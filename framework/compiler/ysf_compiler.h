@@ -77,6 +77,20 @@ extern "C"
 #define YSF_WEAK                __weak
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
+
+/**
+ * @name IAR ARM编译器大小端模式检测
+ * @{
+ */
+#if 0
+    #define COMPILER_USE_BIG_ENDIAN
+    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+    #warning The byte order of the compiler uses little endian mode!
+#endif
+/**@} */
+
 /**@} */
 
 /**
@@ -90,8 +104,8 @@ extern "C"
 
 #define YSF_PACKED_HEAD(n)      PRAGMA(data_alignment = n)
 #define YSF_PACKED_TAIL(n)
-#define PACKED(type)            PRAGMA(data_alignment = n) type;
-#define ALIGNMENT(n,type)       PRAGMA(data_alignment = n) type;
+#define YSF_PACKED(type)        PRAGMA(data_alignment = n) type;
+#define YSF_ALIGNMENT(n,type)   PRAGMA(data_alignment = n) type;
 /**@} */
 
 /**@} */
@@ -135,6 +149,20 @@ extern "C"
 #define YSF_WEAK                __weak
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
+
+/**
+ * @name ARM Compiler 6编译器大小端模式检测
+ * @{
+ */
+#if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
+    #define COMPILER_USE_BIG_ENDIAN
+    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+    #warning The byte order of the compiler uses little endian mode!
+#endif
+/**@} */
+
 /**@} */
 
 /**
@@ -192,6 +220,20 @@ extern "C"
 #define YSF_WEAK                __weak
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
+
+/**
+ * @name ARM Compiler 6编译器大小端模式检测
+ * @{
+ */
+#if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
+    #define COMPILER_USE_BIG_ENDIAN
+    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+    #warning The byte order of the compiler uses little endian mode!
+#endif
+/**@} */
+
 /**@} */
 
 /**
@@ -249,6 +291,20 @@ extern "C"
 #define YSF_WEAK
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
+
+/**
+ * @name Visual Studio编译器大小端模式检测
+ * @{
+ */
+#if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
+    #define COMPILER_USE_BIG_ENDIAN
+    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+    #warning The byte order of the compiler uses little endian mode!
+#endif
+/**@} */
+
 /**@} */
 
 /**
@@ -313,6 +369,20 @@ extern "C"
 #define YSF_WEAK                __attribute__((weak))
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
+
+/**
+ * @name GCC编译器大小端模式检测
+ * @{
+ */
+#if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
+    #define COMPILER_USE_BIG_ENDIAN
+    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+    #warning The byte order of the compiler uses little endian mode!
+#endif
+/**@} */
+
 /**@} */
 
 /**
@@ -333,7 +403,63 @@ extern "C"
 /**@} */
 
 #else
-	#error  ysf unsupported compilers!
+/**
+ * @name 不支持的编译器宏
+ * @{
+ */
+#define __FUNCNAME__           
+#define __YSF_FUNCNAME__       
+
+#define PRAGMA(pragma)         
+
+#if !defined(__CORTEX_M)
+#define __ASM                   
+#define __INLINE                
+#define __STATIC_INLINE         static
+#endif
+
+#define YSF_ASM                 
+#define YSF_INLINE              
+#define YSF_STATIC_INLINE       static
+
+#define YSF_SECTION(x)         
+#define YSF_UNUSED
+#define YSF_USED
+#define YSF_WEAK                
+#define YSF_IMPORT_API         
+#define YSF_EXPORT_API          
+
+/**
+ * @name 不支持的编译器大小端模式检测
+ * @{
+ */
+#if 0
+    #define COMPILER_USE_BIG_ENDIAN
+    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+    #warning The byte order of the compiler uses little endian mode!
+#endif
+/**@} */
+
+/**@} */
+
+/**
+ * @name 不支持的编译器字节对齐配置
+ * @{
+ */
+#define PACKED_HEAD(n)          
+#define PACKED_TAIL(n)
+#define PACKED(type)            type;
+#define ALIGNMENT(n,type)       type;
+
+#define YSF_PACKED_HEAD(n)      
+#define YSF_PACKED_TAIL(n)
+#define YSF_PACKED(type)        type;
+#define YSF_ALIGNMENT(n,type)   type;
+/**@} */
+
+/**@} */
 #endif
 
 /**@} */
