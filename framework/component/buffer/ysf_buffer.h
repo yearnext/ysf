@@ -31,6 +31,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_type.h"
+#include "ysf_compiler.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -79,18 +80,105 @@ typedef ysf_rb_t ysf_fifo_t;
 
 /**@} */
 
+/**
+ * @name ring buffer type
+ * @{
+ */
+YSF_PACKED_HEAD(1)
+#if USE_YSF_RING_BUFFER_PTR
+typedef struct _YSF_MEM_TYPE_
+{
+    struct _YSF_MEM_TYPE_ *next;
+
+    enum
+    {
+        IS_MEM_FREE = 0,
+        IS_MEM_USE  = 1,
+    }status;
+
+    ysf_u8_t data[];
+}ysf_mem_t;
+
+#else
+typedef struct _YSF_MEM_TYPE_
+{
+#define YSF_MEMORY_CB_NEXT_END (0)
+    ysf_buffer_point_t next;
+
+    enum
+    {
+        IS_MEM_FREE = 0,
+        IS_MEM_USE  = 1,
+    }status;
+
+    ysf_u8_t data[];
+}ysf_mem_cb_t;
+YSF_PACKED_TAIL(1)
+#endif
+
+typedef struct _YSF_MEM_CB_TYPE_
+{
+    ysf_buffer_t buffer;
+    ysf_u8_t     alignment;
+
+    enum
+    {
+        IS_YSF_POOL_NOT_INIT = 0,
+        IS_YSF_POOL_INIT     = 1,
+    }status;
+}ysf_mem_t;
+
+/**@} */
+
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+/**
+ * @name ring buffer type API
+ * @{
+ */
 extern ysf_err_t ysf_rbInit( ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t);
-extern ysf_err_t ysf_rbWrite(ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t);
-extern ysf_err_t ysf_rbRead(ysf_rb_t*,  ysf_u8_t*, ysf_buffer_size_t);
+extern ysf_buffer_size_t ysf_rbGetLen( ysf_rb_t* );
+extern ysf_buffer_size_t ysf_rbCanRead( ysf_rb_t* );
+extern ysf_buffer_size_t ysf_rbCanWrite( ysf_rb_t* );
+extern ysf_err_t ysf_rbWrite( ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t );
+extern ysf_err_t ysf_rbRead( ysf_rb_t*,  ysf_u8_t*, ysf_buffer_size_t );
 
+#define ysf_queueInit(queue, buffer, size)  ysf_rbInit(queue, buffer, size)
+#define ysf_queueGetLen(queue)              ysf_rbGetLen(queue)
+#define ysf_queueCanRead(queue)             ysf_rbCanRead(queue)
+#define ysf_queueCanWrite(queue)            ysf_rbCanWrite(queue)
+#define ysf_queueWrite(queue, buffer, size) ysf_rbWrite(queue, buffer, size)
+#define ysf_queueRead(queue, buffer, size)  ysf_rbRead(queue, buffer, size)
+
+#define ysf_fifoInit(queue, buffer, size)   ysf_rbInit(queue, buffer, size)
+#define ysf_fifoGetLen(queue)               ysf_rbGetBufferLen(queue)
+#define ysf_fifoCanRead(queue)              ysf_rbCanRead(queue)
+#define ysf_fifoCanWrite(queue)             ysf_rbCanWrite(queue)
+#define ysf_fifoPush(queue, buffer, size)   ysf_rbWrite(queue, buffer, size)
+#define ysf_fifoPushByte(queue, buffer)     ysf_rbWrite(queue, buffer, 1)
+#define ysf_fifoPop(queue, buffer, size)    ysf_rbRead(queue, buffer, size)
+#define ysf_fifoPopByte(queue, buffer)      ysf_rbRead(queue, buffer, 1)
+/**@} */
+
+/**
+ * @name memory mamagnment API
+ * @{
+ */
+extern ysf_buffer_size_t ysf_memAlignmentCal(ysf_buffer_size_t);
+extern ysf_err_t ysf_memInit(ysf_mem_t *mem, ysf_u8_t*, ysf_buffer_size_t);
+extern ysf_buffer_size_t ysf_memGetLen(ysf_mem_t *mem);
+extern ysf_buffer_size_t ysf_memGetAlignment(ysf_mem_t *mem);
+extern ysf_buffer_size_t ysf_memUseRateCal(ysf_mem_t *mem);
+extern void* ysf_memMalloc(ysf_mem_t *mem, ysf_buffer_size_t);
+extern ysf_err_t ysf_memFree(ysf_mem_t *mem, void*);
+
+/**@} */
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf_buffer 閰嶇疆  */
+/** @}*/     /* ysf_buffer 闁板秶鐤�  */
 
 /**********************************END OF FILE*********************************/
