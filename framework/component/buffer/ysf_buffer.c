@@ -573,17 +573,16 @@ ysf_err_t ysf_memBlockInit( ysf_mem_cb_t *mem )
     ysf_assert(IS_PTR_NULL(mem));
     ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
 
-    ysf_mem_block_t *memCB = YSF_NULL;
     ysf_buffer_size_t nowNode = 0, nextNode = 0;
+    ysf_mem_block_t *memCB = (ysf_mem_block_t *)&mem->buffer.buffer[nowNode];
 
     while(1)
     {
-        memCB = (ysf_mem_block_t *)&mem->buffer.buffer[nowNode];
         nextNode = nowNode + mem->alignment;
 
         memCB->status = IS_MEM_FREE;
 
-        if( nextNode > mem->buffer.size )
+        if( nextNode >= mem->buffer.size )
         {
             memCB->next = YSF_MEMORY_CB_NEXT_END;
 
@@ -591,6 +590,7 @@ ysf_err_t ysf_memBlockInit( ysf_mem_cb_t *mem )
         }
 
         memCB->next = (ysf_mem_block_t *)&mem->buffer.buffer[nextNode];
+        memCB       = memCB->next;
 
         nowNode     = nextNode;
     }
@@ -774,8 +774,8 @@ void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
     ysf_assert(IS_PTR_NULL(mem));
     ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
 
-    ysf_mem_block_t *nowNode  = (ysf_mem_block_t *)&mem->buffer.buffer;
-    ysf_mem_block_t *nextNode;
+    ysf_mem_block_t *nowNode  = (ysf_mem_block_t *)mem->buffer.buffer;
+    ysf_mem_block_t *startNode = YSF_NULL;
 
     const ysf_buffer_size_t needBlock = ysf_memNeedBlockCal(mem, sizeof(ysf_mem_block_t)+size);
     ysf_buffer_size_t getSize  = 0;
@@ -784,19 +784,20 @@ void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
     {
         if( nowNode->status == IS_MEM_FREE )
         {
+            (startNode == YSF_NULL) ? (startNode = nowNode) : (0);
+
             if( ++getSize >= needBlock )
             {
-                nextNode        = nowNode->next;
-                nowNode         = nowNode - getSize * mem->alignment;
-                nowNode->next   = nextNode;
-                nowNode->status = IS_MEM_USE;
+                startNode->next   = nowNode->next;
+                startNode->status = IS_MEM_USE;
 
-                return ((void *)nowNode->data);
+                return ((void *)startNode->data);
             }
         }
         else
         {
-            getSize = 0;
+            getSize  = 0;
+            startNode = YSF_NULL;
         }
 
         if( nowNode->next == YSF_MEMORY_CB_NEXT_END )
@@ -823,12 +824,16 @@ void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
 ysf_err_t ysf_memFree(ysf_mem_cb_t *mem, void *useMem)
 {
     ysf_assert(IS_PTR_NULL(mem));
-    ysf_assert(IS_PTR_NULL(useMem));
     ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
 
-    ysf_mem_block_t *node  = (ysf_mem_block_t *)&mem->buffer.buffer;
+    ysf_mem_block_t *node  = (ysf_mem_block_t *)mem->buffer.buffer;
     ysf_buffer_size_t next;
     ysf_buffer_size_t block;
+
+    if(useMem == YSF_NULL)
+    {
+        return YSF_ERR_FAIL;
+    }
 
     while(1)
     {
@@ -851,7 +856,7 @@ ysf_err_t ysf_memFree(ysf_mem_cb_t *mem, void *useMem)
     }
 
     block = ysf_memUseBlockCal(mem, node);
-    next  = (ysf_buffer_size_t)((ysf_u8_t *)node - (ysf_u8_t *)&mem->buffer.buffer);
+    next  = (ysf_buffer_size_t)((ysf_u8_t *)node - (ysf_u8_t *)mem->buffer.buffer);
     next  = next + mem->alignment;
 
     for( ; block>0; block-- )
@@ -891,7 +896,7 @@ ysf_err_t ysf_memBlockInit( ysf_mem_cb_t *mem )
 
         memCB->status = IS_MEM_FREE;
 
-        if( nextNode > mem->buffer.size )
+        if( nextNode >= mem->buffer.size )
         {
             memCB->next = YSF_MEMORY_CB_NEXT_END;
 
@@ -1082,30 +1087,31 @@ void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
     ysf_assert(IS_PTR_NULL(mem));
     ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
 
-    ysf_mem_block_t *nowNode  = (ysf_mem_block_t *)&mem->buffer.buffer;
+    ysf_mem_block_t *nowNode  = (ysf_mem_block_t *)mem->buffer.buffer;
+    ysf_mem_block_t *startNode = YSF_NULL;
 
     const ysf_buffer_size_t needSize = ysf_memNeedBlockCal(mem, sizeof(ysf_mem_block_t)+size);
 
-    ysf_buffer_size_t nextNode;
     ysf_buffer_size_t getSize  = 0;
 
     while(1)
     {
         if( nowNode->status == IS_MEM_FREE )
         {
+            (startNode == YSF_NULL) ? (startNode = nowNode) : (0);
+
             if( ++getSize >= needSize )
             {
-                nextNode = nowNode->next;
-                nowNode  = nowNode - getSize * mem->alignment;
-                nowNode->next = nextNode;
-                nowNode->status = IS_MEM_USE;
+                startNode->next   = nowNode->next;
+                startNode->status = IS_MEM_USE;
 
-                return ((void *)nowNode->data);
+                return ((void *)startNode->data);
             }
         }
         else
         {
-            getSize = 0;
+            getSize   = 0;
+            startNode = YSF_NULL;
         }
 
         if( nowNode->next == YSF_MEMORY_CB_NEXT_END )
@@ -1132,12 +1138,16 @@ void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
 ysf_err_t ysf_memFree(ysf_mem_cb_t *mem, void *useMem)
 {
     ysf_assert(IS_PTR_NULL(mem));
-    ysf_assert(IS_PTR_NULL(useMem));
     ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
 
-    ysf_mem_block_t *node  = (ysf_mem_block_t *)&mem->buffer.buffer;
+    ysf_mem_block_t *node  = (ysf_mem_block_t *)mem->buffer.buffer;
     ysf_buffer_size_t next;
     ysf_buffer_size_t block;
+
+    if(useMem == YSF_NULL)
+    {
+        return YSF_ERR_FAIL;
+    }
 
     while(1)
     {
@@ -1160,7 +1170,7 @@ ysf_err_t ysf_memFree(ysf_mem_cb_t *mem, void *useMem)
     }
 
     block = ysf_memUseBlockCal(mem, node);
-    next  = (ysf_buffer_size_t)((ysf_u8_t *)node - (ysf_u8_t *)&mem->buffer.buffer);
+    next  = (ysf_buffer_size_t)((ysf_u8_t *)node - (ysf_u8_t *)mem->buffer.buffer);
     next  = next + mem->alignment;
 
     for( ; block>0; block-- )

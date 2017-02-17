@@ -43,7 +43,7 @@ extern "C"
 #define USE_YSF_MEMORY_MANAGEMENT_DEBUG (1)
 
 #define USE_YSF_RING_BUFFER_PTR         (0)
-#define USE_YSF_MEMORY_MANAGEMENT_PTR   (1)
+#define USE_YSF_MEMORY_MANAGEMENT_PTR   (0)
 
 /* Exported types ------------------------------------------------------------*/
 /**
