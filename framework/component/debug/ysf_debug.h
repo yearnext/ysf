@@ -30,9 +30,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_commtools.h"
-#include "ysf_compiler.h"
-#include "ysf_type.h"
+#include "..\framework\common\ysf_commtools.h"
+#include "..\framework\compiler\ysf_compiler.h"
+#include "..\framework\common\ysf_type.h"
 #include <stdarg.h>
 
 /* Exported macro ------------------------------------------------------------*/
@@ -73,8 +73,6 @@ extern "C"
                                 ysf_assert_failed(__FILE__,__LINE__);     \
                                 while(1);                                 \
                             }                                             \
-                                                                          \
-                                return 0;                                 \
                         }
 
 #else

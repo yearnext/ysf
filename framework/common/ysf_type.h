@@ -30,25 +30,13 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-//#include <stdbool.h>
-//#include <stdlib.h>
-//#include <stdint.h>
+#include "..\framework\compiler\ysf_compiler.h"
 
 /* Exported types ------------------------------------------------------------*/
 /**
  * @name ysf 基本数据类型定义
  * @{
  */
-typedef unsigned char               ysf_uint8_t;
-typedef unsigned short              ysf_uint16_t;
-typedef unsigned int                ysf_uint32_t;
-typedef unsigned long long          ysf_uint64_t;
-
-typedef char                        ysf_int8_t;
-typedef short                       ysf_int16_t;
-typedef int                         ysf_int32_t;
-typedef long long                   ysf_int64_t;
-
 typedef ysf_uint8_t                 ysf_u8_t;
 typedef ysf_uint16_t                ysf_u16_t;
 typedef ysf_uint32_t                ysf_u32_t;
@@ -81,6 +69,31 @@ typedef volatile const ysf_int8_t   ysf_vcs8_t;
 typedef volatile const ysf_int16_t  ysf_vcs16_t;
 typedef volatile const ysf_int32_t  ysf_vcs32_t;
 
+/**@} */
+
+/**
+ * @name ysf 基本数据类型最大最小值定义
+ * @{
+ */
+#define YSF_INT8_MAX   (-128)
+#define YSF_INT16_MAX  (-32768)
+#define YSF_INT32_MAX  (-2147483647 - 1)
+#define YSF_INT64_MAX  (-9223372036854775807LL - 1)
+
+#define YSF_INT8_MIN   (127)
+#define YSF_INT16_MIN  (32767)
+#define YSF_INT32_MIN  (2147483647U)
+#define YSF_INT64_MIN  (9223372036854775807LL)
+
+#define YSF_UINT8_MAX  (0xFF)
+#define YSF_UINT16_MAX (0xFFFF)
+#define YSF_UINT32_MAX (0xFFFFFFFFU)
+#define YSF_UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
+
+#define YSF_UINT8_MIN  (0)
+#define YSF_UINT16_MIN (0)
+#define YSF_UINT32_MIN (0U)
+#define YSF_UINT64_MIN (0ULL)
 /**@} */
 
 /**

@@ -1,28 +1,28 @@
 /**
  ******************************************************************************
-  * @file       ysf_buffer.c
-  * @author     yearnext
-  * @version    1.0.0
-  * @date       2017骞�1鏈�6鏃�
-  * @brief      ysf 缂撳啿鍖� 婧愭枃浠�
-  * @par        宸ヤ綔骞冲彴
-  *                 Windows
-  * @par        缂栬瘧骞冲彴
-  * 				GCC
+ * @file       ysf_debug.c
+ * @author     yearnext
+ * @version    1.0.0
+ * @date       2017-01-10
+ * @brief      ysf's debug component source files
+ * @par        work platform
+ *                 Windows
+ * @par        compiler
+ *                 GCC
  ******************************************************************************
-  * @note
-  * 1.瀹氫箟浜嗛槦鍒椼�佺幆褰㈢紦鍐插尯銆丗IFO鐨勫姛鑳藉嚱鏁般��
+ * @note
+ * 1.XXXXX
  ******************************************************************************
  */
 
 /**
- * @defgroup ysf 閰嶇疆
+ * @defgroup ysf debug
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_debug.h"
-#include "ysf_type.h"
+#include "..\framework\component\debug\ysf_debug.h"
+#include "..\framework\common\ysf_type.h"
 
 #if USE_STD_LIB_IN_YSF_DEBUG
 #include <stdarg.h>
@@ -41,10 +41,10 @@
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       杈撳嚭鏃ュ織鍑芥暟
- * @param       [in/out]  log*              杈撳嚭鏃ュ織淇℃伅
- * @param       [in/out]  ...               鏃ュ織鍙傛暟
- * @return      [in/out]  YSF_ERR_NONE      杈撳嚭鎴愬姛
+ * @brief       ysf put log message
+ * @param       [in/out]  log*              put message
+ * @param       [in/out]  ...               message param
+ * @return      [in/out]  YSF_ERR_NONE      put finish
  * @note        None
  *******************************************************************************
  */
@@ -80,6 +80,6 @@ ysf_err_t ysf_log(const char *log, ...)
 }
 #endif
 
-/** @}*/     /* ynf_ringbuff 閰嶇疆  */
+/** @}*/     /* ysf debug component */
 
 /**********************************END OF FILE*********************************/
