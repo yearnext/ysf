@@ -615,7 +615,7 @@ ysf_buffer_size_t ysf_memAlignmentCal( ysf_buffer_size_t memSize )
     ((memSize%8) == 0) ? (0) : (temp++);
 
     size = temp << 1;
-    size = temp << 3;
+    size = size << 3;
 
     return size;
 }
@@ -923,7 +923,7 @@ ysf_buffer_size_t ysf_memAlignmentCal( ysf_buffer_size_t memSize )
     ((memSize%8) == 0) ? (0) : (temp++);
 
     size = temp << 1;
-    size = temp << 3;
+    size = size << 3;
     
     return size;
 }
@@ -1178,7 +1178,7 @@ ysf_err_t ysf_memFree(ysf_mem_cb_t *mem, void *useMem)
 #endif
 
 #if USE_YSF_MEMORY_MANAGEMENT_DEBUG
-static ysf_u8_t pool[YSF_UINT8_MAX];
+static ysf_u8_t pool[128];
 static ysf_mem_cb_t memCB;
 static ysf_u8_t *memory[2] = {YSF_NULL, YSF_NULL};
 static ysf_u8_t size;
@@ -1193,7 +1193,7 @@ static ysf_u8_t size;
  */
 void ysf_memoryManagementTest( void )
 {
-    ysf_memInit(&memCB, pool, YSF_UINT8_MAX);
+    ysf_memInit(&memCB, pool, sizeof(pool));
 
     while(1)
     {
