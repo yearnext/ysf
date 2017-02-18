@@ -21,7 +21,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "..\ysf\component\buffer\ysf_buffer.h"
+#include "../ysf/component/timer/ysf_timer.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +31,8 @@
 /* Exported functions --------------------------------------------------------*/
 int main( void )
 {
-    ysf_mem.test();
+    ysf_timer.init();
+    ysf_timer.general.e.test();
     return 0;
 }
 

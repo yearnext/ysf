@@ -42,8 +42,9 @@ typedef struct _YSF_SINGLE_LIST_TYPE_
 /* Exported variables --------------------------------------------------------*/
 const ysf_sList_func_list_t ysf_sList =
 {
-    .addNode = ysf_slist_add,
-    .delNode = ysf_slist_del,
+    .traversal = ysf_slist_traversal,
+    .add       = ysf_slist_add,
+    .del       = ysf_slist_del,
 };
 
 /* Private functions ---------------------------------------------------------*/
@@ -61,9 +62,9 @@ const ysf_sList_func_list_t ysf_sList =
  *******************************************************************************
  */
 ysf_bool_t ysf_slist_traversal(void **listHead,
-                                     sListFunc func,
-                                     void **ctx,
-                                     void **expand)
+                               sListFunc func,
+                               void **ctx,
+                               void **expand)
 {
     ysf_assert(IS_PTR_NULL(listHead));
 
@@ -102,7 +103,7 @@ ysf_bool_t ysf_slist_add( void **listHead, void **ctx, void **expand )
 
     ysf_bool_t status = YSF_FALSE;
 
-    if( *listHead == YSF_NULL )
+    if( *listHead == YSF_NULL || *listHead == *ctx )
     {
         *listHead = *ctx;
 

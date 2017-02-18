@@ -38,15 +38,16 @@ typedef ysf_bool_t (*sListFunc)(void **, void **, void **);
 
 typedef struct
 {
-    sListFunc addNode;
-    sListFunc delNode;
+    ysf_bool_t (*traversal)(void**, sListFunc, void**, void**);
+    sListFunc add;
+    sListFunc del;
 }ysf_sList_func_list_t;
 
 /* Exported variables --------------------------------------------------------*/
 extern const ysf_sList_func_list_t ysf_sList;
 
 /* Exported functions --------------------------------------------------------*/
-extern ysf_bool_t ysf_single_list_traversal(void**, sListFunc, void**, void**);
+extern ysf_bool_t ysf_slist_traversal(void**, sListFunc, void**, void**);
 extern ysf_bool_t ysf_slist_add( void**, void**, void** );
 extern ysf_bool_t ysf_slist_del( void**, void**, void** );
 
