@@ -21,7 +21,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "..\framework\component\buffer\ysf_buffer.h"
+#include "..\ysf\component\buffer\ysf_buffer.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -31,8 +31,7 @@
 /* Exported functions --------------------------------------------------------*/
 int main( void )
 {
-    ysf_rbTest();
-    ysf_memoryManagementTest();
+    ysf_mem.test();
     return 0;
 }
 

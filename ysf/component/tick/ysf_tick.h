@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
-  * @file       ysf_event.h
+  * @file       ysf_tick.h
   * @author     yearnext
   * @version    1.0.0
-  * @date       2017年1月10日
-  * @brief      ysf_event 源文件
-  * @par        工作平台                                  
+  * @date       2017-1-10
+  * @brief      ysf tick head file
+  * @par        work platform
   *                 Windows
-  * @par        编译平台									                         
+  * @par        compiler platform
   * 				GCC
  ******************************************************************************
   * @note
@@ -16,12 +16,12 @@
  */
 
 /**
- * @defgroup ysf_event配置
+ * @defgroup ysf tick
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_EVENT_H__
-#define __YSF_EVENT_H__
+#ifndef __YSF_TICK_H__
+#define __YSF_TICK_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -30,30 +30,58 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_type.h"
-#include "ysf_event_conf.h"
+#include "../ysf/common/ysf_type.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       事件框架调试开关
+ * @brief       ysf tick component enable configuration
  *******************************************************************************
  */
-#define USE_YNF_EVENT_DEBUG (0)
+#define USE_YSF_TICK (1)
 
 /**
  *******************************************************************************
- * @brief       事件模块默认工作模式开关
+ * @brief       ysf tick max value
  *******************************************************************************
  */
-#define USE_YNF_EVENT_AUTO_MODE (1)
+#define YSF_TICK_MAX YSF_UINT32_MAX
 
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       ysf tick type
+ *******************************************************************************
+ */
+typedef ysf_vu32_t ysf_tick_t;
+
+/**
+ *******************************************************************************
+ * @brief       ysf tick func list
+ *******************************************************************************
+ */
+typedef struct
+{
+    void (*init)(void);
+    void (*inc)(void);
+    ysf_tick_t (*read)(void);
+}ysf_tick_func_list;
+
 /* Exported variables --------------------------------------------------------*/
+extern const ysf_tick_func_list ysf_tick;
+
 /* Exported functions --------------------------------------------------------*/
-extern ysf_err_t ysf_event_init( void );
-extern ysf_err_t ysf_event_send( ysf_event_t );
-extern ysf_err_t ysf_event_read( ysf_event_t* );
+#if USE_YSF_TICK
+extern void ysf_tick_init( void );
+extern void ysf_tick_inc( void );
+extern ysf_tick_t ysf_tick_read( void );
+
+#else
+#define ysf_tick_init()
+#define ysf_tick_inc()
+#define ysf_tick_read() (0)
+
+#endif
 
 #ifdef __cplusplus
 }
@@ -61,6 +89,6 @@ extern ysf_err_t ysf_event_read( ysf_event_t* );
 	
 #endif       /** end include define */
 
-/** @}*/     /* YSF_EVENT 配置  */
+/** @}*/     /* ysf tick component  */
 
 /**********************************END OF FILE*********************************/

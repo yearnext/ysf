@@ -21,10 +21,10 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "..\framework\component\buffer\ysf_buffer.h"
-#include "..\framework\compiler\ysf_compiler.h"
-#include "..\framework\common\ysf_type.h"
-#include "..\framework\component\debug\ysf_debug.h"
+#include "../ysf/component/buffer/ysf_buffer.h"
+#include "../ysf/common/ysf_type.h"
+#include "../ysf/compiler/ysf_compiler.h"
+#include "../ysf/component/debug/ysf_debug.h"
 
 #if USE_YSF_BUFFER_DEBUG || USE_YSF_MEMORY_MANAGEMENT_DEBUG
 #include <stdlib.h>
@@ -32,11 +32,33 @@
 #endif
 
 /* Private define ------------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
+const ysf_ring_buffer_func_type_t ysf_rb =
+{
+    .init  = ysf_rbInit,
+    .len   = ysf_rbGetLen,
+    .write = ysf_rbWrite,
+    .read  = ysf_rbRead,
+#if USE_YSF_BUFFER_DEBUG
+    .test  = ysf_rbTest,
+#endif
+};
+
+const ysf_memory_func_type_t ysf_mem =
+{
+    .init      = ysf_memInit,
+    .len       = ysf_memGetLen,
+    .alignment = ysf_memGetAlignment,
+    .rate      = ysf_memUseRateCal,
+    .malloc    = ysf_memMalloc,
+    .free      = ysf_memFree,
+#if USE_YSF_MEMORY_MANAGEMENT_DEBUG
+    .test      = ysf_memoryManagementTest,
+#endif
+};
+
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_YSF_RING_BUFFER_PTR
@@ -656,11 +678,11 @@ ysf_buffer_size_t ysf_memUseBlockCal(ysf_mem_cb_t *mem, ysf_mem_block_t *block)
 
     if( block->next != YSF_MEMORY_CB_NEXT_END )
     {
-        size = (ysf_buffer_size_t)((ysf_u8_t *)block->next - (ysf_u8_t *)block);
+        size = (ysf_buffer_size_t)((ysf_addr_t)block->next - (ysf_addr_t)block);
     }
     else
     {
-        size = (ysf_buffer_size_t)((ysf_u8_t *)&mem->buffer.buffer[mem->buffer.size] - (ysf_u8_t *)block);
+        size = (ysf_buffer_size_t)((ysf_addr_t)&mem->buffer.buffer[mem->buffer.size] - (ysf_addr_t)block);
     }
 
     return (size / mem->alignment);
@@ -969,11 +991,11 @@ ysf_buffer_size_t ysf_memUseBlockCal(ysf_mem_cb_t *mem, ysf_mem_block_t *block)
 
     if( block->next != YSF_MEMORY_CB_NEXT_END )
     {
-        size = (ysf_buffer_size_t)((ysf_u8_t *)&mem->buffer.buffer[block->next] - (ysf_u8_t *)block);
+        size = (ysf_buffer_size_t)((ysf_addr_t)&mem->buffer.buffer[block->next] - (ysf_addr_t)block);
     }
     else
     {
-        size = (ysf_buffer_size_t)((ysf_u8_t *)&mem->buffer.buffer[mem->buffer.size] - (ysf_u8_t *)block);
+        size = (ysf_buffer_size_t)((ysf_addr_t)&mem->buffer.buffer[mem->buffer.size] - (ysf_addr_t)block);
     }
 
     return (size / mem->alignment);
@@ -1091,7 +1113,6 @@ void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
     ysf_mem_block_t *startNode = YSF_NULL;
 
     const ysf_buffer_size_t needSize = ysf_memNeedBlockCal(mem, sizeof(ysf_mem_block_t)+size);
-
     ysf_buffer_size_t getSize  = 0;
 
     while(1)

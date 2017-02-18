@@ -116,6 +116,13 @@ typedef char                        ysf_int8_t;
 typedef short                       ysf_int16_t;
 typedef int                         ysf_int32_t;
 typedef long long                   ysf_int64_t;
+
+#if 1
+typedef ysf_uint32_t                ysf_addr_t;
+#else
+typedef ysf_uint64_t                ysf_addr_t;
+#endif
+
 /**@} */
 
 /**@} */

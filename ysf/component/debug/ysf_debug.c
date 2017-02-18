@@ -21,8 +21,8 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "..\framework\component\debug\ysf_debug.h"
-#include "..\framework\common\ysf_type.h"
+#include "../ysf/component/debug/ysf_debug.h"
+#include "../ysf/common/ysf_type.h"
 
 #if USE_STD_LIB_IN_YSF_DEBUG
 #include <stdarg.h>

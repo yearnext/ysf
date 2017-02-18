@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
-  * @file       ysf_event.c
+  * @file       ysf_tick.c
   * @author     yearnext
   * @version    1.0.0
-  * @date       2017年1月10日
-  * @brief      ysf_event 源文件
-  * @par        工作平台
+  * @date       2017-1-10
+  * @brief      ysf_tick source file
+  * @par        work platform
   *                 Windows
-  * @par        编译平台
+  * @par        compiler platform
   * 				GCC
  ******************************************************************************
   * @note
@@ -16,75 +16,91 @@
  */
 
 /**
- * @defgroup ysf_event配置
+ * @defgroup ysf tick
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_event.h"
-#include "ysf_type.h"
-#include "ysf_buffer.h"
+#include "../ysf/component/tick/ysf_tick.h"
 
 /* Private define ------------------------------------------------------------*/
-#define YSF_EVENT_SIZE_CAL(event) (sizeof(event)/sizeof(char))
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       事件队列
+ * @brief       ysf tick count
  *******************************************************************************
  */
-#if USE_YNF_EVENT_AUTO_MODE
-static ysf_event_t eventQueue[YSF_EVENT_MAX];
-static ysf_rb_t eventQueueCB;
+#if USE_YSF_TICK
+static ysf_tick_t ysfTick = 0;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
+const ysf_tick_func_list ysf_tick =
+{
+    .init = ysf_tick_init,
+    .inc  = ysf_tick_inc,
+    .read = ysf_tick_read,
+};
+
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_YSF_TICK
 /**
  *******************************************************************************
- * @brief       ysf event component init
+ * @brief       tick value initialization
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_init( void )
+void ysf_tick_init( void )
 {
-	return ysf_rbInit(&eventQueueCB, eventQueue, sizeof(eventQueue));
+    ysfTick = 0;
 }
 
 /**
  *******************************************************************************
- * @brief       ysf write event to event queue
- * @param       [in/out]  event             write events
- * @return      [in/out]  YSF_ERR_NONE      write success
- * @return      [in/out]  YSF_ERR_FAIL      write failed
+ * @brief       tick value increase
+ * @param       [in/out]  void
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_send( ysf_event_t event )
+void ysf_tick_inc( void )
 {
-	return ysf_rbWrite( &eventQueueCB, &event, YSF_EVENT_SIZE_CAL(ysf_event_t) );
+    ysfTick++;
 }
 
 /**
  *******************************************************************************
- * @brief       read events from event queue
- * @param       [in/out]  *event            read events
- * @return      [in/out]  YSF_ERR_NONE      read success
- * @return      [in/out]  YSF_ERR_FAIL      read failed
+ * @brief       read past tick
+ * @param       [in/out]  void
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_read( ysf_event_t *event )
+ysf_tick_t ysf_tick_read( void )
 {
-	return ysf_rbRead( &eventQueueCB, event, YSF_EVENT_SIZE_CAL(ysf_event_t) );
+	static ysf_tick_t lastTick = 0;
+	ysf_tick_t tick = 0;
+	
+	if( ysfTick >= lastTick )
+	{
+		tick = ysfTick - lastTick;
+	}
+	else
+	{
+		tick = YSF_TICK_MAX - lastTick;
+		tick = tick + ysfTick;
+	}
+	
+	lastTick = ysfTick;
+	
+	return tick;
 }
 
-/** @}*/     /* ynf_event 配置  */
+#endif
+/** @}*/     /* ysf tick  */
 
 /**********************************END OF FILE*********************************/

@@ -30,7 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "..\framework\compiler\ysf_compiler.h"
+#include "../../ysf/compiler/ysf_compiler.h"
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -106,7 +106,7 @@ typedef volatile const ysf_int32_t  ysf_vcs32_t;
 typedef enum _YSF_BOOL_TYPE_
 {
    ysf_false = 0,
-   ysf_true = 1,
+   ysf_true  = !ysf_false,
 }ysf_bool_t;
 
 /**@} */

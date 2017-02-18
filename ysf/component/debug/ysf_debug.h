@@ -30,9 +30,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "..\framework\common\ysf_commtools.h"
-#include "..\framework\compiler\ysf_compiler.h"
-#include "..\framework\common\ysf_type.h"
+#include "../ysf/common/ysf_commtools.h"
+#include "../ysf/compiler/ysf_compiler.h"
+#include "../ysf/common/ysf_type.h"
 #include <stdarg.h>
 
 /* Exported macro ------------------------------------------------------------*/

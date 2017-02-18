@@ -30,8 +30,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "..\framework\common\ysf_type.h"
-#include "..\framework\compiler\ysf_compiler.h"
+#include "../ysf/common/ysf_type.h"
+#include "../ysf/compiler/ysf_compiler.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -60,7 +60,7 @@ typedef struct _YSF_BUFFER_TYPE_
 }ysf_buffer_t;
 
 #if USE_YSF_RING_BUFFER_PTR
-typedef struct _YSF_RING_BUFF_TYPE_
+typedef volatile struct _YSF_RING_BUFF_TYPE_
 {
     ysf_buffer_t       buffer;
     ysf_u8_t           *head;
@@ -69,7 +69,7 @@ typedef struct _YSF_RING_BUFF_TYPE_
 }ysf_rb_t;
 
 #else
-typedef struct _YSF_RING_BUFF_TYPE_
+typedef volatile struct _YSF_RING_BUFF_TYPE_
 {
     ysf_buffer_t       buffer;
     ysf_buffer_point_t head;
@@ -132,13 +132,40 @@ typedef struct _YSF_MEM_CB_TYPE_
 
 /**@} */
 
+typedef struct
+{
+    ysf_err_t (*init)(ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t);
+    ysf_buffer_size_t (*len)(ysf_rb_t*);
+    ysf_err_t (*write)(ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t);
+    ysf_err_t (*read)(ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t);
+#if USE_YSF_BUFFER_DEBUG
+    void (*test)(void);
+#endif
+}ysf_ring_buffer_func_type_t;
+
+typedef struct
+{
+    ysf_err_t (*init)(ysf_mem_cb_t*, ysf_u8_t*, ysf_buffer_size_t);
+    ysf_buffer_size_t (*len)(ysf_mem_cb_t*);
+    ysf_buffer_size_t (*alignment)(ysf_mem_cb_t*);
+    ysf_buffer_size_t (*rate)(ysf_mem_cb_t*);
+    void *(*malloc)(ysf_mem_cb_t*, ysf_buffer_size_t);
+    ysf_err_t (*free)(ysf_mem_cb_t*, void*);
+#if USE_YSF_MEMORY_MANAGEMENT_DEBUG
+    void (*test)(void);
+#endif
+}ysf_memory_func_type_t;
+
 /* Exported variables --------------------------------------------------------*/
+extern const ysf_ring_buffer_func_type_t ysf_rb;
+extern const ysf_memory_func_type_t      ysf_mem;
+
 /* Exported functions --------------------------------------------------------*/
 /**
  * @name ring buffer type API
  * @{
  */
-extern ysf_err_t ysf_rbInit( ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t);
+extern ysf_err_t ysf_rbInit( ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t );
 extern ysf_buffer_size_t ysf_rbGetLen( ysf_rb_t* );
 extern ysf_err_t ysf_rbWrite( ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t );
 extern ysf_err_t ysf_rbRead( ysf_rb_t*,  ysf_u8_t*, ysf_buffer_size_t );
@@ -167,12 +194,12 @@ extern void ysf_rbTest( void );
  * @name memory management API
  * @{
  */
-extern ysf_err_t ysf_memInit(ysf_mem_cb_t *mem, ysf_u8_t*, ysf_buffer_size_t);
-extern ysf_buffer_size_t ysf_memGetLen(ysf_mem_cb_t *mem);
-extern ysf_buffer_size_t ysf_memGetAlignment(ysf_mem_cb_t *mem);
-extern ysf_buffer_size_t ysf_memUseRateCal(ysf_mem_cb_t *mem);
-extern void* ysf_memMalloc(ysf_mem_cb_t *mem, ysf_buffer_size_t);
-extern ysf_err_t ysf_memFree(ysf_mem_cb_t *mem, void*);
+extern ysf_err_t ysf_memInit(ysf_mem_cb_t*, ysf_u8_t*, ysf_buffer_size_t);
+extern ysf_buffer_size_t ysf_memGetLen(ysf_mem_cb_t*);
+extern ysf_buffer_size_t ysf_memGetAlignment(ysf_mem_cb_t*);
+extern ysf_buffer_size_t ysf_memUseRateCal(ysf_mem_cb_t*);
+extern void* ysf_memMalloc(ysf_mem_cb_t*, ysf_buffer_size_t);
+extern ysf_err_t ysf_memFree(ysf_mem_cb_t*, void*);
 
 #if USE_YSF_MEMORY_MANAGEMENT_DEBUG
 extern void ysf_memoryManagementTest( void );

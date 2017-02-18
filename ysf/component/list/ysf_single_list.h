@@ -1,27 +1,27 @@
 /**
  ******************************************************************************
- * @file       ysf_compiler.h
+ * @file       ysf_single_list.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017年1月10日
- * @brief      编译器配置 头文件
- * @par        工作平台
+ * @date       2017年2月18日
+ * @brief      ysf single list head file
+ * @par        work paltform		                             
  *                 Windows
- * @par        编译平台
- *                 GCC
+ * @par        compiler paltform									                         
+ * 				   GCC
  ******************************************************************************
  * @note
- * 1.目前仅支持IAR ARM编译器、MDK ARM编译器、GCC编译器、Visual Studio编译器。
+ * 1.XXXXX                  						                     
  ******************************************************************************
  */
 
 /**
- * @defgroup ynf配置
+ * @defgroup ysf single list component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_COMPILER_H__
-#define __YSF_COMPILER_H__
+#ifndef __YSF_SINGLE_LIST_H__
+#define __YSF_SINGLE_LIST_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -30,23 +30,25 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "../ysf/common/ysf_type.h"
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-#if defined(__ICCARM__)
-#include "..\framework\compiler\ysf_iar_arm_compiler.h"
-#elif defined(__CC_ARM)
-#include "..\framework\compiler\ysf_mdk_compiler.h"
-#elif defined(_MSC_BUILD)
-#include "..\framework\compiler\ysf_vs_compiler.h"
-#elif defined(__GNUC__)
-#include "..\framework\compiler\ysf_gcc_compiler.h"
-#else
-#include "..\framework\compiler\ysf_simulation_compiler.h"
-#endif
+typedef ysf_bool_t (*sListFunc)(void **, void **, void **);
 
-/**@} */
+typedef struct
+{
+    sListFunc addNode;
+    sListFunc delNode;
+}ysf_sList_func_list_t;
+
+/* Exported variables --------------------------------------------------------*/
+extern const ysf_sList_func_list_t ysf_sList;
+
+/* Exported functions --------------------------------------------------------*/
+extern ysf_bool_t ysf_single_list_traversal(void**, sListFunc, void**, void**);
+extern ysf_bool_t ysf_slist_add( void**, void**, void** );
+extern ysf_bool_t ysf_slist_del( void**, void**, void** );
 
 #ifdef __cplusplus
 }
@@ -54,6 +56,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf 编译器配置  */
+/** @}*/     /* ysf single list component  */
 
 /**********************************END OF FILE*********************************/

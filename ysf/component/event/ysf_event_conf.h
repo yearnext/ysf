@@ -3,12 +3,12 @@
  * @file       ysf_event_conf.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017年2月12日
- * @brief      ysf_event_conf 头文件
- * @par        工作平台                                  
+ * @date       2017-2-12
+ * @brief      ysf event conf head file
+ * @par        work platform
  *                 Windows
- * @par        编译平台									                         
- * 				GCC
+ * @par        compiler platform
+ * 				   GCC
  ******************************************************************************
  * @note
  * 1.XXXXX                  						                     
@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf事件信息配置
+ * @defgroup ysf event config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -33,7 +33,7 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       事件信息封装
+ * @brief       EVENT MESSAGE PACKAGE
  *******************************************************************************
  */
 #define RegistrarionEvent(event) event,
@@ -70,6 +70,6 @@ _YSF_EVENT_END(EVENT)
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf_event_conf 配置  */
+/** @}*/     /* ysf even config  */
 
 /**********************************END OF FILE*********************************/
