@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file       ysf_key.h
+  * @file       ysf_signal.h
   * @author     yearnext
   * @version    1.0.0
   * @date       2017-1-15
-  * @brief      ynf key head file
+  * @brief      ynf signal head file
   * @par        work platform
   *                 Windows
   * @par        compile platform
@@ -16,12 +16,12 @@
   */
 
 /**
- * @defgroup ysf key
+ * @defgroup ysf signal
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_KEY_H__
-#define __YSF_KEY_H__
+#ifndef __YSF_SIGNAL_H__
+#define __YSF_SIGNAL_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -30,30 +30,15 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_type.h"
-#include "ysf_timer.h"
-
 /* Exported macro ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       按键模块配置层
- *******************************************************************************
- */
-/** 按键扫描时间 */
-#define YSF_KEY_SCAN_TIME        (10)
-#define YSF_KEY_TIME2COUNT(n)    ((n)/YSF_KEY_SCAN_TIME)
+#define YSF_SIGNAL_SCAN_TIME        (10)
+#define YSF_SIGNAL_TIME2COUNT(n)    ((n)/YSF_SIGNAL_SCAN_TIME)
 
-/** 按键动作 */
-#define YSF_KEY_ACTIVE_LOW       !
-#define YSF_KEY_ACTIVE_HIGH      !!
-#define YSF_KEY_ACTIVE           YSF_KEY_ACTIVE_LOW
+#define YSF_SIGNAL_ACTIVE_LOW       !
+#define YSF_SIGNAL_ACTIVE_HIGH      !!
+#define YSF_SIGNAL_ACTIVE           YSF_SIGNAL_ACTIVE_LOW
 
-/**
- *******************************************************************************
- * @brief       按键调试宏开关
- *******************************************************************************
- */
-#define USE_YSF_KEY_DEBUG (1)
+#define USE_YSF_SIGNAL_DEBUG (1)
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
@@ -65,6 +50,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf key */
+/** @}*/     /** ysf signal */
 
 /**********************************END OF FILE*********************************/

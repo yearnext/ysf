@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file       ysf_key.c
+  * @file       ysf_signal.c
   * @author     yearnext
   * @version    1.0.0
   * @date       2017-1-15
-  * @brief      ynf key source file
+  * @brief      ynf signal source file
   * @par        work platform
   *                 Windows
   * @par        compile platform
@@ -16,7 +16,7 @@
   */
 
 /**
- * @defgroup ysf key component
+ * @defgroup ysf signal component
  * @{
  */
 
@@ -28,6 +28,6 @@
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 
-/** @}*/     /* ysf key component  */
+/** @}*/     /* ysf signal component  */
 
 /**********************************END OF FILE*********************************/
