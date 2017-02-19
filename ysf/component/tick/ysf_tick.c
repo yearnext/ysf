@@ -36,7 +36,7 @@ static ysf_tick_t ysfTick = 0;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
-const ysf_tick_func_list ysf_tick =
+const struct _YSF_TICK_API_ ysf_tick =
 {
     .init = ysf_tick_init,
     .inc  = ysf_tick_inc,

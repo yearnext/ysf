@@ -41,7 +41,7 @@ static volatile ysf_rb_t eventQueueCB;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
-const ysf_event_func_list_t ysf_event =
+const struct _YSF_EVENT_API_ ysf_event =
 {
     .init = ysf_event_init,
     .send = ysf_event_send,

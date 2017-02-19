@@ -60,15 +60,15 @@ typedef ysf_vu32_t ysf_tick_t;
  * @brief       ysf tick func list
  *******************************************************************************
  */
-typedef struct
+struct _YSF_TICK_API_
 {
     void (*init)(void);
     void (*inc)(void);
     ysf_tick_t (*read)(void);
-}ysf_tick_func_list;
+};
 
 /* Exported variables --------------------------------------------------------*/
-extern const ysf_tick_func_list ysf_tick;
+extern const struct _YSF_TICK_API_ ysf_tick;
 
 /* Exported functions --------------------------------------------------------*/
 #if USE_YSF_TICK

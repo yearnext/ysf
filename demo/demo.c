@@ -31,8 +31,7 @@
 /* Exported functions --------------------------------------------------------*/
 int main( void )
 {
-    ysf_timer.init();
-    ysf_timer.general.e.test();
+    ysf_timer.eTimer.test();
     return 0;
 }
 

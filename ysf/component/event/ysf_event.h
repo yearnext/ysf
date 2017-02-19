@@ -49,15 +49,15 @@ extern "C"
 #define USE_YNF_EVENT_AUTO_MODE (1)
 
 /* Exported types ------------------------------------------------------------*/
-typedef struct
+struct _YSF_EVENT_API_
 {
     ysf_err_t (*init)(void);
     ysf_err_t (*send)(ysf_event_t);
     ysf_err_t (*read)(ysf_event_t*);
-}ysf_event_func_list_t;
+};
 
 /* Exported variables --------------------------------------------------------*/
-extern const ysf_event_func_list_t ysf_event;
+extern const struct _YSF_EVENT_API_ ysf_event;
 
 /* Exported functions --------------------------------------------------------*/
 extern ysf_err_t ysf_event_init( void );

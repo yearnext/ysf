@@ -35,15 +35,15 @@ extern "C"
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if defined(__ICCARM__)
-#include "../ysf/compiler/ysf_iar_arm_compiler.h"
+#include "../ysf/compiler/iccarm/ysf_compiler_conf.h"
 #elif defined(__CC_ARM)
-#include "../ysf/compiler/ysf_mdk_compiler.h"
+#include "../ysf/compiler/mdk/ysf_compiler_conf.h"
 #elif defined(_MSC_BUILD)
-#include "../ysf/compiler/ysf_vs_compiler.h"
+#include "../ysf/compiler/vs/ysf_compiler_conf.h"
 #elif defined(__GNUC__)
-#include "../ysf/compiler/ysf_gcc_compiler.h"
+#include "../ysf/compiler/gcc/ysf_compiler_conf.h"
 #else
-#include "../ysf/compiler/ysf_simulation_compiler.h"
+#include "../ysf/compiler/simulation/ysf_compiler_conf.h"
 #endif
 
 /**@} */

@@ -38,16 +38,23 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-/* Private typedef -----------------------------------------------------------*/
-static void *head = YSF_NULL;
+#define ysf_timer_add(timer_cb) \
+                  ysf_slist_add((void **)&head, (void **)&(timer_cb))
 
-const ysf_timer_func_t ysf_timer =
+#define ysf_timer_del(timer_cb) \
+                  ysf_slist_del((void **)&head, (void **)&(timer_cb) )
+
+/* Private typedef -----------------------------------------------------------*/
+static ysf_s_list_t *head = YSF_NULL;
+
+const struct _YSF_TIMER_API_ ysf_timer =
 {
-    .init             = ysf_timer_init,
-    .general.e.arm    = ysf_event_timer_arm,
-    .general.e.disarm = ysf_event_timer_disarm,
+    .init          = ysf_timer_init,
+    .handler       = ysf_timer_handler,
+    .eTimer.arm    = ysf_event_timer_arm,
+    .eTimer.disarm = ysf_event_timer_disarm,
 #if USE_EVENT_TIMER_DEBUG
-    .general.e.test   = ysf_event_timer_test,
+    .eTimer.test   = ysf_event_timer_test,
 #endif
 };
 
@@ -70,7 +77,11 @@ ysf_err_t ysf_event_timer_arm(ysf_event_timer_t *timer_cb,
     timer_cb->config.time = time;
     timer_cb->param.event = event;
 
-    if( ysf_sList.traversal((void **)&head, ysf_sList.add, (void **)&timer_cb, YSF_NULL ) == YSF_TRUE )
+#if USE_YSF_VARIOUS_TIMER_TYPE
+    timer_cb->cb.class = YSF_EVENT_TIMER;
+#endif
+
+    if( ysf_timer_add(timer_cb) == YSF_TRUE )
     {
         return YSF_ERR_NONE;
     }
@@ -85,7 +96,7 @@ ysf_err_t ysf_event_timer_disarm(ysf_event_timer_t *timer_cb)
     timer_cb->config.time = 0;
     timer_cb->param.event = YSF_EVENT_NONE;
 
-    if( ysf_sList.traversal((void **)&head, ysf_sList.del, (void **)&timer_cb, YSF_NULL ) == YSF_TRUE )
+    if( ysf_timer_del(timer_cb) == YSF_TRUE )
     {
         return YSF_ERR_NONE;
     }
@@ -107,28 +118,116 @@ void ysf_event_timer_test(void)
     {
         id  = rand();
         time = rand();
-        if( ysf_timer.general.e.arm(&testTimer[id], time, YSF_EVENT_NONE) == YSF_ERR_NONE )
+        if( ysf_timer.eTimer.arm(&testTimer[id], time, YSF_EVENT_NONE) == YSF_ERR_NONE )
         {
-            ysf_log("\nadd timer success! id: %4d, set time %4d \n\n", id, time);
+            ysf_log("\nadd timer success! id: %4d, set time %4d \n", id, time);
         }
         else
         {
-            ysf_log("\nadd timer failed! id: %4d, set time %4d \n\n", id, time);
+            ysf_log("\nadd timer failed! id: %4d, set time %4d \n", id, time);
         }
 
         id  = rand();
-        if( ysf_timer.general.e.disarm(&testTimer[id]) == YSF_ERR_NONE )
+        if( ysf_timer.eTimer.disarm(&testTimer[id]) == YSF_ERR_NONE )
         {
             ysf_log("\ndel timer success! id: %4d \n", id);
         }
         else
         {
-            ysf_log("\ndel timer failed! id: %4d \n\n", id);
+            ysf_log("\ndel timer failed! id: %4d \n", id);
         }
 
         Sleep(3000);
     }
 }
+#endif
+
+ysf_bool_t ysf_timer_status_judge( ysf_timing_t *timing, ysf_tick_t tick )
+{
+    ysf_assert(IS_PTR_NULL(timing));
+
+    if( *timing > tick )
+    {
+        *timing -= tick;
+        return YSF_FALSE;
+    }
+    else
+    {
+        *timing = 0;
+        return YSF_TRUE;
+    }
+
+    return YSF_FALSE;
+}
+
+#if USE_YSF_VARIOUS_TIMER_TYPE
+ysf_err_t ysf_timer_handler( void )
+{
+    ysf_tick_t tick = ysf_tick_read();
+
+    ysf_event_timer_t *timer_cb = (ysf_event_timer_t *)head;
+
+    return YSF_ERR_NONE;
+}
+
+#else
+ysf_bool_t ysf_tList_eTimer_handler( void **timer_cb, void **ctx, void **expand )
+{
+    ysf_assert(IS_PTR_NULL(ctx));
+
+    ysf_tick_t tick = *((ysf_tick_t *)(ctx));
+    ysf_event_timer_t *timer = (ysf_event_timer_t *)(*timer_cb);
+
+    if( timer == YSF_NULL )
+    {
+        return YSF_FALSE;
+    }
+
+    if( ysf_timer_status_judge(&timer->config.time, tick) == YSF_TRUE )
+    {
+        ysf_event_send(timer->param.event);
+        ysf_event_timer_disarm(timer);
+    }
+
+    return YSF_FALSE;
+}
+
+ysf_err_t ysf_timer_handler( void )
+{
+    ysf_tick_t tick = ysf_tick_read();
+
+    ysf_slist_traversal((void **)&head, ysf_tList_eTimer_handler,
+                        (void **)&tick, YSF_NULL);
+
+    return YSF_ERR_NONE;
+}
+
+//ysf_err_t ysf_timer_handler( void )
+//{
+//    ysf_tick_t tick = ysf_tick_read();
+//
+//    ysf_event_timer_t *timer_cb = (ysf_event_timer_t *)head;
+//
+//    while(1)
+//    {
+//        if(timer_cb != YSF_NULL)
+//        {
+//            if( ysf_timer_status_judge(&timer_cb->config.time, tick) == YSF_TRUE )
+//            {
+//                ysf_event_send(timer_cb->param.event);
+//                ysf_event_timer_disarm(timer_cb);
+//            }
+//
+//            timer_cb = (ysf_event_timer_t *)timer_cb->cb.next;
+//        }
+//        else
+//        {
+//            break;
+//        }
+//    }
+//
+//    return YSF_ERR_NONE;
+//}
 #endif
 
 /** @}*/     /* ysf timer component */

@@ -132,7 +132,7 @@ typedef struct _YSF_MEM_CB_TYPE_
 
 /**@} */
 
-typedef struct
+struct _YSF_RING_BUFFER_API_
 {
     ysf_err_t (*init)(ysf_rb_t*, ysf_u8_t*, ysf_buffer_size_t);
     ysf_buffer_size_t (*len)(ysf_rb_t*);
@@ -141,9 +141,9 @@ typedef struct
 #if USE_YSF_BUFFER_DEBUG
     void (*test)(void);
 #endif
-}ysf_ring_buffer_func_type_t;
+};
 
-typedef struct
+struct _YSF_MEMORY_API_
 {
     ysf_err_t (*init)(ysf_mem_cb_t*, ysf_u8_t*, ysf_buffer_size_t);
     ysf_buffer_size_t (*len)(ysf_mem_cb_t*);
@@ -154,11 +154,11 @@ typedef struct
 #if USE_YSF_MEMORY_MANAGEMENT_DEBUG
     void (*test)(void);
 #endif
-}ysf_memory_func_type_t;
+};
 
 /* Exported variables --------------------------------------------------------*/
-extern const ysf_ring_buffer_func_type_t ysf_rb;
-extern const ysf_memory_func_type_t      ysf_mem;
+extern const struct _YSF_RING_BUFFER_API_ ysf_rb;
+extern const struct _YSF_MEMORY_API_      ysf_mem;
 
 /* Exported functions --------------------------------------------------------*/
 /**

@@ -27,28 +27,27 @@
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       ysf single list type
- *******************************************************************************
- */
-typedef struct _YSF_SINGLE_LIST_TYPE_
-{
-    void     *next;
-    ysf_u8_t data[];
-}ysf_s_list_t;
-
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
-const ysf_sList_func_list_t ysf_sList =
+const struct _YSF_S_LIST_API_ ysf_sList =
 {
-    .traversal = ysf_slist_traversal,
-    .add       = ysf_slist_add,
-    .del       = ysf_slist_del,
+    .init        = ysf_slist_init,
+    .add         = ysf_slist_add,
+    .del         = ysf_slist_del,
+    .isExist     = ysf_slist_isExist,
 };
 
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+ysf_err_t ysf_slist_init( void **listHead )
+{
+    ysf_assert(IS_PTR_NULL(listHead));
+
+    *listHead = YSF_NULL;
+
+    return YSF_ERR_NONE;
+}
+
 /**
  *******************************************************************************
  * @brief       single list traversal function
@@ -66,14 +65,12 @@ ysf_bool_t ysf_slist_traversal(void **listHead,
                                void **ctx,
                                void **expand)
 {
-    ysf_assert(IS_PTR_NULL(listHead));
-
     ysf_bool_t status = YSF_FALSE;
     ysf_s_list_t **sList = (ysf_s_list_t **)listHead;
 
     while(1)
     {
-        status = func((void **)listHead, ctx, expand);
+        status = func((void **)sList, ctx, expand);
 
         if( status == YSF_TRUE || *sList == YSF_NULL )
         {
@@ -97,45 +94,49 @@ ysf_bool_t ysf_slist_traversal(void **listHead,
  * @note        None
  *******************************************************************************
  */
-ysf_bool_t ysf_slist_add( void **listHead, void **ctx, void **expand )
+ysf_bool_t ysf_slist_module_add( void **node, void **ctx, void **expand )
 {
     ysf_assert(IS_PTR_NULL(*ctx));
 
     ysf_bool_t status = YSF_FALSE;
+    ysf_s_list_t *next = (ysf_s_list_t *)(*ctx);
 
-    if( *listHead == YSF_NULL || *listHead == *ctx )
+    if( *node == YSF_NULL )
     {
-        *listHead = *ctx;
+        next->next = YSF_NULL;
+        *node = *ctx;
 
         status = YSF_TRUE;
+    }
+    else  if( *node == *ctx )
+    {
+        status = YSF_TRUE;
+    }
+    else
+    {
+        /** do nothing! */
     }
 
     return status;
 }
 
-/**
- *******************************************************************************
- * @brief       del node from signle list
- * @param       [in/out]  **listHead        now single list node
- * @param       [in/out]  **ctx             wait del node
- * @param       [in/out]  **expand          expand
- * @return      [in/out]  YSF_TRUE          del node success
- * @return      [in/out]  YSF_FALSE         del node failed
- * @note        None
- *******************************************************************************
- */
-ysf_bool_t ysf_slist_del( void **listHead, void **ctx, void **expand )
+ysf_bool_t ysf_slist_module_del( void **node, void **ctx, void **expand )
 {
     ysf_assert(IS_PTR_NULL(*ctx));
 
-    ysf_s_list_t *now = (ysf_s_list_t *)(*listHead);
+    ysf_s_list_t *now = (ysf_s_list_t *)(*node);
     ysf_s_list_t *next = (ysf_s_list_t *)(*ctx);
 
     ysf_bool_t status = YSF_FALSE;
 
-    if( *listHead == *ctx )
+    if( now == YSF_NULL )
     {
-        *listHead = now->next;
+        return YSF_FALSE;
+    }
+
+    if( *node == *ctx )
+    {
+        *node = now->next;
 
         status = YSF_TRUE;
     }
@@ -152,6 +153,64 @@ ysf_bool_t ysf_slist_del( void **listHead, void **ctx, void **expand )
     }
 
     return status;
+}
+
+ysf_bool_t ysf_slist_module_isExist( void **node, void **ctx, void **expand )
+{
+    ysf_assert(IS_PTR_NULL(*ctx));
+
+    ysf_bool_t status = YSF_FALSE;
+
+    if( *node == YSF_NULL )
+    {
+        return YSF_FALSE;
+    }
+
+    if( *node == *ctx )
+    {
+        status = YSF_TRUE;
+    }
+
+    return status;
+}
+
+ysf_err_t ysf_slist_add( void **listHead, void **ctx )
+{
+    ysf_assert(IS_PTR_NULL(listHead));
+    ysf_assert(IS_PTR_NULL(*ctx));
+
+    if( ysf_slist_traversal(listHead, ysf_slist_module_add, ctx, YSF_NULL) == YSF_FALSE)
+    {
+        return YSF_ERR_FAIL;
+    }
+
+    return YSF_ERR_NONE;
+}
+
+ysf_err_t ysf_slist_del( void **listHead, void **ctx )
+{
+    ysf_assert(IS_PTR_NULL(listHead));
+    ysf_assert(IS_PTR_NULL(*ctx));
+
+    if( ysf_slist_traversal(listHead, ysf_slist_module_del, ctx, YSF_NULL) == YSF_FALSE)
+    {
+        return YSF_ERR_FAIL;
+    }
+
+    return YSF_ERR_NONE;
+}
+
+ysf_err_t ysf_slist_isExist( void **listHead, void **ctx )
+{
+    ysf_assert(IS_PTR_NULL(listHead));
+    ysf_assert(IS_PTR_NULL(*ctx));
+
+    if( ysf_slist_traversal(listHead, ysf_slist_module_isExist, ctx, YSF_NULL) == YSF_FALSE)
+    {
+        return YSF_ERR_FAIL;
+    }
+
+    return YSF_ERR_NONE;
 }
 
 /** @}*/     /* ysf single list component  */

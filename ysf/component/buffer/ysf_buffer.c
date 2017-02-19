@@ -35,7 +35,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
-const ysf_ring_buffer_func_type_t ysf_rb =
+const struct _YSF_RING_BUFFER_API_ ysf_rb =
 {
     .init  = ysf_rbInit,
     .len   = ysf_rbGetLen,
@@ -46,7 +46,7 @@ const ysf_ring_buffer_func_type_t ysf_rb =
 #endif
 };
 
-const ysf_memory_func_type_t ysf_mem =
+const struct _YSF_MEMORY_API_ ysf_mem =
 {
     .init      = ysf_memInit,
     .len       = ysf_memGetLen,
