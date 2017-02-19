@@ -30,7 +30,7 @@
 #include "../ysf/component/debug/ysf_debug.h"
 #include "../ysf/component/list/ysf_single_list.h"
 
-#if USE_TIMER_DEBUG
+#if USE_YSF_EVENT_TIMER_DEBUG
 #include <stdlib.h>
 #include <windows.h>
 #endif
@@ -51,25 +51,45 @@ const struct _YSF_TIMER_API_ ysf_timer =
 {
     .init               = ysf_timer_init,
     .handler            = ysf_timer_handler,
+
+#if USE_YSF_EVENT_TIMER
     .eTimer.arm         = ysf_event_timer_arm,
     .eTimer.disarm      = ysf_event_timer_disarm,
-#if USE_EVENT_TIMER_DEBUG
+
+#if USE_YSF_EVENT_TIMER_DEBUG
     .eTimer.test        = ysf_event_timer_test,
 #endif
 
-#if USE_YSF_VARIOUS_TIMER_TYPE
+#endif
+
+#if USE_YSF_EVENT_CYCLE_TIMER
     .eCycleTimer.arm    = ysf_event_cycle_timer_arm,
     .eCycleTimer.disarm = ysf_event_cycle_timer_disarm,
+
+#if USE_YSF_EVENT_CYCLE_TIMER_DEBUG
+    .eCycleTimer.test   = ysf_event_timer_test,
 #endif
 
-#if USE_YSF_VARIOUS_TIMER_TYPE
+#endif
+
+#if USE_YSF_TRIGGER_TIMER
     .tTimer.arm         = ysf_trigger_timer_arm,
     .tTimer.disarm      = ysf_trigger_timer_disarm,
+
+#if USE_YSF_TRIGGER_TIMER_DEBUG
+    .tTimer.test        = ysf_event_timer_test,
 #endif
 
-#if USE_YSF_VARIOUS_TIMER_TYPE
+#endif
+
+#if USE_YSF_TRIGGER_CYCLE_TIMER
     .tCycleTimer.arm    = ysf_trigger_cycle_timer_arm,
     .tCycleTimer.disarm = ysf_trigger_cycle_timer_disarm,
+
+#if USE_YSF_TRIGGER_CYCLE_TIMER_DEBUG
+    .tCycleTimer.test   = ysf_event_timer_test,
+#endif
+
 #endif
 };
 
@@ -239,7 +259,7 @@ ysf_err_t ysf_trigger_cycle_timer_disarm(ysf_trigger_cycle_timer_t *timer_cb)
 }
 #endif
 
-#if USE_EVENT_TIMER_DEBUG
+#if USE_YSF_EVENT_TIMER_DEBUG
 static ysf_event_timer_t testTimer[256];
 
 void ysf_event_timer_test(void)

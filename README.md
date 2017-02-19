@@ -1,1 +1,1 @@
-yearnext's embedded software framework
+yearnext's software framework
