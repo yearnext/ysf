@@ -68,11 +68,19 @@ typedef enum signal_status
     SIGNAL_STATUS_RELEASE_EDGE,
 }signal_status_t;
 
+typedef enum
+{
+    YSF_EVENT_SIGNAL,
+    YSF_TRIGGER_SIGNAL,
+}singal_class_t;
+
 typedef struct
 {
     struct
     {
         void *next;
+
+        singal_class_t class;
     }cb;
 
     struct
@@ -89,6 +97,8 @@ typedef struct
     struct
     {
         void *next;
+
+        singal_class_t class;
     }cb;
 
     struct

@@ -99,18 +99,21 @@ ysf_bool_t ysf_slist_module_add( void **node, void **ctx, void **expand )
     ysf_assert(IS_PTR_NULL(*ctx));
 
     ysf_bool_t status = YSF_FALSE;
-    ysf_s_list_t *next = (ysf_s_list_t *)(*ctx);
+    ysf_s_list_t *temp = (ysf_s_list_t *)(*ctx);
 
     if( *node == YSF_NULL )
     {
-        next->next = YSF_NULL;
+        temp->next = YSF_NULL;
         *node = *ctx;
 
         status = YSF_TRUE;
     }
     else  if( *node == *ctx )
     {
+        temp = ((ysf_s_list_t *)(*node))->next;
+
         *node = *ctx;
+        ((ysf_s_list_t *)(*node))->next = temp;
 
         status = YSF_TRUE;
     }
