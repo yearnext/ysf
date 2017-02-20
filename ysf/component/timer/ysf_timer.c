@@ -433,7 +433,7 @@ ysf_bool_t ysf_tList_timer_handler( void **timer_cb, void **ctx, void **expand )
 #if USE_YSF_VARIOUS_TIMER_TYPE
 ysf_err_t ysf_timer_handler( void )
 {
-    ysf_tick_t tick = ysf_tick_read();
+    ysf_tick_t tick = ysf_past_tick_cal();
 
     const sListFunc timer_handler[] =
     {
@@ -452,7 +452,7 @@ ysf_err_t ysf_timer_handler( void )
 #else
 ysf_err_t ysf_timer_handler( void )
 {
-    ysf_tick_t tick = ysf_tick_read();
+    ysf_tick_t tick = ysf_past_tick_cal();
 
     ysf_slist_traversal((void **)&head, ysf_tList_eTimer_handler,
                         (void **)&tick, YSF_NULL);
@@ -462,7 +462,7 @@ ysf_err_t ysf_timer_handler( void )
 
 //ysf_err_t ysf_timer_handler( void )
 //{
-//    ysf_tick_t tick = ysf_tick_read();
+//    ysf_tick_t tick = ysf_past_tick_cal();
 //
 //    ysf_event_timer_t *timer_cb = (ysf_event_timer_t *)head;
 //

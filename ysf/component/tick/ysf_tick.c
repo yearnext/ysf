@@ -40,7 +40,8 @@ const struct _YSF_TICK_API_ ysf_tick =
 {
     .init = ysf_tick_init,
     .inc  = ysf_tick_inc,
-    .read = ysf_tick_read,
+    .read = ysf_tick_get,
+    .cal  = ysf_past_tick_cal,
 };
 
 /* Private functions ---------------------------------------------------------*/
@@ -74,13 +75,26 @@ void ysf_tick_inc( void )
 
 /**
  *******************************************************************************
- * @brief       read past tick
+ * @brief       tick value get
  * @param       [in/out]  void
- * @return      [in/out]  void
+ * @return      [in/out]  ysf_tick_t    tick
  * @note        None
  *******************************************************************************
  */
-ysf_tick_t ysf_tick_read( void )
+ysf_tick_t ysf_tick_get( void )
+{
+    return ysfTick;
+}
+
+/**
+ *******************************************************************************
+ * @brief       read past tick
+ * @param       [in/out]  void
+ * @return      [in/out]  ysf_tick_t    tick
+ * @note        None
+ *******************************************************************************
+ */
+ysf_tick_t ysf_past_tick_cal( void )
 {
 	static ysf_tick_t lastTick = 0;
 	ysf_tick_t tick = 0;

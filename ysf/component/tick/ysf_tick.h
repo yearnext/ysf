@@ -65,6 +65,7 @@ struct _YSF_TICK_API_
     void (*init)(void);
     void (*inc)(void);
     ysf_tick_t (*read)(void);
+    ysf_tick_t (*cal)(void);
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -74,7 +75,8 @@ extern const struct _YSF_TICK_API_ ysf_tick;
 #if USE_YSF_TICK
 extern void ysf_tick_init( void );
 extern void ysf_tick_inc( void );
-extern ysf_tick_t ysf_tick_read( void );
+extern ysf_tick_t ysf_tick_get( void );
+extern ysf_tick_t ysf_past_tick_cal( void );
 
 #else
 #define ysf_tick_init()
