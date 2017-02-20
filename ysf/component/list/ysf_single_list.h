@@ -63,6 +63,7 @@ extern ysf_bool_t ysf_slist_traversal(void**, sListFunc, void**, void**);
 extern ysf_bool_t ysf_slist_module_add(void**, void**, void**);
 extern ysf_bool_t ysf_slist_module_del(void**, void**, void**);
 extern ysf_bool_t ysf_slist_module_isExist(void**, void**, void**);
+extern ysf_bool_t ysf_slist_module_findLastNode(void **, void**, void**);
 
 extern ysf_err_t ysf_slist_init(void**);
 extern ysf_err_t ysf_slist_add(void**, void**);

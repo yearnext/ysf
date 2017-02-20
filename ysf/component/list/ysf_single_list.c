@@ -110,6 +110,8 @@ ysf_bool_t ysf_slist_module_add( void **node, void **ctx, void **expand )
     }
     else  if( *node == *ctx )
     {
+        *node = *ctx;
+
         status = YSF_TRUE;
     }
     else
@@ -169,6 +171,26 @@ ysf_bool_t ysf_slist_module_isExist( void **node, void **ctx, void **expand )
     if( *node == *ctx )
     {
         status = YSF_TRUE;
+    }
+
+    return status;
+}
+
+ysf_bool_t ysf_slist_module_findLastNode( void **node, void **ctx, void **expand )
+{
+    ysf_bool_t status = YSF_FALSE;
+
+    ysf_s_list_t *now = (ysf_s_list_t *)(*node);
+
+    if( *node == YSF_NULL )
+    {
+        return YSF_FALSE;
+    }
+
+    if( now->next == ctx )
+    {
+        *expand = now;
+        return YSF_TRUE;
     }
 
     return status;

@@ -25,6 +25,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "../ysf/component/timer/ysf_timer.h"
 #include "../ysf/common/ysf_type.h"
+#include "../ysf/compiler/ysf_compiler.h"
 #include "../ysf/component/event/ysf_event.h"
 #include "../ysf/component/tick/ysf_tick.h"
 #include "../ysf/component/debug/ysf_debug.h"
@@ -302,7 +303,8 @@ void ysf_event_timer_test(void)
  * @brief       timer processing functions
  *******************************************************************************
  */
-ysf_bool_t ysf_timer_status_judge( ysf_timing_t *timing, ysf_tick_t tick )
+__STATIC_INLINE ysf_bool_t ysf_timer_status_judge( ysf_timing_t *timing,
+                                                   ysf_tick_t tick )
 {
     ysf_assert(IS_PTR_NULL(timing));
 
@@ -326,16 +328,65 @@ ysf_bool_t ysf_tList_eTimer_handler( void **timer_cb, void **ctx, void **expand 
 
     ysf_tick_t tick = *((ysf_tick_t *)(ctx));
     ysf_event_timer_t *timer = (ysf_event_timer_t *)(*timer_cb);
+    ysf_event_timer_t *lastNode = YSF_NULL;
 
-    if( timer == YSF_NULL )
+    if( *timer_cb == YSF_NULL )
     {
         return YSF_FALSE;
     }
 
-    if( ysf_timer_status_judge(&timer->config.time, tick) == YSF_TRUE )
+    // check timer tick is end
+    if( ysf_timer_status_judge(&timer->config.time, tick) == YSF_FALSE )
+    {
+        return YSF_FALSE;
+    }
+
+    ysf_slist_traversal((void **)head, ysf_slist_module_findLastNode,
+                        (void **)timer, (void **)&lastNode);
+
+    // timer is not head timer
+    if( lastNode != YSF_NULL )
     {
         ysf_event_send(timer->param.event);
-        ysf_event_timer_disarm(*timer_cb);
+
+        lastNode->cb.next = timer->cb.next;
+        timer->cb.next    = YSF_NULL;
+        *timer_cb         = lastNode;
+    }
+    // timer is head timer
+    // find last node
+    else
+    {
+        ysf_event_send(timer->param.event);
+
+        lastNode = timer;
+        timer    = (ysf_event_timer_t *)timer->cb.next;
+
+        while(1)
+        {
+            if( timer == YSF_NULL )
+            {
+                timer = (ysf_event_timer_t *)(*timer_cb);
+                timer->cb.next = YSF_NULL;
+
+                return YSF_FALSE;
+            }
+
+            if( ysf_timer_status_judge(&timer->config.time, tick) == YSF_FALSE )
+            {
+                *timer_cb = timer;
+
+                return YSF_FALSE;
+            }
+            else
+            {
+                ysf_event_send(timer->param.event);
+
+                lastNode->cb.next = timer->cb.next;
+                timer->cb.next = YSF_NULL;
+                timer = (ysf_event_timer_t *)lastNode->cb.next;
+            }
+        }
     }
 
     return YSF_FALSE;
@@ -366,22 +417,76 @@ ysf_bool_t ysf_tList_tTimer_handler( void **timer_cb, void **ctx, void **expand 
 {
     ysf_assert(IS_PTR_NULL(ctx));
 
-    ysf_tick_t tick = *((ysf_tick_t *)(ctx));
-    ysf_trigger_timer_t *timer = (ysf_trigger_timer_t *)(*timer_cb);
+    ysf_tick_t tick               = *((ysf_tick_t *)(ctx));
+    ysf_trigger_timer_t *timer    = (ysf_trigger_timer_t *)(*timer_cb);
+    ysf_trigger_timer_t *lastNode = YSF_NULL;
 
-    if( timer == YSF_NULL )
+    if( *timer_cb == YSF_NULL )
     {
         return YSF_FALSE;
     }
 
-    if( ysf_timer_status_judge(&timer->config.time, tick) == YSF_TRUE )
+    // check timer tick is end
+    if( ysf_timer_status_judge(&timer->config.time, tick) == YSF_FALSE )
+    {
+        return YSF_FALSE;
+    }
+
+    ysf_slist_traversal((void **)head, ysf_slist_module_findLastNode,
+                        (void **)timer, (void **)&lastNode);
+
+    // timer is not head timer
+    if( lastNode != YSF_NULL )
     {
         if( timer->param.func != YSF_NULL )
         {
             timer->param.func(timer->param.param);
         }
 
-        ysf_event_timer_disarm(*timer_cb);
+        lastNode->cb.next = timer->cb.next;
+        timer->cb.next    = YSF_NULL;
+        *timer_cb         = lastNode;
+    }
+    // timer is head timer
+    // find last node
+    else
+    {
+        if( timer->param.func != YSF_NULL )
+        {
+            timer->param.func(timer->param.param);
+        }
+
+        lastNode = timer;
+        timer    = (ysf_trigger_timer_t *)timer->cb.next;
+
+        while(1)
+        {
+            if( timer == YSF_NULL )
+            {
+                timer = (ysf_trigger_timer_t *)(*timer_cb);
+                timer->cb.next = YSF_NULL;
+
+                return YSF_FALSE;
+            }
+
+            if( ysf_timer_status_judge(&timer->config.time, tick) == YSF_FALSE )
+            {
+                *timer_cb = timer;
+
+                return YSF_FALSE;
+            }
+            else
+            {
+                if( timer->param.func != YSF_NULL )
+                {
+                    timer->param.func(timer->param.param);
+                }
+
+                lastNode->cb.next = timer->cb.next;
+                timer->cb.next = YSF_NULL;
+                timer = (ysf_trigger_timer_t *)lastNode->cb.next;
+            }
+        }
     }
 
     return YSF_FALSE;
