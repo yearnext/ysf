@@ -118,9 +118,16 @@ YSF_PACKED_TAIL(1)
 
 #endif
 
+typedef ysf_u16_t ysf_memSize_t;
+
 typedef struct _YSF_MEM_CB_TYPE_
 {
-    ysf_buffer_t buffer;
+    struct
+    {
+        ysf_u8_t      *buffer;
+        ysf_memSize_t size;
+    }buffer;
+
     ysf_u8_t     alignment;
 
     enum
@@ -143,13 +150,13 @@ struct _YSF_RING_BUFFER_API_
 #endif
 };
 
-struct _YSF_MEMORY_API_
+struct _YSF_MEM_API_
 {
-    ysf_err_t (*init)(ysf_mem_cb_t*, ysf_u8_t*, ysf_buffer_size_t);
+    ysf_err_t (*init)(ysf_mem_cb_t*, ysf_u8_t*, ysf_memSize_t);
     ysf_buffer_size_t (*len)(ysf_mem_cb_t*);
     ysf_buffer_size_t (*alignment)(ysf_mem_cb_t*);
     ysf_buffer_size_t (*rate)(ysf_mem_cb_t*);
-    void *(*malloc)(ysf_mem_cb_t*, ysf_buffer_size_t);
+    void *(*malloc)(ysf_mem_cb_t*, ysf_memSize_t);
     ysf_err_t (*free)(ysf_mem_cb_t*, void*);
 #if USE_YSF_MEMORY_MANAGEMENT_DEBUG
     void (*test)(void);
@@ -158,7 +165,7 @@ struct _YSF_MEMORY_API_
 
 /* Exported variables --------------------------------------------------------*/
 extern const struct _YSF_RING_BUFFER_API_ ysf_rb;
-extern const struct _YSF_MEMORY_API_      ysf_mem;
+extern const struct _YSF_MEM_API_      ysf_mem;
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -194,11 +201,11 @@ extern void ysf_rbTest( void );
  * @name memory management API
  * @{
  */
-extern ysf_err_t ysf_memInit(ysf_mem_cb_t*, ysf_u8_t*, ysf_buffer_size_t);
+extern ysf_err_t ysf_memInit(ysf_mem_cb_t*, ysf_u8_t*, ysf_memSize_t);
 extern ysf_buffer_size_t ysf_memGetLen(ysf_mem_cb_t*);
 extern ysf_buffer_size_t ysf_memGetAlignment(ysf_mem_cb_t*);
 extern ysf_buffer_size_t ysf_memUseRateCal(ysf_mem_cb_t*);
-extern void* ysf_memMalloc(ysf_mem_cb_t*, ysf_buffer_size_t);
+extern void* ysf_memMalloc(ysf_mem_cb_t*, ysf_memSize_t);
 extern ysf_err_t ysf_memFree(ysf_mem_cb_t*, void*);
 
 #if USE_YSF_MEMORY_MANAGEMENT_DEBUG

@@ -46,7 +46,7 @@ const struct _YSF_RING_BUFFER_API_ ysf_rb =
 #endif
 };
 
-const struct _YSF_MEMORY_API_ ysf_mem =
+const struct _YSF_MEM_API_ ysf_mem =
 {
     .init      = ysf_memInit,
     .len       = ysf_memGetLen,
@@ -965,9 +965,9 @@ ysf_buffer_size_t ysf_memAlignmentCal( ysf_buffer_size_t memSize )
  *******************************************************************************
  */
 YSF_STATIC_INLINE
-ysf_buffer_size_t ysf_memNeedBlockCal( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
+ysf_buffer_size_t ysf_memNeedBlockCal( ysf_mem_cb_t *mem, ysf_memSize_t size )
 {
-    ysf_buffer_size_t needSize = size / mem->alignment;
+    ysf_memSize_t needSize = size / mem->alignment;
 
     return ((size % mem->alignment) == 0) ? (needSize) : (++needSize);
 }
@@ -1011,9 +1011,9 @@ ysf_buffer_size_t ysf_memUseBlockCal(ysf_mem_cb_t *mem, ysf_mem_block_t *block)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_memInit(ysf_mem_cb_t *mem, ysf_u8_t *buffer, ysf_buffer_size_t size)
+ysf_err_t ysf_memInit(ysf_mem_cb_t *mem, ysf_u8_t *buffer, ysf_memSize_t size)
 {
-    ysf_buffer_size_t alignment = ysf_memAlignmentCal(sizeof(ysf_mem_block_t)/sizeof(char));
+    ysf_u8_t alignment = ysf_memAlignmentCal(sizeof(ysf_mem_block_t)/sizeof(char));
 
     ysf_assert(IS_PTR_NULL(mem));
     ysf_assert(IS_PTR_NULL(buffer));
@@ -1104,7 +1104,7 @@ ysf_buffer_size_t ysf_memUseRateCal(ysf_mem_cb_t *mem)
  * @note        None
  *******************************************************************************
  */
-void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
+void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_memSize_t size )
 {
     ysf_assert(IS_PTR_NULL(mem));
     ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
@@ -1112,8 +1112,8 @@ void *ysf_memMalloc( ysf_mem_cb_t *mem, ysf_buffer_size_t size )
     ysf_mem_block_t *nowNode  = (ysf_mem_block_t *)mem->buffer.buffer;
     ysf_mem_block_t *startNode = YSF_NULL;
 
-    const ysf_buffer_size_t needSize = ysf_memNeedBlockCal(mem, sizeof(ysf_mem_block_t)+size);
-    ysf_buffer_size_t getSize  = 0;
+    const ysf_memSize_t needSize = ysf_memNeedBlockCal(mem, sizeof(ysf_mem_block_t)+size);
+    ysf_memSize_t getSize  = 0;
 
     while(1)
     {
