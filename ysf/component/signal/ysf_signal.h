@@ -32,6 +32,7 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "../ysf/common/ysf_type.h"
 #include "../ysf/component/event/ysf_event.h"
+#include "../ysf/component/list/ysf_single_list.h"
 
 /* Exported macro ------------------------------------------------------------*/
 #define YSF_SIGNAL_SCAN_TIME        (10)
@@ -109,8 +110,52 @@ typedef struct
     }param;
 }ysf_trigger_signal_t;
 
+struct _YSF_SIGNAL_API_
+{
+    void (*init)(void);
+    void (*handler)(void);
+
+    struct
+    {
+        ysf_err_t (*arm)(ysf_event_signal_t*,
+                         ysf_singal_event_t event,
+                         signal_status_t (*detect)(void));
+
+        ysf_err_t (*disarm)(ysf_event_signal_t*);
+    }eSignal;
+
+    struct
+    {
+        ysf_err_t (*arm)(ysf_trigger_signal_t*,
+                         ysf_err_t (*handler)(signal_status_t),
+                         signal_status_t (*detect)(void));
+
+        ysf_err_t (*disarm)(ysf_trigger_signal_t*);
+    }tSignal;
+};
+
 /* Exported variables --------------------------------------------------------*/
+extern const struct _YSF_SIGNAL_API_ ysf_signal;
+
 /* Exported functions --------------------------------------------------------*/
+extern void ysf_signal_init(void);
+
+extern ysf_err_t ysf_event_signal_arm(ysf_event_signal_t*,
+                                      ysf_singal_event_t event,
+                                      signal_status_t (*detect)(void));
+extern ysf_err_t ysf_event_signal_disarm(ysf_event_signal_t*);
+
+extern ysf_err_t ysf_trigger_signal_arm(ysf_trigger_signal_t*,
+                                        ysf_err_t (*handler)(signal_status_t),
+                                        signal_status_t (*detect)(void) );
+extern ysf_err_t ysf_trigger_signal_disarm(ysf_trigger_signal_t*);
+
+extern void ysf_signal_judge(signal_status_t*, signal_status_t (*detect)(void));
+extern ysf_bool_t ysf_event_signal_handler(void**, void**, void**);
+extern ysf_bool_t ysf_trigger_signal_handler(void**, void**, void**);
+extern ysf_bool_t ysf_slist_signal_handler(void**, void**, void**);
+
+extern void ysf_signal_handler(void);
 
 #ifdef __cplusplus
 }

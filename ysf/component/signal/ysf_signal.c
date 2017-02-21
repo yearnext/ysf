@@ -39,8 +39,25 @@
 static ysf_s_list_t *head = YSF_NULL;
 
 /* Exported variables --------------------------------------------------------*/
+const struct _YSF_SIGNAL_API_ ysf_signal =
+{
+    .init           = ysf_signal_init,
+    .handler        = ysf_signal_handler,
+
+    .eSignal.arm    = ysf_event_signal_arm,
+    .eSignal.disarm = ysf_event_signal_disarm,
+
+    .tSignal.arm    = ysf_trigger_signal_arm,
+    .tSignal.disarm = ysf_trigger_signal_disarm,
+};
+
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+void ysf_signal_init( void )
+{
+    head = YSF_NULL;
+}
+
 ysf_err_t ysf_event_signal_arm( ysf_event_signal_t *signal,
                                 ysf_singal_event_t event,
                                 signal_status_t (*detect)(void) )
@@ -114,7 +131,6 @@ ysf_err_t ysf_trigger_signal_disarm( ysf_trigger_signal_t *signal )
 //    return YSF_ERR_NONE;
 }
 
-__STATIC_INLINE
 void ysf_signal_judge( signal_status_t *lastStatus, signal_status_t (*detect)(void) )
 {
     signal_status_t nowStatus = detect();
@@ -352,10 +368,8 @@ ysf_bool_t ysf_slist_signal_handler( void **signal_cb, void **ctx, void **expand
     return status;
 }
 
-ysf_bool_t ysf_signal_handler( void **signal_cb, void **ctx, void **expand )
+void ysf_signal_handler( void )
 {
-    ysf_bool_t status = YSF_FALSE;
-
     const sListFunc func[] =
     {
         ysf_event_signal_handler,
@@ -364,8 +378,6 @@ ysf_bool_t ysf_signal_handler( void **signal_cb, void **ctx, void **expand )
 
     ysf_slist_traversal((void **)&head, ysf_slist_signal_handler,
                         YSF_NULL, (void **)func);
-
-    return status;
 }
 
 /** @}*/     /* ysf signal component  */
