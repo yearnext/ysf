@@ -46,26 +46,28 @@ extern "C"
 #define USE_GENRAL_SIGNAL_
 #define USE_FULL_SIGNAL (0)
 
+#define USE_SINGAL_EVENT_NUM (4)
+
 /* Exported types ------------------------------------------------------------*/
 typedef enum signal_status
 {
-    SIGNAL_STATUS_INIT = 0,
+    SIGNAL_STATUS_INIT                 = 10,
 
-    SIGNAL_STATUS_DETECT,
+    SIGNAL_STATUS_DETECT               = 20,
 
-    SIGNAL_STATUS_PRESS_FILTER_STEP1,
-    SIGNAL_STATUS_PRESS_FILTER_STEP2,
-    SIGNAL_STATUS_PRESS_FILTER_STEP3,
-    SIGNAL_STATUS_RELEASE_FILTER_STEP1,
-    SIGNAL_STATUS_RELEASE_FILTER_STEP2,
-    SIGNAL_STATUS_RELEASE_FILTER_STEP3,
+    SIGNAL_STATUS_PRESS_FILTER_STEP1   = 30,
+    SIGNAL_STATUS_PRESS_FILTER_STEP2   = 31,
+    SIGNAL_STATUS_PRESS_FILTER_STEP3   = 32,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP1 = 40,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP2 = 41,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP3 = 42,
 
-    SIGNAL_STATUS_RELEASE,
-    SIGNAL_STATUS_PRESS_DEGE,
-    SIGNAL_STATUS_PRESS,
-    SIGNAL_STATUS_LONG_PRESS,
-    SIGNAL_STATUS_MULTI_PRESS,
-    SIGNAL_STATUS_RELEASE_EDGE,
+    SIGNAL_STATUS_RELEASE              = 0,
+    SIGNAL_STATUS_PRESS_EDGE           = 1,
+    SIGNAL_STATUS_PRESS                = 2,
+    SIGNAL_STATUS_LONG_PRESS           = 4,
+    SIGNAL_STATUS_MULTI_PRESS          = 5,
+    SIGNAL_STATUS_RELEASE_EDGE         = 3,
 }signal_status_t;
 
 typedef enum
@@ -76,17 +78,20 @@ typedef enum
 
 typedef struct
 {
-    struct
-    {
-        void *next;
+    void *next;
+    singal_class_t class;
+}ysf_signal_cb_t;
 
-        singal_class_t class;
-    }cb;
+typedef ysf_event_t ysf_singal_event_t[USE_SINGAL_EVENT_NUM];
+
+typedef struct
+{
+    ysf_signal_cb_t cb;
 
     struct
     {
         signal_status_t status;
-        ysf_event_t event;
+        ysf_singal_event_t event;
         signal_status_t (*detect)(void);
 
     }param;
@@ -94,12 +99,7 @@ typedef struct
 
 typedef struct
 {
-    struct
-    {
-        void *next;
-
-        singal_class_t class;
-    }cb;
+    ysf_signal_cb_t cb;
 
     struct
     {
