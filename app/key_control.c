@@ -42,15 +42,15 @@ static struct ysf_msp_gpio_t led2 =
 
 static struct ysf_msp_gpio_t key1 = 
 {
-    .port = MCU_PORT_C,
-    .pin  = MCU_PIN_13,
+    .port = MCU_PORT_E,
+    .pin  = MCU_PIN_0,
     .mode = GPIO_PIN_I_UD_MODE,
 };
 
 static struct ysf_msp_gpio_t key2 = 
 {
-    .port = MCU_PORT_E,
-    .pin  = MCU_PIN_0,
+    .port = MCU_PORT_C,
+    .pin  = MCU_PIN_13,
     .mode = GPIO_PIN_I_UD_MODE,
 };
 

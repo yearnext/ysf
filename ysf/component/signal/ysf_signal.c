@@ -95,8 +95,8 @@ ysf_err_t ysf_signalSimple_arm( enum ysf_signal_status_t (*detect)(void), void (
 }
 
 ysf_err_t ysf_signalEx_arm(struct ysf_signal_t *signal, 
-                                enum ysf_signal_status_t (*detect)(void), 
-                                void (*handler)(enum ysf_signal_status_t) )
+                           enum ysf_signal_status_t (*detect)(void), 
+                           void (*handler)(enum ysf_signal_status_t) )
 {
     if( signal == NULL )
     {

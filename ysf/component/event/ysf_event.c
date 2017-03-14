@@ -180,9 +180,46 @@ static bool ysf_event_handler_delte(void **node, void **ctx, void **expand)
     return false;
 }
 
+static bool evtHandlerIsInList( void **node, void **ctx, void **expand )
+{
+    struct ysf_evt_handler_t *evtHandlerNode = (struct ysf_evt_handler_t *)(*node);
+    ysf_evt_handler evtHandler = (ysf_evt_handler)(ctx);
+    
+    if( *node == NULL )
+    {
+        return false;
+    }
+
+    if( evtHandler == NULL )
+    {
+        return false;
+    }
+    
+    if( evtHandlerNode->handler != NULL && evtHandlerNode->handler == evtHandler )
+    {
+        return true;
+    }
+    
+    return false;
+}
+
 ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint16_t) )
 {
-    struct ysf_evt_handler_t *evt_handler_node = (struct ysf_evt_handler_t *)ysf_memory_malloc(YSF_CalTypeByteSize(struct ysf_evt_handler_t));
+    struct ysf_evt_handler_t *evt_handler_node = NULL;
+    
+    if( IS_PTR_NULL(handler) )
+    {
+        return YSF_ERR_INVAILD_PTR;
+    }
+    
+    if( ysf_slist_walk((void**)&evt_hander[event], evtHandlerIsInList, (void **)handler, NULL) == false )
+    {
+        evt_handler_node = (struct ysf_evt_handler_t *)ysf_memory_malloc(YSF_CalTypeByteSize(struct ysf_evt_handler_t));
+    }
+    else
+    {
+        return YSF_ERR_NONE;
+    }
     
     evt_handler_node->handler = handler;
     evt_handler_node->next    = NULL;
