@@ -21,7 +21,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/component/tick/ysf_tick.h"
+#include "ysf_path.h"
+#include YSF_COMPONENT_TICK_DIR
+#include YSF_COMPONENT_EVENT_DIR
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -31,22 +33,14 @@
  * @brief       ysf tick count
  *******************************************************************************
  */
-#if USE_YSF_TICK
-static ysf_tick_t ysfTick = 0;
+#if USE_YSF_TICK_API
+static ysf_tick_t tick = 0;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
-const struct _YSF_TICK_API_ ysf_tick =
-{
-    .init = ysf_tick_init,
-    .inc  = ysf_tick_inc,
-    .read = ysf_tick_get,
-    .cal  = ysf_past_tick_cal,
-};
-
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_TICK
+#if USE_YSF_TICK_API
 /**
  *******************************************************************************
  * @brief       tick value initialization
@@ -57,7 +51,7 @@ const struct _YSF_TICK_API_ ysf_tick =
  */
 void ysf_tick_init( void )
 {
-    ysfTick = 0;
+    tick = 0;
 }
 
 /**
@@ -70,7 +64,12 @@ void ysf_tick_init( void )
  */
 void ysf_tick_inc( void )
 {
-    ysfTick++;
+    YSF_ENTER_CRITICAL();
+    tick++;
+#if USE_YSF_EVENT_API
+    ysf_event_post(YSF_CORE_TICK_UPDATE);
+#endif
+    YSF_EXIT_CRITICAL();
 }
 
 /**
@@ -83,7 +82,7 @@ void ysf_tick_inc( void )
  */
 ysf_tick_t ysf_tick_get( void )
 {
-    return ysfTick;
+    return tick;
 }
 
 /**
@@ -97,21 +96,21 @@ ysf_tick_t ysf_tick_get( void )
 ysf_tick_t ysf_past_tick_cal( void )
 {
 	static ysf_tick_t lastTick = 0;
-	ysf_tick_t tick = 0;
+	ysf_tick_t calTick = 0;
 	
-	if( ysfTick >= lastTick )
+	if( tick >= lastTick )
 	{
-		tick = ysfTick - lastTick;
+		calTick = tick - lastTick;
 	}
 	else
 	{
-		tick = YSF_TICK_MAX - lastTick;
-		tick = tick + ysfTick;
+		calTick = YSF_TICK_MAX - lastTick;
+		calTick = calTick + tick;
 	}
 	
-	lastTick = ysfTick;
+	lastTick = tick;
 	
-	return tick;
+	return calTick;
 }
 
 #endif

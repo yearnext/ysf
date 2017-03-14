@@ -30,20 +30,22 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
+#include "ysf_path.h"
+	
 #if defined(__ICCARM__)
-#include "../ysf/compiler/iccarm/ysf_compiler_conf.h"
+#include YSF_ICCARM_COMPILER_CONF_DIR
 #elif defined(__CC_ARM)
-#include "../ysf/compiler/mdk/ysf_compiler_conf.h"
+#include YSF_ARMCC5_COMPILER_CONF_DIR
+#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+#include YSF_ARMCC6_COMPILER_CONF_DIR
 #elif defined(_MSC_BUILD)
-#include "../ysf/compiler/vs/ysf_compiler_conf.h"
+#include YSF_VS_COMPILER_CONF_DIR
 #elif defined(__GNUC__)
-#include "../ysf/compiler/gcc/ysf_compiler_conf.h"
+#include YSF_GCC_COMPILER_CONF_DIR
+#elif defined(__ICCSTM8__)
+#include YSF_ICC_STM8_COMPILER_CONF_DIR
 #else
-#include "../ysf/compiler/simulation/ysf_compiler_conf.h"
+#include YSF_SIMULATION_COMPILER_CONF_DIR
 #endif
 
 /**@} */

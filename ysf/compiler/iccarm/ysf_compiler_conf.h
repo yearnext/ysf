@@ -92,15 +92,16 @@ extern "C"
  * @name IAR ARM±‡“Î∆˜◊÷Ω⁄∂‘∆Î≈‰÷√
  * @{
  */
-#define PACKED_HEAD(n)          PRAGMA(data_alignment = n)
-#define PACKED_TAIL(n)
-#define PACKED(type)            PRAGMA(data_alignment = 1) type;
-#define ALIGNMENT(n,type)       PRAGMA(data_alignment = 1) type;
-
-#define YSF_PACKED_HEAD(n)      PRAGMA(data_alignment = n)
-#define YSF_PACKED_TAIL(n)
-#define YSF_PACKED(type)        PRAGMA(data_alignment = n) type;
-#define YSF_ALIGNMENT(n,type)   PRAGMA(data_alignment = n) type;
+#define ALIGN_HEAD(n)           PRAGMA(pack(push, n))
+#define ALIGN_TAIL(n)           PRAGMA(pack(pop))
+#define PACKED_HEAD             PRAGMA(pack(push, 1))
+#define PACKED_TAIL             PRAGMA(pack(pop))
+    
+#define YSF_ALIGN_HEAD(n)       PRAGMA(pack(push, n))
+#define YSF_ALIGN_TAIL(n)       PRAGMA(pack(pop))
+#define YSF_PACKED_HEAD         PRAGMA(pack(push, 1))
+#define YSF_PACKED_TAIL         PRAGMA(pack(pop))
+    
 /**@} */
 
 /**

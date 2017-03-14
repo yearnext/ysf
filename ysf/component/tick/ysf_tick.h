@@ -30,22 +30,30 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/common/ysf_type.h"
+#include "ysf_path.h"
+#include YSF_TYPE_DIR
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf tick component enable configuration
+ * @brief       ysf tick api enable switch
  *******************************************************************************
  */
-#define USE_YSF_TICK (1)
+#define USE_YSF_TICK_API (1)
 
+/**
+ *******************************************************************************
+ * @brief       ysf tick time(unit: ms)
+ *******************************************************************************
+ */
+#define YSF_TICK_TIME    (1)
+    
 /**
  *******************************************************************************
  * @brief       ysf tick max value
  *******************************************************************************
  */
-#define YSF_TICK_MAX YSF_UINT32_MAX
+#define YSF_TICK_MAX UINT32_MAX
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -53,36 +61,32 @@ extern "C"
  * @brief       ysf tick type
  *******************************************************************************
  */
-typedef ysf_vu32_t ysf_tick_t;
+#if USE_YSF_TICK_API
+typedef uint32_t ysf_tick_t;
+#endif
 
 /**
  *******************************************************************************
  * @brief       ysf tick func list
  *******************************************************************************
  */
-struct _YSF_TICK_API_
+#if USE_YSF_TICK_API
+struct YSF_TICK_API
 {
     void (*init)(void);
     void (*inc)(void);
     ysf_tick_t (*read)(void);
     ysf_tick_t (*cal)(void);
 };
+#endif
 
 /* Exported variables --------------------------------------------------------*/
-extern const struct _YSF_TICK_API_ ysf_tick;
-
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_TICK
+#if USE_YSF_TICK_API
 extern void ysf_tick_init( void );
 extern void ysf_tick_inc( void );
 extern ysf_tick_t ysf_tick_get( void );
 extern ysf_tick_t ysf_past_tick_cal( void );
-
-#else
-#define ysf_tick_init()
-#define ysf_tick_inc()
-#define ysf_tick_read() (0)
-
 #endif
 
 #ifdef __cplusplus

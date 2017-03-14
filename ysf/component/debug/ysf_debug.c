@@ -21,15 +21,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/component/debug/ysf_debug.h"
-#include "../ysf/common/ysf_type.h"
-
-#if USE_STD_LIB_IN_YSF_DEBUG
-#include <stdarg.h>
-#include <stdio.h>
-#else
-    
-#endif
+#include "ysf_path.h"
+#include YSF_COMPONENT_DEBUG_DIR
+#include YSF_TYPE_DIR
 
 /* Private define ------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -39,46 +33,16 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       ysf put log message
- * @param       [in/out]  log*              put message
- * @param       [in/out]  ...               message param
- * @return      [in/out]  YSF_ERR_NONE      put finish
- * @note        None
- *******************************************************************************
- */
-#if USE_STD_LIB_IN_YSF_DEBUG
-ysf_err_t ysf_log(const char *log, ...)
+ysf_err_t ysf_debug_init( void )
 {
-#if USE_YSF_DBBUG_MODULE_DEBUG
-    if( log == NULL )
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-#endif
-    va_list arg;
-    
-    va_start(arg,log);
-    vprintf(log, arg);
-    va_end(arg);
-    
     return YSF_ERR_NONE;
 }
 
-#else
-ysf_err_t ysf_log(const char *log, ...)
+void ysf_assert_failed(uint8_t* file, uint32_t line)
 {
-#if USE_YSF_DBBUG_MODULE_DEBUG
-    if( log == NULL )
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-#endif
-
-    return YSF_ERR_NONE;
+    YSF_ENTER_CRITICAL();
+    YSF_EXIT_CRITICAL();
 }
-#endif
 
 /** @}*/     /* ysf debug component */
 

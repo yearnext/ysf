@@ -30,29 +30,37 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/component/buffer/ysf_buffer.h"
+#include "ysf_path.h"
+#include YSF_COMPONENT_BUFFER_DIR
 
 /* Exported macro ------------------------------------------------------------*/
-#define USE_YSF_MEMORY_COMPONENT (1)
+#define USE_YSF_MEMORY_API  (1)
 
-#define USE_YSF_MEMORY_SIZE      (4096)
+#define USE_YSF_MEMORY_SIZE (4096)
 
 /* Exported types ------------------------------------------------------------*/
-struct _YSF_MEMORY_API_
+struct YSF_MEMORY_API
 {
     void (*init)(void);
-    void* (*malloc)(ysf_memSize_t);
+    void *(*malloc)(ysf_mem_size_t);
     void (*free)(void*);
+    ysf_mem_size_t (*len)(void);
+    ysf_mem_size_t (*alignment)(void);
+    ysf_mem_size_t (*useRate)(void);
+    bool (*isIn)(void *);
 };
 
 /* Exported variables --------------------------------------------------------*/
-extern const struct _YSF_MEMORY_API_ ysf_memory;
-
 /* Exported functions --------------------------------------------------------*/
+#if USE_YSF_MEMORY_API
 extern void ysf_memory_init( void );
-extern void *ysf_malloc(ysf_memSize_t);
-extern void ysf_free(void*);
-
+extern void *ysf_memory_malloc(ysf_mem_size_t);
+extern void ysf_memory_free(void*);
+extern ysf_mem_size_t ysf_memory_get_len(void);
+extern ysf_mem_size_t ysf_memory_get_alignment(void);
+extern ysf_mem_size_t ysf_memory_cal_use_rate(void);
+extern bool ysf_memory_is_in(void*);
+#endif
 
 #ifdef __cplusplus
 }

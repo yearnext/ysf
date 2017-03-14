@@ -39,16 +39,16 @@ extern "C"
 #define Name2String(name)    (#name)
 
 /** 计算类型所占内存的字节大小 */
-#define YNF_CalTypeByteSize(type) (sizeof(type) / sizeof(unsigned char))
+#define YSF_CalTypeByteSize(type) (sizeof(type) / sizeof(unsigned char))
 
 /** 计算类型所占内存的位数大小 */
-#define YNF_CalTypeBitSize(type)  (YNF_CalTypeByteSize(type) * 8)
+#define YSF_CalTypeBitSize(type)  (YSF_CalTypeByteSize(type) * 8)
 
 /** 计算余数 */
-#define YNF_CalRemainder(dividend,divisor) ((dividend)%(divisor))
+#define YSF_CalRemainder(dividend,divisor) ((dividend)%(divisor))
 
 /** 计算是否存在余数 */
-#define YNF_CheckRemainder(dividend,divisor) ((((dividend)%(divisor)) != 0 ) \
+#define YSF_CheckRemainder(dividend,divisor) ((((dividend)%(divisor)) != 0 ) \
                                              ? (1) : (0))
                                              
 /**@} */

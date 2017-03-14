@@ -21,29 +21,22 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/component/list/ysf_single_list.h"
-#include "../ysf/common/ysf_type.h"
-#include "../ysf/component/debug/ysf_debug.h"
+#include "ysf_path.h"
+#include YSF_COMPONENT_SINGLE_LIST_DIR
+#include YSF_TYPE_DIR
+#include YSF_COMPONENT_DEBUG_DIR
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
-const struct _YSF_S_LIST_API_ ysf_sList =
-{
-    .init        = ysf_slist_init,
-    .add         = ysf_slist_add,
-    .del         = ysf_slist_del,
-    .isExist     = ysf_slist_isExist,
-};
-
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 ysf_err_t ysf_slist_init( void **listHead )
 {
     ysf_assert(IS_PTR_NULL(listHead));
 
-    *listHead = YSF_NULL;
+    *listHead = NULL;
 
     return YSF_ERR_NONE;
 }
@@ -55,29 +48,29 @@ ysf_err_t ysf_slist_init( void **listHead )
  * @param       [in/out]  func              single list visit function
  * @param       [in/out]  **ctx             context
  * @param       [in/out]  **expand          expand
- * @return      [in/out]  YSF_TRUE          visit success
- * @return      [in/out]  YSF_FALSE         visit failed
+ * @return      [in/out]  true          visit success
+ * @return      [in/out]  false         visit failed
  * @note        None
  *******************************************************************************
  */
-ysf_bool_t ysf_slist_traversal(void **listHead,
-                               sListFunc func,
-                               void **ctx,
-                               void **expand)
+bool ysf_slist_walk(void **listHead,
+                    sListFunc func,
+                    void **ctx,
+                    void **expand)
 {
-    ysf_bool_t status = YSF_FALSE;
-    ysf_s_list_t **sList = (ysf_s_list_t **)listHead;
+    bool status = false;
+    struct ysf_sList_t **sList = (struct ysf_sList_t **)listHead;
 
     while(1)
     {
         status = func((void **)sList, ctx, expand);
 
-        if( status == YSF_TRUE || *sList == YSF_NULL )
+        if( status == true || *sList == NULL )
         {
             break;
         }
 
-        sList = (ysf_s_list_t **)(&((ysf_s_list_t *)(*sList))->next);
+        sList = (struct ysf_sList_t **)(&((struct ysf_sList_t *)(*sList))->next);
     }
 
     return status;
@@ -89,33 +82,33 @@ ysf_bool_t ysf_slist_traversal(void **listHead,
  * @param       [in/out]  **listHead        now single list node
  * @param       [in/out]  **ctx             wait add node
  * @param       [in/out]  **expand          expand
- * @return      [in/out]  YSF_TRUE          add node success
- * @return      [in/out]  YSF_FALSE         add node failed
+ * @return      [in/out]  true          add node success
+ * @return      [in/out]  false         add node failed
  * @note        None
  *******************************************************************************
  */
-ysf_bool_t ysf_slist_module_add( void **node, void **ctx, void **expand )
+bool ysf_slist_module_add( void **node, void **ctx, void **expand )
 {
     ysf_assert(IS_PTR_NULL(*ctx));
 
-    ysf_bool_t status = YSF_FALSE;
-    ysf_s_list_t *temp = (ysf_s_list_t *)(*ctx);
-
-    if( *node == YSF_NULL )
+    bool status = false;
+    struct ysf_sList_t *temp = (struct ysf_sList_t *)(*ctx);
+    
+    if( *node == NULL )
     {
-        temp->next = YSF_NULL;
+        temp->next = NULL;
         *node = *ctx;
 
-        status = YSF_TRUE;
+        status = true;
     }
     else  if( *node == *ctx )
     {
-        temp = ((ysf_s_list_t *)(*node))->next;
+        temp = ((struct ysf_sList_t *)(*node))->next;
 
         *node = *ctx;
-        ((ysf_s_list_t *)(*node))->next = temp;
+        ((struct ysf_sList_t *)(*node))->next = temp;
 
-        status = YSF_TRUE;
+        status = true;
     }
     else
     {
@@ -125,32 +118,32 @@ ysf_bool_t ysf_slist_module_add( void **node, void **ctx, void **expand )
     return status;
 }
 
-ysf_bool_t ysf_slist_module_del( void **node, void **ctx, void **expand )
+bool ysf_slist_module_del( void **node, void **ctx, void **expand )
 {
     ysf_assert(IS_PTR_NULL(*ctx));
 
-    ysf_s_list_t *now = (ysf_s_list_t *)(*node);
-    ysf_s_list_t *next = (ysf_s_list_t *)(*ctx);
+    struct ysf_sList_t *now = (struct ysf_sList_t *)(*node);
+    struct ysf_sList_t *next = (struct ysf_sList_t *)(*ctx);
 
-    ysf_bool_t status = YSF_FALSE;
-
-    if( now == YSF_NULL )
+    bool status = false;
+    
+    if( now == NULL )
     {
-        return YSF_FALSE;
+        return false;
     }
 
     if( *node == *ctx )
     {
         *node = now->next;
 
-        status = YSF_TRUE;
+        status = true;
     }
     else if( now->next == *ctx )
     {
         now->next  = next->next;
-        next->next = YSF_NULL;
+        next->next = NULL;
 
-        status = YSF_TRUE;
+        status = true;
     }
     else
     {
@@ -160,40 +153,40 @@ ysf_bool_t ysf_slist_module_del( void **node, void **ctx, void **expand )
     return status;
 }
 
-ysf_bool_t ysf_slist_module_isExist( void **node, void **ctx, void **expand )
+bool ysf_slist_module_isExist( void **node, void **ctx, void **expand )
 {
     ysf_assert(IS_PTR_NULL(*ctx));
 
-    ysf_bool_t status = YSF_FALSE;
+    bool status = false;
 
-    if( *node == YSF_NULL )
+    if( *node == NULL )
     {
-        return YSF_FALSE;
+        return false;
     }
 
     if( *node == *ctx )
     {
-        status = YSF_TRUE;
+        status = true;
     }
 
     return status;
 }
 
-ysf_bool_t ysf_slist_module_findLastNode( void **node, void **ctx, void **expand )
+bool ysf_slist_module_findLastNode( void **node, void **ctx, void **expand )
 {
-    ysf_bool_t status = YSF_FALSE;
+    bool status = false;
 
-    ysf_s_list_t *now = (ysf_s_list_t *)(*node);
+    struct ysf_sList_t *now = (struct ysf_sList_t *)(*node);
 
-    if( *node == YSF_NULL )
+    if( *node == NULL )
     {
-        return YSF_FALSE;
+        return false;
     }
 
-    if( now->next == ctx )
+    if( ((void *)now->next) == ctx )
     {
         *expand = now;
-        return YSF_TRUE;
+        return true;
     }
 
     return status;
@@ -204,7 +197,7 @@ ysf_err_t ysf_slist_add( void **listHead, void **ctx )
     ysf_assert(IS_PTR_NULL(listHead));
     ysf_assert(IS_PTR_NULL(*ctx));
 
-    if( ysf_slist_traversal(listHead, ysf_slist_module_add, ctx, YSF_NULL) == YSF_FALSE)
+    if( ysf_slist_walk(listHead, ysf_slist_module_add, ctx, NULL) == false )
     {
         return YSF_ERR_FAIL;
     }
@@ -217,7 +210,7 @@ ysf_err_t ysf_slist_del( void **listHead, void **ctx )
     ysf_assert(IS_PTR_NULL(listHead));
     ysf_assert(IS_PTR_NULL(*ctx));
 
-    if( ysf_slist_traversal(listHead, ysf_slist_module_del, ctx, YSF_NULL) == YSF_FALSE)
+    if( ysf_slist_walk(listHead, ysf_slist_module_del, ctx, NULL) == false )
     {
         return YSF_ERR_FAIL;
     }
@@ -230,7 +223,7 @@ ysf_err_t ysf_slist_isExist( void **listHead, void **ctx )
     ysf_assert(IS_PTR_NULL(listHead));
     ysf_assert(IS_PTR_NULL(*ctx));
 
-    if( ysf_slist_traversal(listHead, ysf_slist_module_isExist, ctx, YSF_NULL) == YSF_FALSE)
+    if( ysf_slist_walk(listHead, ysf_slist_module_isExist, ctx, NULL) == false )
     {
         return YSF_ERR_FAIL;
     }

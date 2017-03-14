@@ -22,306 +22,102 @@
 #define __YSF_TIMER_H__
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/common/ysf_type.h"
-#include "../ysf/component/event/ysf_event.h"
-#include "../ysf/component/list/ysf_single_list.h"
+#include "ysf_path.h"
+#include YSF_TYPE_DIR
+#include YSF_COMPONENT_TICK_DIR
+#include YSF_COMPONENT_SINGLE_LIST_DIR
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf timer various config
+ * @brief        timer api config switch
  *******************************************************************************
  */
-#define USE_YSF_VARIOUS_TIMER_TYPE  (1)
-
-/*** prohibited to modify **/
-#if USE_YSF_VARIOUS_TIMER_TYPE
-#define USE_YSF_EVENT_TIMER         (1)
-#define USE_YSF_EVENT_CYCLE_TIMER   (1)
-#define USE_YSF_TRIGGER_TIMER       (1)
-#define USE_YSF_TRIGGER_CYCLE_TIMER (1)
-#else
-#define USE_YSF_EVENT_TIMER         (1)
-#define USE_YSF_EVENT_CYCLE_TIMER   (0)
-#define USE_YSF_TRIGGER_TIMER       (0)
-#define USE_YSF_TRIGGER_CYCLE_TIMER (0)
-#endif
-
-/**
- *******************************************************************************
- * @brief       ysf timer debug config
- *******************************************************************************
- */
-#if USE_YSF_VARIOUS_TIMER_TYPE
-#define USE_YSF_EVENT_TIMER_DEBUG         (1)
-#define USE_YSF_EVENT_CYCLE_TIMER_DEBUG   (1)
-#define USE_YSF_TRIGGER_TIMER_DEBUG       (1)
-#define USE_YSF_TRIGGER_CYCLE_TIMER_DEBUG (1)
-#else
-#define USE_YSF_EVENT_TIMER_DEBUG         (1)
-#define USE_YSF_EVENT_CYCLE_TIMER_DEBUG   (0)
-#define USE_YSF_TRIGGER_TIMER_DEBUG       (0)
-#define USE_YSF_TRIGGER_CYCLE_TIMER_DEBUG (0)
-#endif
-
-#if !USE_YSF_EVENT_TIMER
-#define USE_YSF_EVENT_TIMER_DEBUG         (0)
-#endif
-
-#if !USE_YSF_EVENT_CYCLE_TIMER
-#define USE_YSF_EVENT_CYCLE_TIMER_DEBUG   (0)
-#endif
-
-#if !USE_YSF_TRIGGER_TIMER
-#define USE_YSF_TRIGGER_TIMER_DEBUG       (0)
-#endif
-
-#if !USE_YSF_TRIGGER_CYCLE_TIMER
-#define USE_YSF_TRIGGER_CYCLE_TIMER_DEBUG (0)
-#endif
+#define USE_YSF_TIMER_API (1)
 
 /**
  *******************************************************************************
  * @brief       ysf timer tick config
  *******************************************************************************
  */
-#define YSF_TICK_TIME         (10)
+#define YSF_TIMER_PERIOD         YSF_TICK_TIME
+#define YSF_TIME_2_TICK(time)    ((time)/YSF_TIMER_PERIOD)
 
-#define YSF_TIME_CAL(time)    ((time)/YSF_TICK_TIME)
+#define YSF_TIMER_CYCLE_PARAM    (0)
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        define general timer type
+ * @brief        ysf timer type
  *******************************************************************************
  */
-#if USE_YSF_VARIOUS_TIMER_TYPE
-typedef enum
+struct ysf_timer_t
 {
-    YSF_EVENT_TIMER = 0,
-    YSF_EVENT_CYCLE_TIMER,
-
-    YSF_TRIGGER_TIMER,
-    YSF_TRIGGER_CYCLE_TIMER,
-}ysf_timer_class_t;
-#endif
-
-typedef struct
-{
-    ysf_s_list_t *next;
-#if USE_YSF_VARIOUS_TIMER_TYPE
-    ysf_timer_class_t class;
-#endif
-}ysf_timer_cb_t;
-
-typedef ysf_u16_t ysf_timing_t;
-
-/**
- *******************************************************************************
- * @brief        define event timer type
- *******************************************************************************
- */
-#if USE_YSF_EVENT_TIMER
-typedef struct
-{
-    ysf_timer_cb_t cb;
+    struct
+    {
+        struct ysf_sList_t *next;
+        ysf_status_t  status;
+    }control;
+    
+    struct
+    {
+        union
+        {
+            struct
+            {
+                ysf_err_t (*func)(void *param);
+                void *param;
+            }callback;
+        };
+        
+        uint16_t event;
+    }trigger;
 
     struct
     {
-        ysf_timing_t time;
+        ysf_tick_t count;
+        ysf_tick_t loadCount;
+        
+        uint8_t cycle;
     }config;
-
-    struct
-    {
-        ysf_event_t event;
-    }param;
-}ysf_event_timer_t;
-#endif
+};
 
 /**
  *******************************************************************************
- * @brief        define cycle event timer type
+ * @brief      interface function defineitions 
  *******************************************************************************
  */
-#if USE_YSF_EVENT_CYCLE_TIMER
-typedef struct
-{
-    ysf_timer_cb_t cb;
-
-    struct
-    {
-        ysf_timing_t setTime;
-        ysf_timing_t time;
-    }config;
-
-    struct
-    {
-        ysf_event_t event;
-    }param;
-}ysf_event_cycle_timer_t;
-#endif
-
-/**
- *******************************************************************************
- * @brief        define trigger timer type
- *******************************************************************************
- */
-#if USE_YSF_TRIGGER_TIMER
-typedef struct
-{
-    ysf_timer_cb_t cb;
-
-    struct
-    {
-        ysf_timing_t time;
-    }config;
-
-    struct
-    {
-        void (*func)(void *param);
-        void *param;
-    }param;
-}ysf_trigger_timer_t;
-#endif
-
-/**
- *******************************************************************************
- * @brief        define cycle trigger timer type
- *******************************************************************************
- */
-#if USE_YSF_TRIGGER_CYCLE_TIMER
-typedef struct
-{
-    ysf_timer_cb_t cb;
-
-    struct
-    {
-        ysf_timing_t setTime;
-        ysf_timing_t time;
-    }config;
-
-    struct
-    {
-        void (*func)(void *param);
-        void *param;
-    }param;
-}ysf_trigger_cycle_timer_t;
-#endif
-
-/**
- *******************************************************************************
- * @brief        define cycle trigger timer type
- *******************************************************************************
- */
-struct _YSF_TIMER_API_
+struct YSF_TIMER_API
 {
     ysf_err_t (*init)(void);
-    ysf_err_t (*handler)(void);
-#if USE_YSF_EVENT_TIMER
+    ysf_err_t (*handler)(uint16_t);
     struct
     {
-        ysf_err_t (*arm)(ysf_event_timer_t*, ysf_timing_t, ysf_event_t);
-        ysf_err_t (*disarm)(ysf_event_timer_t*);
-
-#if USE_YSF_EVENT_TIMER_DEBUG
-        void (*test)(void);
-#endif
-    }eTimer;
-#endif
-
-#if USE_YSF_EVENT_CYCLE_TIMER
+        struct ysf_timer_t *(*cb_arm)(uint32_t, uint8_t, ysf_err_t (*func)(void*), void*);
+        struct ysf_timer_t *(*evt_arm)(uint32_t, uint8_t, uint16_t);
+        ysf_err_t (*disarm)(struct ysf_timer_t*);
+    }simple;
+    
     struct
     {
-        ysf_err_t (*arm)(ysf_event_cycle_timer_t*, ysf_timing_t, ysf_event_t);
-        ysf_err_t (*disarm)(ysf_event_cycle_timer_t*);
-
-#if USE_YSF_EVENT_CYCLE_TIMER_DEBUG
-        void (*test)(void);
-#endif
-    }eCycleTimer;
-#endif
-
-#if USE_YSF_TRIGGER_TIMER
-    struct
-    {
-        ysf_err_t (*arm)(ysf_trigger_timer_t*, ysf_timing_t,
-                         void (*func)(void*), void*);
-        ysf_err_t (*disarm)(ysf_trigger_timer_t*);
-
-#if USE_YSF_TRIGGER_TIMER_DEBUG
-        void (*test)(void);
-#endif
-    }tTimer;
-#endif
-
-#if USE_YSF_TRIGGER_CYCLE_TIMER
-    struct
-    {
-        ysf_err_t (*arm)(ysf_trigger_cycle_timer_t*, ysf_timing_t,
-                         void (*func)(void*), void*);
-        ysf_err_t (*disarm)(ysf_trigger_cycle_timer_t*);
-
-#if USE_YSF_TRIGGER_CYCLE_TIMER_DEBUG
-        void (*test)(void);
-#endif
-    }tCycleTimer;
-#endif
+        ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*func)(void*), void*);
+        ysf_err_t (*evt_init)(struct ysf_timer_t*, uint16_t);
+        ysf_err_t (*arm)(struct ysf_timer_t*,uint32_t,uint8_t);
+        ysf_err_t (*disarm)(struct ysf_timer_t*);
+    }ex;
 };
 
 /* Exported constants --------------------------------------------------------*/
-extern const struct _YSF_TIMER_API_ ysf_timer;
-
 /* Exported functions --------------------------------------------------------*/
-extern ysf_err_t ysf_timer_init( void );
-extern ysf_err_t ysf_timer_handler(void);
-
-#if USE_YSF_EVENT_TIMER
-extern ysf_err_t ysf_event_timer_arm(   ysf_event_timer_t*,
-                                        ysf_timing_t,
-                                        ysf_event_t);
-extern ysf_err_t ysf_event_timer_disarm(ysf_event_timer_t*);
-
-#else
-#define ysf_event_timer_arm()          (YSF_ERR_FAIL)
-#define ysf_event_timer_disarm()       (YSF_ERR_FAIL)
-#endif
-
-#if USE_YSF_EVENT_TIMER_DEBUG
-extern void ysf_event_timer_test(void);
-#else
-#define ysf_event_timer_test()
-#endif
-
-#if USE_YSF_EVENT_CYCLE_TIMER
-extern ysf_err_t ysf_event_cycle_timer_arm(   ysf_event_cycle_timer_t*,
-                                              ysf_timing_t,
-                                              ysf_event_t);
-extern ysf_err_t ysf_event_cycle_timer_disarm(ysf_event_cycle_timer_t*);
-#else
-#define ysf_event_cycle_timer_arm()          (YSF_ERR_FAIL)
-#define ysf_event_cycle_timer_disarm()       (YSF_ERR_FAIL)
-#endif
-
-#if USE_YSF_TRIGGER_TIMER
-extern ysf_err_t ysf_trigger_timer_arm(   ysf_trigger_timer_t*,
-                                          ysf_timing_t,
-                                          void (*func)(void*),
-                                          void*);
-extern ysf_err_t ysf_trigger_timer_disarm(ysf_trigger_timer_t*);
-#else
-#define ysf_trigger_timer_arm()          (YSF_ERR_FAIL)
-#define ysf_trigger_timer_disarm()       (YSF_ERR_FAIL)
-#endif
-
-#if USE_YSF_TRIGGER_CYCLE_TIMER
-extern ysf_err_t ysf_trigger_cycle_timer_arm(   ysf_trigger_cycle_timer_t*,
-                                                ysf_timing_t,
-                                                void (*func)(void*),
-                                                void*);
-extern ysf_err_t ysf_trigger_cycle_timer_disarm(ysf_trigger_cycle_timer_t*);
-#else
-#define ysf_trigger_cycle_timer_arm()          (YSF_ERR_FAIL)
-#define ysf_trigger_cycle_timer_disarm()       (YSF_ERR_FAIL)
+#if USE_YSF_TIMER_API
+extern ysf_err_t ysf_timer_init(void);
+extern struct ysf_timer_t *ysf_timerSimple_cb_arm(uint32_t, uint8_t, ysf_err_t (*func)(void*), void*);                                         
+extern struct ysf_timer_t *ysf_timerSimple_evt_arm(uint32_t, uint8_t, uint16_t);                                             
+extern ysf_err_t ysf_timerEx_cb_init(struct ysf_timer_t*, ysf_err_t (*func)(void*), void*);                                          
+extern ysf_err_t ysf_timerEx_evt_init(struct ysf_timer_t*, uint16_t);                                          
+extern ysf_err_t ysf_timerEx_arm(struct ysf_timer_t*, uint32_t, uint8_t);                                          
+extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*);                                          
+extern ysf_err_t ysf_timer_handler(uint16_t);
 #endif
 
 #endif      /* _USER_TIMER_ */

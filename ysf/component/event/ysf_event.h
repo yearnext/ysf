@@ -30,8 +30,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/common/ysf_type.h"
-#include "../ysf/component/event/ysf_event_conf.h"
+#include "ysf_event_conf.h"
+#include "ysf_path.h"
+#include YSF_TYPE_DIR
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -39,30 +40,29 @@ extern "C"
  * @brief       event component debug config
  *******************************************************************************
  */
-#define USE_YNF_EVENT_DEBUG (0)
-
-/**
- *******************************************************************************
- * @brief       event component auto config
- *******************************************************************************
- */
-#define USE_YNF_EVENT_AUTO_MODE (1)
+#define USE_YSF_EVENT_API (1)
 
 /* Exported types ------------------------------------------------------------*/
-struct _YSF_EVENT_API_
+struct YSF_EVENT_API
 {
     ysf_err_t (*init)(void);
-    ysf_err_t (*send)(ysf_event_t);
-    ysf_err_t (*read)(ysf_event_t*);
+    ysf_err_t (*post)(uint16_t);
+    ysf_err_t (*read)(uint16_t*);
+    ysf_err_t (*evt_register)(uint16_t, ysf_err_t (*handler)(uint16_t));
+    ysf_err_t (*evt_writeoff)(uint16_t, ysf_err_t (*handler)(uint16_t));
+    ysf_err_t (*evt_handler)(void);
 };
 
 /* Exported variables --------------------------------------------------------*/
-extern const struct _YSF_EVENT_API_ ysf_event;
-
 /* Exported functions --------------------------------------------------------*/
+#if USE_YSF_EVENT_API
 extern ysf_err_t ysf_event_init( void );
-extern ysf_err_t ysf_event_send( ysf_event_t );
-extern ysf_err_t ysf_event_read( ysf_event_t* );
+extern ysf_err_t ysf_event_post( uint16_t );
+extern ysf_err_t ysf_event_read( uint16_t* );
+extern ysf_err_t ysf_event_handler_register(uint16_t, ysf_err_t (*handler)(uint16_t));
+extern ysf_err_t ysf_event_handler_writeoff(uint16_t, ysf_err_t (*handler)(uint16_t));
+extern ysf_err_t ysf_event_handler( void );
+#endif
 
 #ifdef __cplusplus
 }

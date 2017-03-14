@@ -30,7 +30,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/common/ysf_type.h"
+#include "ysf_path.h"
+#include YSF_TYPE_DIR
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -39,15 +40,15 @@ extern "C"
  * @brief       ysf single list type
  *******************************************************************************
  */
-typedef struct _YSF_SINGLE_LIST_TYPE_
+struct ysf_sList_t
 {
-    void     *next;
-    ysf_u8_t data[];
-}ysf_s_list_t;
+    struct ysf_sList_t *next;
+    uint8_t        data[];
+};
 
-typedef ysf_bool_t (*sListFunc)(void **, void **, void **);
+typedef bool (*sListFunc)(void **, void **, void **);
 
-struct _YSF_S_LIST_API_
+struct YSF_SLIST_API
 {
     ysf_err_t (*init)(void**);
     ysf_err_t (*add)(void**, void **);
@@ -56,14 +57,14 @@ struct _YSF_S_LIST_API_
 };
 
 /* Exported variables --------------------------------------------------------*/
-extern const struct _YSF_S_LIST_API_ ysf_sList;
+extern const struct YSF_SLIST_API ysf_sList;
 
 /* Exported functions --------------------------------------------------------*/
-extern ysf_bool_t ysf_slist_traversal(void**, sListFunc, void**, void**);
-extern ysf_bool_t ysf_slist_module_add(void**, void**, void**);
-extern ysf_bool_t ysf_slist_module_del(void**, void**, void**);
-extern ysf_bool_t ysf_slist_module_isExist(void**, void**, void**);
-extern ysf_bool_t ysf_slist_module_findLastNode(void **, void**, void**);
+extern bool ysf_slist_walk(void**, sListFunc, void**, void**);
+extern bool ysf_slist_module_add(void**, void**, void**);
+extern bool ysf_slist_module_del(void**, void**, void**);
+extern bool ysf_slist_module_isExist(void**, void**, void**);
+extern bool ysf_slist_module_findLastNode(void **, void**, void**);
 
 extern ysf_err_t ysf_slist_init(void**);
 extern ysf_err_t ysf_slist_add(void**, void**);

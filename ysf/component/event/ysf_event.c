@@ -21,35 +21,56 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/component/event/ysf_event.h"
-#include "../ysf/common/ysf_type.h"
-#include "../ysf/component/buffer/ysf_buffer.h"
+#include "ysf_path.h"
+#include YSF_COMMTOOLS_DIR
+#include YSF_COMPONENT_EVENT_DIR
+#include YSF_TYPE_DIR
+#include YSF_COMPONENT_BUFFER_DIR
+#include YSF_COMPONENT_SINGLE_LIST_DIR
+#include YSF_COMPONENT_MEMORY_DIR
+#include YSF_COMPONENT_DEBUG_DIR
 
 /* Private define ------------------------------------------------------------*/
 #define YSF_EVENT_SIZE_CAL(event) (sizeof(event)/sizeof(char))
 
 /* Private typedef -----------------------------------------------------------*/
+typedef ysf_err_t (*ysf_evt_handler)(uint16_t);
+
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+struct ysf_evt_handler_t
+{
+    void *next;
+    ysf_evt_handler handler;
+};
+#endif
+
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       event component auto config
  *******************************************************************************
  */
-#if USE_YNF_EVENT_AUTO_MODE
-static volatile ysf_event_t eventQueue[YSF_EVENT_MAX];
-static volatile ysf_rb_t eventQueueCB;
+#if USE_YSF_EVENT_API
+static int16_t buffer[YSF_EVENT_MAX];
+static struct  ysf_rb_t QCB;
+
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+static struct ysf_evt_handler_t *evt_hander[YSF_EVENT_MAX]; 
+#else
+static ysf_evt_handler evt_hander[YSF_EVENT_MAX]; 
+#endif
+
 #endif
 
 /* Exported variables --------------------------------------------------------*/
-const struct _YSF_EVENT_API_ ysf_event =
-{
-    .init = ysf_event_init,
-    .send = ysf_event_send,
-    .read = ysf_event_read,
-};
-
 /* Private functions ---------------------------------------------------------*/
+static ysf_err_t ysf_empty_event_handler(uint16_t event)
+{
+    return YSF_ERR_NONE;
+}
+
 /* Exported functions --------------------------------------------------------*/
+#if USE_YSF_EVENT_API
 /**
  *******************************************************************************
  * @brief       ysf event component init
@@ -61,9 +82,18 @@ const struct _YSF_EVENT_API_ ysf_event =
  */
 ysf_err_t ysf_event_init( void )
 {
-	return ysf_rbInit( &eventQueueCB,
-	                   (ysf_u8_t *)&eventQueue,
-	                   YSF_EVENT_SIZE_CAL(eventQueue));
+    uint16_t i;
+    
+    for( i=0; i<YSF_EVENT_MAX; i++ )
+    {
+        evt_hander[i] = NULL;
+    }
+    
+    ysf_event_handler_register(YSF_EVENT_NONE, ysf_empty_event_handler);
+    
+    ysf_rbInit(&QCB, (uint8_t *)&buffer, YSF_EVENT_SIZE_CAL(buffer));
+    
+	return YSF_ERR_NONE;
 }
 
 /**
@@ -75,11 +105,11 @@ ysf_err_t ysf_event_init( void )
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_send( ysf_event_t event )
+ysf_err_t ysf_event_post( uint16_t event )
 {
-	return ysf_rbWrite( &eventQueueCB,
-	                    (ysf_u8_t *)&event,
-	                    YSF_EVENT_SIZE_CAL(ysf_event_t) );
+    ysf_rbWrite( &QCB, (uint8_t *)&event, YSF_EVENT_SIZE_CAL(int16_t) );
+    
+	return YSF_ERR_NONE;
 }
 
 /**
@@ -91,12 +121,128 @@ ysf_err_t ysf_event_send( ysf_event_t event )
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_read( ysf_event_t *event )
+ysf_err_t ysf_event_read( uint16_t *event )
 {
-	return ysf_rbRead( &eventQueueCB,
-	                   (ysf_u8_t *)event,
-	                   YSF_EVENT_SIZE_CAL(ysf_event_t) );
+    ysf_rbRead( &QCB, (uint8_t *)event, YSF_EVENT_SIZE_CAL(int16_t) );
+	
+    return YSF_ERR_NONE;
 }
+
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+static bool ysf_event_walk(void **node, void **ctx, void **expand)
+{
+    struct ysf_evt_handler_t *evt_handler_node = (struct ysf_evt_handler_t *)*node;
+    uint16_t events = *((uint16_t *)ctx);
+    
+    if( *node == NULL )
+    {
+        return true;
+    }
+    
+    evt_handler_node->handler(events);
+    
+    return false;
+}
+
+static bool ysf_event_handler_delte(void **node, void **ctx, void **expand)
+{
+    ysf_assert(IS_PTR_NULL(*ctx));
+    
+    struct ysf_evt_handler_t *now  = (struct ysf_evt_handler_t *)(*node);
+    struct ysf_evt_handler_t *last = (struct ysf_evt_handler_t *)(*expand);
+    ysf_evt_handler condition = (ysf_evt_handler)(*ctx);
+    
+    if( now == NULL )
+    {
+        return false;
+    }
+
+    if( now->handler == condition )
+    {
+        if( now != last )
+        {
+            now->handler = NULL;
+            last->next = now->next;
+            now->next = NULL;
+            ysf_memory_free(now);
+            now = last;
+        }
+        else
+        {
+            now->handler = NULL;
+            now = now->next;
+            last->next = NULL;
+            ysf_memory_free(last);
+            last = now;
+        }
+    }
+    
+    return false;
+}
+
+ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint16_t) )
+{
+    struct ysf_evt_handler_t *evt_handler_node = (struct ysf_evt_handler_t *)ysf_memory_malloc(YSF_CalTypeByteSize(struct ysf_evt_handler_t));
+    
+    evt_handler_node->handler = handler;
+    evt_handler_node->next    = NULL;
+    
+    return ysf_slist_add((void**)&evt_hander[event], (void **)&evt_handler_node);
+}
+
+ysf_err_t ysf_event_handler_writeoff( uint16_t event, ysf_err_t (*handler)(uint16_t) )
+{
+    ysf_assert(event>=YSF_EVENT_MAX);
+    struct ysf_evt_handler_t *head = evt_hander[event];
+
+    return ysf_slist_walk( (void **)&evt_hander[event], ysf_event_handler_delte, (void **)handler, (void **)&head );
+}
+
+ysf_err_t ysf_event_handler(void)
+{
+    uint16_t event = YSF_EVENT_NONE;
+    ysf_event_read(&event);
+    
+    ysf_slist_walk( (void **)&evt_hander[event], ysf_event_walk, (void **)((ysf_addr_t)&event), NULL );
+    
+    return YSF_ERR_NONE;
+}
+#else
+
+ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint16_t) )
+{
+    ysf_assert(IS_PTR_NULL(handler));
+    ysf_assert(event>=YSF_EVENT_MAX);
+    
+    evt_hander[event] = handler;
+
+    return YSF_ERR_NONE;
+}
+
+ysf_err_t ysf_event_handler_writeoff( uint16_t event, ysf_err_t (*handler)(uint16_t) )
+{
+    ysf_assert(event>=YSF_EVENT_MAX);
+    
+    evt_hander[event] = NULL;
+
+    return YSF_ERR_NONE;
+}
+
+ysf_err_t ysf_event_handler( void )
+{
+    uint16_t event = YSF_EVENT_NONE;
+    ysf_event_read(&event);
+    
+    if( IS_PTR_NULL(evt_hander[event]))
+    {
+        evt_hander[event](event);
+    }
+    
+    return YSF_ERR_NONE;
+}
+#endif
+
+#endif
 
 /** @}*/     /* ynf_event component  */
 
