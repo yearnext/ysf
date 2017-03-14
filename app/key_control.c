@@ -96,10 +96,10 @@ static ysf_err_t bsp_led2_blink( void *param )
 static void bsp_led_init( void )
 {
     hal.gpio.map.init(&led1);
-    hal.gpio.map.config(&led1);
-    led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
+    hal.gpio.map.config(&led1);    
     ysf.event.evt_register(LED1_BLINK_EVENT, led1_blink_event_handler);
-    
+    led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
+
     hal.gpio.msp.init(led2.port);
     hal.gpio.msp.config(led2.port, led2.pin, led2.mode);
     ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
@@ -134,9 +134,9 @@ static void key1_handler(enum ysf_signal_status_t status)
             hal.gpio.map.clr(&led2);
             break;
         case SIGNAL_STATUS_RELEASE_EDGE:
-            led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
             ysf.event.evt_register(LED1_BLINK_EVENT, led1_blink_event_handler);
-        
+            led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
+
             ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
             ysf.timer.ex.arm(&led2Timer, YSF_TIME_2_TICK(1000), 0);
             break;
@@ -158,9 +158,9 @@ static void key2_handler(enum ysf_signal_status_t status)
             hal.gpio.map.set(&led2);
             break;
         case SIGNAL_STATUS_RELEASE_EDGE:
-            led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
             ysf.event.evt_register(LED1_BLINK_EVENT, led1_blink_event_handler);
-        
+            led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
+            
             ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
             ysf.timer.ex.arm(&led2Timer, YSF_TIME_2_TICK(1000), 0);
             break;

@@ -83,7 +83,7 @@ ysf_err_t ysf_signalSimple_arm( enum ysf_signal_status_t (*detect)(void), void (
     signal->func.detect     = detect;
     signal->func.handler    = handler;
     
-    signal->status          = SIGNAL_STATUS_INIT;
+    signal->status          = SIGNAL_STATUS_RELEASE;
 
     ysf_signal_add(signal);
     
@@ -119,7 +119,7 @@ ysf_err_t ysf_signalEx_arm(struct ysf_signal_t *signal,
     signal->func.detect     = detect;
     signal->func.handler    = handler;
 
-    signal->status          = SIGNAL_STATUS_INIT;
+    signal->status          = SIGNAL_STATUS_RELEASE;
     
     ysf_signal_add(signal);
     
