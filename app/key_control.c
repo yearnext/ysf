@@ -172,11 +172,11 @@ static void key2_handler(enum ysf_signal_status_t status)
 static void bsp_key_init(void)
 {
     hal.gpio.map.init(&key1);
-    hal.gpio.map.init(&key1);
+    hal.gpio.map.config(&key1);
     ysf.signal.simple.arm(key1_scan, key1_handler);
     
     hal.gpio.map.init(&key2);
-    hal.gpio.map.init(&key2);
+    hal.gpio.map.config(&key2);
     ysf.signal.ex.arm(&key1Signal, key2_scan, key2_handler);
 }
 
