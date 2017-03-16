@@ -44,13 +44,13 @@ static struct ysf_sList_t *head = NULL;
 #if USE_YSF_SIGNAL_API
 ysf_err_t ysf_signal_init( void )
 {    
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API    
-    ysf_timerSimple_cb_arm(YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM, ysf_signal_handler, NULL);
-#else
+//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API    
+//    ysf_timerSimple_cb_arm(YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM, ysf_signal_handler, NULL);
+//#else
     static struct ysf_timer_t signal;
     ysf_timerEx_cb_init(&signal, ysf_signal_handler, NULL);
     ysf_timerEx_arm(&signal, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM);
-#endif
+//#endif
     
     head = NULL;
     

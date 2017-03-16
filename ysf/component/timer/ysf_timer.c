@@ -373,12 +373,14 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
         {
             timer->trigger.callback.func(NULL);
         }
+//        perform this function will directly lead to the cortex m3 kernel abort          
+//        timer->trigger.callback.func(timer->trigger.callback.param);
     }
     else
     {
         ysf_event_post(timer->trigger.event);
     }
-    
+
     return true;
 }
 

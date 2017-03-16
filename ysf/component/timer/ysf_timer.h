@@ -61,14 +61,11 @@ struct ysf_timer_t
     
     struct
     {
-        union
+        struct
         {
-            struct
-            {
-                ysf_err_t (*func)(void *param);
-                void *param;
-            }callback;
-        };
+            ysf_err_t (*func)(void *param);
+            void *param;
+        }callback;
         
         uint16_t event;
     }trigger;
