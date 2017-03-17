@@ -22,8 +22,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMPONENT_TICK_DIR
-#include YSF_COMPONENT_EVENT_DIR
+#include YSF_COMPONENT_TICK_PATH
+#include YSF_COMPONENT_EVENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -66,7 +66,7 @@ void ysf_tick_inc( void )
 {
     YSF_ENTER_CRITICAL();
     tick++;
-#if USE_YSF_EVENT_API
+#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
     ysf_event_post(YSF_CORE_TICK_UPDATE);
 #endif
     YSF_EXIT_CRITICAL();

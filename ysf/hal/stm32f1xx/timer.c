@@ -21,11 +21,10 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_hal_conf.h"
 #include "ysf_path.h"
-#include YSF_MSP_TIMER_DIR
-#include YSF_MAL_DIR
-#include YSF_COMPONENT_DEBUG_DIR
-#include YSF_COMPILER_DIR
+#include YSF_COMPONENT_DEBUG_PATH
+#include YSF_COMPILER_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/

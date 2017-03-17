@@ -47,6 +47,7 @@ extern "C"
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <intrinsics.h>
 
 /**@} */
 
@@ -75,6 +76,9 @@ extern "C"
 #define YSF_WEAK                __weak
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
+    
+#define YSF_ENTER_CRITICAL()    __disable_interrupt()
+#define YSF_EXIT_CRITICAL()     __enable_interrupt()
 
 /**
  * @name IAR ARM编译器大小端模式检测

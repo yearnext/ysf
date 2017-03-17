@@ -111,7 +111,6 @@ extern "C"
 
 /**@} */
 
-
 #ifndef __stdint_h
 /**
  * @name ARM Compiler 6编译器数据类型定义

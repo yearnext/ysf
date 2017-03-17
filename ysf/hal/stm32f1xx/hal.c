@@ -21,8 +21,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_HAL_DIR
+#include "ysf_hal_conf.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -32,28 +31,28 @@
 const struct HAL_API hal = 
 {
 #if defined(USE_MSP_GPIO_API) && USE_MSP_GPIO_API
-    .gpio.msp.init        = msp_gpio_init,
-    .gpio.msp.fini        = msp_gpio_fini,
-    .gpio.msp.config      = msp_gpio_config,
-    .gpio.msp.set         = msp_gpio_set,
-    .gpio.msp.clr         = msp_gpio_clr,
-    .gpio.msp.get         = msp_gpio_get,
+    .msp.gpio.init        = msp_gpio_init,
+    .msp.gpio.fini        = msp_gpio_fini,
+    .msp.gpio.config      = msp_gpio_config,
+    .msp.gpio.set         = msp_gpio_set,
+    .msp.gpio.clr         = msp_gpio_clr,
+    .msp.gpio.get         = msp_gpio_get,
     
-    .gpio.map.init        = map_gpio_init,
-    .gpio.map.fini        = map_gpio_fini,
-    .gpio.map.config      = map_gpio_config,
-    .gpio.map.set         = map_gpio_set,
-    .gpio.map.clr         = map_gpio_clr,
-    .gpio.map.get         = map_gpio_get,
+    .map.gpio.init        = map_gpio_init,
+    .map.gpio.fini        = map_gpio_fini,
+    .map.gpio.config      = map_gpio_config,
+    .map.gpio.set         = map_gpio_set,
+    .map.gpio.clr         = map_gpio_clr,
+    .map.gpio.get         = map_gpio_get,
 #endif
 
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
-    .timer.msp.enable     = msp_timer_init,
-    .timer.msp.disable    = msp_timer_fini,
-    .timer.msp.tick.init  = msp_tick_timer_init,
+    .msp.timer.enable     = msp_timer_init,
+    .msp.timer.disable    = msp_timer_fini,
+    .msp.timer.tick.init  = msp_tick_timer_init,
     
-    .timer.map.enable     = map_timer_init,
-    .timer.map.disable    = map_timer_fini,
+    .map.timer.enable     = map_timer_init,
+    .map.timer.disable    = map_timer_fini,
 #endif
 };
 #endif

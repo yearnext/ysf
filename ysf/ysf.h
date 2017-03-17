@@ -29,8 +29,69 @@ extern "C"
 {
 #endif
 
+/* YSF_API config macro ------------------------------------------------------*/   
+/**
+ *******************************************************************************
+ * @brief      YSF API USE STATUS CONFIG
+ *******************************************************************************
+ */
+#define USE_YSF_API (1)  
+    
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_conf.h"
+#include "ysf_hal_conf.h"
+#include "ysf_path.h"
+#include YSF_TYPE_PATH 
+  
+/**
+ *******************************************************************************
+ * @brief      INCLUDE YSF COMPONENTS
+ *******************************************************************************
+ */
+#if USE_YSF_API
+#include YSF_COMPONENT_TICK_PATH
+#include YSF_COMPONENT_MEMORY_PATH
+#include YSF_COMPONENT_EVENT_PATH
+#include YSF_COMPONENT_TIMER_PATH
+#include YSF_COMPONENT_SIGNAL_PATH
+#include YSF_COMPONENT_DEBUG_PATH
+#else
+#warning "YSF is not use YSF_API!"
+#endif
+
+/* Exported types ------------------------------------------------------------*/
+#if USE_YSF_API    
+struct YSF_API
+{
+    void (*init)(ysf_err_t (*user_init)(void));
+    void (*start)(void);
+    char *ver;
+    
+#if USE_YSF_TICK_API
+    struct YSF_TICK_API tick;
+#endif
+        
+#if USE_YSF_MEMORY_API
+    struct YSF_MEMORY_API memory;
+#endif
+    
+#if USE_YSF_EVENT_API
+    struct YSF_EVENT_API event;
+#endif
+    
+#if USE_YSF_TIMER_API
+    struct YSF_TIMER_API timer;
+#endif
+
+#if USE_YSF_SIGNAL_API
+    struct YSF_SIGNAL_API signal;
+#endif
+
+#if USE_YSF_DEBUG_API
+    struct YSF_DEBUG_API debug;
+#endif
+};
+#endif    
 
 /* Exported variables --------------------------------------------------------*/    
 #if USE_YSF_API

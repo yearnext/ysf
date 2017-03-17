@@ -33,19 +33,19 @@ extern "C"
 #include "ysf_path.h"
 	
 #if defined(__ICCARM__)
-#include YSF_ICCARM_COMPILER_CONF_DIR
+#include YSF_ICCARM_COMPILER_CONF_PATH
 #elif defined(__CC_ARM)
-#include YSF_ARMCC5_COMPILER_CONF_DIR
+#include YSF_ARMCC5_COMPILER_CONF_PATH
 #elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#include YSF_ARMCC6_COMPILER_CONF_DIR
+#include YSF_ARMCC6_COMPILER_CONF_PATH
 #elif defined(_MSC_BUILD)
-#include YSF_VS_COMPILER_CONF_DIR
+#include YSF_VS_COMPILER_CONF_PATH
 #elif defined(__GNUC__)
-#include YSF_GCC_COMPILER_CONF_DIR
+#include YSF_GCC_COMPILER_CONF_PATH
 #elif defined(__ICCSTM8__)
-#include YSF_ICC_STM8_COMPILER_CONF_DIR
+#include YSF_ICC_STM8_COMPILER_CONF_PATH
 #else
-#include YSF_SIMULATION_COMPILER_CONF_DIR
+#include YSF_SIMULATION_COMPILER_CONF_PATH
 #endif
 
 /**@} */

@@ -21,11 +21,10 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_hal_conf.h"
 #include "ysf_path.h"
-#include YSF_MSP_GPIO_DIR
-#include YSF_MAL_DIR
-#include YSF_COMPONENT_DEBUG_DIR
-#include YSF_COMPILER_DIR
+#include YSF_COMPONENT_DEBUG_PATH
+#include YSF_COMPILER_PATH
 
 /* Private define ------------------------------------------------------------*/
 #if defined(STM32F100xB)
@@ -285,7 +284,7 @@ bool msp_gpio_get(uint8_t port, uint8_t pin)
     return gpio_get(port, pin);
 }
 
-ysf_err_t map_gpio_init(struct ysf_msp_gpio_t *gpio)
+ysf_err_t map_gpio_init(struct ysf_map_gpio_t *gpio)
 {
     ysf_assert(IS_PTR_NULL(gpio));
 
@@ -295,7 +294,7 @@ ysf_err_t map_gpio_init(struct ysf_msp_gpio_t *gpio)
     return YSF_ERR_NONE;
 }
 
-ysf_err_t map_gpio_fini(struct ysf_msp_gpio_t *gpio)
+ysf_err_t map_gpio_fini(struct ysf_map_gpio_t *gpio)
 {
     ysf_assert(IS_PTR_NULL(gpio));
     
@@ -304,28 +303,28 @@ ysf_err_t map_gpio_fini(struct ysf_msp_gpio_t *gpio)
     return YSF_ERR_NONE;
 }
 
-ysf_err_t map_gpio_config(struct ysf_msp_gpio_t *gpio)
+ysf_err_t map_gpio_config(struct ysf_map_gpio_t *gpio)
 {
     ysf_assert(IS_PTR_NULL(gpio));
     
     return gpio_config(gpio->port, gpio->pin, gpio->mode);
 }
 
-ysf_err_t map_gpio_set(struct ysf_msp_gpio_t *gpio)
+ysf_err_t map_gpio_set(struct ysf_map_gpio_t *gpio)
 {
     ysf_assert(IS_PTR_NULL(gpio));
     
     return gpio_set(gpio->port, gpio->pin);
 }
 
-ysf_err_t map_gpio_clr(struct ysf_msp_gpio_t *gpio)
+ysf_err_t map_gpio_clr(struct ysf_map_gpio_t *gpio)
 {
     ysf_assert(IS_PTR_NULL(gpio));
     
     return gpio_clr(gpio->port, gpio->pin);
 }
 
-bool map_gpio_get(struct ysf_msp_gpio_t *gpio)
+bool map_gpio_get(struct ysf_map_gpio_t *gpio)
 {
     ysf_assert(IS_PTR_NULL(gpio));
     

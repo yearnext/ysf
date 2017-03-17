@@ -73,8 +73,7 @@
 /** @addtogroup STM32F1xx_System_Private_Includes
   * @{
   */
-#include "ysf_path.h"
-#include YSF_MAL_DIR
+#include "../ysf/hal/stm32f1xx/mal/mal.h"
 
 /**
   * @}

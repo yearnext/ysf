@@ -24,12 +24,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMPONENT_TIMER_DIR
-#include YSF_COMPONENT_EVENT_DIR
-#include YSF_TYPE_DIR
-#include YSF_COMPONENT_TICK_DIR
-#include YSF_COMPONENT_MEMORY_DIR
-#include YSF_COMPONENT_SINGLE_LIST_DIR
+#include YSF_COMPONENT_TIMER_PATH
+#include YSF_COMPONENT_EVENT_PATH
+#include YSF_TYPE_PATH
+#include YSF_COMPONENT_TICK_PATH
+#include YSF_COMPONENT_MEMORY_PATH
+#include YSF_COMPONENT_SINGLE_LIST_PATH
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
@@ -365,6 +365,9 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
     
     if( timer->trigger.event == YSF_EVENT_NONE )
     {
+//        perform this function will directly lead to the cortex m3 kernel abort          
+//        timer->trigger.callback.func(timer->trigger.callback.param);
+        
         if( timer->trigger.callback.param != NULL )
         {
             timer->trigger.callback.func(timer->trigger.callback.param);
@@ -373,14 +376,12 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
         {
             timer->trigger.callback.func(NULL);
         }
-//        perform this function will directly lead to the cortex m3 kernel abort          
-//        timer->trigger.callback.func(timer->trigger.callback.param);
     }
     else
     {
         ysf_event_post(timer->trigger.event);
     }
-
+    
     return true;
 }
 
@@ -399,7 +400,9 @@ static bool ysf_timer_walk(void **node, void **ctx, void **expand)
 {
     struct ysf_timer_t *timer = (struct ysf_timer_t *)(*node);
     struct ysf_timer_t *last  = (struct ysf_timer_t *)(*expand);
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
     void *del = *node;
+#endif
     ysf_tick_t tick = (ysf_tick_t)(*(ctx));
     
     if( *node == NULL )

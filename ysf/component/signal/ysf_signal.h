@@ -31,9 +31,9 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_TYPE_DIR
-#include YSF_COMPONENT_EVENT_DIR
-#include YSF_COMPONENT_SINGLE_LIST_DIR
+#include YSF_TYPE_PATH
+#include YSF_COMPONENT_EVENT_PATH
+#include YSF_COMPONENT_SINGLE_LIST_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 #define YSF_SIGNAL_SCAN_TIME        YSF_TIME_2_TICK(10)

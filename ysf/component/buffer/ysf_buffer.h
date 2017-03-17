@@ -31,8 +31,8 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_TYPE_DIR
-#include YSF_COMPILER_DIR
+#include YSF_TYPE_PATH
+#include YSF_COMPILER_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**

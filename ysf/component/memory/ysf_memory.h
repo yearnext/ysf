@@ -31,7 +31,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMPONENT_BUFFER_DIR
+#include YSF_COMPONENT_BUFFER_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 #define USE_YSF_MEMORY_API  (1)

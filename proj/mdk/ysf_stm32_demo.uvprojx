@@ -431,14 +431,14 @@
           <GroupName>ysf/hal/startup</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32f103xe.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\ysf\hal\msp\stm32f10x\startup\arm\startup_stm32f103xe.s</FilePath>
-            </File>
-            <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\msp\stm32f10x\startup\system_stm32f1xx.c</FilePath>
+              <FilePath>..\..\ysf\hal\stm32f1xx\startup\system_stm32f1xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32f103xe.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\ysf\hal\stm32f1xx\startup\arm\startup_stm32f103xe.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -446,24 +446,19 @@
           <GroupName>ysf/hal/hal</GroupName>
           <Files>
             <File>
-              <FileName>hal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\hal.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ysf/hal/msp/stm32f10x</GroupName>
-          <Files>
-            <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\msp\stm32f10x\gpio.c</FilePath>
+              <FilePath>..\..\ysf\hal\stm32f1xx\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\hal\stm32f1xx\hal.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\msp\stm32f10x\timer.c</FilePath>
+              <FilePath>..\..\ysf\hal\stm32f1xx\timer.c</FilePath>
             </File>
           </Files>
         </Group>

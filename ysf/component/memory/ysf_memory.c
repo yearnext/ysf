@@ -22,18 +22,15 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMPONENT_MEMORY_DIR
-#include YSF_COMPONENT_BUFFER_DIR
-#include YSF_COMPILER_DIR
-#include YSF_TYPE_DIR
+#include YSF_COMPONENT_MEMORY_PATH
+#include YSF_COMPONENT_BUFFER_PATH
+#include YSF_TYPE_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 #if USE_YSF_MEMORY_API
-YSF_ALIGN_HEAD(4)
 static uint8_t ysfMemory[USE_YSF_MEMORY_SIZE];
-YSF_ALIGN_TAIL(4)
 static struct ysf_mem_cb_t ysfMemoryCB;
 #endif
 

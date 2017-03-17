@@ -22,12 +22,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMPONENT_SIGNAL_DIR
-#include YSF_COMPONENT_TIMER_DIR
-#include YSF_COMPONENT_MEMORY_DIR
-#include YSF_TYPE_DIR
-#include YSF_COMPONENT_EVENT_DIR
-#include YSF_COMPONENT_SINGLE_LIST_DIR
+#include YSF_COMPONENT_SIGNAL_PATH
+#include YSF_COMPONENT_TIMER_PATH
+#include YSF_COMPONENT_MEMORY_PATH
+#include YSF_TYPE_PATH
+#include YSF_COMPONENT_EVENT_PATH
+#include YSF_COMPONENT_SINGLE_LIST_PATH
 
 /* Private define ------------------------------------------------------------*/
 #define ysf_signal_add(signal_cb) \
@@ -320,7 +320,9 @@ bool ysf_signal_walk( void **node, void **ctx, void **expand )
 {
     struct ysf_signal_t *signal = (struct ysf_signal_t *)(*node);
     struct ysf_signal_t *last   = (struct ysf_signal_t *)(*expand); 
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
     struct ysf_signal_t *del    = (struct ysf_signal_t *)(*node); 
+#endif
     
     if( *node == NULL )
     {

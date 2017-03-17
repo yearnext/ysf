@@ -58,9 +58,9 @@ const struct YSF_API ysf =
     .event.init               = ysf_event_init,
     .event.post               = ysf_event_post,
     .event.read               = ysf_event_read,
-    .event.evt_register       = ysf_event_handler_register,
-    .event.evt_writeoff       = ysf_event_handler_writeoff,
-    .event.evt_handler        = ysf_event_handler,
+    .event.reg                = ysf_event_handler_register,
+    .event.writeoff           = ysf_event_handler_writeoff,
+    .event.handler            = ysf_event_handler,
 #endif
     
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
@@ -100,7 +100,7 @@ void ysf_init( ysf_err_t (*user_init)(void) )
     ysf.tick.init();
     
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
-    hal.timer.msp.tick.init(ysf.tick.inc);
+    hal.msp.timer.tick.init(ysf.tick.inc);
 #endif
     
 #endif
@@ -115,7 +115,7 @@ void ysf_init( ysf_err_t (*user_init)(void) )
     
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
     ysf.timer.init();
-    ysf.event.evt_register(YSF_CORE_TICK_UPDATE, ysf_timer_handler);
+    ysf.event.reg(YSF_CORE_TICK_UPDATE, ysf_timer_handler);
 #endif
     
 #if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API

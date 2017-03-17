@@ -22,10 +22,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMPONENT_BUFFER_DIR
-#include YSF_TYPE_DIR
-#include YSF_COMPILER_DIR
-#include YSF_COMPONENT_DEBUG_DIR
+#include YSF_COMPONENT_BUFFER_PATH
+#include YSF_TYPE_PATH
+#include YSF_COMPILER_PATH
+#include YSF_COMPONENT_DEBUG_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/

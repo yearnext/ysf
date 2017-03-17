@@ -164,10 +164,8 @@ typedef enum
 /**
   * @}
   */
-#include "ysf_path.h"
-#include YSF_MAL_CORE_CM3_DIR
-#include YSF_MAL_START_UP_DIR
-#include YSF_TYPE_DIR
+#include "../ysf/hal/stm32f1xx/mal/cmsis/core_cm3.h"
+#include "../ysf/hal/stm32f1xx/startup/system_stm32f1xx.h"
 
 /** @addtogroup Peripheral_registers_structures
   * @{

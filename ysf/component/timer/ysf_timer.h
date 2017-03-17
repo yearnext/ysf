@@ -23,9 +23,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_TYPE_DIR
-#include YSF_COMPONENT_TICK_DIR
-#include YSF_COMPONENT_SINGLE_LIST_DIR
+#include YSF_TYPE_PATH
+#include YSF_COMPONENT_TICK_PATH
+#include YSF_COMPONENT_SINGLE_LIST_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -66,7 +66,7 @@ struct ysf_timer_t
             ysf_err_t (*func)(void *param);
             void *param;
         }callback;
-        
+
         uint16_t event;
     }trigger;
 

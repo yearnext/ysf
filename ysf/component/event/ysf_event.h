@@ -30,9 +30,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_event_conf.h"
+#include "ysf_conf.h"
 #include "ysf_path.h"
-#include YSF_TYPE_DIR
+#include YSF_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -48,9 +48,9 @@ struct YSF_EVENT_API
     ysf_err_t (*init)(void);
     ysf_err_t (*post)(uint16_t);
     ysf_err_t (*read)(uint16_t*);
-    ysf_err_t (*evt_register)(uint16_t, ysf_err_t (*handler)(uint16_t));
-    ysf_err_t (*evt_writeoff)(uint16_t, ysf_err_t (*handler)(uint16_t));
-    ysf_err_t (*evt_handler)(void);
+    ysf_err_t (*reg)(uint16_t, ysf_err_t (*handler)(uint16_t));
+    ysf_err_t (*writeoff)(uint16_t, ysf_err_t (*handler)(uint16_t));
+    ysf_err_t (*handler)(void);
 };
 
 /* Exported variables --------------------------------------------------------*/

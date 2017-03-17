@@ -2317,149 +2317,53 @@
   <group>
     <name>app</name>
     <file>
-      <name>$PROJ_DIR$\..\..\app\main.c</name>
+      <name>$PROJ_DIR$\..\..\app\key_control.c</name>
     </file>
   </group>
   <group>
-    <name>msp</name>
+    <name>hal</name>
     <group>
-      <name>startup</name>
-      <group>
-        <name>asm</name>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f100xb.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f100xe.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f101x6.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f101xb.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f101xe.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f101xg.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f102x6.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f102xb.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f103x6.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f103xb.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f103xe.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f103xg.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f105xc.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\startup_stm32f107xc.s</name>
-        </file>
-      </group>
-      <group>
-        <name>link</name>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f100xb_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f100xb_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f100xe_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f100xe_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101x6_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101x6_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101xb_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101xb_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101xe_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101xe_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101xg_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f101xg_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f102x6_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f102x6_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f102xb_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f102xb_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103x6_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103x6_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103xb_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103xb_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103xe_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103xe_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103xg_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f103xg_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f105xc_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f105xc_sram.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f107xc_flash.icf</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\iar\linker\stm32f107xc_sram.icf</name>
-        </file>
-      </group>
+      <name>gpio</name>
       <file>
-        <name>$PROJ_DIR$\..\..\hal\msp\stm32f10x\Src\st\system_stm32f1xx.c</name>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\gpio.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\gpio.h</name>
       </file>
     </group>
+    <group>
+      <name>mal</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\mal\mal.h</name>
+      </file>
+    </group>
+    <group>
+      <name>startup</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\startup\iar\startup_stm32f103xe.s</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\startup\system_stm32f1xx.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\startup\system_stm32f1xx.h</name>
+      </file>
+    </group>
+    <group>
+      <name>timer</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\timer.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\timer.h</name>
+      </file>
+    </group>
+    <file>
+      <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\hal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\ysf\hal\stm32f1xx\hal.h</name>
+    </file>
   </group>
   <group>
     <name>ysf</name>
@@ -2475,15 +2379,21 @@
         </file>
       </group>
       <group>
+        <name>debug</name>
+        <file>
+          <name>$PROJ_DIR$\..\..\ysf\component\debug\ysf_debug.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\ysf\component\debug\ysf_debug.h</name>
+        </file>
+      </group>
+      <group>
         <name>event</name>
         <file>
           <name>$PROJ_DIR$\..\..\ysf\component\event\ysf_event.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\ysf\component\event\ysf_event.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\ysf\component\event\ysf_event_conf.h</name>
         </file>
       </group>
       <group>
@@ -2532,18 +2442,21 @@
         </file>
       </group>
     </group>
-    <group>
-      <name>core</name>
-      <file>
-        <name>$PROJ_DIR$\..\..\ysf\core\ysf.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\ysf\core\ysf.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\ysf\core\ysf_conf.h</name>
-      </file>
-    </group>
+    <file>
+      <name>$PROJ_DIR$\..\..\ysf\ysf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\ysf\ysf.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\ysf\ysf_conf.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\ysf\ysf_hal_conf.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\ysf\ysf_path.h</name>
+    </file>
   </group>
 </project>
 

@@ -59,7 +59,9 @@
 #ifdef __cplusplus
  extern "C" {
 #endif /* __cplusplus */
-  
+
+#include "ysf_hal_conf.h"
+     
 /** @addtogroup Library_configuration_section
   * @{
   */
@@ -155,7 +157,7 @@
 #elif defined(STM32F107xC)
   #include "stm32f107xc.h"
 #else
- #error "Please select first the target STM32F1xx device used in your application (in stm32f1xx.h file)"
+ #error "Please select first the target STM32F1xx device used in your application"
 #endif
 
 /**

@@ -31,7 +31,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMPILER_DIR
+#include YSF_COMPILER_PATH
 
 /* Exported types ------------------------------------------------------------*/
 typedef enum

@@ -22,13 +22,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_COMMTOOLS_DIR
-#include YSF_COMPONENT_EVENT_DIR
-#include YSF_TYPE_DIR
-#include YSF_COMPONENT_BUFFER_DIR
-#include YSF_COMPONENT_SINGLE_LIST_DIR
-#include YSF_COMPONENT_MEMORY_DIR
-#include YSF_COMPONENT_DEBUG_DIR
+#include YSF_COMMTOOLS_PATH
+#include YSF_COMPONENT_EVENT_PATH
+#include YSF_TYPE_PATH
+#include YSF_COMPONENT_BUFFER_PATH
+#include YSF_COMPONENT_SINGLE_LIST_PATH
+#include YSF_COMPONENT_MEMORY_PATH
+#include YSF_COMPONENT_DEBUG_PATH
 
 /* Private define ------------------------------------------------------------*/
 #define YSF_EVENT_SIZE_CAL(event) (sizeof(event)/sizeof(char))
@@ -189,7 +189,6 @@ static bool evtHandlerIsInList( void **node, void **ctx, void **expand )
     {
         return false;
     }
-
     if( evtHandler == NULL )
     {
         return false;
@@ -270,7 +269,7 @@ ysf_err_t ysf_event_handler( void )
     uint16_t event = YSF_EVENT_NONE;
     ysf_event_read(&event);
     
-    if( IS_PTR_NULL(evt_hander[event]))
+    if( !IS_PTR_NULL(evt_hander[event]))
     {
         evt_hander[event](event);
     }

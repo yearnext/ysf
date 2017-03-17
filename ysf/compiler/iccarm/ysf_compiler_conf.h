@@ -43,8 +43,12 @@ extern "C"
  * @name IAR ARM包含头文件
  * @{
  */
-// #include <stdarg.h>
-// #include <stdint.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <intrinsics.h>
+    
 /**@} */
 
 /**
@@ -102,26 +106,68 @@ extern "C"
 #define YSF_PACKED_HEAD         PRAGMA(pack(push, 1))
 #define YSF_PACKED_TAIL         PRAGMA(pack(pop))
     
+#define YSF_ENTER_CRITICAL()    __disable_interrupt()
+#define YSF_EXIT_CRITICAL()     __enable_interrupt()
+    
 /**@} */
 
+#ifndef _STDINT
 /**
  * @name IAR ARM编译器数据类型定义
  * @{
  */
-typedef unsigned char               ysf_uint8_t;
-typedef unsigned short              ysf_uint16_t;
-typedef unsigned int                ysf_uint32_t;
-typedef unsigned long long          ysf_uint64_t;
+typedef unsigned char           uint8_t;
+typedef unsigned short          uint16_t;
+typedef unsigned int            uint32_t;
+typedef unsigned long long      uint64_t;
 
-typedef char                        ysf_int8_t;
-typedef short                       ysf_int16_t;
-typedef int                         ysf_int32_t;
-typedef long long                   ysf_int64_t;
+typedef char                    int8_t;
+typedef short                   int16_t;
+typedef int                     int32_t;
+typedef long long               int64_t;
+
+/**
+ * @name IAR ARM基本数据类型最大最小值定义
+ * @{
+ */
+#define INT8_MAX   (-128)
+#define INT16_MAX  (-32768)
+#define INT32_MAX  (-2147483647 - 1)
+#define INT64_MAX  (-9223372036854775807LL - 1)
+
+#define INT8_MIN   (127)
+#define INT16_MIN  (32767)
+#define INT32_MIN  (2147483647U)
+#define INT64_MIN  (9223372036854775807LL)
+
+#define UINT8_MAX  (0xFF)
+#define UINT16_MAX (0xFFFF)
+#define UINT32_MAX (0xFFFFFFFFU)
+#define UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
+
+#define UINT8_MIN  (0)
+#define UINT16_MIN (0)
+#define UINT32_MIN (0U)
+#define UINT64_MIN (0ULL)
+/**@} */
+#endif
+
+#ifndef _STDBOOL
+typedef enum
+{
+    false = 0,
+    true = !false,
+}bool;
+#endif
+
+#ifndef NULL
+#define NULL ((void *)0)
+#endif
 
 #if 1
-typedef ysf_uint32_t                ysf_addr_t;
+typedef uint32_t ysf_addr_t;
 #else
-typedef ysf_uint64_t                ysf_addr_t;
+typedef uint64_t ysf_addr_t;
 #endif
 
 /**@} */
