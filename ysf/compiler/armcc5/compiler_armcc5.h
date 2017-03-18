@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file       ysf_mdk_compiler.h
+ * @file       compiler_armcc5.h
  * @author     yearnext
  * @version    1.0.0
  * @date       2017Äê1ÔÂ10ÈÕ
@@ -20,8 +20,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_MDK_COMPILER_H__
-#define __YSF_MDK_COMPILER_H__
+#ifndef __YSF_COMPILER_ARMCC5_H__
+#define __YSF_COMPILER_ARMCC5_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

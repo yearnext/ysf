@@ -87,7 +87,7 @@ const struct YSF_API ysf =
 
 #if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
     .debug.init              = ysf_debug_init,
-    .debug.assert            = ysf_assert_failed,
+    .debug.assert_failed     = ysf_assert_failed,
 #endif
 };
 #endif

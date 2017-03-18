@@ -43,6 +43,12 @@ extern "C"
 #define USE_YSF_EVENT_API (1)
 
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define event api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
 struct YSF_EVENT_API
 {
     ysf_err_t (*init)(void);
@@ -52,10 +58,16 @@ struct YSF_EVENT_API
     ysf_err_t (*writeoff)(uint16_t, ysf_err_t (*handler)(uint16_t));
     ysf_err_t (*handler)(void);
 };
+#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_EVENT_API
+/**
+ *******************************************************************************
+ * @brief       event function interface
+ *******************************************************************************
+ */
+#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
 extern ysf_err_t ysf_event_init( void );
 extern ysf_err_t ysf_event_post( uint16_t );
 extern ysf_err_t ysf_event_read( uint16_t* );

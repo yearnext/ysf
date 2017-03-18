@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file       ysf_iar_arm_compiler.h
+ * @file       compiler_armcc6.h
  * @author     yearnext
  * @version    1.0.0
  * @date       2017年1月10日
@@ -8,7 +8,7 @@
  * @par        工作平台
  *                 ARM
  * @par        编译平台
- *                 IAR
+ *                 MDK
  ******************************************************************************
  * @note
  * 1.XXXXX
@@ -20,8 +20,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_IAR_ARM_COMPILER_H__
-#define __YSF_IAR_ARM_COMPILER_H__
+#ifndef __YSF_COMPILER_ARMCC6_H__
+#define __YSF_COMPILER_ARMCC6_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -35,26 +35,34 @@ extern "C"
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
- * @name IAR ARM编译器配置
+ * @name ARM Compiler 6编译器配置
  * @{
  */
-
 /**
- * @name IAR ARM包含头文件
+ * @name ARM Compiler 6包含头文件
  * @{
  */
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdlib.h>
-#include <intrinsics.h>
     
 /**@} */
 
 /**
- * @name IAR ARM编译器宏
+ * @name ARM Compiler 6编译器宏
  * @{
  */
+#define USE_ARM_CLANG_COMPILER
+
+#pragma clang diagnostic ignored "-Wpadded" 
+#pragma clang diagnostic ignored "-Wunused-parameter" 
+#pragma clang diagnostic ignored "-Wswitch-enum" 
+#pragma clang diagnostic ignored "-Warmcc-pragma-anon-unions"
+#pragma clang diagnostic ignored "-Wc11-extensions"
+#pragma clang diagnostic ignored "-Wunreachable-code-break"
+#pragma clang diagnostic ignored "-Wunused-value"
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+
 #define __FUNCNAME__            __func__
 #define __YSF_FUNCNAME__        __func__
 
@@ -62,26 +70,29 @@ extern "C"
 
 #if !defined(__CORTEX_M)
 #define __ASM                   __asm
-#define __INLINE                inline
-#define __STATIC_INLINE         static inline
+#define __INLINE                __inline
+#define __STATIC_INLINE         static __inline
 #endif
 
 #define YSF_ASM                 __asm
-#define YSF_INLINE              inline
-#define YSF_STATIC_INLINE       static inline
+#define YSF_INLINE              __inline
+#define YSF_STATIC_INLINE       static __inline
 
-#define YSF_SECTION(x)          @ x
-#define YSF_UNUSED
-#define YSF_USED
+#define YSF_SECTION(x)          __attribute__((section(x)))
+#define YSF_UNUSED              __attribute__((unused))
+#define YSF_USED                __attribute__((used))
 #define YSF_WEAK                __weak
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
 
+#define YSF_ENTER_CRITICAL()    __ASM volatile ("cpsid i" : : : "memory")
+#define YSF_EXIT_CRITICAL()     __ASM volatile ("cpsie i" : : : "memory")
+
 /**
- * @name IAR ARM编译器大小端模式检测
+ * @name ARM Compiler 6编译器大小端模式检测
  * @{
  */
-#if 0
+#if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
     #define COMPILER_USE_BIG_ENDIAN
 //    #warning The byte order of the compiler uses big endian mode!
 #else
@@ -93,27 +104,24 @@ extern "C"
 /**@} */
 
 /**
- * @name IAR ARM编译器字节对齐配置
+ * @name ARM Compiler 6编译器字节对齐配置
  * @{
  */
 #define ALIGN_HEAD(n)           PRAGMA(pack(push, n))
 #define ALIGN_TAIL(n)           PRAGMA(pack(pop))
-#define PACKED_HEAD             PRAGMA(pack(push, 1))
-#define PACKED_TAIL             PRAGMA(pack(pop))
-    
+#define PACKED_HEAD             
+#define PACKED_TAIL
+
 #define YSF_ALIGN_HEAD(n)       PRAGMA(pack(push, n))
 #define YSF_ALIGN_TAIL(n)       PRAGMA(pack(pop))
-#define YSF_PACKED_HEAD         PRAGMA(pack(push, 1))
-#define YSF_PACKED_TAIL         PRAGMA(pack(pop))
-    
-#define YSF_ENTER_CRITICAL()    __disable_interrupt()
-#define YSF_EXIT_CRITICAL()     __enable_interrupt()
-    
+#define YSF_PACKED_HEAD         
+#define YSF_PACKED_TAIL
+
 /**@} */
 
-#ifndef _STDINT
+#ifndef __stdint_h
 /**
- * @name IAR ARM编译器数据类型定义
+ * @name ARM Compiler 6编译器数据类型定义
  * @{
  */
 typedef unsigned char           uint8_t;
@@ -127,7 +135,7 @@ typedef int                     int32_t;
 typedef long long               int64_t;
 
 /**
- * @name IAR ARM基本数据类型最大最小值定义
+ * @name ysf 基本数据类型最大最小值定义
  * @{
  */
 #define INT8_MAX   (-128)
@@ -152,7 +160,7 @@ typedef long long               int64_t;
 /**@} */
 #endif
 
-#ifndef _STDBOOL
+#ifndef __bool_true_false_are_defined
 typedef enum
 {
     false = 0,
@@ -169,7 +177,6 @@ typedef uint32_t ysf_addr_t;
 #else
 typedef uint64_t ysf_addr_t;
 #endif
-
 /**@} */
 
 /**@} */

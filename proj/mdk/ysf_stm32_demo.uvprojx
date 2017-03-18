@@ -381,49 +381,49 @@
           <GroupName>ysf/framework</GroupName>
           <Files>
             <File>
-              <FileName>ysf_tick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\tick\ysf_tick.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_buffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\buffer\ysf_buffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_memory.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\memory\ysf_memory.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_single_list.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\list\ysf_single_list.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\timer\ysf_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_event.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\event\ysf_event.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\signal\ysf_signal.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\debug\ysf_debug.c</FilePath>
-            </File>
-            <File>
               <FileName>ysf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\ysf\ysf.c</FilePath>
+            </File>
+            <File>
+              <FileName>buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\buffer\buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>tick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\tick\tick.c</FilePath>
+            </File>
+            <File>
+              <FileName>debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\debug\debug.c</FilePath>
+            </File>
+            <File>
+              <FileName>event.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\event\event.c</FilePath>
+            </File>
+            <File>
+              <FileName>single_list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\list\single_list.c</FilePath>
+            </File>
+            <File>
+              <FileName>memory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\memory\memory.c</FilePath>
+            </File>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\signal\signal.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\ysf\component\timer\timer.c</FilePath>
             </File>
           </Files>
         </Group>
