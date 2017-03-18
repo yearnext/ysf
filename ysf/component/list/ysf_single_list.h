@@ -1,27 +1,27 @@
 /**
  ******************************************************************************
- * @file       debug.h
+ * @file       ysf_single_list.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017-01-10
- * @brief      ysf debug component header files
- * @par        work platform
+ * @date       2017Äê2ÔÂ18ÈÕ
+ * @brief      ysf single list head file
+ * @par        work paltform		                             
  *                 Windows
- * @par        compiler
- *                 GCC
+ * @par        compiler paltform									                         
+ * 				   GCC
  ******************************************************************************
  * @note
- * 1.XXXXX
+ * 1.XXXXX                  						                     
  ******************************************************************************
  */
 
 /**
- * @defgroup ysf debug component
+ * @defgroup ysf single list component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_DEBUG_H__
-#define __YSF_DEBUG_H__
+#ifndef __YSF_SINGLE_LIST_H__
+#define __YSF_SINGLE_LIST_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -36,52 +36,64 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf tick api enable switch
+ * @brief       config single list api switch
  *******************************************************************************
  */
-#define USE_YSF_DEBUG_API (1)
- 
-/**
- *******************************************************************************
- * @brief       define detecting null pointer macros
- *******************************************************************************
- */    
-#define IS_PTR_NULL(ptr) ((ptr) == NULL)
-
-/**
- *******************************************************************************
- * @brief       define assert macros
- *******************************************************************************
- */ 
-#define ysf_assert(expr) ((expr) ? ysf_assert_failed((uint8_t *)__FILE__, __LINE__) :(void)0 )
-                             
+#define USE_YSF_SINGLE_LIST_API (1)
+    
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define ysf debug api
+ * @brief       ysf single list type
  *******************************************************************************
- */ 
-#if USE_YSF_DEBUG_API
-struct YSF_DEBUG_API
+ */
+struct ysf_sList_t
 {
-    ysf_err_t (*init)(void);
-    void (*assert_failed)(uint8_t*, uint32_t);
+    struct ysf_sList_t *next;
+    uint8_t        data[];
+};
+
+/**
+ *******************************************************************************
+ * @brief       define visit list function type
+ *******************************************************************************
+ */
+typedef bool (*sListFunc)(void **, void **, void **);
+
+/**
+ *******************************************************************************
+ * @brief       ysf single list api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
+struct YSF_SLIST_API
+{
+    ysf_err_t (*init)(void**);
+    ysf_err_t (*add)(void**, void **);
+    ysf_err_t (*del)(void**, void **);
+    ysf_err_t (*isExist)(void**, void **);
 };
 #endif
-      
+
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define ysf debug function interface
+ * @brief       define single list function interface
  *******************************************************************************
- */ 
-#if USE_YSF_DEBUG_API
-extern ysf_err_t ysf_debug_init(void);
-extern void ysf_assert_failed(uint8_t*, uint32_t);
-#endif        
+ */
+#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
+extern bool ysf_slist_walk(void**, sListFunc, void**, void**);
+extern bool ysf_slist_module_add(void**, void**, void**);
+extern bool ysf_slist_module_del(void**, void**, void**);
+extern bool ysf_slist_module_isExist(void**, void**, void**);
+extern bool ysf_slist_module_findLastNode(void **, void**, void**);
 
-/**@} */
+extern ysf_err_t ysf_slist_init(void**);
+extern ysf_err_t ysf_slist_add(void**, void**);
+extern ysf_err_t ysf_slist_del(void**, void**);
+extern ysf_err_t ysf_slist_isExist(void**, void**);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -90,6 +102,6 @@ extern void ysf_assert_failed(uint8_t*, uint32_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf debug component  */
+/** @}*/     /** ysf single list component  */
 
 /**********************************END OF FILE*********************************/

@@ -46,14 +46,14 @@ extern "C"
 #define YSF_ICCARM_COMPILER_CONF_PATH        "../ysf/compiler/iccarm/compiler_iar_arm.h"
 #define YSF_ICC_STM8_COMPILER_CONF_PATH      "../ysf/compiler/iccstm8/compiler_conf.h"
 	
-#define YSF_COMPONENT_TICK_PATH              "../ysf/component/tick/tick.h"
-#define YSF_COMPONENT_BUFFER_PATH            "../ysf/component/buffer/buffer.h"
-#define YSF_COMPONENT_MEMORY_PATH            "../ysf/component/memory/memory.h"
-#define YSF_COMPONENT_TIMER_PATH             "../ysf/component/timer/timer.h"
-#define YSF_COMPONENT_EVENT_PATH             "../ysf/component/event/event.h"
-#define YSF_COMPONENT_SIGNAL_PATH            "../ysf/component/signal/signal.h"
-#define YSF_COMPONENT_DEBUG_PATH             "../ysf/component/debug/debug.h"
-#define YSF_COMPONENT_SINGLE_LIST_PATH       "../ysf/component/list/single_list.h"
+#define YSF_COMPONENT_TICK_PATH              "../ysf/component/tick/ysf_tick.h"
+#define YSF_COMPONENT_BUFFER_PATH            "../ysf/component/buffer/ysf_buffer.h"
+#define YSF_COMPONENT_MEMORY_PATH            "../ysf/component/memory/ysf_memory.h"
+#define YSF_COMPONENT_TIMER_PATH             "../ysf/component/timer/ysf_timer.h"
+#define YSF_COMPONENT_EVENT_PATH             "../ysf/component/event/ysf_event.h"
+#define YSF_COMPONENT_SIGNAL_PATH            "../ysf/component/signal/ysf_signal.h"
+#define YSF_COMPONENT_DEBUG_PATH             "../ysf/component/debug/ysf_debug.h"
+#define YSF_COMPONENT_SINGLE_LIST_PATH       "../ysf/component/list/ysf_single_list.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

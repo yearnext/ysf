@@ -1,10 +1,10 @@
 /**
  ******************************************************************************
- * @file       single_list.h
+ * @file       ysf_memory.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017年2月18日
- * @brief      ysf single list head file
+ * @date       2017年2月20日
+ * @brief      ysf_memory head file
  * @par        work paltform		                             
  *                 Windows
  * @par        compiler paltform									                         
@@ -16,12 +16,12 @@
  */
 
 /**
- * @defgroup ysf single list component
+ * @defgroup ysf_memory component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_SINGLE_LIST_H__
-#define __YSF_SINGLE_LIST_H__
+#ifndef __YSF_MEMORY_H__
+#define __YSF_MEMORY_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -31,47 +31,39 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
-#include YSF_TYPE_PATH
+#include YSF_COMPONENT_BUFFER_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       config single list api switch
+ * @brief        config ysf memory management switch
  *******************************************************************************
  */
-#define USE_YSF_SINGLE_LIST_API (1)
-    
+#define USE_YSF_MEMORY_API  (1)
+
+/**
+ *******************************************************************************
+ * @brief        config ysf memory pool size
+ *******************************************************************************
+ */
+#define YSF_USE_MEMORY_SIZE (4096)
+
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf single list type
+ * @brief        ysf memory management api
  *******************************************************************************
  */
-struct ysf_sList_t
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+struct YSF_MEMORY_API
 {
-    struct ysf_sList_t *next;
-    uint8_t        data[];
-};
-
-/**
- *******************************************************************************
- * @brief       define visit list function type
- *******************************************************************************
- */
-typedef bool (*sListFunc)(void **, void **, void **);
-
-/**
- *******************************************************************************
- * @brief       ysf single list api
- *******************************************************************************
- */
-#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
-struct YSF_SLIST_API
-{
-    ysf_err_t (*init)(void**);
-    ysf_err_t (*add)(void**, void **);
-    ysf_err_t (*del)(void**, void **);
-    ysf_err_t (*isExist)(void**, void **);
+    void (*init)(void);
+    void *(*malloc)(ysf_mem_size_t);
+    void (*free)(void*);
+    ysf_mem_size_t (*len)(void);
+    ysf_mem_size_t (*alignment)(void);
+    ysf_mem_size_t (*useRate)(void);
+    bool (*isIn)(void *);
 };
 #endif
 
@@ -79,20 +71,17 @@ struct YSF_SLIST_API
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define single list function interface
+ * @brief        memory management function interface
  *******************************************************************************
  */
-#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
-extern bool ysf_slist_walk(void**, sListFunc, void**, void**);
-extern bool ysf_slist_module_add(void**, void**, void**);
-extern bool ysf_slist_module_del(void**, void**, void**);
-extern bool ysf_slist_module_isExist(void**, void**, void**);
-extern bool ysf_slist_module_findLastNode(void **, void**, void**);
-
-extern ysf_err_t ysf_slist_init(void**);
-extern ysf_err_t ysf_slist_add(void**, void**);
-extern ysf_err_t ysf_slist_del(void**, void**);
-extern ysf_err_t ysf_slist_isExist(void**, void**);
+#if USE_YSF_MEMORY_API
+extern void ysf_memory_init( void );
+extern void *ysf_memory_malloc(ysf_mem_size_t);
+extern void ysf_memory_free(void*);
+extern ysf_mem_size_t ysf_memory_get_len(void);
+extern ysf_mem_size_t ysf_memory_get_alignment(void);
+extern ysf_mem_size_t ysf_memory_cal_use_rate(void);
+extern bool ysf_memory_is_in(void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -102,6 +91,6 @@ extern ysf_err_t ysf_slist_isExist(void**, void**);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf single list component  */
+/** @}*/     /** ysf memory component  */
 
 /**********************************END OF FILE*********************************/

@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
- * @file       event.h
+ * @file       ysf_debug.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017-2-12
- * @brief      ysf event head file
+ * @date       2017-01-10
+ * @brief      ysf debug component header files
  * @par        work platform
  *                 Windows
- * @par        compiler platform
+ * @par        compiler
  *                 GCC
  ******************************************************************************
  * @note
@@ -16,12 +16,12 @@
  */
 
 /**
- * @defgroup ysf event component
+ * @defgroup ysf debug component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_EVENT_H__
-#define __YSF_EVENT_H__
+#ifndef __YSF_DEBUG_H__
+#define __YSF_DEBUG_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -30,51 +30,58 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       event component debug config
+ * @brief       ysf tick api enable switch
  *******************************************************************************
  */
-#define USE_YSF_EVENT_API (1)
+#define USE_YSF_DEBUG_API (1)
+ 
+/**
+ *******************************************************************************
+ * @brief       define detecting null pointer macros
+ *******************************************************************************
+ */    
+#define IS_PTR_NULL(ptr) ((ptr) == NULL)
 
+/**
+ *******************************************************************************
+ * @brief       define assert macros
+ *******************************************************************************
+ */ 
+#define ysf_assert(expr) ((expr) ? ysf_assert_failed((uint8_t *)__FILE__, __LINE__) :(void)0 )
+                             
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define event api
+ * @brief       define ysf debug api
  *******************************************************************************
- */
-#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
-struct YSF_EVENT_API
+ */ 
+#if USE_YSF_DEBUG_API
+struct YSF_DEBUG_API
 {
     ysf_err_t (*init)(void);
-    ysf_err_t (*post)(uint16_t);
-    ysf_err_t (*read)(uint16_t*);
-    ysf_err_t (*reg)(uint16_t, ysf_err_t (*handler)(uint16_t));
-    ysf_err_t (*writeoff)(uint16_t, ysf_err_t (*handler)(uint16_t));
-    ysf_err_t (*handler)(void);
+    void (*assert_failed)(uint8_t*, uint32_t);
 };
 #endif
-
+      
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       event function interface
+ * @brief       define ysf debug function interface
  *******************************************************************************
- */
-#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
-extern ysf_err_t ysf_event_init( void );
-extern ysf_err_t ysf_event_post( uint16_t );
-extern ysf_err_t ysf_event_read( uint16_t* );
-extern ysf_err_t ysf_event_handler_register(uint16_t, ysf_err_t (*handler)(uint16_t));
-extern ysf_err_t ysf_event_handler_writeoff(uint16_t, ysf_err_t (*handler)(uint16_t));
-extern ysf_err_t ysf_event_handler( void );
-#endif
+ */ 
+#if USE_YSF_DEBUG_API
+extern ysf_err_t ysf_debug_init(void);
+extern void ysf_assert_failed(uint8_t*, uint32_t);
+#endif        
+
+/**@} */
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -83,6 +90,6 @@ extern ysf_err_t ysf_event_handler( void );
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf event component  */
+/** @}*/     /** ysf debug component  */
 
 /**********************************END OF FILE*********************************/

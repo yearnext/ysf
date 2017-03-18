@@ -1,27 +1,27 @@
 /**
  ******************************************************************************
- * @file       memory.h
+ * @file       ysf_event.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017Äê2ÔÂ20ÈÕ
- * @brief      ysf_memory head file
- * @par        work paltform		                             
+ * @date       2017-2-12
+ * @brief      ysf event head file
+ * @par        work platform
  *                 Windows
- * @par        compiler paltform									                         
- * 				   GCC
+ * @par        compiler platform
+ *                 GCC
  ******************************************************************************
  * @note
- * 1.XXXXX                  						                     
+ * 1.XXXXX
  ******************************************************************************
  */
 
 /**
- * @defgroup ysf_memory component
+ * @defgroup ysf event component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_MEMORY_H__
-#define __YSF_MEMORY_H__
+#ifndef __YSF_EVENT_H__
+#define __YSF_EVENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -30,40 +30,33 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include "ysf_path.h"
-#include YSF_COMPONENT_BUFFER_PATH
+#include YSF_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        config ysf memory management switch
+ * @brief       event component debug config
  *******************************************************************************
  */
-#define USE_YSF_MEMORY_API  (1)
-
-/**
- *******************************************************************************
- * @brief        config ysf memory pool size
- *******************************************************************************
- */
-#define YSF_USE_MEMORY_SIZE (4096)
+#define USE_YSF_EVENT_API (1)
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        ysf memory management api
+ * @brief       define event api
  *******************************************************************************
  */
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-struct YSF_MEMORY_API
+#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
+struct YSF_EVENT_API
 {
-    void (*init)(void);
-    void *(*malloc)(ysf_mem_size_t);
-    void (*free)(void*);
-    ysf_mem_size_t (*len)(void);
-    ysf_mem_size_t (*alignment)(void);
-    ysf_mem_size_t (*useRate)(void);
-    bool (*isIn)(void *);
+    ysf_err_t (*init)(void);
+    ysf_err_t (*post)(uint16_t);
+    ysf_err_t (*read)(uint16_t*);
+    ysf_err_t (*reg)(uint16_t, ysf_err_t (*handler)(uint16_t));
+    ysf_err_t (*writeoff)(uint16_t, ysf_err_t (*handler)(uint16_t));
+    ysf_err_t (*handler)(void);
 };
 #endif
 
@@ -71,17 +64,16 @@ struct YSF_MEMORY_API
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        memory management function interface
+ * @brief       event function interface
  *******************************************************************************
  */
-#if USE_YSF_MEMORY_API
-extern void ysf_memory_init( void );
-extern void *ysf_memory_malloc(ysf_mem_size_t);
-extern void ysf_memory_free(void*);
-extern ysf_mem_size_t ysf_memory_get_len(void);
-extern ysf_mem_size_t ysf_memory_get_alignment(void);
-extern ysf_mem_size_t ysf_memory_cal_use_rate(void);
-extern bool ysf_memory_is_in(void*);
+#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
+extern ysf_err_t ysf_event_init( void );
+extern ysf_err_t ysf_event_post( uint16_t );
+extern ysf_err_t ysf_event_read( uint16_t* );
+extern ysf_err_t ysf_event_handler_register(uint16_t, ysf_err_t (*handler)(uint16_t));
+extern ysf_err_t ysf_event_handler_writeoff(uint16_t, ysf_err_t (*handler)(uint16_t));
+extern ysf_err_t ysf_event_handler( void );
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -91,6 +83,6 @@ extern bool ysf_memory_is_in(void*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf memory component  */
+/** @}*/     /** ysf event component  */
 
 /**********************************END OF FILE*********************************/

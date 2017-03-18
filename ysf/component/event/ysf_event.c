@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
-  * @file       event.c
+  * @file       ysf_event.c
   * @author     yearnext
   * @version    1.0.0
   * @date       2017-1-10
@@ -36,7 +36,7 @@
  * @brief       calculate events use memory size
  *******************************************************************************
  */
-#define YSF_EVENT_SIZE_CAL(event) YSF_CalTypeByteSize(event)
+#define YSF_EVENT_SIZE_CAL(event) CalTypeByteSize(event)
 
 /* Private typedef -----------------------------------------------------------*/
 /**
@@ -281,7 +281,7 @@ ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint1
     
     if( ysf_slist_walk((void**)&evt_hander[event], evtHandlerIsInList, (void **)handler, NULL) == false )
     {
-        evt_handler_node = (struct ysf_evt_handler_t *)ysf_memory_malloc(YSF_CalTypeByteSize(struct ysf_evt_handler_t));
+        evt_handler_node = (struct ysf_evt_handler_t *)ysf_memory_malloc(CalTypeByteSize(struct ysf_evt_handler_t));
     }
     else
     {
