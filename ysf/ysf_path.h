@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf config
+ * @defgroup ysf path config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -29,6 +29,7 @@ extern "C"
 {
 #endif
 
+/* Exported macro ------------------------------------------------------------*/
 #define YSF_HEAD_PATH                        "../ysf/ysf.h"
 #define YSF_EVENT_CONF_PATH                  "../ysf/ysf_event_conf.h"
     
@@ -54,12 +55,13 @@ extern "C"
 #define YSF_COMPONENT_DEBUG_PATH             "../ysf/component/debug/debug.h"
 #define YSF_COMPONENT_SINGLE_LIST_PATH       "../ysf/component/list/single_list.h"
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf path config  */
+/** @}*/     /** ysf path config  */
 
 /**********************************END OF FILE*********************************/

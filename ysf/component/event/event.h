@@ -76,12 +76,13 @@ extern ysf_err_t ysf_event_handler_writeoff(uint16_t, ysf_err_t (*handler)(uint1
 extern ysf_err_t ysf_event_handler( void );
 #endif
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf event component  */
+/** @}*/     /** ysf event component  */
 
 /**********************************END OF FILE*********************************/

@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
- * @file       ysf_commtools.h
+ * @file       tools.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017年1月10日
- * @brief      ysf 通用工具配置头文件
- * @par        工作平台
+ * @date       2017-1-10
+ * @brief      ysf tools head file
+ * @par        work platform
  *                 Windows
- * @par        编译平台
+ * @par        compiler platform
  *                 GCC
  ******************************************************************************
  * @note
@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf 通用工具配置
+ * @defgroup ysf tool component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -32,23 +32,39 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /**
- * @name ynf 应用工具
- * @{
+ *******************************************************************************
+ * @brief      YSF API USE STATUS CONFIG
+ *******************************************************************************
  */
-/** 变量名转换字符串宏 */
-#define Name2String(name)    (#name)
+#define Name2String(name)                    (#name)
 
-/** 计算类型所占内存的字节大小 */
-#define YSF_CalTypeByteSize(type) (sizeof(type) / sizeof(unsigned char))
+/**
+ *******************************************************************************
+ * @brief      YSF API USE STATUS CONFIG
+ *******************************************************************************
+ */
+#define CalTypeByteSize(type)            (sizeof(type) / sizeof(unsigned char))
 
-/** 计算类型所占内存的位数大小 */
-#define YSF_CalTypeBitSize(type)  (YSF_CalTypeByteSize(type) * 8)
+/**
+ *******************************************************************************
+ * @brief      YSF API USE STATUS CONFIG
+ *******************************************************************************
+ */
+#define CalTypeBitSize(type)             (YSF_CalTypeByteSize(type) * 8)
 
-/** 计算余数 */
-#define YSF_CalRemainder(dividend,divisor) ((dividend)%(divisor))
+/**
+ *******************************************************************************
+ * @brief      YSF API USE STATUS CONFIG
+ *******************************************************************************
+ */
+#define CalRemainder(dividend,divisor)   ((dividend)%(divisor))
 
-/** 计算是否存在余数 */
-#define YSF_CheckRemainder(dividend,divisor) ((((dividend)%(divisor)) != 0 ) \
+/**
+ *******************************************************************************
+ * @brief      YSF API USE STATUS CONFIG
+ *******************************************************************************
+ */
+#define CheckRemainder(dividend,divisor) ((((dividend)%(divisor)) != 0 ) \
                                              ? (1) : (0))
                                              
 /**@} */
@@ -62,6 +78,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf 通用工具配置  */
+/** @}*/     /* ysf tool component  */
 
 /**********************************END OF FILE*********************************/

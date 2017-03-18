@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ynf buffer component
+ * @defgroup ysf buffer component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -213,12 +213,13 @@ extern ysf_err_t ysf_memFree(struct ysf_mem_cb_t*, void*);
 extern bool ysf_memIsIn(struct ysf_mem_cb_t*, void*);
 #endif
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf_buffer  */
+/** @}*/     /** ysf buffer component  */
 
 /**********************************END OF FILE*********************************/

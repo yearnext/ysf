@@ -89,12 +89,13 @@ extern ysf_tick_t ysf_tick_get( void );
 extern ysf_tick_t ysf_past_tick_cal( void );
 #endif
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf tick component  */
+/** @}*/     /** ysf tick component  */
 
 /**********************************END OF FILE*********************************/

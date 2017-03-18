@@ -150,12 +150,13 @@ _YSF_DEFINE_EVENT_END
 #else
 #endif
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf config  */
+/** @}*/     /** ysf config  */
 
 /**********************************END OF FILE*********************************/

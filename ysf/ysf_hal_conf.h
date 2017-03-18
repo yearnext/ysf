@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf config
+ * @defgroup ysf hal config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -43,12 +43,13 @@ extern "C"
 #else
 #endif
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf config  */
+/** @}*/     /** ysf hal config  */
 
 /**********************************END OF FILE*********************************/

@@ -108,12 +108,13 @@ struct YSF_API
 extern const struct YSF_API ysf;
 #endif
     
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf */
+/** @}*/     /** ysf */
 
 /**********************************END OF FILE*********************************/

@@ -137,6 +137,6 @@ bool ysf_memory_is_in(void *mem)
 
 #endif
 
-/** @}*/     /* ysf_memory component  */
+/** @}*/     /** ysf_memory component  */
 
 /**********************************END OF FILE*********************************/

@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf_buffer
+ * @defgroup ysf buffer component
  * @{
  */
 
@@ -639,6 +639,6 @@ bool ysf_memIsIn(struct ysf_mem_cb_t *mem, void *useMem)
 }
 #endif
 
-/** @}*/     /* ysf_buffer  */
+/** @}*/     /** ysf buffer component */
 
 /**********************************END OF FILE*********************************/

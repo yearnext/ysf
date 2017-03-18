@@ -21,6 +21,12 @@
 #ifndef __YSF_TIMER_H__
 #define __YSF_TIMER_H__
 
+/* Add c++ compatibility------------------------------------------------------*/
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
@@ -124,5 +130,10 @@ extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*);
 extern ysf_err_t ysf_timer_handler(uint16_t);
 #endif
 
-#endif      /* _USER_TIMER_ */
+/* Add c++ compatibility------------------------------------------------------*/
+#ifdef __cplusplus
+}
+#endif
+
+#endif      /** timer */
 /**********************************END OF FILE*********************************/

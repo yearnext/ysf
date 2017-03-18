@@ -95,12 +95,13 @@ extern ysf_err_t ysf_slist_del(void**, void**);
 extern ysf_err_t ysf_slist_isExist(void**, void**);
 #endif
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf single list component  */
+/** @}*/     /** ysf single list component  */
 
 /**********************************END OF FILE*********************************/

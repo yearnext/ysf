@@ -304,6 +304,6 @@ ysf_err_t ysf_slist_isExist( void **listHead, void **ctx )
 }
 #endif
 
-/** @}*/     /* ysf single list component  */
+/** @}*/     /** ysf single list component  */
 
 /**********************************END OF FILE*********************************/

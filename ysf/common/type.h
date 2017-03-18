@@ -3,11 +3,11 @@
  * @file       ysf_type.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017年1月10日
- * @brief      ysf 数据类型头文件
- * @par        工作平台
+ * @date       2017-1-10
+ * @brief      ysf type define head file
+ * @par        work platform
  *                 Windows
- * @par        编译平台
+ * @par        compiler platform
  *                 GCC
  ******************************************************************************
  * @note
@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf数据类型配置
+ * @defgroup ysf type
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -34,39 +34,40 @@ extern "C"
 #include YSF_COMPILER_PATH
 
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define ysf status type
+ *******************************************************************************
+ */
 typedef enum
 {
    ysf_disable  = 0,
    ysf_enable = !ysf_disable,
 }ysf_status_t;
 
-/**@} */
-
 /**
- * @name ysf 错误类型定义
- * @{
+ *******************************************************************************
+ * @brief      define ysf error type
+ *******************************************************************************
  */
 enum
 {
-    YSF_ERR_NONE,              /** 无错误     */
-    YSF_ERR_FAIL,              /** 失败错误   */
+    YSF_ERR_NONE,
+    YSF_ERR_FAIL,
     
-    YSF_ERR_NOT_READY,         /** 未就绪错误 */
-    YSF_ERR_NOT_SUPPORT,       /** 不支持错误 */
+    YSF_ERR_NOT_READY,
+    YSF_ERR_NOT_SUPPORT,
     
-    YSF_ERR_INVAILD_PTR,       /** 无效指针错误 */
-    YSF_ERR_INVAILD_PARAM,     /** 无效参数错误 */
+    YSF_ERR_INVAILD_PTR,
+    YSF_ERR_INVAILD_PARAM,
 
-    YSF_ERR_IO,                /** IO错误     */
+    YSF_ERR_IO,
     
-    YSF_ERR_BUG,               /** BUG错误    */
-    YSF_ERR_UNKNOW,            /** 未知错误   */  
+    YSF_ERR_BUG,
+    YSF_ERR_UNKNOW,
 };
 
 typedef int16_t ysf_err_t;
-/**@} */
-
-/**@} */
 
 #ifdef __cplusplus
 }
@@ -74,6 +75,6 @@ typedef int16_t ysf_err_t;
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf 编译器配置  */
+/** @}*/     /** ysf type  */
 
 /**********************************END OF FILE*********************************/

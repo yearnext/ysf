@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf ≈‰÷√
+ * @defgroup ysf config
  * @{
  */
 

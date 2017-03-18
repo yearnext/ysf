@@ -447,6 +447,6 @@ ysf_err_t ysf_signal_handler( void *param )
 
 #endif
 
-/** @}*/     /* ysf signal component  */
+/** @}*/     /** ysf signal component  */
 
 /**********************************END OF FILE*********************************/

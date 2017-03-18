@@ -84,12 +84,13 @@ extern ysf_mem_size_t ysf_memory_cal_use_rate(void);
 extern bool ysf_memory_is_in(void*);
 #endif
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf memory component  */
+/** @}*/     /** ysf memory component  */
 
 /**********************************END OF FILE*********************************/

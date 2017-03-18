@@ -152,6 +152,7 @@ extern ysf_err_t ysf_signal_disarm(struct ysf_signal_t*);
 extern ysf_err_t ysf_signal_handler(void *);
 #endif
                                        
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif

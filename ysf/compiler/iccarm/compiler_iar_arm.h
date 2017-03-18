@@ -3,11 +3,11 @@
  * @file       compiler_iar_arm.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017年1月10日
- * @brief      编译器配置 头文件
- * @par        工作平台
+ * @date       2017-1-10
+ * @brief      iar compiler head file
+ * @par        work platform
  *                 ARM
- * @par        编译平台
+ * @par        compiler platform
  *                 IAR
  ******************************************************************************
  * @note
@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ynf配置
+ * @defgroup iar compiler config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -30,34 +30,26 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-/**
- * @name IAR ARM编译器配置
- * @{
- */
-
-/**
- * @name IAR ARM包含头文件
- * @{
- */
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <intrinsics.h>
-    
-/**@} */
 
+/* Exported macro ------------------------------------------------------------*/
 /**
- * @name IAR ARM编译器宏
- * @{
+ *******************************************************************************
+ * @brief      define function name macro 
+ *******************************************************************************
  */
 #define __FUNCNAME__            __func__
 #define __YSF_FUNCNAME__        __func__
 
+/**
+ *******************************************************************************
+ * @brief      define compiler pragma cmd
+ *******************************************************************************
+ */
 #define PRAGMA(pragma)          _Pragma(#pragma)
 
 #if !defined(__CORTEX_M)
@@ -78,23 +70,9 @@ extern "C"
 #define YSF_EXPORT_API          __declspec(dllexport)
 
 /**
- * @name IAR ARM编译器大小端模式检测
- * @{
- */
-#if 0
-    #define COMPILER_USE_BIG_ENDIAN
-//    #warning The byte order of the compiler uses big endian mode!
-#else
-    #define COMPILER_USE_LITTLE_ENDIAN
-//    #warning The byte order of the compiler uses little endian mode!
-#endif
-/**@} */
-
-/**@} */
-
-/**
- * @name IAR ARM编译器字节对齐配置
- * @{
+ *******************************************************************************
+ * @brief      define compiler alignment cmd 
+ *******************************************************************************
  */
 #define ALIGN_HEAD(n)           PRAGMA(pack(push, n))
 #define ALIGN_TAIL(n)           PRAGMA(pack(pop))
@@ -106,16 +84,34 @@ extern "C"
 #define YSF_PACKED_HEAD         PRAGMA(pack(push, 1))
 #define YSF_PACKED_TAIL         PRAGMA(pack(pop))
     
+/**
+ *******************************************************************************
+ * @brief      define compiler critical cmd
+ *******************************************************************************
+ */
 #define YSF_ENTER_CRITICAL()    __disable_interrupt()
 #define YSF_EXIT_CRITICAL()     __enable_interrupt()
-    
-/**@} */
 
-#ifndef _STDINT
 /**
- * @name IAR ARM编译器数据类型定义
- * @{
+ *******************************************************************************
+ * @brief      size the end mode detection
+ *******************************************************************************
  */
+#if 0
+    #define COMPILER_USE_BIG_ENDIAN
+//    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+//    #warning The byte order of the compiler uses little endian mode!
+#endif
+
+/* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define int type
+ *******************************************************************************
+ */
+#ifndef _STDINT
 typedef unsigned char           uint8_t;
 typedef unsigned short          uint16_t;
 typedef unsigned int            uint32_t;
@@ -127,8 +123,9 @@ typedef int                     int32_t;
 typedef long long               int64_t;
 
 /**
- * @name IAR ARM基本数据类型最大最小值定义
- * @{
+ *******************************************************************************
+ * @brief      define int max value and min value
+ *******************************************************************************
  */
 #define INT8_MAX   (-128)
 #define INT16_MAX  (-32768)
@@ -149,9 +146,13 @@ typedef long long               int64_t;
 #define UINT16_MIN (0)
 #define UINT32_MIN (0U)
 #define UINT64_MIN (0ULL)
-/**@} */
 #endif
 
+/**
+ *******************************************************************************
+ * @brief      define bool type
+ *******************************************************************************
+ */
 #ifndef _STDBOOL
 typedef enum
 {
@@ -160,26 +161,33 @@ typedef enum
 }bool;
 #endif
 
+/**
+ *******************************************************************************
+ * @brief      define NULL
+ *******************************************************************************
+ */
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
 
+/**
+ *******************************************************************************
+ * @brief      define addr type
+ *******************************************************************************
+ */
 #if 1
 typedef uint32_t ysf_addr_t;
 #else
 typedef uint64_t ysf_addr_t;
 #endif
 
-/**@} */
-
-/**@} */
-
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf 编译器配置  */
+/** @}*/     /* iar compiler config  */
 
 /**********************************END OF FILE*********************************/

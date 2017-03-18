@@ -35,16 +35,13 @@ extern "C"
 #define ysf_pt_begin()
 #define ysf_pt_end()
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf pt component  */
+/** @}*/     /** ysf pt component  */
 
 /**********************************END OF FILE*********************************/

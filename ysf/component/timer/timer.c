@@ -461,5 +461,5 @@ ysf_err_t ysf_timer_handler( uint16_t event )
 
 #endif
 
-/** @}*/     /* ysf timer component */
+/** @}*/     /** ysf timer component */
  /**********************************END OF FILE*********************************/

@@ -394,6 +394,6 @@ ysf_err_t ysf_event_handler( void )
 
 #endif
 
-/** @}*/     /* ynf_event component  */
+/** @}*/     /** ysf event component  */
 
 /**********************************END OF FILE*********************************/

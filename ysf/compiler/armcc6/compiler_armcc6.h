@@ -3,11 +3,11 @@
  * @file       compiler_armcc6.h
  * @author     yearnext
  * @version    1.0.0
- * @date       2017年1月10日
- * @brief      编译器配置 头文件
- * @par        工作平台
+ * @date       2017-1-10
+ * @brief      armcc6 compiler head file
+ * @par        work platform
  *                 ARM
- * @par        编译平台
+ * @par        compiler platform
  *                 MDK
  ******************************************************************************
  * @note
@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ynf配置
+ * @defgroup armcc6 compiler config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -30,30 +30,16 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-/**
- * @name ARM Compiler 6编译器配置
- * @{
- */
-/**
- * @name ARM Compiler 6包含头文件
- * @{
- */
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
-    
-/**@} */
 
+/* Exported macro ------------------------------------------------------------*/
 /**
- * @name ARM Compiler 6编译器宏
- * @{
+ *******************************************************************************
+ * @brief      disable something for compiler warning
+ *******************************************************************************
  */
-#define USE_ARM_CLANG_COMPILER
-
 #pragma clang diagnostic ignored "-Wpadded" 
 #pragma clang diagnostic ignored "-Wunused-parameter" 
 #pragma clang diagnostic ignored "-Wswitch-enum" 
@@ -63,9 +49,19 @@ extern "C"
 #pragma clang diagnostic ignored "-Wunused-value"
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
+/**
+ *******************************************************************************
+ * @brief      define function name macro 
+ *******************************************************************************
+ */
 #define __FUNCNAME__            __func__
 #define __YSF_FUNCNAME__        __func__
 
+/**
+ *******************************************************************************
+ * @brief      define compiler pragma cmd
+ *******************************************************************************
+ */
 #define PRAGMA(pragma)          _Pragma(#pragma)
 
 #if !defined(__CORTEX_M)
@@ -85,27 +81,10 @@ extern "C"
 #define YSF_IMPORT_API          __declspec(dllimport)
 #define YSF_EXPORT_API          __declspec(dllexport)
 
-#define YSF_ENTER_CRITICAL()    __ASM volatile ("cpsid i" : : : "memory")
-#define YSF_EXIT_CRITICAL()     __ASM volatile ("cpsie i" : : : "memory")
-
 /**
- * @name ARM Compiler 6编译器大小端模式检测
- * @{
- */
-#if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
-    #define COMPILER_USE_BIG_ENDIAN
-//    #warning The byte order of the compiler uses big endian mode!
-#else
-    #define COMPILER_USE_LITTLE_ENDIAN
-//    #warning The byte order of the compiler uses little endian mode!
-#endif
-/**@} */
-
-/**@} */
-
-/**
- * @name ARM Compiler 6编译器字节对齐配置
- * @{
+ *******************************************************************************
+ * @brief      define compiler alignment cmd 
+ *******************************************************************************
  */
 #define ALIGN_HEAD(n)           PRAGMA(pack(push, n))
 #define ALIGN_TAIL(n)           PRAGMA(pack(pop))
@@ -117,13 +96,34 @@ extern "C"
 #define YSF_PACKED_HEAD         
 #define YSF_PACKED_TAIL
 
-/**@} */
-
-#ifndef __stdint_h
 /**
- * @name ARM Compiler 6编译器数据类型定义
- * @{
+ *******************************************************************************
+ * @brief      define compiler critical cmd
+ *******************************************************************************
  */
+#define YSF_ENTER_CRITICAL()    __ASM volatile ("cpsid i" : : : "memory")
+#define YSF_EXIT_CRITICAL()     __ASM volatile ("cpsie i" : : : "memory")
+
+/**
+ *******************************************************************************
+ * @brief      size the end mode detection
+ *******************************************************************************
+ */
+#if __BYTE_ORDER__==__ORDER_BIG_ENDIAN__
+    #define COMPILER_USE_BIG_ENDIAN
+//    #warning The byte order of the compiler uses big endian mode!
+#else
+    #define COMPILER_USE_LITTLE_ENDIAN
+//    #warning The byte order of the compiler uses little endian mode!
+#endif
+
+/* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define int type
+ *******************************************************************************
+ */
+#ifndef __stdint_h
 typedef unsigned char           uint8_t;
 typedef unsigned short          uint16_t;
 typedef unsigned int            uint32_t;
@@ -135,8 +135,9 @@ typedef int                     int32_t;
 typedef long long               int64_t;
 
 /**
- * @name ysf 基本数据类型最大最小值定义
- * @{
+ *******************************************************************************
+ * @brief      define int max value and min value
+ *******************************************************************************
  */
 #define INT8_MAX   (-128)
 #define INT16_MAX  (-32768)
@@ -157,9 +158,13 @@ typedef long long               int64_t;
 #define UINT16_MIN (0)
 #define UINT32_MIN (0U)
 #define UINT64_MIN (0ULL)
-/**@} */
 #endif
 
+/**
+ *******************************************************************************
+ * @brief      define bool type
+ *******************************************************************************
+ */
 #ifndef __bool_true_false_are_defined
 typedef enum
 {
@@ -168,25 +173,33 @@ typedef enum
 }bool;
 #endif
 
+/**
+ *******************************************************************************
+ * @brief      define NULL
+ *******************************************************************************
+ */
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
 
+/**
+ *******************************************************************************
+ * @brief      define addr type
+ *******************************************************************************
+ */
 #if 1
 typedef uint32_t ysf_addr_t;
 #else
 typedef uint64_t ysf_addr_t;
 #endif
-/**@} */
 
-/**@} */
-
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf 编译器配置  */
+/** @}*/     /* armcc6 compiler config  */
 
 /**********************************END OF FILE*********************************/

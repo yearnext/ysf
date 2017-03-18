@@ -4,7 +4,7 @@
  * @author     yearnext
  * @version    1.0.0
  * @date       2017-01-10
- * @brief      ysf's debug component header files
+ * @brief      ysf debug component header files
  * @par        work platform
  *                 Windows
  * @par        compiler
@@ -16,7 +16,7 @@
  */
 
 /**
- * @defgroup ysf's debug component
+ * @defgroup ysf debug component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -83,12 +83,13 @@ extern void ysf_assert_failed(uint8_t*, uint32_t);
 
 /**@} */
 
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* ysf's debug component  */
+/** @}*/     /** ysf debug component  */
 
 /**********************************END OF FILE*********************************/

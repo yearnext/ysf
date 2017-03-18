@@ -114,6 +114,6 @@ ysf_tick_t ysf_past_tick_cal( void )
 }
 
 #endif
-/** @}*/     /* ysf tick component */
+/** @}*/     /** ysf tick component */
 
 /**********************************END OF FILE*********************************/

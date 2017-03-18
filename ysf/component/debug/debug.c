@@ -4,7 +4,7 @@
  * @author     yearnext
  * @version    1.0.0
  * @date       2017-01-10
- * @brief      ysf's debug component source files
+ * @brief      debug component source files
  * @par        work platform
  *                 Windows
  * @par        compiler
@@ -63,6 +63,6 @@ void ysf_assert_failed(uint8_t* file, uint32_t line)
 }
 #endif
 
-/** @}*/     /* ysf debug component */
+/** @}*/     /** ysf debug component */
 
 /**********************************END OF FILE*********************************/

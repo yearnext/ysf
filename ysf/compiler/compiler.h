@@ -4,19 +4,19 @@
  * @author     yearnext
  * @version    1.0.0
  * @date       2017年1月10日
- * @brief      编译器配置 头文件
- * @par        工作平台
+ * @brief      compiler head file
+ * @par        work platform
  *                 Windows
- * @par        编译平台
+ * @par        compiler platform
  *                 GCC
  ******************************************************************************
  * @note
- * 1.目前仅支持IAR ARM编译器、MDK ARM编译器、GCC编译器、Visual Studio编译器。
+ * 1.currenly support only the armcc5 compiler, armcc6 compiler and iararm compiler
  ******************************************************************************
  */
 
 /**
- * @defgroup ynf配置
+ * @defgroup compiler config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -56,6 +56,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /* 编译器配置  */
+/** @}*/     /** compiler config  */
 
 /**********************************END OF FILE*********************************/
