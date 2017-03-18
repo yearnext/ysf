@@ -30,7 +30,7 @@
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf tick count
+ * @brief       framework tick
  *******************************************************************************
  */
 #if USE_YSF_TICK_API
@@ -43,7 +43,7 @@ static ysf_tick_t tick = 0;
 #if USE_YSF_TICK_API
 /**
  *******************************************************************************
- * @brief       tick value initialization
+ * @brief       tick initialization
  * @param       [in/out]  void
  * @return      [in/out]  void
  * @note        None
@@ -76,7 +76,7 @@ void ysf_tick_inc( void )
  *******************************************************************************
  * @brief       tick value get
  * @param       [in/out]  void
- * @return      [in/out]  ysf_tick_t    tick
+ * @return      [in/out]  ysf_tick_t    now tick
  * @note        None
  *******************************************************************************
  */
@@ -87,9 +87,9 @@ ysf_tick_t ysf_tick_get( void )
 
 /**
  *******************************************************************************
- * @brief       read past tick
+ * @brief       calculate the distance past the previous read tick tick
  * @param       [in/out]  void
- * @return      [in/out]  ysf_tick_t    tick
+ * @return      [in/out]  ysf_tick_t    past tick
  * @note        None
  *******************************************************************************
  */
@@ -114,6 +114,6 @@ ysf_tick_t ysf_past_tick_cal( void )
 }
 
 #endif
-/** @}*/     /* ysf tick  */
+/** @}*/     /* ysf tick component */
 
 /**********************************END OF FILE*********************************/

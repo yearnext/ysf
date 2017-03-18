@@ -33,6 +33,7 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_YSF_BUFFER_API
 /**
  *******************************************************************************
  * @brief       ring buffer init
@@ -104,7 +105,8 @@ ysf_buf_size_t ysf_rbCanRead( struct ysf_rb_t *rb )
  * @note        one byte in the ring buffer is occupied by the control system
  *******************************************************************************
  */
-YSF_STATIC_INLINE ysf_buf_size_t ysf_rbCanWrite( struct ysf_rb_t *rb )
+YSF_STATIC_INLINE 
+ysf_buf_size_t ysf_rbCanWrite( struct ysf_rb_t *rb )
 {
     ysf_assert(IS_PTR_NULL(rb));
 
@@ -229,7 +231,7 @@ ysf_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, ysf_buf_size_t rbSize)
 
         return YSF_ERR_NONE;
     }
-#if USE_YSF_BUFFER_DEBUG
+#if defined(USE_YSF_BUFFER_DEBUG) && USE_YSF_BUFFER_DEBUG
     else
     {
         ysf_log("%s Read data size is too long! \n",__FUNCTION__);
@@ -239,7 +241,9 @@ ysf_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, ysf_buf_size_t rbSize)
 
     return YSF_ERR_FAIL;
 }
+#endif
 
+#if USE_YSF_MEMORY_MANAGEMENT_API
 /**
  *******************************************************************************
  * @brief       memory block init
@@ -347,6 +351,15 @@ ysf_mem_size_t ysf_memUseBlockCal(struct ysf_mem_cb_t *mem, struct ysf_mem_block
     return (size / mem->alignment);
 }
 
+/**
+ *******************************************************************************
+ * @brief       detection this memory is init
+ * @param       [in/out]  *mem           memory management block
+ * @return      [in/out]  false          this memory is not initialized
+ * @return      [in/out]  true           this memory is initialized
+ * @note        None
+ *******************************************************************************
+ */
 YSF_STATIC_INLINE
 bool ysf_memIsInit(struct ysf_mem_cb_t *mem)
 {
@@ -591,6 +604,16 @@ ysf_err_t ysf_memFree(struct ysf_mem_cb_t *mem, void *useMem)
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       detection whether memory areas
+ * @param       [in/out]  *mem           memory management block
+ * @param       [in/out]  *useMem        need to test addresses
+ * @return      [in/out]  false          the address not in this memory areas
+ * @return      [in/out]  true           the address is in this memory areas
+ * @note        None 
+ *******************************************************************************
+ */
 bool ysf_memIsIn(struct ysf_mem_cb_t *mem, void *useMem)
 {    
     if( useMem == NULL )
@@ -614,6 +637,7 @@ bool ysf_memIsIn(struct ysf_mem_cb_t *mem, void *useMem)
     
 //    return false;
 }
+#endif
 
 /** @}*/     /* ysf_buffer  */
 

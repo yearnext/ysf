@@ -30,14 +30,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "../ysf/common/ysf_type.h"
-
 /* Exported macro ------------------------------------------------------------*/
-struct ysf_pt_t
-{
-
-};
-
+#define ysf_pt_init()
 #define ysf_pt_begin()
 #define ysf_pt_end()
 
