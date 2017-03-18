@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file       ysf_memory.h
+ * @file       memory.h
  * @author     yearnext
  * @version    1.0.0
  * @date       2017Äê2ÔÂ20ÈÕ
@@ -34,11 +34,27 @@ extern "C"
 #include YSF_COMPONENT_BUFFER_PATH
 
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        config ysf memory management switch
+ *******************************************************************************
+ */
 #define USE_YSF_MEMORY_API  (1)
 
-#define USE_YSF_MEMORY_SIZE (4096)
+/**
+ *******************************************************************************
+ * @brief        config ysf memory pool size
+ *******************************************************************************
+ */
+#define YSF_USE_MEMORY_SIZE (4096)
 
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        ysf memory management api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
 struct YSF_MEMORY_API
 {
     void (*init)(void);
@@ -49,9 +65,15 @@ struct YSF_MEMORY_API
     ysf_mem_size_t (*useRate)(void);
     bool (*isIn)(void *);
 };
+#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        memory management function interface
+ *******************************************************************************
+ */
 #if USE_YSF_MEMORY_API
 extern void ysf_memory_init( void );
 extern void *ysf_memory_malloc(ysf_mem_size_t);

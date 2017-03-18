@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file       ysf_memory.c
+ * @file       memory.c
  * @author     yearnext
  * @version    1.0.0
  * @date       2017Äê2ÔÂ20ÈÕ
@@ -29,48 +29,110 @@
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-#if USE_YSF_MEMORY_API
-static uint8_t ysfMemory[USE_YSF_MEMORY_SIZE];
-static struct ysf_mem_cb_t ysfMemoryCB;
+/**
+ *******************************************************************************
+ * @brief        define ysf memory management vailables
+ *******************************************************************************
+ */
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+static uint8_t memory[YSF_USE_MEMORY_SIZE];
+static struct ysf_mem_cb_t memoryManagemrntCB;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_MEMORY_API
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+/**
+ *******************************************************************************
+ * @brief       init ysf memory 
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
 void ysf_memory_init( void )
 {
-    ysf_memInit(&ysfMemoryCB, ysfMemory, sizeof(ysfMemory));
+    ysf_memInit(&memoryManagemrntCB, memory, sizeof(memory));
 }
 
+/**
+ *******************************************************************************
+ * @brief       allocating memory
+ * @param       [in/out]  size               allocated memory size
+ * @return      [in/out]  void*              return allocated memory
+ * @note        None
+ *******************************************************************************
+ */
 void *ysf_memory_malloc( ysf_mem_size_t size )
 {
-    return ysf_memMalloc(&ysfMemoryCB, size);
+    return ysf_memMalloc(&memoryManagemrntCB, size);
 }
 
+/**
+ *******************************************************************************
+ * @brief       free memory
+ * @param       [in/out]  void*              allocated memory size
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
 void ysf_memory_free( void *mem )
 {
-    ysf_memFree(&ysfMemoryCB, mem);
+    ysf_memFree(&memoryManagemrntCB, mem);
 }
 
+/**
+ *******************************************************************************
+ * @brief       get memory len
+ * @param       [in/out]  void
+ * @return      [in/out]  ysf_mem_size_t    memory len
+ * @note        None
+ *******************************************************************************
+ */
 ysf_mem_size_t ysf_memory_get_len(void)
 {
-    return ysf_memGetLen(&ysfMemoryCB);
+    return ysf_memGetLen(&memoryManagemrntCB);
 }
 
+/**
+ *******************************************************************************
+ * @brief       get memory alignment
+ * @param       [in/out]  void
+ * @return      [in/out]  ysf_mem_size_t    memory alignment size
+ * @note        None
+ *******************************************************************************
+ */
 ysf_mem_size_t ysf_memory_get_alignment(void)
 {
-    return ysf_memGetAlignment(&ysfMemoryCB);
+    return ysf_memGetAlignment(&memoryManagemrntCB);
 }
 
+/**
+ *******************************************************************************
+ * @brief       get memory use rate
+ * @param       [in/out]  void
+ * @return      [in/out]  ysf_mem_size_t    use rate
+ * @note        None
+ *******************************************************************************
+ */
 ysf_mem_size_t ysf_memory_cal_use_rate(void)
 {
-    return ysf_memUseRateCal(&ysfMemoryCB);
+    return ysf_memUseRateCal(&memoryManagemrntCB);
 }
 
+/**
+ *******************************************************************************
+ * @brief       detecting the memory is in memory pool
+ * @param       [in/out]  void*             wait detect memory
+ * @return      [in/out]  false             the memory not in memory pool
+ * @return      [in/out]  true              the memory is in memory pool
+ * @note        None
+ *******************************************************************************
+ */
 bool ysf_memory_is_in(void *mem)
 {
-    return ysf_memIsIn(&ysfMemoryCB, mem);
+    return ysf_memIsIn(&memoryManagemrntCB, mem);
 }
 
 #endif

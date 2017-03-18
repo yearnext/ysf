@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file       ysf_single_list.h
+ * @file       single_list.h
  * @author     yearnext
  * @version    1.0.0
  * @date       2017Äê2ÔÂ18ÈÕ
@@ -34,6 +34,13 @@ extern "C"
 #include YSF_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       config single list api switch
+ *******************************************************************************
+ */
+#define USE_YSF_SINGLE_LIST_API (1)
+    
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -46,8 +53,19 @@ struct ysf_sList_t
     uint8_t        data[];
 };
 
+/**
+ *******************************************************************************
+ * @brief       define visit list function type
+ *******************************************************************************
+ */
 typedef bool (*sListFunc)(void **, void **, void **);
 
+/**
+ *******************************************************************************
+ * @brief       ysf single list api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
 struct YSF_SLIST_API
 {
     ysf_err_t (*init)(void**);
@@ -55,11 +73,16 @@ struct YSF_SLIST_API
     ysf_err_t (*del)(void**, void **);
     ysf_err_t (*isExist)(void**, void **);
 };
+#endif
 
 /* Exported variables --------------------------------------------------------*/
-extern const struct YSF_SLIST_API ysf_sList;
-
 /* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define single list function interface
+ *******************************************************************************
+ */
+#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
 extern bool ysf_slist_walk(void**, sListFunc, void**, void**);
 extern bool ysf_slist_module_add(void**, void**, void**);
 extern bool ysf_slist_module_del(void**, void**, void**);
@@ -70,6 +93,8 @@ extern ysf_err_t ysf_slist_init(void**);
 extern ysf_err_t ysf_slist_add(void**, void**);
 extern ysf_err_t ysf_slist_del(void**, void**);
 extern ysf_err_t ysf_slist_isExist(void**, void**);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
