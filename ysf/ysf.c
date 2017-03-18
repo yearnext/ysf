@@ -24,13 +24,23 @@
 #include "ysf.h"
 
 /* Private define ------------------------------------------------------------*/
-#if USE_YSF_API
+/**
+ *******************************************************************************
+ * @brief      define ysf function
+ *******************************************************************************
+ */
+#if defined(USE_YSF_API) && USE_YSF_API
 void ysf_init( ysf_err_t (*user_init)(void) );
 void ysf_start(void);
 #endif
 
 /* Exported variables --------------------------------------------------------*/
-#if USE_YSF_API
+/**
+ *******************************************************************************
+ * @brief      ysf api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_API) && USE_YSF_API
 const struct YSF_API ysf = 
 {
     .init                     = ysf_init,
@@ -66,9 +76,11 @@ const struct YSF_API ysf =
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
     .timer.init               = ysf_timer_init,
     .timer.handler            = ysf_timer_handler,
+    
     .timer.simple.cb_arm      = ysf_timerSimple_cb_arm,
     .timer.simple.evt_arm     = ysf_timerSimple_evt_arm,
     .timer.simple.disarm      = ysf_timer_disarm,
+    
     .timer.ex.cb_init         = ysf_timerEx_cb_init,
     .timer.ex.evt_init        = ysf_timerEx_evt_init,
     .timer.ex.arm             = ysf_timerEx_arm,
@@ -80,9 +92,10 @@ const struct YSF_API ysf =
     .signal.handler           = ysf_signal_handler,
 
     .signal.simple.arm        = ysf_signalSimple_arm,
-
+    .signal.simple.disarm     = ysf_signal_disarm,
+    
     .signal.ex.arm            = ysf_signalEx_arm,
-    .signal.ex.disarm         = ysf_signalEx_disarm,
+    .signal.ex.disarm         = ysf_signal_disarm,
 #endif
 
 #if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
@@ -93,6 +106,14 @@ const struct YSF_API ysf =
 #endif
 
 /* Private functions ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       ysf init
+ * @param       [in/out]  *user_init     user init function
+ * @return      [in/out]  void
+ * @note        initialize ysf component
+ *******************************************************************************
+ */
 void ysf_init( ysf_err_t (*user_init)(void) )
 {
     YSF_ENTER_CRITICAL();
@@ -134,6 +155,14 @@ void ysf_init( ysf_err_t (*user_init)(void) )
     YSF_EXIT_CRITICAL();
 }
 
+/**
+ *******************************************************************************
+ * @brief       ysf start
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        start ysf component
+ *******************************************************************************
+ */
 void ysf_start(void)
 {
     while(1)
@@ -146,6 +175,6 @@ void ysf_start(void)
     }
 }
 
-/** @}*/     /* ysf ≈‰÷√  */
+/** @}*/     /** ysf config */
 
 /**********************************END OF FILE*********************************/

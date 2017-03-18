@@ -26,6 +26,11 @@
 /* Private define ------------------------------------------------------------*/                                                        
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       device port define
+ *******************************************************************************
+ */  
 static struct ysf_map_gpio_t led1 = 
 {
     .port = MCU_PORT_D,
@@ -54,15 +59,28 @@ static struct ysf_map_gpio_t key2 =
     .mode = GPIO_PIN_I_UD_MODE,
 };
 
+/**
+ *******************************************************************************
+ * @brief       timer variable define
+ *******************************************************************************
+ */ 
 static struct ysf_timer_t *led1Timer;
 static struct ysf_timer_t led2Timer;
+
+/**
+ *******************************************************************************
+ * @brief       signal variable define
+ *******************************************************************************
+ */
 static struct ysf_signal_t key1Signal;
+
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+
 /**
  *******************************************************************************
- * @brief       LED 驱动相关
+ * @brief       led1 blink function
  *******************************************************************************
  */
 static ysf_err_t led1_blink_event_handler( uint16_t event )
@@ -79,6 +97,11 @@ static ysf_err_t led1_blink_event_handler( uint16_t event )
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       led2 blink function
+ *******************************************************************************
+ */
 static ysf_err_t bsp_led2_blink( void *param )
 {   
     if( hal.msp.gpio.get(led2.port, led2.pin) == true )
@@ -93,6 +116,11 @@ static ysf_err_t bsp_led2_blink( void *param )
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       device led init function
+ *******************************************************************************
+ */
 static void bsp_led_init( void )
 {
     hal.map.gpio.init(&led1);
@@ -108,7 +136,7 @@ static void bsp_led_init( void )
 
 /**
  *******************************************************************************
- * @brief       key 控制相关
+ * @brief       key1 scan function
  *******************************************************************************
  */
 static enum ysf_signal_status_t key1_scan( void )
@@ -116,11 +144,21 @@ static enum ysf_signal_status_t key1_scan( void )
     return ( hal.map.gpio.get(&key1) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
 }
 
+/**
+ *******************************************************************************
+ * @brief       key2 scan function
+ *******************************************************************************
+ */
 static enum ysf_signal_status_t key2_scan( void )
 {
     return ( hal.map.gpio.get(&key2) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
 }
 
+/**
+ *******************************************************************************
+ * @brief       key1 handler function
+ *******************************************************************************
+ */
 static void key1_handler(enum ysf_signal_status_t status)
 {
     switch(status)
@@ -145,6 +183,11 @@ static void key1_handler(enum ysf_signal_status_t status)
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       key2 handler function
+ *******************************************************************************
+ */
 static void key2_handler(enum ysf_signal_status_t status)
 {
     switch(status)
@@ -169,6 +212,11 @@ static void key2_handler(enum ysf_signal_status_t status)
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       device key init function
+ *******************************************************************************
+ */
 static void bsp_key_init(void)
 {
     hal.map.gpio.init(&key1);
@@ -180,6 +228,11 @@ static void bsp_key_init(void)
     ysf.signal.ex.arm(&key1Signal, key2_scan, key2_handler);
 }
 
+/**
+ *******************************************************************************
+ * @brief       user init function
+ *******************************************************************************
+ */
 static ysf_err_t user_init( void )
 {
     bsp_led_init();
@@ -190,7 +243,7 @@ static ysf_err_t user_init( void )
 
 /**
  *******************************************************************************
- * @brief       主函数
+ * @brief       main function
  *******************************************************************************
  */
 int main( void )

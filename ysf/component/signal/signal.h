@@ -36,16 +36,31 @@ extern "C"
 #include YSF_COMPONENT_SINGLE_LIST_PATH
 
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       config signal api switch
+ *******************************************************************************
+ */
+#define USE_YSF_SIGNAL_API          (1)
+    
+/**
+ *******************************************************************************
+ * @brief       config signal time
+ *******************************************************************************
+ */
 #define YSF_SIGNAL_SCAN_TIME        YSF_TIME_2_TICK(10)
 #define YSF_SIGNAL_TIME2COUNT(n)    ((n)/YSF_SIGNAL_SCAN_TIME)
 
 #define YSF_SIGNAL_ACTIVE_LOW       !
 #define YSF_SIGNAL_ACTIVE_HIGH      !!
 #define YSF_SIGNAL_ACTIVE           YSF_SIGNAL_ACTIVE_LOW
-    
-#define USE_YSF_SIGNAL_API          (1)
-
+   
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define signal status enumeration
+ *******************************************************************************
+ */
 enum ysf_signal_status_t
 {
     SIGNAL_STATUS_INIT,
@@ -65,6 +80,11 @@ enum ysf_signal_status_t
     SIGNAL_STATUS_RELEASE_EDGE,
 };
 
+/**
+ *******************************************************************************
+ * @brief       define signal type
+ *******************************************************************************
+ */
 struct ysf_signal_t
 {
     struct
@@ -82,6 +102,12 @@ struct ysf_signal_t
     enum ysf_signal_status_t status;
 };
 
+/**
+ *******************************************************************************
+ * @brief       ysf signal api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
 struct YSF_SIGNAL_API
 {
     ysf_err_t (*init)(void);
@@ -89,7 +115,8 @@ struct YSF_SIGNAL_API
     
     struct
     {
-        ysf_err_t (*arm)(enum ysf_signal_status_t (*detect)(void), void (*handler)(enum ysf_signal_status_t));
+        struct ysf_signal_t *(*arm)(enum ysf_signal_status_t (*detect)(void), void (*handler)(enum ysf_signal_status_t));
+        ysf_err_t (*disarm)(struct ysf_signal_t *signal);
     }simple;
     
     struct
@@ -101,20 +128,26 @@ struct YSF_SIGNAL_API
         ysf_err_t (*disarm)(struct ysf_signal_t *signal);
     }ex;
 };
+#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_SIGNAL_API
+/**
+ *******************************************************************************
+ * @brief       ysf signal api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
 extern ysf_err_t ysf_signal_init(void);
 
-extern ysf_err_t ysf_signalSimple_arm(enum ysf_signal_status_t (*detect)(void), 
-                                      void (*handler)(enum ysf_signal_status_t));
+extern struct ysf_signal_t *ysf_signalSimple_arm(enum ysf_signal_status_t (*detect)(void), 
+                                                 void (*handler)(enum ysf_signal_status_t));
 
 extern ysf_err_t ysf_signalEx_arm(struct ysf_signal_t*, 
                                   enum ysf_signal_status_t (*detect)(void), 
                                   void (*handler)(enum ysf_signal_status_t));
                                        
-extern ysf_err_t ysf_signalEx_disarm(struct ysf_signal_t*);
+extern ysf_err_t ysf_signal_disarm(struct ysf_signal_t*);
                                        
 extern ysf_err_t ysf_signal_handler(void *);
 #endif

@@ -30,7 +30,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        timer api config switch
+ * @brief        config timer api switch
  *******************************************************************************
  */
 #define USE_YSF_TIMER_API        (1)
@@ -84,6 +84,7 @@ struct ysf_timer_t
  * @brief      interface function defineitions 
  *******************************************************************************
  */
+#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 struct YSF_TIMER_API
 {
     ysf_err_t (*init)(void);
@@ -103,10 +104,16 @@ struct YSF_TIMER_API
         ysf_err_t (*disarm)(struct ysf_timer_t*);
     }ex;
 };
+#endif
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_TIMER_API
+/**
+ *******************************************************************************
+ * @brief      defineitions interface function 
+ *******************************************************************************
+ */
+#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 extern ysf_err_t ysf_timer_init(void);
 extern struct ysf_timer_t *ysf_timerSimple_cb_arm(uint32_t, uint8_t, ysf_err_t (*func)(void*), void*);                                         
 extern struct ysf_timer_t *ysf_timerSimple_evt_arm(uint32_t, uint8_t, uint16_t);                                             

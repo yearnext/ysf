@@ -48,13 +48,13 @@
  * @brief      timer head node
  *******************************************************************************
  */
-#if USE_YSF_TIMER_API
+#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 static void *head = NULL;
 #endif
 
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_TIMER_API
+#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 /**
  *******************************************************************************
  * @brief       ysf timer component init
@@ -349,7 +349,7 @@ bool isTimerTrigger(ysf_tick_t sys, struct ysf_timer_t *timer)
 /**
  *******************************************************************************
  * @brief       timer trigger handler
- * @param       [in/out]  *timer         timer block
+ * @param       [in/out]  *timer     timer block
  * @return      [in/out]  false      timer handler failed
  * @return      [in/out]  true       timer handler success
  * @note        this is a static inline type function
@@ -391,8 +391,8 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
  * @param       [in/out]  **node         now timer node
  * @param       [in/out]  **ctx          elapsed time
  * @param       [in/out]  **expand       last timer node
- * @return      [in/out]  false      timer walk is not end
- * @return      [in/out]  true       timer walk is end
+ * @return      [in/out]  false          timer walk is not end
+ * @return      [in/out]  true           timer walk is end
  * @note        this is a static type function
  *******************************************************************************
  */
@@ -445,8 +445,8 @@ static bool ysf_timer_walk(void **node, void **ctx, void **expand)
 /**
  *******************************************************************************
  * @brief       timer handler
- * @return      [in/out]  YSF_ERR_NONE timer processing function without errors
- * @note        NONE
+ * @return      [in/out]  YSF_ERR_NONE    not happen error
+ * @note        timer processing function without errors
  *******************************************************************************
  */
 ysf_err_t ysf_timer_handler( uint16_t event )

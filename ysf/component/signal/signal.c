@@ -30,18 +30,37 @@
 #include YSF_COMPONENT_SINGLE_LIST_PATH
 
 /* Private define ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       add signal component to list
+ *******************************************************************************
+ */
 #define ysf_signal_add(signal_cb) \
                        ysf_slist_add((void **)&head, (void **)&(signal_cb))
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       signal component head point
+ *******************************************************************************
+ */
+#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
 static struct ysf_sList_t *head = NULL;
-//
-
+#endif
+                       
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_SIGNAL_API
+#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
+/**
+ *******************************************************************************
+ * @brief       ysf signal component init
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
 ysf_err_t ysf_signal_init( void )
 {    
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API    
@@ -57,24 +76,36 @@ ysf_err_t ysf_signal_init( void )
     return YSF_ERR_NONE;
 }
 
-ysf_err_t ysf_signalSimple_arm( enum ysf_signal_status_t (*detect)(void), void (*handler)(enum ysf_signal_status_t) )
+/**
+ *******************************************************************************
+ * @brief       signal simple component arm
+ * @param       [in/out]  *detect            signal detect function
+ * @param       [in/out]  *handler           handler detect function
+ * @return      [in/out]  YSF_ERR_NONE       arm success
+ * @return      [in/out]  YSF_ERR_FAIL       arm failed
+ * @note        None
+ *******************************************************************************
+ */
+struct ysf_signal_t *ysf_signalSimple_arm( enum ysf_signal_status_t (*detect)(void), void (*handler)(enum ysf_signal_status_t) )
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct ysf_signal_t *signal = (struct ysf_signal_t *)ysf_memory_malloc(sizeof(struct ysf_signal_t)/sizeof(char));
-    
-    if( signal == NULL )
-    {
-        return YSF_ERR_FAIL;
-    }
-    
+    struct ysf_signal_t *signal = NULL;
+        
     if( detect == NULL )
     {
-        return YSF_ERR_FAIL;
+        return NULL;
     }
     
     if( handler == NULL )
     {
-        return YSF_ERR_FAIL;
+        return NULL;
+    }
+    
+    signal = (struct ysf_signal_t *)ysf_memory_malloc(sizeof(struct ysf_signal_t)/sizeof(char));
+    
+    if( signal == NULL )
+    {
+        return NULL;
     }
     
     signal->control.next    = NULL;
@@ -87,13 +118,24 @@ ysf_err_t ysf_signalSimple_arm( enum ysf_signal_status_t (*detect)(void), void (
 
     ysf_signal_add(signal);
     
-    return YSF_ERR_NONE;
+    return signal;
     
 #else
-    return YSF_ERR_FAIL;
+    return NULL;
 #endif
 }
 
+/**
+ *******************************************************************************
+ * @brief       signal ex component arm
+ * @param       [in/out]  *signal            signal ex component
+ * @param       [in/out]  *detect            signal detect function
+ * @param       [in/out]  *handler           handler detect function
+ * @return      [in/out]  YSF_ERR_NONE       arm success
+ * @return      [in/out]  YSF_ERR_FAIL       arm failed
+ * @note        None
+ *******************************************************************************
+ */
 ysf_err_t ysf_signalEx_arm(struct ysf_signal_t *signal, 
                            enum ysf_signal_status_t (*detect)(void), 
                            void (*handler)(enum ysf_signal_status_t) )
@@ -126,7 +168,16 @@ ysf_err_t ysf_signalEx_arm(struct ysf_signal_t *signal,
     return YSF_ERR_NONE;
 }
 
-ysf_err_t ysf_signalEx_disarm(struct ysf_signal_t *signal)
+/**
+ *******************************************************************************
+ * @brief       signal component disarm
+ * @param       [in/out]  *signal            signal component
+ * @return      [in/out]  YSF_ERR_NONE       disarm success
+ * @return      [in/out]  YSF_ERR_FAIL       disarm failed
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_signal_disarm(struct ysf_signal_t *signal)
 {
     if( signal == NULL )
     {
@@ -138,15 +189,25 @@ ysf_err_t ysf_signalEx_disarm(struct ysf_signal_t *signal)
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       signal status judge
+ * @param       [in/out]  *signal            signal component
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
 YSF_STATIC_INLINE
 void ysf_signal_judge( struct ysf_signal_t *signal )
 {
-    enum ysf_signal_status_t status = signal->func.detect();
+    enum ysf_signal_status_t status;
 
-    if( signal == NULL )
+    if( signal == NULL || signal->func.detect == NULL || signal->func.handler == NULL)
     {
         return;
     }
+    
+    status = signal->func.detect();
     
     switch( signal->status )
     {
@@ -315,7 +376,18 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
     }
 }
 
-YSF_STATIC_INLINE
+/**
+ *******************************************************************************
+ * @brief       signal list walk
+ * @param       [in/out]  **node         now node
+ * @param       [in/out]  **ctx          none
+ * @param       [in/out]  **expand       last node
+ * @return      [in/out]  false          walk is not end
+ * @return      [in/out]  true           walk is end
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
 bool ysf_signal_walk( void **node, void **ctx, void **expand )
 {
     struct ysf_signal_t *signal = (struct ysf_signal_t *)(*node);
@@ -356,6 +428,14 @@ bool ysf_signal_walk( void **node, void **ctx, void **expand )
     return false;
 }
 
+/**
+ *******************************************************************************
+ * @brief       signal handler
+ * @param       [in/out]  *param         none
+ * @return      [in/out]  YSF_ERR_NONE   handler end
+ * @note        None
+ *******************************************************************************
+ */
 ysf_err_t ysf_signal_handler( void *param )
 {
     void *last = (void *)head;

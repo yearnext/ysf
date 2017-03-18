@@ -60,7 +60,12 @@ extern "C"
 #endif
 
 /* Exported types ------------------------------------------------------------*/
-#if USE_YSF_API    
+/**
+ *******************************************************************************
+ * @brief      define ysf api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_API) && USE_YSF_API   
 struct YSF_API
 {
     void (*init)(ysf_err_t (*user_init)(void));
@@ -94,7 +99,12 @@ struct YSF_API
 #endif    
 
 /* Exported variables --------------------------------------------------------*/    
-#if USE_YSF_API
+/**
+ *******************************************************************************
+ * @brief      define ysf api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_API) && USE_YSF_API
 extern const struct YSF_API ysf;
 #endif
     
