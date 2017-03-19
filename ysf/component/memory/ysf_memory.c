@@ -22,6 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
+#include YSF_COMPILER_PATH
 #include YSF_COMPONENT_MEMORY_PATH
 #include YSF_COMPONENT_BUFFER_PATH
 #include YSF_TYPE_PATH
@@ -35,7 +36,9 @@
  *******************************************************************************
  */
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#if 0
 static uint8_t memory[YSF_USE_MEMORY_SIZE];
+#endif
 static struct ysf_mem_cb_t memoryManagemrntCB;
 #endif
 
@@ -53,7 +56,8 @@ static struct ysf_mem_cb_t memoryManagemrntCB;
  */
 void ysf_memory_init( void )
 {
-    ysf_memInit(&memoryManagemrntCB, memory, sizeof(memory));
+//    ysf_memInit(&memoryManagemrntCB, memory, sizeof(memory));
+    ysf_memInit(&memoryManagemrntCB, (uint8_t *)MCU_HEAP_HEAD_ADDR, MCU_HEAP_SIZE);
 }
 
 /**

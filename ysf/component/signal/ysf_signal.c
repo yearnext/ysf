@@ -388,7 +388,7 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
  * @note        None
  *******************************************************************************
  */
-bool ysf_signal_walk( void **node, void **ctx, void **expand )
+static bool ysf_signal_walk( void **node, void **ctx, void **expand )
 {
     struct ysf_signal_t *signal = (struct ysf_signal_t *)(*node);
     struct ysf_signal_t *last   = (struct ysf_signal_t *)(*expand); 

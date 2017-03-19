@@ -123,14 +123,14 @@ struct YSF_RING_BUFFER_API
  * @brief       define memory pool size type
  *******************************************************************************
  */
-typedef uint16_t ysf_mem_size_t;
+typedef uint32_t ysf_mem_size_t;
 
 /**
  *******************************************************************************
  * @brief       define memory block type
  *******************************************************************************
  */
-YSF_ALIGN_HEAD(1)
+//YSF_ALIGN_HEAD(1)
 struct ysf_mem_block_t 
 {
 #define YSF_MEMORY_CB_NEXT_END (0)
@@ -142,7 +142,7 @@ struct ysf_mem_block_t
 
     uint8_t data[];
 };
-YSF_ALIGN_TAIL(1)
+//YSF_ALIGN_TAIL(1)
 
 /**
  *******************************************************************************
@@ -204,7 +204,7 @@ extern ysf_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
  *******************************************************************************
  */
 #if USE_YSF_MEMORY_MANAGEMENT_API
-extern ysf_err_t ysf_memInit(struct ysf_mem_cb_t*, uint8_t*, uint16_t);
+extern ysf_err_t ysf_memInit(struct ysf_mem_cb_t*, uint8_t*, ysf_mem_size_t);
 extern ysf_mem_size_t ysf_memGetLen(struct ysf_mem_cb_t*);
 extern ysf_mem_size_t ysf_memGetAlignment(struct ysf_mem_cb_t*);
 extern ysf_mem_size_t ysf_memUseRateCal(struct ysf_mem_cb_t*);

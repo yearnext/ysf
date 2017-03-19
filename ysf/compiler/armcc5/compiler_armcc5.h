@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -42,6 +43,17 @@ extern "C"
  */
 #define __FUNCNAME__            __func__
 #define __YSF_FUNCNAME__        __func__
+    
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU HEAP ADDRESS
+ *******************************************************************************
+ */
+extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
+
+#define MCU_HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
+#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
+#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - MCU_HEAP_HEAD_ADDR) 
 
 /**
  *******************************************************************************

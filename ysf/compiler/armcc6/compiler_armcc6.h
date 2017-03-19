@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -48,6 +49,17 @@ extern "C"
 #pragma clang diagnostic ignored "-Wunreachable-code-break"
 #pragma clang diagnostic ignored "-Wunused-value"
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU HEAP ADDRESS
+ *******************************************************************************
+ */
+extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
+
+#define MCU_HEAP_HEAD_ADDR    (Image$$RW_IRAM1$$ZI$$Limit)
+#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
+#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - MCU_HEAP_HEAD_ADDR) 
 
 /**
  *******************************************************************************
