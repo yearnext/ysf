@@ -118,7 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>o</Name>
+          <Name>痱?</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -160,9 +160,25 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
+          <LineNumber>134</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134221090</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\ysf\ysf.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../ysf/ysf.c\134</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
           <LineNumber>60</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222738</Address>
+          <Address>134221896</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -172,6 +188,38 @@
           <Filename>..\..\ysf\component\memory\ysf_memory.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\ysf_stm32_demo\../../ysf/component/memory/ysf_memory.c\60</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>284</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134220798</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\ysf\component\event\ysf_event.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../ysf/component/event/ysf_event.c\284</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>522</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134221666</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\ysf\component\buffer\ysf_buffer.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../ysf/component/buffer/ysf_buffer.c\522</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -303,7 +351,7 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>6</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\ysf\component\memory\ysf_memory.c</PathWithFileName>

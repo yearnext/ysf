@@ -282,6 +282,11 @@ ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint1
     if( ysf_slist_walk((void**)&evt_hander[event], evtHandlerIsInList, (void **)handler, NULL) == false )
     {
         evt_handler_node = (struct ysf_evt_handler_t *)ysf_memory_malloc(CalTypeByteSize(struct ysf_evt_handler_t));
+        
+        if( evt_handler_node == NULL )
+        {
+            return YSF_ERR_INVAILD_PTR;
+        }
     }
     else
     {

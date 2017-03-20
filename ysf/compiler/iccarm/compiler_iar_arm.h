@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -37,6 +38,17 @@ extern "C"
 #include <intrinsics.h>
 
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU HEAP ADDRESS
+ *******************************************************************************
+ */
+#pragma section="HEAP"
+
+#define MCU_HEAP_HEAD_ADDR    (__segment_end("HEAP"))
+#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
+#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - (uint32_t)MCU_HEAP_HEAD_ADDR) 
+
 /**
  *******************************************************************************
  * @brief      define function name macro 
