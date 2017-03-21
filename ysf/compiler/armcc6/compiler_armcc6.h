@@ -49,7 +49,7 @@ extern "C"
 #pragma clang diagnostic ignored "-Wunreachable-code-break"
 #pragma clang diagnostic ignored "-Wunused-value"
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
-#pragma clang diagnostic ignored "-Wdollar-in-identifier-extension"
+//#pragma clang diagnostic ignored "-Wdollar-in-identifier-extension"
 
 /**
  *******************************************************************************
@@ -195,22 +195,22 @@ typedef uint32_t ysf_addr_t;
 typedef uint64_t ysf_addr_t;
 #endif
 
-/**
- *******************************************************************************
- * @brief      DEFINE MCU HEAP ADDRESS
- *******************************************************************************
- */
-//extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
+///**
+// *******************************************************************************
+// * @brief      DEFINE MCU HEAP ADDRESS
+// *******************************************************************************
+// */
+////extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
 
-//#define MCU_HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
-//#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
-//#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - MCU_HEAP_HEAD_ADDR) 
+////#define MCU_HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
+////#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
+////#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - MCU_HEAP_HEAD_ADDR) 
 
-#define YSF_HEAP_SIZE (4096)    
-static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
-#define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
-#define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
-#define MCU_HEAP_SIZE         YSF_HEAP_SIZE
+//#define YSF_HEAP_SIZE (4096)    
+//static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
+//#define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
+//#define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
+//#define MCU_HEAP_SIZE         YSF_HEAP_SIZE
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

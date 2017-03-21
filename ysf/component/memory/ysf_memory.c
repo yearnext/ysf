@@ -36,6 +36,15 @@
  *******************************************************************************
  */
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#ifndef MCU_HEAP_HEAD_ADDR
+#define YSF_HEAP_SIZE         (4096)    
+YSF_ALIGN_HEAD(1)
+static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
+YSF_ALIGN_TAIL(1)
+#define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
+#define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
+#define MCU_HEAP_SIZE         YSF_HEAP_SIZE
+#endif
 static struct ysf_mem_cb_t memoryManagemrntCB;
 #endif
 

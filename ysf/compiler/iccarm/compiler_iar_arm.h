@@ -182,22 +182,22 @@ typedef uint32_t ysf_addr_t;
 typedef uint64_t ysf_addr_t;
 #endif
 
-/**
- *******************************************************************************
- * @brief      DEFINE MCU HEAP ADDRESS
- *******************************************************************************
- */
-//#pragma section="HEAP"
+///**
+// *******************************************************************************
+// * @brief      DEFINE MCU HEAP ADDRESS
+// *******************************************************************************
+// */
+////#pragma section="HEAP"
+////
+////#define MCU_HEAP_HEAD_ADDR    (__segment_end("HEAP"))
+////#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
+////#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - (uint32_t)MCU_HEAP_HEAD_ADDR) 
 //
-//#define MCU_HEAP_HEAD_ADDR    (__segment_end("HEAP"))
-//#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
-//#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - (uint32_t)MCU_HEAP_HEAD_ADDR) 
-
-#define YSF_HEAP_SIZE (4096)    
-static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
-#define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
-#define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
-#define MCU_HEAP_SIZE         YSF_HEAP_SIZE
+//#define YSF_HEAP_SIZE (4096)    
+//static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
+//#define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
+//#define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
+//#define MCU_HEAP_SIZE         YSF_HEAP_SIZE
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
