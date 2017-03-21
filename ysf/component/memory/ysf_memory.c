@@ -36,9 +36,6 @@
  *******************************************************************************
  */
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-#if 0
-static uint8_t memory[YSF_USE_MEMORY_SIZE];
-#endif
 static struct ysf_mem_cb_t memoryManagemrntCB;
 #endif
 
