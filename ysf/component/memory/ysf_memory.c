@@ -53,7 +53,6 @@ static struct ysf_mem_cb_t memoryManagemrntCB;
  */
 void ysf_memory_init( void )
 {
-//    ysf_memInit(&memoryManagemrntCB, memory, sizeof(memory));
     ysf_memInit(&memoryManagemrntCB, (uint8_t *)MCU_HEAP_HEAD_ADDR, MCU_HEAP_SIZE);
 }
 

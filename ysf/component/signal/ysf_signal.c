@@ -63,7 +63,7 @@ static struct ysf_sList_t *head = NULL;
  */
 ysf_err_t ysf_signal_init( void )
 {    
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API    
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
     ysf_timerSimple_cb_arm(YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM, ysf_signal_handler, NULL);
 #else
     static struct ysf_timer_t signal;
