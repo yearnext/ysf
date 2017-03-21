@@ -37,9 +37,9 @@ extern "C"
 #endif
     
 #if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-    #include "../ysf/hal/stm32f1xx/hal.h"
+    #include "../framework/hal/stm32f1xx/hal.h"
 #elif __TARGET_CHIP__ == USE_MCU_STM8S
-    #include "../ysf/hal/stm8s/hal.h"
+    #include "../framework/hal/stm8s/hal.h"
 #else
 #endif
 

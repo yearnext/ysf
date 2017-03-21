@@ -30,11 +30,11 @@ extern "C"
 #endif
 
 /* Hal path macro ------------------------------------------------------------*/
-#define YSF_MAL_PATH          "../ysf/hal/stm32f1xx/mal/mal.h"
-#define YSF_MSP_GPIO_PATH     "../ysf/hal/stm32f1xx/gpio.h"
-#define YSF_MSP_TIMER_PATH    "../ysf/hal/stm32f1xx/timer.h"
-#define YSF_MAL_CORE_CM3_PATH "../ysf/hal/stm32f1xx/mal/cmsis/core_cm3.h"
-#define YSF_MAL_START_UP_PATH "../ysf/hal/stm32f1xx/startup/system_stm32f1xx.h"
+#define YSF_MAL_PATH          "../framework/hal/stm32f1xx/mal/mal.h"
+#define YSF_MSP_GPIO_PATH     "../framework/hal/stm32f1xx/gpio.h"
+#define YSF_MSP_TIMER_PATH    "../framework/hal/stm32f1xx/timer.h"
+#define YSF_MAL_CORE_CM3_PATH "../framework/hal/stm32f1xx/mal/cmsis/core_cm3.h"
+#define YSF_MAL_START_UP_PATH "../framework/hal/stm32f1xx/startup/system_stm32f1xx.h"
    
 /* Includes ------------------------------------------------------------------*/  
 #include YSF_MAL_PATH

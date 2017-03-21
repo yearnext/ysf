@@ -164,8 +164,8 @@ typedef enum
 /**
   * @}
   */
-#include "../ysf/hal/stm32f1xx/mal/cmsis/core_cm3.h"
-#include "../ysf/hal/stm32f1xx/startup/system_stm32f1xx.h"
+#include "../framework/hal/stm32f1xx/mal/cmsis/core_cm3.h"
+#include "../framework/hal/stm32f1xx/startup/system_stm32f1xx.h"
 
 /** @addtogroup Peripheral_registers_structures
   * @{

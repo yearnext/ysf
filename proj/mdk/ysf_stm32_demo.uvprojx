@@ -10,8 +10,8 @@
       <TargetName>debug</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pArmCC>6060000::V6.6::.\ARMCLANG</pArmCC>
-      <pCCUsed>6060000::V6.6::.\ARMCLANG</pCCUsed>
+      <pArmCC>5060422::V5.06 update 4 (build 422)::ARMCC</pArmCC>
+      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103ZE</Device>
@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\app;..\..\ysf</IncludePath>
+              <IncludePath>..\..\app;..\..\framework</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,47 +383,47 @@
             <File>
               <FileName>ysf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\ysf.c</FilePath>
+              <FilePath>..\..\framework\ysf.c</FilePath>
             </File>
             <File>
               <FileName>ysf_buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\buffer\ysf_buffer.c</FilePath>
+              <FilePath>..\..\framework\component\buffer\ysf_buffer.c</FilePath>
             </File>
             <File>
               <FileName>ysf_debug.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\debug\ysf_debug.c</FilePath>
+              <FilePath>..\..\framework\component\debug\ysf_debug.c</FilePath>
             </File>
             <File>
               <FileName>ysf_event.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\event\ysf_event.c</FilePath>
+              <FilePath>..\..\framework\component\event\ysf_event.c</FilePath>
             </File>
             <File>
               <FileName>ysf_single_list.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\list\ysf_single_list.c</FilePath>
+              <FilePath>..\..\framework\component\list\ysf_single_list.c</FilePath>
             </File>
             <File>
               <FileName>ysf_memory.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\memory\ysf_memory.c</FilePath>
+              <FilePath>..\..\framework\component\memory\ysf_memory.c</FilePath>
             </File>
             <File>
               <FileName>ysf_signal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\signal\ysf_signal.c</FilePath>
+              <FilePath>..\..\framework\component\signal\ysf_signal.c</FilePath>
             </File>
             <File>
               <FileName>ysf_tick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\tick\ysf_tick.c</FilePath>
+              <FilePath>..\..\framework\component\tick\ysf_tick.c</FilePath>
             </File>
             <File>
               <FileName>ysf_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\component\timer\ysf_timer.c</FilePath>
+              <FilePath>..\..\framework\component\timer\ysf_timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -433,12 +433,12 @@
             <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\stm32f1xx\startup\system_stm32f1xx.c</FilePath>
+              <FilePath>..\..\framework\hal\stm32f1xx\startup\system_stm32f1xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f103xe.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\ysf\hal\stm32f1xx\startup\arm\startup_stm32f103xe.s</FilePath>
+              <FilePath>..\..\framework\hal\stm32f1xx\startup\arm\startup_stm32f103xe.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -448,17 +448,17 @@
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\stm32f1xx\gpio.c</FilePath>
+              <FilePath>..\..\framework\hal\stm32f1xx\gpio.c</FilePath>
             </File>
             <File>
               <FileName>hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\stm32f1xx\hal.c</FilePath>
+              <FilePath>..\..\framework\hal\stm32f1xx\hal.c</FilePath>
             </File>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\ysf\hal\stm32f1xx\timer.c</FilePath>
+              <FilePath>..\..\framework\hal\stm32f1xx\timer.c</FilePath>
             </File>
           </Files>
         </Group>
