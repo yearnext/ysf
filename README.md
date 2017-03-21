@@ -33,32 +33,28 @@
 	 * @brief       device port define
 	 *******************************************************************************
 	 */  
-	static struct ysf_map_gpio_t led1 = 
-	{
-	    .port = MCU_PORT_D,
-	    .pin  = MCU_PIN_13,
-	    .mode = GPIO_PIN_O_PP_LS_MODE,
-	};
+	//static struct ysf_map_gpio_t led1 = 
+	//{
+	//    .port = MCU_PORT_D,
+	//    .pin  = MCU_PIN_13,
+	//};
 	
 	static struct ysf_map_gpio_t led2 = 
 	{
 	    .port = MCU_PORT_G,
 	    .pin  = MCU_PIN_14,
-	    .mode = GPIO_PIN_O_PP_LS_MODE,
 	};
 	
-	static struct ysf_map_gpio_t key1 = 
-	{
-	    .port = MCU_PORT_E,
-	    .pin  = MCU_PIN_0,
-	    .mode = GPIO_PIN_I_UD_MODE,
-	};
+	//static struct ysf_map_gpio_t key1 = 
+	//{
+	//    .port = MCU_PORT_E,
+	//    .pin  = MCU_PIN_0,
+	//};
 	
 	static struct ysf_map_gpio_t key2 = 
 	{
 	    .port = MCU_PORT_C,
 	    .pin  = MCU_PIN_13,
-	    .mode = GPIO_PIN_I_UD_MODE,
 	};
 
 	/**
@@ -83,13 +79,13 @@
 	 */
 	static ysf_err_t led1_blink_event_handler( uint16_t event )
 	{   
-	    if( hal.map.gpio.get(&led1) == true )
+	    if( msp.gpio.pin.get(MCU_PORT_D, MCU_PIN_13) == true )
 	    {
-	        hal.map.gpio.clr(&led1);
+	        msp.gpio.pin.clr(MCU_PORT_D, MCU_PIN_13);
 	    }
 	    else
 	    {
-	        hal.map.gpio.set(&led1);
+	        msp.gpio.pin.set(MCU_PORT_D, MCU_PIN_13);
 	    }
 	    
 	    return YSF_ERR_NONE;
@@ -102,18 +98,18 @@
 	 */
 	static ysf_err_t bsp_led2_blink( void *param )
 	{   
-	    if( hal.msp.gpio.get(led2.port, led2.pin) == true )
+	    if( msp.gpio.pin.get(led2.port, led2.pin) == true )
 	    {
-	        hal.msp.gpio.clr(led2.port, led2.pin);
+	        msp.gpio.pin.clr(led2.port, led2.pin);
 	    }
 	    else
 	    {
-	        hal.msp.gpio.set(led2.port, led2.pin);
+	        msp.gpio.pin.set(led2.port, led2.pin);
 	    }
 	    
 	    return YSF_ERR_NONE;
 	}
-	
+
 	/**
 	 *******************************************************************************
 	 * @brief       device led init function
@@ -121,13 +117,13 @@
 	 */
 	static void bsp_led_init( void )
 	{
-	    hal.map.gpio.init(&led1);
-	    hal.map.gpio.config(&led1);    
+	    msp.gpio.port.config.init(MCU_PORT_D);
+	    msp.gpio.pin.config.output(MCU_PORT_D, MCU_PIN_13, GPIO_PIN_O_PP_LS_MODE);    
 	    ysf.event.reg(LED1_BLINK_EVENT, led1_blink_event_handler);
 	    led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
 	
-	    hal.msp.gpio.init(led2.port);
-	    hal.msp.gpio.config(led2.port, led2.pin, led2.mode);
+	    map.gpio.port.config.init(&led2);
+	    map.gpio.pin.config.output(&led2, GPIO_PIN_O_PP_LS_MODE);  
 	    ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
 	    ysf.timer.ex.arm(&led2Timer, YSF_TIME_2_TICK(1000), 0);
 	}
@@ -139,7 +135,7 @@
 	 */
 	static enum ysf_signal_status_t key1_scan( void )
 	{
-	    return ( hal.map.gpio.get(&key1) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
+	    return ( msp.gpio.pin.get(MCU_PORT_E, MCU_PIN_0) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
 	}
 	
 	/**
@@ -149,7 +145,7 @@
 	 */
 	static enum ysf_signal_status_t key2_scan( void )
 	{
-	    return ( hal.map.gpio.get(&key2) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
+	    return ( map.gpio.pin.get(&key2) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
 	}
 	
 	/**
@@ -166,8 +162,8 @@
 	            ysf.timer.ex.disarm(&led2Timer);
 	            break;
 	        case SIGNAL_STATUS_PRESS:
-	            hal.map.gpio.clr(&led1);
-	            hal.map.gpio.clr(&led2);
+	            msp.gpio.pin.clr(MCU_PORT_D, MCU_PIN_13);
+	            map.gpio.pin.clr(&led2);
 	            break;
 	        case SIGNAL_STATUS_RELEASE_EDGE:
 	            ysf.event.reg(LED1_BLINK_EVENT, led1_blink_event_handler);
@@ -180,7 +176,7 @@
 	            break;
 	    }
 	}
-
+	
 	/**
 	 *******************************************************************************
 	 * @brief       key2 handler function
@@ -195,8 +191,8 @@
 	            ysf.timer.ex.disarm(&led2Timer);
 	            break;
 	        case SIGNAL_STATUS_PRESS:
-	            hal.map.gpio.set(&led1);
-	            hal.map.gpio.set(&led2);
+	            msp.gpio.pin.set(MCU_PORT_D, MCU_PIN_13);
+	            map.gpio.pin.set(&led2);
 	            break;
 	        case SIGNAL_STATUS_RELEASE_EDGE:
 	            ysf.event.reg(LED1_BLINK_EVENT, led1_blink_event_handler);
@@ -217,12 +213,12 @@
 	 */
 	static void bsp_key_init(void)
 	{
-	    hal.map.gpio.init(&key1);
-	    hal.map.gpio.config(&key1);
+	    msp.gpio.port.config.init(MCU_PORT_E);
+	    msp.gpio.pin.config.input(MCU_PORT_E, MCU_PIN_0, GPIO_PIN_I_UD_MODE);
 	    ysf.signal.simple.arm(key1_scan, key1_handler);
 	    
-	    hal.map.gpio.init(&key2);
-	    hal.map.gpio.config(&key2);
+	    map.gpio.port.config.init(&key2);
+	    map.gpio.pin.config.input(&key2, GPIO_PIN_I_UD_MODE);
 	    ysf.signal.ex.arm(&key1Signal, key2_scan, key2_handler);
 	}
 	
@@ -238,7 +234,7 @@
 	    
 	    return YSF_ERR_NONE;
 	}
-
+	
 	/**
 	 *******************************************************************************
 	 * @brief       main function

@@ -264,6 +264,11 @@ ysf_err_t msp_gpio_fini(uint8_t port)
     return YSF_ERR_NONE;
 }
 
+ysf_err_t msp_gpio_pin_fini(uint8_t port, uint8_t pin)
+{
+    return gpio_config(port, pin, GPIO_PIN_INIT_MODE);
+}
+
 ysf_err_t msp_gpio_config(uint8_t port, uint8_t pin, uint8_t mode)
 {
     return gpio_config(port, pin, mode);
@@ -303,11 +308,18 @@ ysf_err_t map_gpio_fini(struct ysf_map_gpio_t *gpio)
     return YSF_ERR_NONE;
 }
 
-ysf_err_t map_gpio_config(struct ysf_map_gpio_t *gpio)
+ysf_err_t map_gpio_config(struct ysf_map_gpio_t *gpio, uint8_t mode)
 {
     ysf_assert(IS_PTR_NULL(gpio));
     
-    return gpio_config(gpio->port, gpio->pin, gpio->mode);
+    return gpio_config(gpio->port, gpio->pin, mode);
+}
+
+ysf_err_t map_gpio_pin_fini(struct ysf_map_gpio_t *gpio)
+{
+    ysf_assert(IS_PTR_NULL(gpio));
+    
+    return gpio_config(gpio->port, gpio->pin, GPIO_PIN_INIT_MODE);
 }
 
 ysf_err_t map_gpio_set(struct ysf_map_gpio_t *gpio)

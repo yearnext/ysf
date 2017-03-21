@@ -117,33 +117,66 @@ struct ysf_map_gpio_t
 {
     uint8_t port;
     uint8_t pin;
-    uint8_t mode;
+//    uint8_t mode;
 };
     
 struct MSP_GPIO_API
 {
-    ysf_err_t (*init)(uint8_t);
-    ysf_err_t (*fini)(uint8_t);
-    ysf_err_t (*config)(uint8_t,uint8_t,uint8_t);
-    ysf_err_t (*set)(uint8_t,uint8_t);
-    ysf_err_t (*clr)(uint8_t,uint8_t);
-    bool (*get)(uint8_t,uint8_t);
+    struct
+    {
+        struct
+        {
+            ysf_err_t (*init)(uint8_t);
+            ysf_err_t (*fini)(uint8_t);
+        }config;
+    }port;
+    
+    struct
+    {
+        struct
+        {
+            ysf_err_t (*fini)(uint8_t, uint8_t);
+            ysf_err_t (*input)(uint8_t, uint8_t, uint8_t);
+            ysf_err_t (*output)(uint8_t, uint8_t, uint8_t);
+        }config;
+        
+        ysf_err_t (*set)(uint8_t,uint8_t);
+        ysf_err_t (*clr)(uint8_t,uint8_t);
+        bool (*get)(uint8_t,uint8_t);
+    }pin;
 }; 
 
 struct MAP_GPIO_API
 {
-    ysf_err_t (*init)(struct ysf_map_gpio_t*);
-    ysf_err_t (*fini)(struct ysf_map_gpio_t*);
-    ysf_err_t (*config)(struct ysf_map_gpio_t*);
-    ysf_err_t (*set)(struct ysf_map_gpio_t*);
-    ysf_err_t (*clr)(struct ysf_map_gpio_t*);
-    bool (*get)(struct ysf_map_gpio_t*);
+    struct
+    {
+        struct
+        {
+            ysf_err_t (*init)(struct ysf_map_gpio_t*);
+            ysf_err_t (*fini)(struct ysf_map_gpio_t*);
+        }config;
+    }port;
+    
+    struct
+    {
+        struct
+        {
+            ysf_err_t (*fini)(struct ysf_map_gpio_t*);
+            ysf_err_t (*input)(struct ysf_map_gpio_t*, uint8_t);
+            ysf_err_t (*output)(struct ysf_map_gpio_t*, uint8_t);
+        }config;
+        
+        ysf_err_t (*set)(struct ysf_map_gpio_t*);
+        ysf_err_t (*clr)(struct ysf_map_gpio_t*);
+        bool (*get)(struct ysf_map_gpio_t*);
+    }pin;
 };
     
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 extern ysf_err_t msp_gpio_init(uint8_t);
 extern ysf_err_t msp_gpio_fini(uint8_t);
+extern ysf_err_t msp_gpio_pin_fini(uint8_t, uint8_t);
 extern ysf_err_t msp_gpio_config(uint8_t,uint8_t,uint8_t);
 extern ysf_err_t msp_gpio_set(uint8_t,uint8_t);
 extern ysf_err_t msp_gpio_clr(uint8_t,uint8_t);
@@ -151,7 +184,8 @@ extern bool msp_gpio_get(uint8_t,uint8_t);
 
 extern ysf_err_t map_gpio_init(struct ysf_map_gpio_t*);
 extern ysf_err_t map_gpio_fini(struct ysf_map_gpio_t*);
-extern ysf_err_t map_gpio_config(struct ysf_map_gpio_t*);
+extern ysf_err_t map_gpio_config(struct ysf_map_gpio_t*, uint8_t);
+extern ysf_err_t map_gpio_pin_fini(struct ysf_map_gpio_t*);
 extern ysf_err_t map_gpio_set(struct ysf_map_gpio_t*);
 extern ysf_err_t map_gpio_clr(struct ysf_map_gpio_t*);
 extern bool map_gpio_get(struct ysf_map_gpio_t*);

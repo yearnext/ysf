@@ -121,7 +121,7 @@ void ysf_init( ysf_err_t (*user_init)(void) )
     ysf.tick.init();
     
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
-    hal.msp.timer.tick.init(ysf.tick.inc);
+    msp.timer.tick.init(ysf.tick.inc);
 #endif
     
 #endif

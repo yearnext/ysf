@@ -46,35 +46,33 @@ extern "C"
     
 /* Exported types ------------------------------------------------------------*/
 #if USE_HAL_API
-struct HAL_API
+struct YSF_MSP_API
 {
-    struct
-    {
 #if defined(USE_MSP_GPIO_API) && USE_MSP_GPIO_API
-        struct MSP_GPIO_API gpio;
+    struct MSP_GPIO_API gpio;
 #endif
         
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
     struct MSP_TIMER_API timer;
 #endif
-    }msp;
+};
     
-    struct
-    {
+struct YSF_MAP_API
+{
 #if defined(USE_MAP_GPIO_API) && USE_MAP_GPIO_API
     struct MAP_GPIO_API gpio;
 #endif
         
 #if defined(USE_MAP_TIMER_API) && USE_MAP_TIMER_API
-        struct MAP_TIMER_API timer;
+    struct MAP_TIMER_API timer;
 #endif
-    }map;
 };
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 #if USE_HAL_API
-extern const struct HAL_API hal;
+extern const struct YSF_MSP_API msp;
+extern const struct YSF_MAP_API map;
 #endif
 
 /* Exported functions --------------------------------------------------------*/
