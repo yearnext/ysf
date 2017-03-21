@@ -177,22 +177,6 @@
           <Type>0</Type>
           <LineNumber>128</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218718</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\app\key_control.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../app/key_control.c\128</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>128</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
           <Address>134218742</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
@@ -205,7 +189,7 @@
           <Expression>\\ysf_stm32_demo\../../app/key_control.c\128</Expression>
         </Bp>
         <Bp>
-          <Number>3</Number>
+          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>143</LineNumber>
           <EnabledFlag>1</EnabledFlag>
@@ -220,6 +204,22 @@
           <ExecCommand></ExecCommand>
           <Expression>\\ysf_stm32_demo\../../ysf/ysf.c\143</Expression>
         </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>67</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134222646</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\ysf\component\signal\ysf_signal.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../ysf/component/signal/ysf_signal.c\67</Expression>
+        </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
@@ -231,6 +231,11 @@
           <count>1</count>
           <WinNumber>1</WinNumber>
           <ItemText>MCU_HEAP_SIZE</ItemText>
+        </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>MCU_HEAP</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
@@ -290,7 +295,7 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>1</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\ysf\ysf.c</PathWithFileName>
