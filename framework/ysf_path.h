@@ -38,13 +38,13 @@ extern "C"
 #define YSF_TYPE_PATH         		         "../framework/common/type.h"
 	
 #define YSF_COMPILER_PATH                    "../framework/compiler/compiler.h"
-#define YSF_VS_COMPILER_CONF_PATH            "../framework/compiler/vs/compiler_conf.h"
-#define YSF_ARMCC6_COMPILER_CONF_PATH        "../framework/compiler/armcc6/compiler_armcc6.h"
 #define YSF_ARMCC5_COMPILER_CONF_PATH        "../framework/compiler/armcc5/compiler_armcc5.h"
-#define YSF_GCC_COMPILER_CONF_PATH           "../framework/compiler/gcc/compiler_conf.h"
-#define YSF_SIMULATION_COMPILER_CONF_PATH    "../framework/compiler/simulation/compiler_conf.h"
+#define YSF_ARMCC6_COMPILER_CONF_PATH        "../framework/compiler/armcc6/compiler_armcc6.h"
 #define YSF_ICCARM_COMPILER_CONF_PATH        "../framework/compiler/iccarm/compiler_iar_arm.h"
-#define YSF_ICC_STM8_COMPILER_CONF_PATH      "../framework/compiler/iccstm8/compiler_conf.h"
+//#define YSF_GCC_COMPILER_CONF_PATH           "../framework/compiler/gcc/compiler_conf.h"
+//#define YSF_SIMULATION_COMPILER_CONF_PATH    "../framework/compiler/simulation/compiler_conf.h"
+//#define YSF_VS_COMPILER_CONF_PATH            "../framework/compiler/vs/compiler_conf.h"
+//#define YSF_ICC_STM8_COMPILER_CONF_PATH      "../framework/compiler/iccstm8/compiler_conf.h"
 	
 #define YSF_COMPONENT_TICK_PATH              "../framework/component/tick/ysf_tick.h"
 #define YSF_COMPONENT_BUFFER_PATH            "../framework/component/buffer/ysf_buffer.h"
@@ -54,6 +54,7 @@ extern "C"
 #define YSF_COMPONENT_SIGNAL_PATH            "../framework/component/signal/ysf_signal.h"
 #define YSF_COMPONENT_DEBUG_PATH             "../framework/component/debug/ysf_debug.h"
 #define YSF_COMPONENT_SINGLE_LIST_PATH       "../framework/component/list/ysf_single_list.h"
+#define YSF_COMPONENT_MESSAGE_PATH           "../framework/component/message/ysf_message.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

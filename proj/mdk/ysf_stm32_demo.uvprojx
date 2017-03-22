@@ -10,8 +10,8 @@
       <TargetName>debug</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pArmCC>5060422::V5.06 update 4 (build 422)::ARMCC</pArmCC>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pArmCC>6060000::V6.6::.\ARMCLANG</pArmCC>
+      <pCCUsed>6060000::V6.6::.\ARMCLANG</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103ZE</Device>
@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>7</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -424,6 +424,16 @@
               <FileName>ysf_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\framework\component\timer\ysf_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>ysf_message.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\component\message\ysf_message.c</FilePath>
+            </File>
+            <File>
+              <FileName>ysf_pt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\framework\component\pt\ysf_pt.h</FilePath>
             </File>
           </Files>
         </Group>
