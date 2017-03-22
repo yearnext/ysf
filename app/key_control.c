@@ -98,18 +98,35 @@ static ysf_err_t led1_blink_event_handler( uint16_t event )
  * @brief       led2 blink function
  *******************************************************************************
  */
-static ysf_err_t bsp_led2_blink( void *param )
-{   
-    if( msp.gpio.pin.get(led2.port, led2.pin) == true )
+//static ysf_err_t bsp_led2_blink( void *param )
+//{   
+//    if( msp.gpio.pin.get(led2.port, led2.pin) == true )
+//    {
+//        msp.gpio.pin.clr(led2.port, led2.pin);
+//    }
+//    else
+//    {
+//        msp.gpio.pin.set(led2.port, led2.pin);
+//    }
+//    
+//    return YSF_ERR_NONE;
+//}
+
+static YSF_PT_THREAD(bsp_led2_blink)
+{
+    ysf_pt_init(bsp_led2_blink);
+    ysf_pt_begin();
+    
+    while(1)
     {
         msp.gpio.pin.clr(led2.port, led2.pin);
-    }
-    else
-    {
+        ysf_pt_delay(500);
+        
         msp.gpio.pin.set(led2.port, led2.pin);
+        ysf_pt_delay(500);
     }
     
-    return YSF_ERR_NONE;
+    ysf_pt_end();
 }
 
 /**

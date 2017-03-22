@@ -100,6 +100,7 @@ extern "C"
  *******************************************************************************
  */
 _YSF_DEFINE_EVENT_START
+    RegistrarionEvent(YSF_PT_TIMER_EVENT)
     RegistrarionEvent(LED1_BLINK_EVENT)
     RegistrarionEvent(LED2_BLINK_EVENT)
     RegistrarionEvent(KEY1_SCAN_EVENT)

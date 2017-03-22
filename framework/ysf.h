@@ -55,6 +55,7 @@ extern "C"
 #include YSF_COMPONENT_TIMER_PATH
 #include YSF_COMPONENT_SIGNAL_PATH
 #include YSF_COMPONENT_DEBUG_PATH
+#include YSF_COMPONENT_PT_PATH
 #else
 #warning "YSF is not use YSF_API!"
 #endif

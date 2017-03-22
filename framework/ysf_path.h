@@ -55,6 +55,7 @@ extern "C"
 #define YSF_COMPONENT_DEBUG_PATH             "../framework/component/debug/ysf_debug.h"
 #define YSF_COMPONENT_SINGLE_LIST_PATH       "../framework/component/list/ysf_single_list.h"
 #define YSF_COMPONENT_MESSAGE_PATH           "../framework/component/message/ysf_message.h"
+#define YSF_COMPONENT_PT_PATH                "../framework/component/pt/ysf_pt.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
