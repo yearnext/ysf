@@ -68,30 +68,23 @@ extern "C"
                                         return YSF_ERR_NOT_READY;                                            \
                                      }                                                                       \
                                  }while(0)
-    
-//#define ysf_pt_delay(pt,tick) do                                                                             \
-//                              {                                                                              \
-//                                  #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API                      \
-//                                  ysf_timerSimple_cb_arm(tick, 0, pt.thread, (void *)&YSF_PT_TIMER_EVENT);   \
-//                                  #else                                                                      \
-//                                  ysf_timerEx_cb_init(&pt.timer, pt.thread, (void *)&YSF_PT_TIMER_EVENT);    \
-//                                  ysf_timerEx_arm(&pt.timer, tick, 0);                                       \
-//                                  #endif                                                                     \
-//                                  pt.event = YSF_PT_TIMER_EVENT;                                             \
-//                                  ysf_pt_entry();                                                            \
-//                                  if( pt.event != (uint16_t)(*event) )                                       \
-//                                  {                                                                          \
-//                                      return YSF_ERR_NOT_READY;                                              \
-//                                  }                                                                          \
-//                                  ysf_pt_entry();                                                            \
-//                              }while(0)
-                              
-#define ysf_pt_delay(tick)      do                                                                             \
-                                {                                                                              \
-                                    pt.event = YSF_PT_TIMER_EVENT;                                             \
-                                    ysf_timerSimple_cb_arm(tick, 0, pt.thread, &pt.event);                     \
-                                    ysf_pt_wait(pt.event != *((uint16_t *)event));                             \
+                                 
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#define ysf_pt_delay(tick)      do                                                                           \
+                                {                                                                            \
+                                    pt.event = YSF_PT_TIMER_EVENT;                                           \
+                                    ysf_timerSimple_cb_arm(tick, 0, pt.thread, &pt.event);                   \
+                                    ysf_pt_wfe(pt.event != *((uint16_t *)event));                            \
                                 }while(0)
+#else
+#define ysf_pt_delay(tick)      do                                                                           \
+                                {                                                                            \
+                                    pt.event = YSF_PT_TIMER_EVENT;                                           \
+                                    ysf_timerEx_cb_init(&pt.timer, pt.thread, (void *)&YSF_PT_TIMER_EVENT);  \
+                                    ysf_timerEx_arm(&pt.timer, tick, 0);                                     \
+                                    ysf_pt_wfe(pt.event != *((uint16_t *)event));                            \
+                                }while(0)                        
+#endif
 
 #define ysf_pt_end(pt)          } return YSF_ERR_NONE
     

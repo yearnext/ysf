@@ -119,11 +119,25 @@ static YSF_PT_THREAD(bsp_led2_blink)
     
     while(1)
     {
-        msp.gpio.pin.clr(led2.port, led2.pin);
-        ysf_pt_delay(500);
-        
         msp.gpio.pin.set(led2.port, led2.pin);
-        ysf_pt_delay(500);
+        
+        pt.event = YSF_PT_TIMER_EVENT;                                           
+        ysf_timerSimple_cb_arm(1, 0, pt.thread, &pt.event);
+        pt.state = (uint16_t)__LINE__; case __LINE__:  
+        if( pt.event != *((uint16_t *)event) )                                                          
+        {                                                                       
+            return YSF_ERR_NOT_READY;                                            
+        }             
+
+        msp.gpio.pin.clr(led2.port, led2.pin);
+        
+        pt.event = YSF_PT_TIMER_EVENT;                                           
+        ysf_timerSimple_cb_arm(500, 0, pt.thread, &pt.event);
+        pt.state = (uint16_t)__LINE__; case __LINE__:  
+        if( event == NULL || pt.event != *((uint16_t *)event) )                                                          
+        {                                                                       
+            return YSF_ERR_NOT_READY;                                            
+        }  
     }
     
     ysf_pt_end();
