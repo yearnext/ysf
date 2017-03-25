@@ -33,9 +33,9 @@ extern "C"
 #define YSF_HEAD_PATH                        "../framework/ysf.h"
 #define YSF_EVENT_CONF_PATH                  "../framework/ysf_event_conf.h"
     
-#define YSF_COMMTOOLS_PATH                   "../framework/common/tools.h"	
-#define YSF_OOPC_PATH          		         "../framework/common/oopc.h"
-#define YSF_TYPE_PATH         		         "../framework/common/type.h"
+#define YSF_COMMTOOLS_PATH                   "../framework/common/ysf_tools.h"	
+#define YSF_OOPC_PATH          		         "../framework/common/ysf_oopc.h"
+#define YSF_TYPE_PATH         		         "../framework/common/ysf_type.h"
 	
 #define YSF_COMPILER_PATH                    "../framework/compiler/compiler.h"
 #define YSF_ARMCC5_COMPILER_CONF_PATH        "../framework/compiler/armcc5/compiler_armcc5.h"
@@ -56,6 +56,7 @@ extern "C"
 #define YSF_COMPONENT_SINGLE_LIST_PATH       "../framework/component/list/ysf_single_list.h"
 #define YSF_COMPONENT_MESSAGE_PATH           "../framework/component/message/ysf_message.h"
 #define YSF_COMPONENT_PT_PATH                "../framework/component/pt/ysf_pt.h"
+#define YSF_COMPONENT_STATE_MACHINE_PATH     "../framework/component/sm/ysf_sm.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
