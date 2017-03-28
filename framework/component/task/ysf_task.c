@@ -126,6 +126,39 @@ ysf_err_t ysf_taskSimple_add(void *func, void *param, void *expand)
 #endif
 }
 
+/**
+ *******************************************************************************
+ * @brief       task walk
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE              walking
+ * @note        this function is dependent on ysf memory management
+ *******************************************************************************
+ */
+ysf_err_t ysf_task_walk(void)
+{
+    if(tcb.head == NULL)
+    {
+        return YSF_ERR_FAIL;
+    } 
+    
+    struct ysf_task_t *task = tcb.head;
+    tcb.head                = task->control.next;
+    
+    if( task->func.handler != NULL )
+    {
+        task->func.handler(task->func.param, task->func.expand);
+    }
+    task->control.next = NULL;
+    
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+    if( ysf_memory_is_in(task) == true )
+    {
+        ysf_memory_free(task);
+    }
+#endif    
+    return YSF_ERR_FAIL;
+}
+
 #endif
 /** @}*/     /** ysf task component */
 
