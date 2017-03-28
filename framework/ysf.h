@@ -56,6 +56,7 @@ extern "C"
 #include YSF_COMPONENT_SIGNAL_PATH
 #include YSF_COMPONENT_DEBUG_PATH
 #include YSF_COMPONENT_PT_PATH
+#include YSF_COMPONENT_TASK_PATH
 #else
 #warning "YSF is not use YSF_API!"
 #endif
@@ -73,28 +74,32 @@ struct YSF_API
     void (*start)(void);
     char *ver;
     
-#if USE_YSF_TICK_API
+#if defined(USE_YSF_TICK_API) && USE_YSF_TICK_API
     struct YSF_TICK_API tick;
 #endif
         
-#if USE_YSF_MEMORY_API
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
     struct YSF_MEMORY_API memory;
 #endif
     
-#if USE_YSF_EVENT_API
+#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
     struct YSF_EVENT_API event;
 #endif
     
-#if USE_YSF_TIMER_API
+#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
     struct YSF_TIMER_API timer;
 #endif
 
-#if USE_YSF_SIGNAL_API
+#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
     struct YSF_SIGNAL_API signal;
 #endif
 
-#if USE_YSF_DEBUG_API
+#if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
     struct YSF_DEBUG_API debug;
+#endif
+
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+    struct YSF_TASK_API task;
 #endif
 };
 #endif    

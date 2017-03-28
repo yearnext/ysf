@@ -102,6 +102,14 @@ const struct YSF_API ysf =
     .debug.init              = ysf_debug_init,
     .debug.assert_failed     = ysf_assert_failed,
 #endif
+
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+    .task.init               = ysf_task_init,
+    
+    .task.ex.add             = ysf_taskEx_add,
+    .task.simple.add         = ysf_taskSimple_add,
+
+#endif
 };
 #endif
 
@@ -145,8 +153,11 @@ void ysf_init( ysf_err_t (*user_init)(void) )
 
 #if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
     ysf.debug.init();
-#endif    
+#endif  
 
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+    ysf.task.init();
+#endif
     if(!IS_PTR_NULL(user_init))
     {
         user_init();

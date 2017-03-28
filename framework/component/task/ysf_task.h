@@ -42,8 +42,56 @@ extern "C"
 #define USE_YSF_TASK_API (1)
 
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       ysf task block
+ *******************************************************************************
+ */
+struct ysf_task_t
+{
+    struct
+    {
+        struct ysf_task_t *next;
+    }control;
+    
+    struct
+    {
+        ysf_err_t (*handler)(void*, void*);
+        void *param;
+        void *expand;
+    }func;
+};
+
+/**
+ *******************************************************************************
+ * @brief       ysf task api
+ *******************************************************************************
+ */
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+struct YSF_TASK_API
+{
+    ysf_err_t (*init)(void);
+        
+    struct
+    {
+        ysf_err_t (*add)(struct ysf_task_t*, void*, void*, void*);
+    }ex;
+    
+    struct
+    {
+        ysf_err_t (*add)(void*, void*, void*);
+    }simple;
+};
+#endif
+
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+extern ysf_err_t ysf_task_init(void);
+extern ysf_err_t ysf_taskEx_add(struct ysf_task_t*, void*, void*, void*);
+extern ysf_err_t ysf_taskSimple_add(void*, void*, void*);
+#endif    
+    
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
