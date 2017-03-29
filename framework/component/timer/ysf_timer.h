@@ -30,6 +30,7 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
+#include YSF_COMPONENT_TASK_PATH
 #include YSF_COMPONENT_TICK_PATH
 #include YSF_COMPONENT_SINGLE_LIST_PATH
 
@@ -61,25 +62,21 @@ struct ysf_timer_t
 {
     struct
     {
-        struct ysf_sList_t *next;
+        struct ysf_timer_t *next;
         ysf_status_t  status;
     }control;
     
     struct
     {
-        struct
-        {
-            ysf_err_t (*func)(void *param);
-            void *param;
-        }callback;
+        struct ysf_task_t callback;
 
         uint16_t event;
-    }trigger;
+    }handler;
 
     struct
     {
-        ysf_tick_t count;
-        ysf_tick_t loadCount;
+        ysf_tick_t ticks;
+        ysf_tick_t loadTicks;
         
         uint8_t cycle;
     }config;
@@ -95,20 +92,14 @@ struct YSF_TIMER_API
 {
     ysf_err_t (*init)(void);
     ysf_err_t (*handler)(uint16_t);
-    struct
-    {
-        struct ysf_timer_t *(*cb_arm)(uint32_t, uint8_t, ysf_err_t (*func)(void*), void*);
-        struct ysf_timer_t *(*evt_arm)(uint32_t, uint8_t, uint16_t);
-        ysf_err_t (*disarm)(struct ysf_timer_t*);
-    }simple;
     
     struct
     {
-        ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*func)(void*), void*);
+        ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*func)(void*, void*), void*, void*);
         ysf_err_t (*evt_init)(struct ysf_timer_t*, uint16_t);
-        ysf_err_t (*arm)(struct ysf_timer_t*,uint32_t,uint8_t);
+        ysf_err_t (*arm)(struct ysf_timer_t*,uint32_t,uint16_t);
         ysf_err_t (*disarm)(struct ysf_timer_t*);
-    }ex;
+    };
 };
 #endif
 
@@ -121,13 +112,13 @@ struct YSF_TIMER_API
  */
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 extern ysf_err_t ysf_timer_init(void);
-extern struct ysf_timer_t *ysf_timerSimple_cb_arm(uint32_t, uint8_t, ysf_err_t (*func)(void*), void*);                                         
-extern struct ysf_timer_t *ysf_timerSimple_evt_arm(uint32_t, uint8_t, uint16_t);                                             
-extern ysf_err_t ysf_timerEx_cb_init(struct ysf_timer_t*, ysf_err_t (*func)(void*), void*);                                          
-extern ysf_err_t ysf_timerEx_evt_init(struct ysf_timer_t*, uint16_t);                                          
-extern ysf_err_t ysf_timerEx_arm(struct ysf_timer_t*, uint32_t, uint8_t);                                          
-extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*);                                          
-extern ysf_err_t ysf_timer_handler(uint16_t);
+//extern struct ysf_timer_t *ysf_timerSimple_cb_arm(uint32_t, uint8_t, ysf_err_t (*func)(void*), void*);                                         
+//extern struct ysf_timer_t *ysf_timerSimple_evt_arm(uint32_t, uint8_t, uint16_t);                                             
+//extern ysf_err_t ysf_timerEx_cb_init(struct ysf_timer_t*, ysf_err_t (*func)(void*), void*);                                          
+//extern ysf_err_t ysf_timerEx_evt_init(struct ysf_timer_t*, uint16_t);                                          
+//extern ysf_err_t ysf_timerEx_arm(struct ysf_timer_t*, uint32_t, uint8_t);                                          
+//extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*);                                          
+//extern ysf_err_t ysf_timer_handler(uint16_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

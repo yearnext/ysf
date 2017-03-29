@@ -28,20 +28,18 @@
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
 /**
  *******************************************************************************
  * @brief       ysf task control block
  *******************************************************************************
  */
-struct ysf_task_control_t
+struct ysf_task_control_block
 {
     struct ysf_task_t *head;
     struct ysf_task_t *tail;
-};
-
-/* Private variables ---------------------------------------------------------*/
-#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
-static struct ysf_task_control_t tcb = 
+} static tcb = 
 {
     .head = NULL,
     .tail = NULL,
@@ -96,6 +94,8 @@ ysf_err_t ysf_taskEx_add(struct ysf_task_t *task, void *func, void *param, void 
     {
         tcb.head = task;
         tcb.tail = task;
+    
+        return YSF_ERR_NONE;
     }
     
     tcb.tail->control.next = task;
