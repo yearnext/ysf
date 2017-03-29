@@ -112,10 +112,10 @@ struct YSF_TIMER_API
  */
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 extern ysf_err_t ysf_timer_init(void);
-//extern struct ysf_timer_t *ysf_timerSimple_cb_arm(uint32_t, uint8_t, ysf_err_t (*func)(void*), void*);                                         
-//extern struct ysf_timer_t *ysf_timerSimple_evt_arm(uint32_t, uint8_t, uint16_t);                                             
-//extern ysf_err_t ysf_timerEx_cb_init(struct ysf_timer_t*, ysf_err_t (*func)(void*), void*);                                          
-//extern ysf_err_t ysf_timerEx_evt_init(struct ysf_timer_t*, uint16_t);                                          
+extern ysf_err_t ysf_timer_cb_init(struct ysf_timer_t*, ysf_err_t (*func)(void*, void*), void*, void*);                                     
+extern ysf_err_t ysf_timer_evt_init(struct ysf_timer_t *, uint16_t);                            
+extern ysf_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t,uint16_t);                                          
+extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*);                                          
 //extern ysf_err_t ysf_timerEx_arm(struct ysf_timer_t*, uint32_t, uint8_t);                                          
 //extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*);                                          
 //extern ysf_err_t ysf_timer_handler(uint16_t);
