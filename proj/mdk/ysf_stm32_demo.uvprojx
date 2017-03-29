@@ -440,6 +440,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\framework\component\pt\ysf_pt.h</FilePath>
             </File>
+            <File>
+              <FileName>ysf_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\component\task\ysf_task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

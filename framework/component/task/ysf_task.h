@@ -91,7 +91,7 @@ struct YSF_TASK_API
 extern ysf_err_t ysf_task_init(void);
 extern ysf_err_t ysf_taskEx_add(struct ysf_task_t*, void*, void*, void*);
 extern ysf_err_t ysf_taskSimple_add(void*, void*, void*);
-extern ysf_err_t ysf_task_walk(void);
+extern ysf_err_t ysf_task_poll(void);
 #endif    
     
 /* Add c++ compatibility------------------------------------------------------*/

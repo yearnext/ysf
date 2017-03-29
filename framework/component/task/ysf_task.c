@@ -128,13 +128,13 @@ ysf_err_t ysf_taskSimple_add(void *func, void *param, void *expand)
 
 /**
  *******************************************************************************
- * @brief       task walk
+ * @brief       task poll
  * @param       [in/out]  void
  * @return      [in/out]  YSF_ERR_NONE              walking
  * @note        this function is dependent on ysf memory management
  *******************************************************************************
  */
-ysf_err_t ysf_task_walk(void)
+ysf_err_t ysf_task_poll(void)
 {
     if(tcb.head == NULL)
     {
@@ -143,6 +143,11 @@ ysf_err_t ysf_task_walk(void)
     
     struct ysf_task_t *task = tcb.head;
     tcb.head                = task->control.next;
+    
+    if( tcb.head == NULL )
+    {
+        tcb.tail = NULL;
+    }
     
     if( task->func.handler != NULL )
     {
