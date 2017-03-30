@@ -77,6 +77,14 @@ ysf_err_t ysf_timer_init( void )
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       add timer to list
+ * @param       [in/out]  timer              want to add timer
+ * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
 static inline 
 ysf_err_t ysf_timer_add(struct ysf_timer_t *timer)
 {
@@ -101,10 +109,22 @@ ysf_err_t ysf_timer_add(struct ysf_timer_t *timer)
     return YSF_ERR_NONE;
 }
 
-
+/**
+ *******************************************************************************
+ * @brief       detect timer is in list
+ * @param       [in/out]  timer              want to detect timer
+ * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
 bool ysf_timer_isInList(struct ysf_timer_t *timer)
 {
     struct ysf_timer_t *temp = tcb.head;
+    
+    if(IS_PTR_NULL(timer))
+    {
+        return false;
+    }
     
     if( temp == NULL )
     {
@@ -129,11 +149,36 @@ bool ysf_timer_isInList(struct ysf_timer_t *timer)
 //    return false;
 }
 
+/**
+ *******************************************************************************
+ * @brief       get timer status
+ * @param       [in/out]  timer              want to get status timer
+ * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
 bool ysf_timer_getStatus(struct ysf_timer_t *timer)
 {
+    if(IS_PTR_NULL(timer))
+    {
+        return false;
+    }
+    
     return (timer->status == ysf_enable) ? (true) : (false);
 }
 
+/**
+ *******************************************************************************
+ * @brief       call back trigger timer init
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  func               call back function
+ * @param       [in/out]  param              call back function param
+ * @param       [in/out]  expand             call back function expand param
+ * @return      [in/out]  YSF_ERR_NONE       init success
+ * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
 ysf_err_t ysf_timer_cb_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, void*), void *param, void *expand)
 {
     if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
@@ -149,6 +194,16 @@ ysf_err_t ysf_timer_cb_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, 
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       event trigger timer init
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  event              trigger events
+ * @return      [in/out]  YSF_ERR_NONE       init success
+ * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
 ysf_err_t ysf_timer_evt_init(struct ysf_timer_t *timer, uint16_t event)
 {
     if(IS_PTR_NULL(timer))
@@ -161,6 +216,17 @@ ysf_err_t ysf_timer_evt_init(struct ysf_timer_t *timer, uint16_t event)
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer arm
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  ticks              timer timing
+ * @param       [in/out]  counts             cycle counts
+ * @return      [in/out]  YSF_ERR_NONE       timer arm success
+ * @return      [in/out]  YSF_ERR_FAIL       timer arm failed
+ * @note        None
+ *******************************************************************************
+ */
 ysf_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks,uint16_t counts)
 {
     if(IS_PTR_NULL(timer))
@@ -180,6 +246,15 @@ ysf_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks,uint16_t count
     return YSF_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer disarm
+ * @param       [in/out]  *timer             timer block
+ * @return      [in/out]  YSF_ERR_NONE       timer disarm success
+ * @return      [in/out]  YSF_ERR_FAIL       timer disarm failed
+ * @note        None
+ *******************************************************************************
+ */
 ysf_err_t ysf_timer_disarm(struct ysf_timer_t *timer)
 {
     if(IS_PTR_NULL(timer))
@@ -239,6 +314,15 @@ bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
 //     return false;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer trigger handler
+ * @param       [in/out]  *timer     timer block
+ * @return      [in/out]  false      timer handler failed
+ * @return      [in/out]  true       timer handler success
+ * @note        this is a static inline type function
+ *******************************************************************************
+ */
 static inline
 bool timerTriggerHandler(struct ysf_timer_t *timer)
 {    
@@ -259,6 +343,17 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
     return true;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer walk
+ * @param       [in/out]  **node         now timer node
+ * @param       [in/out]  **ctx          elapsed time
+ * @param       [in/out]  **expand       last timer node
+ * @return      [in/out]  false          timer walk is not end
+ * @return      [in/out]  true           timer walk is end
+ * @note        this is a static type function
+ *******************************************************************************
+ */
 static bool ysf_timer_walk(void **node, void **ctx, void **expand)
 {
     struct ysf_timer_t *timer = (struct ysf_timer_t *)(*node);
@@ -289,6 +384,13 @@ static bool ysf_timer_walk(void **node, void **ctx, void **expand)
             
             *node = *expand;
         }
+        
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+        if( ysf_memory_is_in(timer) == true )
+        {
+            ysf_memory_free(timer);
+        }
+#endif
     }
     
     *expand = *node;
@@ -296,6 +398,14 @@ static bool ysf_timer_walk(void **node, void **ctx, void **expand)
     return false;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer handler
+ * @param       [in/out]  event           trigger event
+ * @return      [in/out]  YSF_ERR_NONE    not happen error
+ * @note        timer processing function without errors
+ *******************************************************************************
+ */
 ysf_err_t ysf_timer_handler( uint16_t event )
 {
     if( tcb.head == NULL )

@@ -256,6 +256,7 @@ static void bsp_key_init(void)
     ysf.signal.ex.arm(&key1Signal, key2_scan, key2_handler);
 }
 #endif
+
 /**
  *******************************************************************************
  * @brief       user init function
