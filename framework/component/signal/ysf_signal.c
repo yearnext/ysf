@@ -30,14 +30,6 @@
 #include YSF_COMPONENT_SINGLE_LIST_PATH
 
 /* Private define ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       add signal component to list
- *******************************************************************************
- */
-#define ysf_signal_add(signal_cb) \
-                       ysf_slist_add((void **)&head, (void **)&(signal_cb))
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /**
@@ -46,85 +38,33 @@
  *******************************************************************************
  */
 #if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
-static struct ysf_sList_t *head = NULL;
+/**
+ *******************************************************************************
+ * @brief       ysf signal control block
+ *******************************************************************************
+ */
+struct ysf_signal_control_block
+{
+    struct ysf_signal_t *head;
+    struct ysf_signal_t *tail;
+} static scb = 
+{
+    .head = NULL,
+    .tail = NULL,
+};
+
+/**
+ *******************************************************************************
+ * @brief       signal timer
+ *******************************************************************************
+ */
+static struct ysf_timer_t signal;
 #endif
                        
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
-/**
- *******************************************************************************
- * @brief       ysf signal component init
- * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_signal_init( void )
-{    
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    ysf_timerSimple_cb_arm(YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM, ysf_signal_handler, NULL);
-#else
-    static struct ysf_timer_t signal;
-    ysf_timerEx_cb_init(&signal, ysf_signal_handler, NULL);
-    ysf_timerEx_arm(&signal, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM);
-#endif
-    
-    head = NULL;
-    
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       signal simple component arm
- * @param       [in/out]  *detect            signal detect function
- * @param       [in/out]  *handler           handler detect function
- * @return      [in/out]  YSF_ERR_NONE       arm success
- * @return      [in/out]  YSF_ERR_FAIL       arm failed
- * @note        None
- *******************************************************************************
- */
-struct ysf_signal_t *ysf_signalSimple_arm( enum ysf_signal_status_t (*detect)(void), void (*handler)(enum ysf_signal_status_t) )
-{
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct ysf_signal_t *signal = NULL;
-        
-    if( detect == NULL )
-    {
-        return NULL;
-    }
-    
-    if( handler == NULL )
-    {
-        return NULL;
-    }
-    
-    signal = (struct ysf_signal_t *)ysf_memory_malloc(sizeof(struct ysf_signal_t)/sizeof(char));
-    
-    if( signal == NULL )
-    {
-        return NULL;
-    }
-    
-    signal->control.next    = NULL;
-    signal->control.status  = ysf_enable;
-    
-    signal->func.detect     = detect;
-    signal->func.handler    = handler;
-    
-    signal->status          = SIGNAL_STATUS_RELEASE;
-
-    ysf_signal_add(signal);
-    
-    return signal;
-    
-#else
-    return NULL;
-#endif
-}
-
 /**
  *******************************************************************************
  * @brief       signal ex component arm
@@ -136,9 +76,9 @@ struct ysf_signal_t *ysf_signalSimple_arm( enum ysf_signal_status_t (*detect)(vo
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_signalEx_arm(struct ysf_signal_t *signal, 
-                           enum ysf_signal_status_t (*detect)(void), 
-                           void (*handler)(enum ysf_signal_status_t) )
+ysf_err_t ysf_signal_evt_arm(struct ysf_signal_t *signal, 
+                             enum ysf_signal_status_t (*detect)(void), 
+                             uint16_t event )
 {
     if( signal == NULL )
     {
@@ -146,11 +86,6 @@ ysf_err_t ysf_signalEx_arm(struct ysf_signal_t *signal,
     }
     
     if( detect == NULL )
-    {
-        return YSF_ERR_FAIL;
-    }
-    
-    if( handler == NULL )
     {
         return YSF_ERR_FAIL;
     }
@@ -436,11 +371,51 @@ static bool ysf_signal_walk( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_signal_handler( void *param )
+static ysf_err_t ysf_signal_handler( void *param, void *expand )
 {
-    void *last = (void *)head;
+    void *last = (void *)scb.head;
     
-    ysf_slist_walk((void **)&head, ysf_signal_walk, NULL, (void **)&last);
+    ysf_slist_walk((void **)&scb.head, ysf_signal_walk, NULL, (void **)&last);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       ysf signal component init
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_signal_init( void )
+{        
+    scb.head = NULL;
+    scb.tail = NULL;
+    
+    ysf_timer_cb_init(&signal, ysf_signal_handler, NULL, NULL);
+    ysf_timer_arm(&signal, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       ysf signal component deinit
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_signal_deinit( void )
+{    
+    scb.head = NULL;
+    scb.tail = NULL;
+    
+    if( ysf_timer_isInList(&signal) == true )
+    {
+        ysf_timer_disarm(&signal);
+    }
     
     return YSF_ERR_NONE;
 }

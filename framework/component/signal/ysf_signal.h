@@ -34,6 +34,7 @@ extern "C"
 #include YSF_TYPE_PATH
 #include YSF_COMPONENT_EVENT_PATH
 #include YSF_COMPONENT_SINGLE_LIST_PATH
+#include YSF_COMPONENT_TASK_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -90,14 +91,16 @@ struct ysf_signal_t
     struct
     {
         struct ysf_sList_t *next;
-        ysf_status_t status;
-    }control;
+        ysf_status_t useStatus;
+    };
     
     struct
     {
         enum ysf_signal_status_t (*detect)(void);
-        void (*handler)(enum ysf_signal_status_t);
-    }func;
+        
+        struct ysf_task_t callback;
+        uint16_t event;
+    };
     
     enum ysf_signal_status_t status;
 };
@@ -111,22 +114,12 @@ struct ysf_signal_t
 struct YSF_SIGNAL_API
 {
     ysf_err_t (*init)(void);
-    ysf_err_t (*handler)(void*);
+//    ysf_err_t (*handler)(void*);
     
-    struct
-    {
-        struct ysf_signal_t *(*arm)(enum ysf_signal_status_t (*detect)(void), void (*handler)(enum ysf_signal_status_t));
-        ysf_err_t (*disarm)(struct ysf_signal_t *signal);
-    }simple;
-    
-    struct
-    {
-        ysf_err_t (*arm)(struct ysf_signal_t *signal, 
-                         enum ysf_signal_status_t (*detect)(void), 
-                         void (*handler)(enum ysf_signal_status_t));
-                              
-        ysf_err_t (*disarm)(struct ysf_signal_t *signal);
-    }ex;
+    ysf_err_t (*cb_init)(struct ysf_signal_t*, void (*)(void*, void*), void*, void*);
+    ysf_err_t (*evt_init)(struct ysf_signal_t*, uint16_t);
+    ysf_err_t (*arm)(struct ysf_signal_t*, enum ysf_signal_status_t (*)(void));            
+    ysf_err_t (*disarm)(struct ysf_signal_t*);
 };
 #endif
 
@@ -149,7 +142,7 @@ extern ysf_err_t ysf_signalEx_arm(struct ysf_signal_t*,
                                        
 extern ysf_err_t ysf_signal_disarm(struct ysf_signal_t*);
                                        
-extern ysf_err_t ysf_signal_handler(void *);
+//extern ysf_err_t ysf_signal_handler(void *);
 #endif
                                        
 /* Add c++ compatibility------------------------------------------------------*/
