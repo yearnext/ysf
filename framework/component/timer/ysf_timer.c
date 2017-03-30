@@ -85,7 +85,7 @@ ysf_err_t ysf_timer_add(struct ysf_timer_t *timer)
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->control.next = NULL;
+    timer->next = NULL;
     
     if(tcb.head == NULL)
     {
@@ -95,10 +95,43 @@ ysf_err_t ysf_timer_add(struct ysf_timer_t *timer)
         return YSF_ERR_NONE;
     }
     
-    tcb.tail->control.next = timer;
+    tcb.tail->next = timer;
     tcb.tail = timer;
     
     return YSF_ERR_NONE;
+}
+
+
+bool ysf_timer_isInList(struct ysf_timer_t *timer)
+{
+    struct ysf_timer_t *temp = tcb.head;
+    
+    if( temp == NULL )
+    {
+        return false;
+    }
+    
+    while(1)
+    {
+        if( temp == timer )
+        {
+            return true;
+        }
+        
+        if( temp->next == NULL )
+        {
+            return false;
+        }
+        
+        temp = temp->next;
+    }
+    
+//    return false;
+}
+
+bool ysf_timer_getStatus(struct ysf_timer_t *timer)
+{
+    return (timer->status == ysf_enable) ? (true) : (false);
 }
 
 ysf_err_t ysf_timer_cb_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, void*), void *param, void *expand)
@@ -108,10 +141,10 @@ ysf_err_t ysf_timer_cb_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, 
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->handler.callback.func.handler = func;
-    timer->handler.callback.func.param   = param;
-    timer->handler.callback.func.expand  = expand;
-    timer->handler.event                 = YSF_EVENT_NONE;
+    timer->callback.func   = func;
+    timer->callback.param  = param;
+    timer->callback.expand = expand;
+    timer->event           = YSF_EVENT_NONE;
     
     return YSF_ERR_NONE;
 }
@@ -123,7 +156,7 @@ ysf_err_t ysf_timer_evt_init(struct ysf_timer_t *timer, uint16_t event)
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->handler.event = event;
+    timer->event = event;
     
     return YSF_ERR_NONE;
 }
@@ -135,12 +168,12 @@ ysf_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks,uint16_t count
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->config.ticks     = ticks;
-    timer->config.loadTicks = ticks;
-    timer->config.cycle     = counts;
+    timer->ticks     = ticks;
+    timer->loadTicks = ticks;
+    timer->cycle     = counts;
     
-//    timer->control.next     = NULL;
-    timer->control.status   = ysf_enable;
+//    timer->next     = NULL;
+    timer->status   = ysf_enable;
     
     ysf_timer_add(timer);
     
@@ -154,479 +187,129 @@ ysf_err_t ysf_timer_disarm(struct ysf_timer_t *timer)
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->control.status = ysf_disable;
+    timer->status = ysf_disable;
     
     return YSF_ERR_NONE;
 }
 
-///**
-// *******************************************************************************
-// * @brief       determines whether the timer is triggered
-// * @param       [in/out]  sys            elapsed time
-// * @param       [in/out]  *timer         timer block
-// * @return      [in/out]  false      timer is not triggered
-// * @return      [in/out]  true       timer is triggered
-// * @note        this is a static inline type function
-// *******************************************************************************
-// */
-//static inline
-//bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
-//{    
-//    if( timer == NULL )
-//    {
-//        return false;
-//    }
-//    
-//    if( timer->control.status == ysf_disable )
-//    {
-//        return false;
-//    }
-//    
-//    if( ticks >= timer->config.ticks )
-//    {
-//        if( timer->config.cycle > 0 )
-//        {
-//            timer->config.cycle--;
-//            if( timer->config.cycle == 0 )
-//            {
-//                timer->control.status = ysf_disable;
-//            }
-//        }
-//        
-//        timer->config.ticks = timer->config.loadTicks;
+/**
+ *******************************************************************************
+ * @brief       determines whether the timer is triggered
+ * @param       [in/out]  *timer     timer block
+ * @param       [in/out]  ticks      elapsed time
+ * @return      [in/out]  false      timer is not triggered
+ * @return      [in/out]  true       timer is triggered
+ * @note        this is a static inline type function
+ *******************************************************************************
+ */
+static inline
+bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
+{    
+    if( timer == NULL )
+    {
+        return false;
+    }
+    
+    if( timer->status == ysf_disable )
+    {
+        return false;
+    }
+    
+    if( ticks >= timer->ticks )
+    {
+        if( timer->cycle > 0 )
+        {
+            timer->cycle--;
+            if( timer->cycle == 0 )
+            {
+                timer->status = ysf_disable;
+            }
+        }
+        
+        timer->ticks = timer->loadTicks;
 
-//        return true;
-//    }
-//    else
-//    {
-//        timer->config.ticks -= ticks;
-//        return false;
-//    }
-//    
-////     return false;
-//}
+        return true;
+    }
+    else
+    {
+        timer->ticks -= ticks;
+        return false;
+    }
+    
+//     return false;
+}
 
-//static inline
-//bool timerTriggerHandler(struct ysf_timer_t *timer)
-//{    
-//    if( timer == NULL )
-//    {
-//        return false;
-//    }    
-//    
-//    if( timer->handler.event == YSF_EVENT_NONE )
-//    {
-////        perform this function will directly lead to the cortex m3 kernel abort          
-////        timer->trigger.callback.func(timer->trigger.callback.param);
-//        
-////        if( timer->handler.callback.param != NULL )
-////        {
-////            timer->handler.callback.func(timer->handler.callback.param);
-////        }
-////        else
-////        {
-////            timer->trigger.callback.func(NULL);
-////        }
-//    }
-//    else
-//    {
-////        ysf_event_post(timer->trigger.event);
-//    }
-//    
-//    return true;
-//}
+static inline
+bool timerTriggerHandler(struct ysf_timer_t *timer)
+{    
+    if( timer == NULL )
+    {
+        return false;
+    }    
+    
+    if( timer->event == YSF_EVENT_NONE )
+    {
+        ysf_task_add(&timer->callback, timer->callback.func, timer->callback.param, timer->callback.expand);
+    }
+    else
+    {
+        ysf_event_post(timer->event);
+    }
+    
+    return true;
+}
 
-//static bool ysf_timer_walk(void **node, void **ctx, void **expand)
-//{
-//    struct ysf_timer_t *timer = (struct ysf_timer_t *)(*node);
-//    struct ysf_timer_t *last  = (struct ysf_timer_t *)(*expand);
-//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-//    void *del = *node;
-//#endif
-//    ysf_tick_t tick = (ysf_tick_t)(*(ctx));
-//    
-//    if( *node == NULL )
-//    {
-//        return true;
-//    }
-//    
-//    if( isTimerTrigger(timer, tick) == true )
-//    {
-//        timerTriggerHandler(timer);
-//    }
-//    
-//    if( timer->control.status == ysf_disable )
-//    {
-//        if( (void *)last == (void *)head )
-//        {
-//            *node = last->control.next;
-//            last->control.next = NULL;
-//        }
-//        else
-//        { 
-//            last->control.next = timer->control.next;
-//            timer->control.next = NULL;
-//            
-//            *node = *expand;
-//        }
-//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-//        if( ysf_memory_is_in(del) == true )
-//        {
-//            ysf_memory_free(del);
-//        }
-//#endif
-//    }
-//    
-//    *expand = *node;
-//    
-//    return false;
-//}
+static bool ysf_timer_walk(void **node, void **ctx, void **expand)
+{
+    struct ysf_timer_t *timer = (struct ysf_timer_t *)(*node);
+    struct ysf_timer_t *last  = (struct ysf_timer_t *)(*expand);
+    ysf_tick_t tick = (ysf_tick_t)(*(ctx));
+    
+    if( *node == NULL )
+    {
+        return true;
+    }
+    
+    if( isTimerTrigger(timer, tick) == true )
+    {
+        timerTriggerHandler(timer);
+    }
+    
+    if( timer->status == ysf_disable )
+    {
+        if( (void *)last == (void *)tcb.head )
+        {
+            *node = last->next;
+            last->next = NULL;
+        }
+        else
+        { 
+            last->next = timer->next;
+            timer->next = NULL;
+            
+            *node = *expand;
+        }
+    }
+    
+    *expand = *node;
+    
+    return false;
+}
 
-//ysf_err_t ysf_timer_poll( void )
-//{
-//    if( tcb.head == NULL )
-//    {
-//        return YSF_ERR_NONE;
-//    }
-//    
-//    ysf_tick_t tick = ysf_past_tick_cal();
-//    
-//    return YSF_ERR_NONE;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       call back trigger timer arm
-// * @param       [in/out]  time               timer timing
-// * @param       [in/out]  count              cycle counts
-// * @param       [in/out]  func               call back function
-// * @param       [in/out]  param              call back function param
-// * @return      [in/out]  YSF_ERR_NONE       timer arm success
-// * @return      [in/out]  YSF_ERR_FAIL       timer arm failed
-// * @note        None
-// *******************************************************************************
-// */
-//struct ysf_timer_t *ysf_timerSimple_cb_arm(uint32_t time, 
-//                                           uint8_t count,
-//                                           ysf_err_t (*func)(void*, void*), 
-//                                           void *param)
-//{
-//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-//    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t)/sizeof(char));
-//    
-//    if( timer == NULL )
-//    {
-//        return NULL;
-//    }
-//    
-//    if( func == NULL )
-//    {
-//        ysf_memory_free(timer);
-//        return NULL;
-//    }
-//    
-//    timer->control.next           = NULL;
-//    timer->control.status         = ysf_enable;
-//    
-//    timer->config.loadCount       = time;
-//    timer->config.count           = timer->config.loadCount;
-//    timer->config.cycle           = count;
-//    
-//    timer->trigger.callback.func  = func;
-//    timer->trigger.callback.param = param;
-//    timer->trigger.event          = YSF_EVENT_NONE;
-//    
-//    ysf_timer_add(timer);
-//    
-//    return timer;
-//    
-//#else
-//    return NULL;
-//#endif
-//}
-
-///**
-// *******************************************************************************
-// * @brief       event trigger timer arm
-// * @param       [in/out]  time               timer timing
-// * @param       [in/out]  count              cycle counts
-// * @param       [in/out]  event              trigger events
-// * @return      [in/out]  YSF_ERR_NONE       timer arm success
-// * @return      [in/out]  YSF_ERR_FAIL       timer arm failed
-// * @note        None
-// *******************************************************************************
-// */
-//struct ysf_timer_t *ysf_timerSimple_evt_arm(uint32_t time, uint8_t count, uint16_t event)
-//{
-//    YSF_ENTER_CRITICAL();
-//    
-//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-//    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t)/sizeof(char));
-//    
-//    if( timer == NULL )
-//    {
-//        return NULL;
-//    }
-//    
-//    timer->control.next           = NULL;
-//    timer->control.status         = ysf_enable;
-//    
-//    timer->config.loadCount       = time;
-//    timer->config.count           = timer->config.loadCount;
-//    timer->config.cycle           = count;
-
-//    timer->trigger.callback.func  = NULL;
-//    timer->trigger.event          = event;
-//    
-//    ysf_timer_add(timer);
-//    
-//    YSF_EXIT_CRITICAL();
-//    
-//    return timer;
-//#else
-//    
-//    YSF_EXIT_CRITICAL();
-//    return NULL;
-//#endif
-//}
-
-///**
-// *******************************************************************************
-// * @brief       call back trigger timer init
-// * @param       [in/out]  *timer             timer block
-// * @param       [in/out]  func               call back function
-// * @param       [in/out]  param              call back function param
-// * @return      [in/out]  YSF_ERR_NONE       init success
-// * @return      [in/out]  YSF_ERR_FAIL       init failed
-// * @note        None
-// *******************************************************************************
-// */
-//ysf_err_t ysf_timerEx_cb_init(struct ysf_timer_t *timer, 
-//                              ysf_err_t (*func)(void*), 
-//                              void *param)
-//{
-//    YSF_ENTER_CRITICAL();
-//    
-//    if( timer == NULL )
-//    {
-//        return YSF_ERR_FAIL;
-//    }
-//    
-//    if( func == NULL )
-//    {
-//        return YSF_ERR_FAIL;
-//    }
-//    
-//    timer->trigger.callback.func  = func;
-//    timer->trigger.callback.param = param;
-//    timer->trigger.event          = YSF_EVENT_NONE;
-//    
-//    YSF_EXIT_CRITICAL();
-//    
-//    return YSF_ERR_NONE;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       event trigger timer init
-// * @param       [in/out]  *timer             timer block
-// * @param       [in/out]  event              trigger events
-// * @return      [in/out]  YSF_ERR_NONE       init success
-// * @return      [in/out]  YSF_ERR_FAIL       init failed
-// * @note        None
-// *******************************************************************************
-// */
-//ysf_err_t ysf_timerEx_evt_init(struct ysf_timer_t *timer, uint16_t event)
-//{
-//    YSF_ENTER_CRITICAL();
-//    
-//    if( timer == NULL )
-//    {
-//        return YSF_ERR_FAIL;
-//    }
-//    
-//    timer->trigger.callback.func = NULL;
-//    timer->trigger.event         = event;
-//    
-//    YSF_EXIT_CRITICAL();
-//    
-//    return YSF_ERR_NONE;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       timer arm
-// * @param       [in/out]  *timer             timer block
-// * @param       [in/out]  time               timer timing
-// * @param       [in/out]  count              cycle counts
-// * @return      [in/out]  YSF_ERR_NONE       timer arm success
-// * @return      [in/out]  YSF_ERR_FAIL       timer arm failed
-// * @note        None
-// *******************************************************************************
-// */
-//ysf_err_t ysf_timerEx_arm(struct ysf_timer_t *timer, 
-//                          uint32_t time, 
-//                          uint8_t count)
-//{
-//    YSF_ENTER_CRITICAL();
-//    
-//    if( timer == NULL )
-//    {
-//        return YSF_ERR_FAIL;
-//    }
-//    
-//    timer->config.loadCount = time;
-//    timer->config.count     = timer->config.loadCount;
-//    timer->config.cycle     = count;
-//    
-//    timer->control.status   = ysf_enable;
-//    
-//    ysf_timer_add(timer);
-//    
-//    YSF_EXIT_CRITICAL();
-//    
-//    return YSF_ERR_NONE;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       timer disarm
-// * @param       [in/out]  *timer             timer block
-// * @return      [in/out]  YSF_ERR_NONE       timer disarm success
-// * @return      [in/out]  YSF_ERR_FAIL       timer disarm failed
-// * @note        None
-// *******************************************************************************
-// */
-//ysf_err_t ysf_timer_disarm( struct ysf_timer_t *timer )
-//{
-//    YSF_ENTER_CRITICAL();
-//    
-//    if( timer == NULL )
-//    {
-//        return YSF_ERR_FAIL;
-//    }
-//    
-//    timer->control.status = ysf_disable;
-//        
-//    YSF_EXIT_CRITICAL();
-//    
-//    return YSF_ERR_NONE;
-//}
-
-
-
-///**
-// *******************************************************************************
-// * @brief       timer trigger handler
-// * @param       [in/out]  *timer     timer block
-// * @return      [in/out]  false      timer handler failed
-// * @return      [in/out]  true       timer handler success
-// * @note        this is a static inline type function
-// *******************************************************************************
-// */
-//YSF_STATIC_INLINE
-//bool timerTriggerHandler(struct ysf_timer_t *timer)
-//{    
-//    if( timer == NULL )
-//    {
-//        return false;
-//    }    
-//    
-//    if( timer->trigger.event == YSF_EVENT_NONE )
-//    {
-////        perform this function will directly lead to the cortex m3 kernel abort          
-////        timer->trigger.callback.func(timer->trigger.callback.param);
-//        
-//        if( timer->trigger.callback.param != NULL )
-//        {
-//            timer->trigger.callback.func(timer->trigger.callback.param);
-//        }
-//        else
-//        {
-//            timer->trigger.callback.func(NULL);
-//        }
-//    }
-//    else
-//    {
-//        ysf_event_post(timer->trigger.event);
-//    }
-//    
-//    return true;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       timer walk
-// * @param       [in/out]  **node         now timer node
-// * @param       [in/out]  **ctx          elapsed time
-// * @param       [in/out]  **expand       last timer node
-// * @return      [in/out]  false          timer walk is not end
-// * @return      [in/out]  true           timer walk is end
-// * @note        this is a static type function
-// *******************************************************************************
-// */
-//static bool ysf_timer_walk(void **node, void **ctx, void **expand)
-//{
-//    struct ysf_timer_t *timer = (struct ysf_timer_t *)(*node);
-//    struct ysf_timer_t *last  = (struct ysf_timer_t *)(*expand);
-//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-//    void *del = *node;
-//#endif
-//    ysf_tick_t tick = (ysf_tick_t)(*(ctx));
-//    
-//    if( *node == NULL )
-//    {
-//        return true;
-//    }
-//    
-//    if( isTimerTrigger(tick, timer) == true )
-//    {
-//        timerTriggerHandler(timer);
-//    }
-//    
-//    if( timer->control.status == ysf_disable )
-//    {
-//        if( (void *)last == (void *)head )
-//        {
-//            *node = last->control.next;
-//            last->control.next = NULL;
-//        }
-//        else
-//        { 
-//            last->control.next = timer->control.next;
-//            timer->control.next = NULL;
-//            
-//            *node = *expand;
-//        }
-//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-//        if( ysf_memory_is_in(del) == true )
-//        {
-//            ysf_memory_free(del);
-//        }
-//#endif
-//    }
-//    
-//    *expand = *node;
-//    
-//    return false;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       timer handler
-// * @return      [in/out]  YSF_ERR_NONE    not happen error
-// * @note        timer processing function without errors
-// *******************************************************************************
-// */
-//ysf_err_t ysf_timer_handler( uint16_t event )
-//{
-//    ysf_tick_t tick = ysf_past_tick_cal();
-//    void *expand = (void *)head;
-//    
-//    ysf_slist_walk((void **)&head, ysf_timer_walk, (void **)&tick, (void **)&expand);
-//    
-//    return YSF_ERR_NONE;
-//}
+ysf_err_t ysf_timer_handler( uint16_t event )
+{
+    if( tcb.head == NULL )
+    {
+        return YSF_ERR_NONE;
+    }
+    
+    ysf_tick_t tick = ysf_past_tick_cal();
+    void *expand = (void *)tcb.head;
+    
+    ysf_slist_walk((void **)&tcb.head, ysf_timer_walk, (void **)&tick, (void **)&expand);
+    
+    return YSF_ERR_NONE;
+}
 
 #endif
 

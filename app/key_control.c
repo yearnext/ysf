@@ -26,6 +26,7 @@
 /* Private define ------------------------------------------------------------*/                                                        
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+#if 0
 /**
  *******************************************************************************
  * @brief       device port define
@@ -254,7 +255,7 @@ static void bsp_key_init(void)
     map.gpio.pin.config.input(&key2, GPIO_PIN_I_UD_MODE);
     ysf.signal.ex.arm(&key1Signal, key2_scan, key2_handler);
 }
-
+#endif
 /**
  *******************************************************************************
  * @brief       user init function
@@ -262,9 +263,10 @@ static void bsp_key_init(void)
  */
 static ysf_err_t user_init( void )
 {
+#if 0
     bsp_led_init();
     bsp_key_init();
-    
+#endif
     return YSF_ERR_NONE;
 }
 

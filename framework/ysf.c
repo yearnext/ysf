@@ -76,15 +76,14 @@ const struct YSF_API ysf =
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
     .timer.init               = ysf_timer_init,
     .timer.handler            = ysf_timer_handler,
-    
-    .timer.simple.cb_arm      = ysf_timerSimple_cb_arm,
-    .timer.simple.evt_arm     = ysf_timerSimple_evt_arm,
-    .timer.simple.disarm      = ysf_timer_disarm,
-    
-    .timer.ex.cb_init         = ysf_timerEx_cb_init,
-    .timer.ex.evt_init        = ysf_timerEx_evt_init,
-    .timer.ex.arm             = ysf_timerEx_arm,
-    .timer.ex.disarm          = ysf_timer_disarm,
+
+    .timer.isIn               = ysf_timer_isInList,
+    .timer.getStatus          = ysf_timer_getStatus,
+
+    .timer.cb_init            = ysf_timer_cb_init,
+    .timer.evt_init           = ysf_timer_evt_init,
+    .timer.arm                = ysf_timer_arm,
+    .timer.disarm             = ysf_timer_disarm,
 #endif
 
 #if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
@@ -107,8 +106,7 @@ const struct YSF_API ysf =
     .task.init               = ysf_task_init,
     .task.walk               = ysf_task_poll,
     
-    .task.ex.add             = ysf_taskEx_add,
-    .task.simple.add         = ysf_taskSimple_add,
+    .task.add                = ysf_task_add,
 #endif
 };
 #endif

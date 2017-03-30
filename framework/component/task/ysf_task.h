@@ -52,14 +52,14 @@ struct ysf_task_t
     struct
     {
         struct ysf_task_t *next;
-    }control;
+    };
     
     struct
     {
-        ysf_err_t (*handler)(void*, void*);
+        ysf_err_t (*func)(void*, void*);
         void *param;
         void *expand;
-    }func;
+    };
 };
 
 /**
@@ -72,16 +72,7 @@ struct YSF_TASK_API
 {
     ysf_err_t (*init)(void);
     ysf_err_t (*walk)(void);
-    
-    struct
-    {
-        ysf_err_t (*add)(struct ysf_task_t*, void*, void*, void*);
-    }ex;
-    
-    struct
-    {
-        ysf_err_t (*add)(void*, void*, void*);
-    }simple;
+    ysf_err_t (*add)(struct ysf_task_t*, void*, void*, void*);
 };
 #endif
 
@@ -89,8 +80,7 @@ struct YSF_TASK_API
 /* Exported functions --------------------------------------------------------*/
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
 extern ysf_err_t ysf_task_init(void);
-extern ysf_err_t ysf_taskEx_add(struct ysf_task_t*, void*, void*, void*);
-extern ysf_err_t ysf_taskSimple_add(void*, void*, void*);
+extern ysf_err_t ysf_task_add(struct ysf_task_t*, void*, void*, void*);
 extern ysf_err_t ysf_task_poll(void);
 #endif    
     

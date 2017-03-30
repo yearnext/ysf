@@ -78,17 +78,17 @@ ysf_err_t ysf_task_init(void)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_taskEx_add(struct ysf_task_t *task, void *func, void *param, void *expand)
+ysf_err_t ysf_task_add(struct ysf_task_t *task, void *func, void *param, void *expand)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
         return YSF_ERR_INVAILD_PTR;
     }
     
-    task->func.handler = (ysf_err_t (*)(void*, void*))func;
-    task->func.param   = param;
-    task->func.expand  = expand;
-    task->control.next = NULL;
+    task->func = (ysf_err_t (*)(void*, void*))func;
+    task->param   = param;
+    task->expand  = expand;
+    task->next    = NULL;
     
     if(tcb.head == NULL)
     {
@@ -98,32 +98,10 @@ ysf_err_t ysf_taskEx_add(struct ysf_task_t *task, void *func, void *param, void 
         return YSF_ERR_NONE;
     }
     
-    tcb.tail->control.next = task;
-    tcb.tail = task;
+    tcb.tail->next = task;
+    tcb.tail       = task;
     
     return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       add task in task queue
- * @param       [in/out]  *func                     task function
- * @param       [in/out]  *param                    task param
- * @param       [in/out]  *expand                   task expand param
- * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
- * @return      [in/out]  YSF_ERR_FAIL              add success
- * @return      [in/out]  YSF_ERR_NONE              add success
- * @note        this function is dependent on ysf memory management
- *******************************************************************************
- */
-ysf_err_t ysf_taskSimple_add(void *func, void *param, void *expand)
-{
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct ysf_task_t *task = (struct ysf_task_t *)ysf_memory_malloc(sizeof(struct ysf_task_t));
-    return ysf_taskEx_add(task, func, param, expand);
-#else
-    return YSF_ERR_FAIL;
-#endif
 }
 
 /**
@@ -135,32 +113,30 @@ ysf_err_t ysf_taskSimple_add(void *func, void *param, void *expand)
  *******************************************************************************
  */
 ysf_err_t ysf_task_poll(void)
-{
+{    
+    struct ysf_task_t *task = tcb.head;
+    
     if(tcb.head == NULL)
     {
         return YSF_ERR_FAIL;
     } 
-    
-    struct ysf_task_t *task = tcb.head;
-    tcb.head                = task->control.next;
-    
-    if( tcb.head == NULL )
+
+    if( task->next == NULL )
     {
-        tcb.tail = NULL;
+		tcb.head   = NULL;
+        tcb.tail   = NULL;
     }
-    
-    if( task->func.handler != NULL )
+	else
+	{
+		tcb.head   = task->next;    
+        task->next = NULL;
+	}
+
+    if( task->func != NULL )
     {
-        task->func.handler(task->func.param, task->func.expand);
+        task->func(task->param, task->expand);
     }
-    task->control.next = NULL;
-    
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    if( ysf_memory_is_in(task) == true )
-    {
-        ysf_memory_free(task);
-    }
-#endif    
+
     return YSF_ERR_FAIL;
 }
 
