@@ -56,9 +56,12 @@ struct ysf_task_t
     
     struct
     {
-        ysf_err_t (*func)(void*, void*);
-        void *param;
-        void *expand;
+        union
+        {
+            ysf_err_t (*func)(void*, void*);
+            void *param;
+            void *expand;
+        };
     };
 };
 

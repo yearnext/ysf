@@ -97,6 +97,8 @@ struct YSF_TIMER_API
     
     ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*func)(void*, void*), void*, void*);
     ysf_err_t (*evt_init)(struct ysf_timer_t*, uint16_t);
+    struct ysf_timer_t* (*cbEx_init)(ysf_err_t (*func)(void*, void*), void*, void*);
+    struct ysf_timer_t* (*evtEx_init)(uint16_t);
     ysf_err_t (*arm)(struct ysf_timer_t*,uint32_t,uint16_t);
     ysf_err_t (*disarm)(struct ysf_timer_t*);
 };

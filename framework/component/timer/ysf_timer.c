@@ -331,11 +331,12 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
         return false;
     }    
     
-    if( timer->event == YSF_EVENT_NONE )
+    if(timer->callback.func != NULL)
     {
         ysf_task_add(&timer->callback, timer->callback.func, timer->callback.param, timer->callback.expand);
     }
-    else
+    
+    if( timer->event != YSF_EVENT_NONE )
     {
         ysf_event_post(timer->event);
     }
