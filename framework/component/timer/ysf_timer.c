@@ -179,7 +179,7 @@ bool ysf_timer_getStatus(struct ysf_timer_t *timer)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_timer_cb_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, void*), void *param, void *expand)
+ysf_err_t ysf_timer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), void *param, uint16_t event)
 {
     if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
     {
@@ -188,8 +188,8 @@ ysf_err_t ysf_timer_cb_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, 
     
     timer->callback.func   = func;
     timer->callback.param  = param;
-    timer->callback.expand = expand;
-    timer->event           = YSF_EVENT_NONE;
+    timer->callback.expand = NULL;
+    timer->event           = event;
     
     return YSF_ERR_NONE;
 }

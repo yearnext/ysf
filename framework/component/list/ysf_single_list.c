@@ -304,6 +304,146 @@ ysf_err_t ysf_slist_isExist( void **listHead, void **ctx )
 }
 #endif
 
+// 遍历函数
+ysf_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t **sListFifo, sListFunc func, void **param, void **expand)
+{
+    ysf_assert(IS_PTR_NULL(sListFifo));
+    ysf_assert(IS_PTR_NULL(func));
+
+    struct ysf_sList_t **temp = (struct ysf_sList_t **)(&((struct ysf_sListFifo_t *)(*sListFifo))->head);
+    bool status = false;
+    
+    while(*temp != NULL && status == false)
+    {
+        status = func((void **)temp, param, expand);
+        
+        temp = (struct ysf_sList_t **)(&((struct ysf_sList_t *)(*temp))->next);
+    }
+    
+    return YSF_ERR_NONE;
+}
+
+// 检测是否存在于链表中
+bool ysf_sListFifo_isIn(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *findData)
+{
+    ysf_assert(IS_PTR_NULL(sListFifo));
+    ysf_assert(IS_PTR_NULL(findData));
+    
+    struct ysf_sList_t *temp = sListFifo->head;
+    
+    if( temp == NULL )
+    {
+        return false;
+    }
+    
+    while(temp != NULL)
+    {
+        if( temp == findData )
+        {
+            return true;
+        }
+        
+        temp = temp->next;
+    }
+
+    return false;
+}
+
+// 入栈
+ysf_err_t ysf_sListFifo_push(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *wrData)
+{
+    ysf_assert(IS_PTR_NULL(sListFifo));
+    ysf_assert(IS_PTR_NULL(wrData));
+    
+//    if( sListFifo->tail == NULL )
+//    {
+//        sListFifo->head = wrData;
+//        sListFifo->tail = wrData;
+//    }
+//    else
+//    {
+//        sListFifo->tail->next = wrData;
+//        sListFifo->tail       = wrData;
+//    }
+    
+    if( ysf_sListFifo_isIn(sListFifo, wrData) == false )
+    {
+        wrData->next = NULL;
+        
+        if(sListFifo->tail != NULL)
+        {
+            sListFifo->tail->next = wrData;
+            sListFifo->tail       = wrData;
+        }
+        else
+        {
+            sListFifo->head = wrData;
+            sListFifo->tail = wrData;
+        }
+    }
+    else
+    {
+        return YSF_ERR_INVAILD_PARAM;
+    }
+    
+    return YSF_ERR_NONE;
+}
+
+// 出栈
+ysf_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *rdData)
+{
+    ysf_assert(IS_PTR_NULL(sListFifo));
+    ysf_assert(IS_PTR_NULL(rdData));
+
+    rdData = sListFifo->head;
+    
+//    if( sListFifo->head->next == NULL )
+//    {
+//        sListFifo->head = NULL;
+//        sListFifo->tail = NULL;
+//    }
+//    else
+//    {
+//        sListFifo->head = sListFifo->head->next;
+//    }
+    
+    sListFifo->head = sListFifo->head->next;
+    
+    if( sListFifo->head->next == NULL )
+    {
+        sListFifo->tail = NULL;
+    }
+
+    rdData->next        = NULL;
+    
+    return YSF_ERR_NONE;
+}
+
+// 清空链表fifo
+ysf_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *sListFifo)
+{
+    ysf_assert(IS_PTR_NULL(sListFifo));
+    
+    struct ysf_sList_t *status;
+    
+    do
+    {
+        ysf_sListFifo_pop(sListFifo, status);
+    }while(status != NULL);
+    
+    return YSF_ERR_NONE;
+}
+
+// 链表fifo初始化
+ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t *sListFifo)
+{
+    ysf_assert(IS_PTR_NULL(sListFifo));
+
+    ysf_sListFifo_clear(sListFifo);
+    
+    return YSF_ERR_NONE;
+}
+
 /** @}*/     /** ysf single list component  */
 
 /**********************************END OF FILE*********************************/

@@ -50,7 +50,18 @@ extern "C"
 struct ysf_sList_t
 {
     struct ysf_sList_t *next;
-    uint8_t        data[];
+    uint8_t            user_data[];
+};
+
+/**
+ *******************************************************************************
+ * @brief       ysf single list fifo type
+ *******************************************************************************
+ */
+struct ysf_sListFifo_t
+{
+    struct ysf_sList_t *head;
+    struct ysf_sList_t *tail;
 };
 
 /**
