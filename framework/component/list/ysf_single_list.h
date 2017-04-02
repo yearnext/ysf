@@ -104,6 +104,13 @@ extern ysf_err_t ysf_slist_init(void**);
 extern ysf_err_t ysf_slist_add(void**, void**);
 extern ysf_err_t ysf_slist_del(void**, void**);
 extern ysf_err_t ysf_slist_isExist(void**, void**);
+
+extern ysf_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t**, sListFunc, void**, void**);
+extern bool ysf_sListFifo_isIn(struct ysf_sListFifo_t*, struct ysf_sList_t*);
+extern ysf_err_t ysf_sListFifo_push(struct ysf_sListFifo_t*, struct ysf_sList_t*);
+extern ysf_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t*, struct ysf_sList_t*);
+extern ysf_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *);
+extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

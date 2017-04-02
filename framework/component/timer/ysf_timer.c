@@ -196,28 +196,6 @@ ysf_err_t ysf_timer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), vo
 
 /**
  *******************************************************************************
- * @brief       event trigger timer init
- * @param       [in/out]  *timer             timer block
- * @param       [in/out]  event              trigger events
- * @return      [in/out]  YSF_ERR_NONE       init success
- * @return      [in/out]  YSF_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_timer_evt_init(struct ysf_timer_t *timer, uint16_t event)
-{
-    if(IS_PTR_NULL(timer))
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-    
-    timer->event = event;
-    
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
  * @brief       timer arm
  * @param       [in/out]  *timer             timer block
  * @param       [in/out]  ticks              timer timing
@@ -277,7 +255,7 @@ ysf_err_t ysf_timer_disarm(struct ysf_timer_t *timer)
  * @note        this is a static inline type function
  *******************************************************************************
  */
-static inline
+YSF_STATIC_INLINE
 bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
 {    
     if( timer == NULL )
@@ -323,7 +301,7 @@ bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
  * @note        this is a static inline type function
  *******************************************************************************
  */
-static inline
+YSF_STATIC_INLINE
 bool timerTriggerHandler(struct ysf_timer_t *timer)
 {    
     if( timer == NULL )

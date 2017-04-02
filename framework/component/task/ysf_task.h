@@ -41,7 +41,7 @@ extern "C"
  */
 #define USE_YSF_TASK_API (1)
 
-/* Exported types ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/    
 /**
  *******************************************************************************
  * @brief       ysf task block
@@ -51,16 +51,31 @@ struct ysf_task_t
 {
     struct
     {
-        struct ysf_task_t *next;
+        struct ysf_task_t    *next;
+        
+        enum ysf_task_type_t
+        {
+            YSF_TASK_IS_CALL_BACK_TYPE,
+            YSF_TASK_IS_EVENT_TYPE,
+        }taskType;
     };
     
     struct
     {
         union
         {
-            ysf_err_t (*func)(void*, void*);
-            void *param;
-            void *expand;
+            struct
+            {
+                ysf_err_t (*func)(void*, void*);
+                void *param;
+                void *expand;
+            }evt;
+            
+            struct
+            {
+                ysf_err_t (*func)(void*);
+                void *param;
+            }cb;
         };
     };
 };
@@ -74,8 +89,9 @@ struct ysf_task_t
 struct YSF_TASK_API
 {
     ysf_err_t (*init)(void);
-    ysf_err_t (*walk)(void);
-    ysf_err_t (*add)(struct ysf_task_t*, void*, void*, void*);
+    ysf_err_t (*poll)(void);
+    ysf_err_t (*evtCreate)(struct ysf_task_t*, ysf_err_t (*)(void*, void*), void*, void*);
+    ysf_err_t (*cbCreate)(struct ysf_task_t*, ysf_err_t (*)(void*), void*);
 };
 #endif
 
@@ -83,8 +99,9 @@ struct YSF_TASK_API
 /* Exported functions --------------------------------------------------------*/
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
 extern ysf_err_t ysf_task_init(void);
-extern ysf_err_t ysf_task_add(struct ysf_task_t*, void*, void*, void*);
 extern ysf_err_t ysf_task_poll(void);
+extern ysf_err_t ysf_evtTask_create(struct ysf_task_t*, ysf_err_t (*)(void*, void*), void*, void*);
+extern ysf_err_t ysf_cbTask_create(struct ysf_task_t*, ysf_err_t (*)(void*), void*);
 #endif    
     
 /* Add c++ compatibility------------------------------------------------------*/

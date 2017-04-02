@@ -104,9 +104,10 @@ const struct YSF_API ysf =
 
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
     .task.init               = ysf_task_init,
-    .task.walk               = ysf_task_poll,
+    .task.poll               = ysf_task_poll,
     
-    .task.add                = ysf_task_add,
+    .task.evtCreate          = ysf_evtTask_create,
+    .task.cbCreate           = ysf_cbTask_create,
 #endif
 };
 #endif
