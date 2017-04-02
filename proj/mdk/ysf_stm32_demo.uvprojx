@@ -431,6 +431,11 @@
               <FilePath>..\..\framework\component\message\ysf_message.c</FilePath>
             </File>
             <File>
+              <FileName>ysf_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\component\task\ysf_task.c</FilePath>
+            </File>
+            <File>
               <FileName>ysf_sm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\framework\component\sm\ysf_sm.c</FilePath>
@@ -439,11 +444,6 @@
               <FileName>ysf_pt.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\framework\component\pt\ysf_pt.h</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\component\task\ysf_task.c</FilePath>
             </File>
           </Files>
         </Group>

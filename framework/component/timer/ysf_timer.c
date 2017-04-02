@@ -63,6 +63,130 @@ struct ysf_timer_control_block
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 /**
  *******************************************************************************
+ * @brief       detect the task is in queue
+ * @param       [in/out]  task                 will detect task
+ * @return      [in/out]  true                 the task in the queue
+ * @return      [in/out]  true                 the task not in the queue
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+bool ysf_timer_isIn(struct ysf_timer_t *timer)
+{
+    ysf_assert(IS_PTR_NULL(timer));
+    
+    struct ysf_timer_t *temp = tcb.head;
+    
+    if( temp == NULL )
+    {
+        return false;
+    }
+    
+    while(temp != NULL)
+    {
+        if( temp == timer )
+        {
+            return true;
+        }
+        
+        temp = temp->next;
+    }
+
+    return false;
+}
+
+/**
+ *******************************************************************************
+ * @brief       pop task to queue
+ * @param       [in/out]  task                 will add task
+ * @return      [in/out]  YSF_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+ysf_err_t ysf_task_push(struct ysf_timer_t *timer)
+{
+//    if(IS_PTR_NULL(task))
+//    {
+//        return YSF_ERR_INVAILD_PTR;
+//    }
+    
+    ysf_assert(IS_PTR_NULL(timer));
+    
+    if( ysf_timer_isIn(timer) == false )
+    {
+        timer->next = NULL;
+        
+        if(tcb.tail != NULL)
+        {
+            tcb.tail->next = timer;
+            tcb.tail       = timer;
+        }
+        else
+        {
+            tcb.head       = timer;
+            tcb.tail       = timer;
+        }
+    }
+    else
+    {
+        return YSF_ERR_INVAILD_PARAM;
+    }
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       push task from queue
+ * @param       [in/out]  void
+ * @return      [in/out]  struct ysf_task_t *     push task addr in memory
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+struct ysf_task_t *ysf_task_pop(void)
+{
+    struct ysf_task_t *task;
+    
+    if( tcb.head == NULL )
+    {
+        tcb.tail = NULL;
+        return NULL;
+    }
+    
+    task = tcb.head;
+
+    tcb.head = tcb.head->next;
+    
+    if( tcb.head->next == NULL )
+    {
+        tcb.tail = NULL;
+    }
+
+    task->next   = NULL;
+    
+    return task;
+}
+
+/**
+ *******************************************************************************
+ * @brief       task queue clear
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+ysf_err_t ysf_task_clear(void)
+{    
+    while(ysf_task_pop() != NULL);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
  * @brief       ysf timer component init
  * @param       [in/out]  void
  * @return      [in/out]  YSF_ERR_NONE       init finish

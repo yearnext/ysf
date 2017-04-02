@@ -111,6 +111,96 @@ extern ysf_err_t ysf_sListFifo_push(struct ysf_sListFifo_t*, struct ysf_sList_t*
 extern ysf_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t*, struct ysf_sList_t*);
 extern ysf_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *);
 extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
+
+#define DEFINE_SLIST_FIFO_CONTROL_BLOCK(type, name) struct                     \
+                                                    {                          \
+                                                        type *head;            \
+                                                        type *tail;            \
+                                                    } name =                   \
+                                                    {                          \
+                                                        .head = NULL,          \
+                                                        .tail = NULL,          \
+                                                    }
+                                                    
+#define ysf_sListControlBlock_isIn(block, node)                                \
+{                                                                              \
+    ysf_assert(IS_PTR_NULL(node));                                             \
+                                                                               \
+    struct ysf_task_t *temp = block.head;                                      \
+                                                                               \
+    if( temp == NULL )                                                         \
+    {                                                                          \
+        return false;                                                          \
+    }                                                                          \
+                                                                               \
+    while(temp != NULL)                                                        \
+    {                                                                          \
+        if( temp == node )                                                     \
+        {                                                                      \
+            return true;                                                       \
+        }                                                                      \
+                                                                               \
+        temp = temp->next;                                                     \
+    }                                                                          \
+                                                                               \
+    return false;                                                              \
+}
+
+#define ysf_sListControlBlock_push(isInFunc, block, node)                      \
+{                                                                              \
+    ysf_assert(IS_PTR_NULL(node));                                             \
+                                                                               \
+    if( isInFunc(node) == false )                                              \
+    {                                                                          \
+        node->next = NULL;                                                     \
+                                                                               \
+        if(block.tail != NULL)                                                 \
+        {                                                                      \
+            block.tail->next = node;                                           \
+            block.tail       = node;                                           \
+        }                                                                      \
+        else                                                                   \
+        {                                                                      \
+            block.head       = node;                                           \
+            block.tail       = node;                                           \
+        }                                                                      \
+    }                                                                          \
+    else                                                                       \
+    {                                                                          \
+        return YSF_ERR_INVAILD_PARAM;                                          \
+    }                                                                          \
+                                                                               \
+    return YSF_ERR_NONE;                                                       \
+}
+
+#define ysf_sListControlBlock_pop(block, popData)                              \
+{                                                                              \
+    if( block.head == NULL )                                                   \
+    {                                                                          \
+        block.tail = NULL;                                                     \
+        return NULL;                                                           \
+    }                                                                          \
+                                                                               \
+    popData    = popData;                                                      \
+    block.head = block.head->next;                                             \
+                                                                               \
+    if( block.head->next == NULL )                                             \
+    {                                                                          \
+        block.tail = NULL;                                                     \
+    }                                                                          \
+                                                                               \
+    popData->next     = NULL;                                                  \
+                                                                               \
+    return popData;                                                            \
+}
+
+#define ysf_sListControlBlock_clear(sListPOPFunc)                              \
+{                                                                              \
+    while(sListPOPFunc() != NULL);                                             \
+                                                                               \
+    return YSF_ERR_NONE;                                                       \
+}
+
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
