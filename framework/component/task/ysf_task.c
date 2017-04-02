@@ -64,26 +64,6 @@ DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, tcb);
 YSF_STATIC_INLINE
 bool ysf_task_isIn(struct ysf_task_t *task)
 {
-//    ysf_assert(IS_PTR_NULL(task));
-//    
-//    struct ysf_task_t *temp = tcb.head;
-//    
-//    if( temp == NULL )
-//    {
-//        return false;
-//    }
-//    
-//    while(temp != NULL)
-//    {
-//        if( temp == task )
-//        {
-//            return true;
-//        }
-//        
-//        temp = temp->next;
-//    }
-
-//    return false;
     ysf_sListControlBlock_isIn(tcb, task);
     
 //    return false;
@@ -100,29 +80,6 @@ bool ysf_task_isIn(struct ysf_task_t *task)
 YSF_STATIC_INLINE
 ysf_err_t ysf_task_push(struct ysf_task_t *task)
 {
-//    ysf_assert(IS_PTR_NULL(task));
-//    
-//    if( ysf_task_isIn(task) == false )
-//    {
-//        task->next = NULL;
-//        
-//        if(tcb.tail != NULL)
-//        {
-//            tcb.tail->next = task;
-//            tcb.tail       = task;
-//        }
-//        else
-//        {
-//            tcb.head       = task;
-//            tcb.tail       = task;
-//        }
-//    }
-//    else
-//    {
-//        return YSF_ERR_INVAILD_PARAM;
-//    }
-//    
-//    return YSF_ERR_NONE;
     ysf_sListControlBlock_push(ysf_task_isIn, tcb, task);
 //    return YSF_ERR_NONE;
 }
@@ -140,25 +97,6 @@ struct ysf_task_t *ysf_task_pop(void)
 {
     struct ysf_task_t *task;
     
-//    if( tcb.head == NULL )
-//    {
-//        tcb.tail = NULL;
-//        return NULL;
-//    }
-//    
-//    task = tcb.head;
-
-//    tcb.head = tcb.head->next;
-//    
-//    if( tcb.head->next == NULL )
-//    {
-//        tcb.tail = NULL;
-//    }
-
-//    task->next   = NULL;
-//    
-//    return task;
-//    
     ysf_sListControlBlock_pop(tcb, task);
 //    return task;
 }
@@ -174,13 +112,8 @@ struct ysf_task_t *ysf_task_pop(void)
 YSF_STATIC_INLINE
 ysf_err_t ysf_task_clear(void)
 {    
-//    while(ysf_task_pop() != NULL);
-//    
-//    return YSF_ERR_NONE;
-    
     ysf_sListControlBlock_clear(ysf_task_pop);
-//    while(ysf_task_pop() != NULL);
-    
+
 //    return YSF_ERR_NONE;
 }
 
