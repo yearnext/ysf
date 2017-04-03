@@ -96,13 +96,12 @@ struct ysf_signal_t
     
     struct
     {
-        enum ysf_signal_status_t (*detect)(void);
+        ysf_err_t (*detect)(void*);
+        ysf_err_t (*handler)(void *);
+        enum ysf_signal_status_t status;
         
-        struct ysf_task_t callback;
-        uint16_t event;
+        struct ysf_task_t task;
     };
-    
-    enum ysf_signal_status_t status;
 };
 
 /**

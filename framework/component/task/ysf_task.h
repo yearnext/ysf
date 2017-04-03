@@ -55,8 +55,9 @@ struct ysf_task_t
         
         enum ysf_task_type_t
         {
-            YSF_TASK_IS_CALL_BACK_TYPE,
-            YSF_TASK_IS_EVENT_TRIGGER_TYPE,
+            YSF_CALL_BACK_TASK,
+            YSF_EVENT_TRIGGER_TASK,
+            YSF_EVENT_HANDLER_TASK,
         }type;
     };
     
@@ -64,21 +65,13 @@ struct ysf_task_t
     {                
         union
         {
-            struct
-            {
-//                ysf_err_t (*func)(void*, void*);
-//                void *expand;
-                ysf_err_t (*func)(void*, uint16_t);
-                void *param;
-                uint16_t event;
-            }evt;
-            
-            struct
-            {
-                ysf_err_t (*func)(void*);
-                void *param;          
-            }cb;
+            ysf_err_t (*evt_trigger)(void*, uint16_t);
+            ysf_err_t (*evt_handler)(uint16_t);
+            ysf_err_t (*cb)(void*);
         };
+
+        void *param;
+        uint16_t event;
     };
 };
 
@@ -92,8 +85,13 @@ struct YSF_TASK_API
 {
     ysf_err_t (*init)(void);
     ysf_err_t (*poll)(void);
-    ysf_err_t (*evtCreate)(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
-    ysf_err_t (*cbCreate)(struct ysf_task_t*, ysf_err_t (*)(void*), void*);
+    
+    struct
+    {
+        ysf_err_t (*evt_trigger)(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+        ysf_err_t (*evt_handler)(struct ysf_task_t*, ysf_err_t (*)(uint16_t), uint16_t);
+        ysf_err_t (*call_back)(struct ysf_task_t*, ysf_err_t (*)(void*), void*);
+    }create;
 };
 #endif
 
@@ -102,7 +100,8 @@ struct YSF_TASK_API
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
 extern ysf_err_t ysf_task_init(void);
 extern ysf_err_t ysf_task_poll(void);
-extern ysf_err_t ysf_evtTask_create(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern ysf_err_t ysf_evtTriggerTask_create(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern ysf_err_t ysf_evtHandlerTask_create(struct ysf_task_t*, ysf_err_t (*)(uint16_t), uint16_t);
 extern ysf_err_t ysf_cbTask_create(struct ysf_task_t*, ysf_err_t (*)(void*), void*);
 #endif    
     

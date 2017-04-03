@@ -111,8 +111,9 @@ const struct YSF_API ysf =
     .task.init                 = ysf_task_init,
     .task.poll                 = ysf_task_poll,
     
-    .task.evtCreate            = ysf_evtTask_create,
-    .task.cbCreate             = ysf_cbTask_create,
+    .task.create.evt_trigger   = ysf_evtTriggerTask_create,
+    .task.create.evt_handler   = ysf_evtHandlerTask_create,
+    .task.create.call_back     = ysf_cbTask_create,
 #endif
 };
 #endif
