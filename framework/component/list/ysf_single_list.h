@@ -122,16 +122,11 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
                                                         .tail = NULL,          \
                                                     }
                                                     
-#define ysf_sListControlBlock_isIn(block, node)                                \
+#define ysf_sListControlBlock_isIn(type, block, node)                          \
 {                                                                              \
     ysf_assert(IS_PTR_NULL(node));                                             \
                                                                                \
-    struct ysf_task_t *temp = block.head;                                      \
-                                                                               \
-    if( temp == NULL )                                                         \
-    {                                                                          \
-        return false;                                                          \
-    }                                                                          \
+    type *temp = block.head;                                                   \
                                                                                \
     while(temp != NULL)                                                        \
     {                                                                          \
@@ -142,8 +137,6 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
                                                                                \
         temp = temp->next;                                                     \
     }                                                                          \
-                                                                               \
-    return false;                                                              \
 }
 
 #define ysf_sListControlBlock_push(isInFunc, block, node)                      \
@@ -169,8 +162,6 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     {                                                                          \
         return YSF_ERR_INVAILD_PARAM;                                          \
     }                                                                          \
-                                                                               \
-    return YSF_ERR_NONE;                                                       \
 }
 
 #define ysf_sListControlBlock_pop(block, popData)                              \
@@ -190,8 +181,6 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     }                                                                          \
                                                                                \
     popData->next     = NULL;                                                  \
-                                                                               \
-    return popData;                                                            \
 }
 
 #define ysf_sListControlBlock_clear(sListPOPFunc)                              \

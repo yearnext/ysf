@@ -45,7 +45,7 @@
 //    .head = NULL,
 //    .tail = NULL,
 //};
-DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, tcb);
+static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, tcb);
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -64,9 +64,9 @@ DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, tcb);
 YSF_STATIC_INLINE
 bool ysf_task_isIn(struct ysf_task_t *task)
 {
-    ysf_sListControlBlock_isIn(tcb, task);
+    ysf_sListControlBlock_isIn(struct ysf_task_t, tcb, task);
     
-//    return false;
+    return false;
 }
 
 /**
@@ -81,7 +81,8 @@ YSF_STATIC_INLINE
 ysf_err_t ysf_task_push(struct ysf_task_t *task)
 {
     ysf_sListControlBlock_push(ysf_task_isIn, tcb, task);
-//    return YSF_ERR_NONE;
+    
+    return YSF_ERR_NONE;
 }
 
 /**
@@ -98,7 +99,8 @@ struct ysf_task_t *ysf_task_pop(void)
     struct ysf_task_t *task;
     
     ysf_sListControlBlock_pop(tcb, task);
-//    return task;
+    
+    return task;
 }
 
 /**
