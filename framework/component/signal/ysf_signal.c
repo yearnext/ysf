@@ -43,15 +43,7 @@
  * @brief       ysf signal control block
  *******************************************************************************
  */
-struct ysf_signal_control_block
-{
-    struct ysf_signal_t *head;
-    struct ysf_signal_t *tail;
-} static scb = 
-{
-    .head = NULL,
-    .tail = NULL,
-};
+static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_signal_t, tcb);
 
 /**
  *******************************************************************************
