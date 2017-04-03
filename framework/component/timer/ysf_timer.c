@@ -168,9 +168,9 @@ ysf_err_t ysf_cbTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), 
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->handler.cb.func  = func;
-    timer->handler.cb.param = param;
-    timer->type             = YSF_CALL_BACK_TIMER;
+    timer->handler.cb    = func;
+    timer->handler.param = param;
+    timer->type          = YSF_CALL_BACK_TIMER;
     
     return YSF_ERR_NONE;
 }
@@ -200,9 +200,9 @@ struct ysf_timer_t *ysf_cbSmpTimer_init(ysf_err_t (*func)(void*), void *param)
         return NULL;
     }
     
-    timer->handler.cb.func  = func;
-    timer->handler.cb.param = param;
-    timer->type             = YSF_CALL_BACK_TIMER;
+    timer->handler.cb    = func;
+    timer->handler.param = param;
+    timer->type          = YSF_CALL_BACK_TIMER;
     
     return timer;
 #else
@@ -229,10 +229,10 @@ ysf_err_t ysf_evtTriggerTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->handler.evt.func  = func;
-    timer->handler.evt.param = param;
-    timer->handler.evt.event = event;
-    timer->type              = YSF_EVENT_TRIGGER_TIMER;
+    timer->handler.evt_handler = func;
+    timer->handler.param       = param;
+    timer->handler.event       = event;
+    timer->type                = YSF_EVENT_TRIGGER_TIMER;
     
     return YSF_ERR_NONE;
 }
@@ -263,10 +263,10 @@ struct ysf_timer_t *ysf_evtTriggerSmpTimer_init(ysf_err_t (*func)(void*, uint16_
         return NULL;
     }
     
-    timer->handler.evt.func  = func;
-    timer->handler.evt.param = param;
-    timer->handler.evt.event = event;
-    timer->type              = YSF_EVENT_TRIGGER_TIMER;
+    timer->handler.evt_handler = func;
+    timer->handler.param       = param;
+    timer->handler.event       = event;
+    timer->type                = YSF_EVENT_TRIGGER_TIMER;
     
     return timer;
 #else
@@ -432,15 +432,15 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
             }
             break;
         case YSF_EVENT_TRIGGER_TIMER:
-            if(timer->handler.evt.func != NULL && timer->handler.evt.param != NULL)
+            if(timer->handler.evt_handler != NULL)
             {
-                ysf_evtTask_create(&timer->handler, timer->handler.evt.func, timer->handler.evt.param, timer->handler.evt.event);
+                ysf_evtHandlerTask_create(&timer->handler, timer->handler.evt_handler, timer->handler.param, timer->handler.event);
             }
             break;
         case YSF_CALL_BACK_TIMER:
-            if(timer->handler.cb.func != NULL)
+            if(timer->handler.cb != NULL)
             {
-                ysf_cbTask_create(&timer->handler, timer->handler.cb.func, timer->handler.cb.param);
+                ysf_cbTask_create(&timer->handler, timer->handler.cb, timer->handler.param);
             }
             break;
         default:

@@ -146,18 +146,18 @@ ysf_err_t ysf_task_init(void)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_evtTriggerTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+ysf_err_t ysf_evtHandlerTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
         return YSF_ERR_INVAILD_PTR;
     }
     
-    task->evt_trigger = func;
+    task->evt_handler = func;
     task->param       = param;
     task->event       = evt;
-//    task->next      = NULL;
-    task->type        = YSF_EVENT_TRIGGER_TASK;
+//    task->next   = NULL;
+    task->type        = YSF_EVENT_HANDLER_TASK;
     
     ysf_task_push(task);
     
@@ -175,17 +175,17 @@ ysf_err_t ysf_evtTriggerTask_create(struct ysf_task_t *task, ysf_err_t (*func)(v
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_evtHandlerTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t), uint16_t event)
+ysf_err_t ysf_evtSampleTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t), uint16_t event)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
         return YSF_ERR_INVAILD_PTR;
     }
     
-    task->evt_handler = func;
-    task->event       = event;
-//    task->next      = NULL;
-    task->type        = YSF_EVENT_HANDLER_TASK;
+    task->evt_sample = func;
+    task->event      = event;
+//    task->next     = NULL;
+    task->type       = YSF_EVENT_SAMPLE_HANDLER_TASK;
     
     ysf_task_push(task);
     
@@ -247,16 +247,16 @@ ysf_err_t ysf_task_poll(void)
                 task->cb(task->param);
             }
             break;
-        case YSF_EVENT_TRIGGER_TASK:
-            if( task->evt_trigger != NULL )
-            {
-                task->evt_trigger(task->param, task->event);
-            }
-            break;
         case YSF_EVENT_HANDLER_TASK:
             if( task->evt_handler != NULL )
             {
-                task->evt_handler(task->event);
+                task->evt_handler(task->param, task->event);
+            }
+            break;
+        case YSF_EVENT_SAMPLE_HANDLER_TASK:
+            if( task->evt_sample != NULL )
+            {
+                task->evt_sample(task->event);
             }
             break;
         default:

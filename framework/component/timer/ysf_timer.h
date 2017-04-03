@@ -105,7 +105,7 @@ struct YSF_TIMER_API
     ysf_err_t (*init)(void);
     ysf_err_t (*handler)(uint16_t);
 
-    ysf_err_t (*arm)(struct ysf_timer_t*, uint32_t, uint16_t);
+    ysf_err_t (*arm)(struct ysf_timer_t*, uint32_t, int16_t);
     ysf_err_t (*disarm)(struct ysf_timer_t*);
     
     bool (*getStatus)(struct ysf_timer_t*);
@@ -145,7 +145,7 @@ extern struct ysf_timer_t *ysf_cbSmpTimer_init(ysf_err_t (*)(void*), void*);
 extern struct ysf_timer_t *ysf_evtTriggerSmpTimer_init(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
 extern struct ysf_timer_t *ysf_evtDstrSmpTimer_init(uint16_t);      
 
-extern ysf_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t, uint16_t);                                          
+extern ysf_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t, int16_t);                                          
 extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*); 
 extern ysf_err_t ysf_timer_handler(uint16_t);
 #endif

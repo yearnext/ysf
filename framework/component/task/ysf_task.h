@@ -56,8 +56,8 @@ struct ysf_task_t
         enum ysf_task_type_t
         {
             YSF_CALL_BACK_TASK,
-            YSF_EVENT_TRIGGER_TASK,
             YSF_EVENT_HANDLER_TASK,
+            YSF_EVENT_SAMPLE_HANDLER_TASK,
         }type;
     };
     
@@ -65,8 +65,8 @@ struct ysf_task_t
     {                
         union
         {
-            ysf_err_t (*evt_trigger)(void*, uint16_t);
-            ysf_err_t (*evt_handler)(uint16_t);
+            ysf_err_t (*evt_handler)(void*, uint16_t);
+            ysf_err_t (*evt_sample)(uint16_t);
             ysf_err_t (*cb)(void*);
         };
 
@@ -88,8 +88,8 @@ struct YSF_TASK_API
     
     struct
     {
-        ysf_err_t (*evt_trigger)(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
-        ysf_err_t (*evt_handler)(struct ysf_task_t*, ysf_err_t (*)(uint16_t), uint16_t);
+        ysf_err_t (*evt_handler)(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+        ysf_err_t (*evt_sample)(struct ysf_task_t*, ysf_err_t (*)(uint16_t), uint16_t);
         ysf_err_t (*call_back)(struct ysf_task_t*, ysf_err_t (*)(void*), void*);
     }create;
 };
@@ -100,8 +100,8 @@ struct YSF_TASK_API
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
 extern ysf_err_t ysf_task_init(void);
 extern ysf_err_t ysf_task_poll(void);
-extern ysf_err_t ysf_evtTriggerTask_create(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
-extern ysf_err_t ysf_evtHandlerTask_create(struct ysf_task_t*, ysf_err_t (*)(uint16_t), uint16_t);
+extern ysf_err_t ysf_evtHandlerTask_create(struct ysf_task_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern ysf_err_t ysf_evtSampleTask_create(struct ysf_task_t*, ysf_err_t (*)(uint16_t), uint16_t);
 extern ysf_err_t ysf_cbTask_create(struct ysf_task_t*, ysf_err_t (*)(void*), void*);
 #endif    
     
