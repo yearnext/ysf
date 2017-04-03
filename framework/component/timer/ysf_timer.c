@@ -139,100 +139,9 @@ ysf_err_t ysf_timer_clear(void)
  */
 ysf_err_t ysf_timer_init( void )
 {
-    tcb.head = NULL;
-    tcb.tail = NULL;
+    ysf_timer_clear();
     
     return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       add timer to list
- * @param       [in/out]  timer              want to add timer
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @note        None
- *******************************************************************************
- */
-static inline 
-ysf_err_t ysf_timer_add(struct ysf_timer_t *timer)
-{
-    if(IS_PTR_NULL(timer))
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-    
-    timer->next = NULL;
-    
-    if(tcb.head == NULL)
-    {
-        tcb.head = timer;
-        tcb.tail = timer;
-        
-        return YSF_ERR_NONE;
-    }
-    
-    tcb.tail->next = timer;
-    tcb.tail = timer;
-    
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       detect timer is in list
- * @param       [in/out]  timer              want to detect timer
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @note        None
- *******************************************************************************
- */
-bool ysf_timer_isInList(struct ysf_timer_t *timer)
-{
-    struct ysf_timer_t *temp = tcb.head;
-    
-    if(IS_PTR_NULL(timer))
-    {
-        return false;
-    }
-    
-    if( temp == NULL )
-    {
-        return false;
-    }
-    
-    while(1)
-    {
-        if( temp == timer )
-        {
-            return true;
-        }
-        
-        if( temp->next == NULL )
-        {
-            return false;
-        }
-        
-        temp = temp->next;
-    }
-    
-//    return false;
-}
-
-/**
- *******************************************************************************
- * @brief       get timer status
- * @param       [in/out]  timer              want to get status timer
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @note        None
- *******************************************************************************
- */
-bool ysf_timer_getStatus(struct ysf_timer_t *timer)
-{
-    if(IS_PTR_NULL(timer))
-    {
-        return false;
-    }
-    
-    return (timer->status == ysf_enable) ? (true) : (false);
 }
 
 /**
@@ -247,17 +156,16 @@ bool ysf_timer_getStatus(struct ysf_timer_t *timer)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_timer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), void *param, uint16_t event)
+ysf_err_t ysf_timer_config(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), void *param, uint16_t event)
 {
     if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
     {
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->callback.func   = func;
-    timer->callback.param  = param;
-    timer->callback.expand = NULL;
-    timer->event           = event;
+    timer->handler.cb.func  = func;
+    timer->handler.cb.param = param;
+    timer->event            = event;
     
     return YSF_ERR_NONE;
 }
@@ -273,7 +181,7 @@ ysf_err_t ysf_timer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), vo
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks,uint16_t counts)
+ysf_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks, uint16_t counts)
 {
     if(IS_PTR_NULL(timer))
     {
@@ -287,7 +195,7 @@ ysf_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks,uint16_t count
 //    timer->next     = NULL;
     timer->status   = ysf_enable;
     
-    ysf_timer_add(timer);
+    ysf_timer_push(timer);
     
     return YSF_ERR_NONE;
 }
@@ -372,19 +280,34 @@ bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
 YSF_STATIC_INLINE
 bool timerTriggerHandler(struct ysf_timer_t *timer)
 {    
-    if( timer == NULL )
+//    if( timer == NULL )
+//    {
+//        return false;
+//    }    
+
+    switch(timer->type)
     {
-        return false;
-    }    
-    
-    if(timer->callback.func != NULL)
-    {
-        ysf_task_add(&timer->callback, timer->callback.func, timer->callback.param, timer->callback.expand);
-    }
-    
-    if( timer->event != YSF_EVENT_NONE )
-    {
-        ysf_event_post(timer->event);
+        case YSF_EVENT_DISTRIBUTE_TIMER:
+            if( timer->event != YSF_EVENT_NONE )
+            {
+                ysf_event_post(timer->event);
+            }
+            break;
+        case YSF_EVENT_TRIGGER_TIMER:
+            if(timer->handler.evt.func != NULL && timer->handler.evt.param != NULL)
+            {
+                ysf_evtTask_create(&timer->handler, timer->handler.evt.func, timer->handler.evt.param, timer->handler.evt.event);
+            }
+            break;
+        case YSF_CALL_BACK_TIMER:
+            if(timer->handler.cb.func != NULL)
+            {
+                ysf_cbTask_create(&timer->handler, timer->handler.cb.func, timer->handler.cb.param);
+            }
+            break;
+        default:
+            return false;
+            break;
     }
     
     return true;

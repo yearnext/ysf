@@ -63,21 +63,36 @@ struct ysf_timer_t
     struct
     {
         struct ysf_timer_t *next;
-        ysf_status_t  status;
+        
+        ysf_status_t status;
+        
+        enum
+        {
+            YSF_EVENT_DISTRIBUTE_TIMER,
+            YSF_EVENT_TRIGGER_TIMER,
+            YSF_CALL_BACK_TIMER,
+        }type;
     };
     
-    struct
-    {
-        struct ysf_task_t callback;
-        uint16_t event;
-    };
-
     struct
     {
         ysf_tick_t ticks;
         ysf_tick_t loadTicks;
         
-        uint8_t cycle;
+        uint8_t    cycle;
+    };
+    
+    union
+    {
+        struct
+        {
+            struct ysf_task_t handler;
+        };
+        
+        struct
+        {
+            uint16_t event;
+        };
     };
 };
 
@@ -112,14 +127,14 @@ struct YSF_TIMER_API
  *******************************************************************************
  */
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
-extern ysf_err_t ysf_timer_init(void);
-extern bool ysf_timer_isInList(struct ysf_timer_t*);
-extern bool ysf_timer_getStatus(struct ysf_timer_t*);
-extern ysf_err_t ysf_timer_cb_init(struct ysf_timer_t*, ysf_err_t (*func)(void*, void*), void*, void*);                                     
-extern ysf_err_t ysf_timer_evt_init(struct ysf_timer_t *, uint16_t);                            
-extern ysf_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t,uint16_t);                                          
-extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*); 
-extern ysf_err_t ysf_timer_handler(uint16_t);
+//extern ysf_err_t ysf_timer_init(void);
+//extern bool ysf_timer_isInList(struct ysf_timer_t*);
+//extern bool ysf_timer_getStatus(struct ysf_timer_t*);
+//extern ysf_err_t ysf_timer_cb_init(struct ysf_timer_t*, ysf_err_t (*func)(void*, void*), void*, void*);                                     
+//extern ysf_err_t ysf_timer_evt_init(struct ysf_timer_t *, uint16_t);                            
+//extern ysf_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t,uint16_t);                                          
+//extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*); 
+//extern ysf_err_t ysf_timer_handler(uint16_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

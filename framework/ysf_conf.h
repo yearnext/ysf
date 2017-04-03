@@ -36,7 +36,7 @@ extern "C"
  * @brief       EVENT PACKAGE
  *******************************************************************************
  */
-#define _YSF_DEFINE_EVENT_START     enum                                       \
+#define _YSF_DEFINE_EVENT_START     enum ysf_evt_enum                          \
                                     {                                          \
                                         YSF_EVENT_NONE = 0,                    \
                                         YSF_CORE_TICK_UPDATE,                                          

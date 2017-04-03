@@ -146,18 +146,18 @@ ysf_err_t ysf_task_init(void)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, void*), void *param, void *expand)
+ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
         return YSF_ERR_INVAILD_PTR;
     }
     
-    task->evt.func    = func;
-    task->evt.param   = param;
-    task->evt.expand  = expand;
-    task->next        = NULL;
-    task->taskType    = YSF_TASK_IS_EVENT_TYPE;
+    task->evt.func  = func;
+    task->evt.param = param;
+    task->evt.event = evt;
+//    task->next      = NULL;
+    task->type      = YSF_TASK_IS_EVENT_TRIGGER_TYPE;
     
     ysf_task_push(task);
     
@@ -182,10 +182,10 @@ ysf_err_t ysf_cbTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*), v
         return YSF_ERR_INVAILD_PTR;
     }
     
-    task->cb.func    = func;
-    task->cb.param   = param;
-    task->next       = NULL;
-    task->taskType   = YSF_TASK_IS_CALL_BACK_TYPE;
+    task->cb.func  = func;
+    task->cb.param = param;
+//    task->next       = NULL;
+    task->type     = YSF_TASK_IS_CALL_BACK_TYPE;
     
     ysf_task_push(task);
     
@@ -211,18 +211,18 @@ ysf_err_t ysf_task_poll(void)
     }
     
     // task trigger handler
-    if( task->taskType == YSF_TASK_IS_CALL_BACK_TYPE )
+    if( task->type == YSF_TASK_IS_CALL_BACK_TYPE )
     {
         if( task->cb.func != NULL )
         {
             task->cb.func(task->cb.param);
         }
     }
-    else if( task->taskType == YSF_TASK_IS_EVENT_TYPE )
+    else if( task->type == YSF_TASK_IS_EVENT_TRIGGER_TYPE )
     {   
         if( task->evt.func != NULL )
         {
-            task->evt.func(task->evt.param, task->evt.expand);
+            task->evt.func(task->evt.param, task->evt.event);
         }
     }
     else
