@@ -36,15 +36,6 @@
  * @brief       ysf task control block
  *******************************************************************************
  */
-//struct ysf_task_control_block
-//{
-//    struct ysf_task_t *head;
-//    struct ysf_task_t *tail;
-//} static tcb = 
-//{
-//    .head = NULL,
-//    .tail = NULL,
-//};
 static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, tcb);
 #endif
 
@@ -257,9 +248,9 @@ ysf_err_t ysf_task_handler(struct ysf_task_t *task)
                 task->handler.sm(task->param, task->evt);
             }
             break;
-        default:
+//        default:
 //            return YSF_ERR_FAIL;
-            break;
+//            break;
     }
     
     return YSF_ERR_NONE;

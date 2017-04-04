@@ -86,12 +86,10 @@ const struct YSF_API ysf =
 
     .timer.cb_init              = ysf_cbTimer_init,
     .timer.evt_init             = ysf_evtTimer_init,
-//    .timer.evt_dist_init        = ysf_evtDistTimer_init,
     .timer.sm_init              = ysf_smTimer_init,
     
     .timer.simple.cb_init       = ysf_cbSimpTimer_init,
     .timer.simple.evt_init      = ysf_evtSimpTimer_init,
-//    .timer.simple.evt_dist_init = ysf_evtDistSimpTimer_init,
     .timer.simple.sm_init       = ysf_smSimpTimer_init,
 #endif
 

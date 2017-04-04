@@ -52,19 +52,6 @@ static struct  ysf_rb_t evt_queue;
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-///**
-// *******************************************************************************
-// * @brief       empty event handler
-// * @param       [in/out]  event              events
-// * @return      [in/out]  YSF_ERR_NONE       init finish
-// * @note        None
-// *******************************************************************************
-// */
-//static ysf_err_t ysf_empty_event_handler(uint16_t event)
-//{
-//    return YSF_ERR_NONE;
-//}
-
 /* Exported functions --------------------------------------------------------*/
 #if USE_YSF_EVENT_API
 /**
@@ -78,16 +65,6 @@ static struct  ysf_rb_t evt_queue;
  */
 ysf_err_t ysf_event_init( void )
 {
-//    uint16_t i;
-//    
-//    for( i=0; i<YSF_EVENT_MAX; i++ )
-//    {
-//        evt_hander[i].next    = NULL;
-//        evt_hander[i].handler = NULL;
-//    }
-//    
-//    ysf_event_writeoff(YSF_EVENT_NONE, ysf_empty_event_handler);
-//    
     ysf_rbInit(&evt_queue, (uint8_t *)buffer, YSF_EVENT_SIZE_CAL(buffer));
     
 	return YSF_ERR_NONE;

@@ -38,7 +38,8 @@ extern "C"
  */
 #define _YSF_DEFINE_EVENT_START     enum ysf_evt_enum                          \
                                     {                                          \
-                                        YSF_EVENT_NONE = 0,                                                            
+                                        YSF_EVENT_NONE = 0,                    \
+                                        YSF_PT_DELAY_EVENT,                   
                                         
 #define _YSF_DEFINE_EVENT_END           YSF_EVENT_MAX,                         \
                                     };
@@ -99,11 +100,6 @@ extern "C"
  *******************************************************************************
  */
 _YSF_DEFINE_EVENT_START
-    RegistrarionEvent(YSF_PT_TIMER_EVENT)
-    RegistrarionEvent(LED1_BLINK_EVENT)
-    RegistrarionEvent(LED2_BLINK_EVENT)
-    RegistrarionEvent(KEY1_SCAN_EVENT)
-    RegistrarionEvent(KEY2_SCAN_EVENT)
 _YSF_DEFINE_EVENT_END	
 
 /**

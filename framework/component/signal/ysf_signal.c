@@ -183,32 +183,6 @@ ysf_err_t ysf_signal_init( void )
  * @note        None
  *******************************************************************************
  */
-//ysf_err_t ysf_evtDistrSignal_arm(struct ysf_signal_t *signal, 
-//                                 enum ysf_signal_status_t (*detect)(void), 
-//                                 uint16_t event )
-//{
-//    if( signal == NULL )
-//    {
-//        return YSF_ERR_FAIL;
-//    }
-//    
-//    if( detect == NULL )
-//    {
-//        return YSF_ERR_FAIL;
-//    }
-
-//    signal->status        = SIGNAL_STATUS_RELEASE;
-//    signal->detect        = detect;
-//    signal->handler.event = event;
-//    signal->type          = YSF_EVENT_DISTRIBUTE_SIGNAL;
-//    signal->useStatus     = ysf_enable;
-////    signal->next          = NULL;
-//    
-//    ysf_signal_push(signal);
-//    
-//    return YSF_ERR_NONE;
-//}
-
 ysf_err_t ysf_evtSignal_arm(struct ysf_signal_t *signal, 
                             enum ysf_signal_status_t (*detect)(void), 
                             ysf_err_t (*handler)(uint16_t) )

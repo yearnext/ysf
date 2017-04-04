@@ -54,9 +54,6 @@ struct YSF_EVENT_API
     ysf_err_t (*init)(void);
     ysf_err_t (*post)(uint16_t);
     ysf_err_t (*read)(uint16_t*);
-//    ysf_err_t (*reg)(uint16_t, ysf_err_t (*)(uint16_t));
-//    ysf_err_t (*writeoff)(uint16_t, ysf_err_t (*)(uint16_t));
-//    ysf_err_t (*handler)(void);
 };
 #endif
 
@@ -71,9 +68,6 @@ struct YSF_EVENT_API
 extern ysf_err_t ysf_event_init( void );
 extern ysf_err_t ysf_event_post( uint16_t );
 extern ysf_err_t ysf_event_read( uint16_t* );
-//extern ysf_err_t ysf_event_register(uint16_t, ysf_err_t (*)(uint16_t));
-//extern ysf_err_t ysf_event_writeoff(uint16_t, ysf_err_t (*)(uint16_t));
-//extern ysf_err_t ysf_event_handler( void );
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

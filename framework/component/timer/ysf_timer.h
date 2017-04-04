@@ -106,7 +106,6 @@ struct YSF_TIMER_API
     {
         ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*)(void*), void*);
         ysf_err_t (*evt_init)(struct ysf_timer_t*, ysf_err_t (*)(uint16_t), uint16_t);
-        ysf_err_t (*evt_dist_init)(struct ysf_timer_t*, uint16_t);
         ysf_err_t (*sm_init)(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
     };
     
@@ -114,7 +113,6 @@ struct YSF_TIMER_API
     {
         struct ysf_timer_t *(*cb_init)(ysf_err_t (*)(void*), void*);
         struct ysf_timer_t *(*evt_init)(ysf_err_t (*)(uint16_t), uint16_t);
-        struct ysf_timer_t *(*evt_dist_init)(uint16_t);
         struct ysf_timer_t *(*sm_init)(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
     }simple;
 };
@@ -139,12 +137,10 @@ extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*);
 
 extern ysf_err_t ysf_cbTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*), void*); 
 extern ysf_err_t ysf_evtTimer_init(struct ysf_timer_t*, ysf_err_t (*)(uint16_t), uint16_t);
-//extern ysf_err_t ysf_evtDistTimer_init(struct ysf_timer_t*, uint16_t);
 extern ysf_err_t ysf_smTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
 
 extern struct ysf_timer_t *ysf_cbSimpTimer_init(ysf_err_t (*)(void*), void*);
 extern struct ysf_timer_t *ysf_evtSimpTimer_init(ysf_err_t (*)(uint16_t), uint16_t);
-//extern struct ysf_timer_t *ysf_evtDistSimpTimer_init(uint16_t);  
 extern struct ysf_timer_t *ysf_smSimpTimer_init(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif
 

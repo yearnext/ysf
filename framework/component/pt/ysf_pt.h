@@ -38,12 +38,11 @@ extern "C"
 #include YSF_COMPONENT_EVENT_PATH
     
 /* Exported macro ------------------------------------------------------------*/
-#define YSF_PT_THREAD(func_name) ysf_err_t func_name(void *event)
+#define YSF_PT_THREAD(func_name) ysf_err_t func_name(uint16_t evt)
                               
 #define ysf_pt_init(func)        static struct ysf_pt_t pt =                                                 \
                                  {                                                                           \
-                                     .state = 0,                                                             \
-                                     .event = YSF_PT_TIMER_EVENT,                                            \
+                                     .state  = 0,                                                            \
                                      .thread = func,                                                         \
                                  }                                                                           
                               
@@ -72,17 +71,17 @@ extern "C"
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
 #define ysf_pt_delay(tick)      do                                                                           \
                                 {                                                                            \
-                                    pt.event = YSF_PT_TIMER_EVENT;                                           \
-                                    ysf_timerSimple_cb_arm(tick, 0, pt.thread, &pt.event);                   \
-                                    ysf_pt_wfe(pt.event != *((uint16_t *)event));                            \
+                                    struct ysf_timer_t *timer;                                               \
+                                    timer = ysf_evtSimpTimer_init(pt.thread, YSF_PT_DELAY_EVENT);            \
+                                    ysf_timer_arm(timer, YSF_TIME_2_TICK(tick), 1);                          \
+                                    ysf_pt_wfe(evt != YSF_PT_DELAY_EVENT);                                   \
                                 }while(0)
 #else
 #define ysf_pt_delay(tick)      do                                                                           \
                                 {                                                                            \
-                                    pt.event = YSF_PT_TIMER_EVENT;                                           \
-                                    ysf_timerEx_cb_init(&pt.timer, pt.thread, (void *)&YSF_PT_TIMER_EVENT);  \
-                                    ysf_timerEx_arm(&pt.timer, tick, 0);                                     \
-                                    ysf_pt_wfe(pt.event != *((uint16_t *)event));                            \
+                                    ysf_evtTimer_init(&pt.timer, pt.thread, YSF_PT_DELAY_EVENT);             \
+                                    ysf_timerEx_arm(&pt.timer, YSF_TIME_2_TICK(tick), 1);                    \
+                                    ysf_pt_wfe(evt != YSF_PT_DELAY_EVENT);                                   \
                                 }while(0)                        
 #endif
 
@@ -92,8 +91,7 @@ extern "C"
 struct ysf_pt_t
 {
     uint16_t state;
-	uint16_t event;
-    ysf_err_t (*thread)(void *);
+    ysf_err_t (*thread)(uint16_t);
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
 #else
     struct ysf_timer_t timer;
