@@ -134,63 +134,6 @@ ysf_err_t ysf_task_init(void)
     return YSF_ERR_NONE;
 }
 
-/**
- *******************************************************************************
- * @brief       add task in task queue
- * @param       [in/out]  *task                     task block
- * @param       [in/out]  *func                     task function
- * @param       [in/out]  *param                    task param
- * @param       [in/out]  *expand                   task expand param
- * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
- * @return      [in/out]  YSF_ERR_NONE              add success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_evtHandlerTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
-{
-    if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-    
-    task->evt_handler = func;
-    task->param       = param;
-    task->event       = evt;
-//    task->next   = NULL;
-    task->type        = YSF_EVENT_HANDLER_TASK;
-    
-    ysf_task_push(task);
-    
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       add task in task queue
- * @param       [in/out]  *task                     task block
- * @param       [in/out]  *func                     task function
- * @param       [in/out]  event                     task event
- * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
- * @return      [in/out]  YSF_ERR_NONE              add success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_evtSampleTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t), uint16_t event)
-{
-    if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-    
-    task->evt_sample = func;
-    task->event      = event;
-//    task->next     = NULL;
-    task->type       = YSF_EVENT_SAMPLE_HANDLER_TASK;
-    
-    ysf_task_push(task);
-    
-    return YSF_ERR_NONE;
-}
 
 /**
  *******************************************************************************
@@ -210,12 +153,114 @@ ysf_err_t ysf_cbTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*), v
         return YSF_ERR_INVAILD_PTR;
     }
     
-    task->cb    = func;
-    task->param = param;
-//    task->next       = NULL;
-    task->type  = YSF_CALL_BACK_TASK;
+    task->handler.cb = func;
+    task->param      = param;
+    task->type       = YSF_CALL_BACK_TASK;
     
+//    task->next       = NULL;
     ysf_task_push(task);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task in task queue
+ * @param       [in/out]  *task                     task block
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  event                     task event
+ * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  YSF_ERR_NONE              add success
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t), uint16_t evt)
+{
+    if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
+    {
+        return YSF_ERR_INVAILD_PTR;
+    }
+    
+    task->handler.evt = func;
+    task->evt         = evt;
+    task->type        = YSF_STATE_MECHINE_TASK;
+    
+//    task->next         = NULL;
+    ysf_task_push(task);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task in task queue
+ * @param       [in/out]  *task                     task block
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  *param                    task param
+ * @param       [in/out]  *expand                   task expand param
+ * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  YSF_ERR_NONE              add success
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_smTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+{
+    if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
+    {
+        return YSF_ERR_INVAILD_PTR;
+    }
+    
+    task->handler.sm = func;
+    task->param      = param;
+    task->evt        = evt;
+    task->type       = YSF_EVENT_HANDLER_TASK;
+    
+//    task->next   = NULL;
+    ysf_task_push(task);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       task handler function
+ * @param       [in/out]  task                 will handler task
+ * @return      [in/out]  YSF_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+ysf_err_t ysf_task_handler(struct ysf_task_t *task)
+{
+//    if( IS_PTR_NULL(task) )
+//    {
+//        return YSF_ERR_NONE;
+//    }
+    
+    switch(task->type)
+    {
+        case YSF_CALL_BACK_TASK:
+            if( task->handler.cb != NULL )
+            {
+                task->handler.cb(task->param);
+            }
+            break;
+        case YSF_EVENT_HANDLER_TASK:
+            if( task->handler.evt != NULL )
+            {
+                task->handler.evt(task->evt);
+            }
+            break;
+        case YSF_STATE_MECHINE_TASK:
+            if( task->handler.sm != NULL )
+            {
+                task->handler.sm(task->param, task->evt);
+            }
+            break;
+        default:
+//            return YSF_ERR_FAIL;
+            break;
+    }
     
     return YSF_ERR_NONE;
 }
@@ -239,31 +284,8 @@ ysf_err_t ysf_task_poll(void)
     }
     
     // task trigger handler
-    switch(task->type)
-    {
-        case YSF_CALL_BACK_TASK:
-            if( task->cb != NULL )
-            {
-                task->cb(task->param);
-            }
-            break;
-        case YSF_EVENT_HANDLER_TASK:
-            if( task->evt_handler != NULL )
-            {
-                task->evt_handler(task->param, task->event);
-            }
-            break;
-        case YSF_EVENT_SAMPLE_HANDLER_TASK:
-            if( task->evt_sample != NULL )
-            {
-                task->evt_sample(task->event);
-            }
-            break;
-        default:
-//            return YSF_ERR_FAIL;
-            break;
-    }
-    
+    ysf_task_handler(task);
+
     return YSF_ERR_NONE;
 }
 

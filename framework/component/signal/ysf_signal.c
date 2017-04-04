@@ -43,20 +43,135 @@
  * @brief       ysf signal control block
  *******************************************************************************
  */
-static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_signal_t, tcb);
+static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_signal_t, scb);
 
 /**
  *******************************************************************************
  * @brief       signal timer
  *******************************************************************************
  */
-static struct ysf_timer_t signal;
+static struct ysf_timer_t signal_timer;
 #endif
                        
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
+/**
+ *******************************************************************************
+ * @brief       detect the timer is in queue
+ * @param       [in/out]  timer                will detect timer
+ * @return      [in/out]  true                 the timer in the queue
+ * @return      [in/out]  true                 the timer not in the queue
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+bool ysf_signal_isIn(struct ysf_signal_t *signal)
+{
+    ysf_sListControlBlock_isIn(struct ysf_signal_t, scb, signal);
+    
+    return false;
+}
+
+/**
+ *******************************************************************************
+ * @brief       pop timer to queue
+ * @param       [in/out]  timer                will timer task
+ * @return      [in/out]  YSF_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+ysf_err_t ysf_signal_push(struct ysf_signal_t *signal)
+{
+    ysf_sListControlBlock_push(ysf_signal_isIn, scb, signal);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       push timer from queue
+ * @param       [in/out]  void
+ * @return      [in/out]  struct ysf_timer_t *     push timer addr in memory
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+struct ysf_signal_t *ysf_signal_pop(void)
+{
+    struct ysf_signal_t *signal;
+    
+    ysf_sListControlBlock_pop(scb, signal);
+    
+    return signal;
+}
+
+/**
+ *******************************************************************************
+ * @brief       timer queue clear
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+ysf_err_t ysf_signal_clear(void)
+{    
+    while(ysf_signal_pop() != NULL);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       timer queue clear
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+YSF_STATIC_INLINE
+ysf_err_t signalTriggerHandler(struct ysf_signal_t *signal, uint16_t evt)
+{
+//    if( IS_PTR_NULL(signal) )
+//    {
+//        return YSF_ERR_FAIL;
+//    }
+
+//    switch(signal->type)
+//    {
+//        case YSF_EVENT_HANDLER_SIGNAL:
+//            ysf_evtTask_create(&signal->task, signal->task.handler.evt, signal->task.evt);
+//            break;
+//        default:
+//            break;
+//    }
+    
+    ysf_evtTask_create(&signal->task, signal->task.handler.evt, evt);
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       ysf timer component init
+ * @param       [in/out]  void
+ * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_signal_init( void )
+{
+    ysf_signal_clear();
+    
+    ysf_evtTimer_init(&signal_timer, ysf_signal_handler, YSF_EVENT_NONE);
+    ysf_timer_arm(&signal_timer, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM);
+    
+    return YSF_ERR_NONE;
+}
+
 /**
  *******************************************************************************
  * @brief       signal ex component arm
@@ -68,31 +183,77 @@ static struct ysf_timer_t signal;
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_signal_evt_arm(struct ysf_signal_t *signal, 
-                             enum ysf_signal_status_t (*detect)(void), 
-                             uint16_t event )
-{
-    if( signal == NULL )
-    {
-        return YSF_ERR_FAIL;
-    }
-    
-    if( detect == NULL )
-    {
-        return YSF_ERR_FAIL;
-    }
-    
-    signal->control.next    = NULL;
-    signal->control.status  = ysf_enable;
-    
-    signal->func.detect     = detect;
-    signal->func.handler    = handler;
+//ysf_err_t ysf_evtDistrSignal_arm(struct ysf_signal_t *signal, 
+//                                 enum ysf_signal_status_t (*detect)(void), 
+//                                 uint16_t event )
+//{
+//    if( signal == NULL )
+//    {
+//        return YSF_ERR_FAIL;
+//    }
+//    
+//    if( detect == NULL )
+//    {
+//        return YSF_ERR_FAIL;
+//    }
 
-    signal->status          = SIGNAL_STATUS_RELEASE;
+//    signal->status        = SIGNAL_STATUS_RELEASE;
+//    signal->detect        = detect;
+//    signal->handler.event = event;
+//    signal->type          = YSF_EVENT_DISTRIBUTE_SIGNAL;
+//    signal->useStatus     = ysf_enable;
+////    signal->next          = NULL;
+//    
+//    ysf_signal_push(signal);
+//    
+//    return YSF_ERR_NONE;
+//}
+
+ysf_err_t ysf_evtSignal_arm(struct ysf_signal_t *signal, 
+                            enum ysf_signal_status_t (*detect)(void), 
+                            ysf_err_t (*handler)(uint16_t) )
+{
+    if( IS_PTR_NULL(signal) || IS_PTR_NULL(detect) )
+    {
+        return YSF_ERR_FAIL;
+    }
+
+    signal->status             = SIGNAL_STATUS_RELEASE;
+    signal->detect             = detect;
+    signal->task.handler.evt   = handler;
+    signal->type               = YSF_EVENT_HANDLER_SIGNAL;
+    signal->useStatus          = ysf_enable;
+//    signal->next          = NULL;
     
-    ysf_signal_add(signal);
+    ysf_signal_push(signal);
     
     return YSF_ERR_NONE;
+}
+
+struct ysf_signal_t *ysf_evtSimpSignal_arm(enum ysf_signal_status_t (*detect)(void), 
+                                           ysf_err_t (*handler)(uint16_t) )
+{
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+    if( IS_PTR_NULL(detect) || IS_PTR_NULL(handler) )
+    {
+        return NULL;
+    }
+    
+    struct ysf_signal_t *signal = (struct ysf_signal_t *)ysf_memory_malloc(sizeof(struct ysf_signal_t));
+    
+    signal->status             = SIGNAL_STATUS_RELEASE;
+    signal->detect             = detect;
+    signal->task.handler.evt   = handler;
+    signal->type               = YSF_EVENT_HANDLER_SIGNAL;
+    signal->useStatus          = ysf_enable;
+//    signal->next          = NULL;
+    
+    ysf_signal_push(signal);
+    
+    return signal;
+#else
+    return NULL;
+#endif
 }
 
 /**
@@ -106,12 +267,7 @@ ysf_err_t ysf_signal_evt_arm(struct ysf_signal_t *signal,
  */
 ysf_err_t ysf_signal_disarm(struct ysf_signal_t *signal)
 {
-    if( signal == NULL )
-    {
-        return YSF_ERR_FAIL;
-    }
-
-    signal->control.status  = ysf_disable;
+    signal->useStatus = ysf_disable;
 
     return YSF_ERR_NONE;
 }
@@ -129,12 +285,12 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
 {
     enum ysf_signal_status_t status;
 
-    if( signal == NULL || signal->func.detect == NULL || signal->func.handler == NULL)
+    if( IS_PTR_NULL(signal) || IS_PTR_NULL(signal->detect) || IS_PTR_NULL(signal->task.handler.evt) )
     {
         return;
     }
     
-    status = signal->func.detect();
+    status = signal->detect();
     
     switch( signal->status )
     {
@@ -143,13 +299,9 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
             {
                 signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
             }
-            else if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP1:
@@ -157,13 +309,9 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
             {
                 signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP2;
             }
-            else if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP2:
@@ -171,28 +319,20 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
             {
                 signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP3;
             }
-            else if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP3:
             if( status == SIGNAL_STATUS_PRESS )
             {
                 signal->status = SIGNAL_STATUS_PRESS_EDGE;
-                signal->func.handler(signal->status);
-            }
-            else if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
+                signalTriggerHandler(signal, signal->status);
             }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP1:
@@ -200,13 +340,9 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
             {
                 signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP2;
             }
-            else if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP2:
@@ -214,88 +350,64 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
             {
                 signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP3;
             }
-            else if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP3:
             if( status == SIGNAL_STATUS_RELEASE )
             {
                 signal->status = SIGNAL_STATUS_RELEASE_EDGE;
-                signal->func.handler(signal->status);
-            }
-            else if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
+                signalTriggerHandler(signal, signal->status);
             }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_RELEASE_EDGE:
             if( status == SIGNAL_STATUS_RELEASE )
             {
                 signal->status = SIGNAL_STATUS_RELEASE;
-                signal->func.handler(signal->status);
-            }
-            else if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
+                signalTriggerHandler(signal, signal->status);
             }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_RELEASE:
             if( status == SIGNAL_STATUS_RELEASE )
             {
                 signal->status = SIGNAL_STATUS_RELEASE;
-                signal->func.handler(signal->status);
-            }
-            else if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
+                signalTriggerHandler(signal, signal->status);
             }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_PRESS_EDGE:
             if( status == SIGNAL_STATUS_PRESS )
             {
                 signal->status = SIGNAL_STATUS_PRESS;
-                signal->func.handler(signal->status);
-            }
-            else if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
+                signalTriggerHandler(signal, signal->status);
             }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
             }
             break;
         case SIGNAL_STATUS_PRESS:
             if( status == SIGNAL_STATUS_PRESS )
             {
                 signal->status = SIGNAL_STATUS_PRESS;
-                signal->func.handler(signal->status);
-            }
-            else if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
+                signalTriggerHandler(signal, signal->status);
             }
             else
             {
-                /** do nothing! */
+                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
             }
             break;
         default:
@@ -315,7 +427,7 @@ void ysf_signal_judge( struct ysf_signal_t *signal )
  * @note        None
  *******************************************************************************
  */
-static bool ysf_signal_walk( void **node, void **ctx, void **expand )
+static bool ysf_signal_pool( void **node, void **ctx, void **expand )
 {
     struct ysf_signal_t *signal = (struct ysf_signal_t *)(*node);
     struct ysf_signal_t *last   = (struct ysf_signal_t *)(*expand); 
@@ -330,17 +442,17 @@ static bool ysf_signal_walk( void **node, void **ctx, void **expand )
     
     ysf_signal_judge(signal);
     
-    if( signal->control.status == ysf_disable )
+    if( signal->useStatus == ysf_disable )
     {
-        if( (void *)last == (void *)head )
+        if( (void *)last == (void *)scb.head )
         {
-            *node = last->control.next;
-            last->control.next = NULL;
+            *node = last->next;
+            last->next = NULL;
         }
         else
         { 
-            last->control.next = signal->control.next;
-            signal->control.next = NULL;
+            last->next = signal->next;
+            signal->next = NULL;
             
             *node = *expand;
         }
@@ -363,51 +475,11 @@ static bool ysf_signal_walk( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-static ysf_err_t ysf_signal_handler( void *param, void *expand )
+ysf_err_t ysf_signal_handler(uint16_t event)
 {
     void *last = (void *)scb.head;
     
-    ysf_slist_walk((void **)&scb.head, ysf_signal_walk, NULL, (void **)&last);
-    
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       ysf signal component init
- * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_signal_init( void )
-{        
-    scb.head = NULL;
-    scb.tail = NULL;
-    
-    ysf_timer_cb_init(&signal, ysf_signal_handler, NULL, NULL);
-    ysf_timer_arm(&signal, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM);
-    
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       ysf signal component deinit
- * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_signal_deinit( void )
-{    
-    scb.head = NULL;
-    scb.tail = NULL;
-    
-    if( ysf_timer_isInList(&signal) == true )
-    {
-        ysf_timer_disarm(&signal);
-    }
+    ysf_slist_walk((void **)&scb.head, ysf_signal_pool, NULL, (void **)&last);
     
     return YSF_ERR_NONE;
 }

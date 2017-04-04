@@ -50,7 +50,7 @@ extern "C"
 #define YSF_TIMER_PERIOD         YSF_TICK_TIME
 #define YSF_TIME_2_TICK(time)    ((time)/YSF_TIMER_PERIOD)
 
-#define YSF_TIMER_CYCLE_PARAM    (0)
+#define YSF_TIMER_CYCLE_PARAM    (-1)
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -66,25 +66,17 @@ struct ysf_timer_t
 
         enum
         {
-            YSF_EVENT_DISTRIBUTE_TIMER,
-            YSF_EVENT_TRIGGER_TIMER,
             YSF_CALL_BACK_TIMER,
+            YSF_EVENT_HANDLER_TIMER,
+            YSF_STATE_MACHINE_TIMER,
         }type;
     };
 
-    union
+    struct
     {
-        struct
-        {
-            struct ysf_task_t handler;
-        };
-        
-        struct
-        {
-            uint16_t event;
-        };
+        struct ysf_task_t task;
     };
-     
+    
     struct
     {
         ysf_tick_t ticks;
@@ -112,17 +104,19 @@ struct YSF_TIMER_API
     
     struct
     {
-        struct ysf_timer_t * (*cb_init)(ysf_err_t (*)(void*), void*);
-        struct ysf_timer_t * (*evt_init)(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
-        struct ysf_timer_t * (*evt_dis_init)(uint16_t);
-    }simple;
-
+        ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*)(void*), void*);
+        ysf_err_t (*evt_init)(struct ysf_timer_t*, ysf_err_t (*)(uint16_t), uint16_t);
+        ysf_err_t (*evt_dist_init)(struct ysf_timer_t*, uint16_t);
+        ysf_err_t (*sm_init)(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+    };
+    
     struct
     {
-        ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*)(void*), void*);
-        ysf_err_t (*evt_init)(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
-        ysf_err_t (*evt_dis_init)(struct ysf_timer_t*, uint16_t);
-    }ex;
+        struct ysf_timer_t *(*cb_init)(ysf_err_t (*)(void*), void*);
+        struct ysf_timer_t *(*evt_init)(ysf_err_t (*)(uint16_t), uint16_t);
+        struct ysf_timer_t *(*evt_dist_init)(uint16_t);
+        struct ysf_timer_t *(*sm_init)(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+    }simple;
 };
 #endif
 
@@ -135,19 +129,23 @@ struct YSF_TIMER_API
  */
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 extern ysf_err_t ysf_timer_init(void);
+
+extern ysf_err_t ysf_timer_handler(uint16_t);
+
 extern bool ysf_timerGetStatus(struct ysf_timer_t*);
-
-extern ysf_err_t ysf_cbTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*), void*); 
-extern ysf_err_t ysf_evtTriggerTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
-extern ysf_err_t ysf_evtDstrTimer_init(struct ysf_timer_t*, uint16_t);
-
-extern struct ysf_timer_t *ysf_cbSmpTimer_init(ysf_err_t (*)(void*), void*);
-extern struct ysf_timer_t *ysf_evtTriggerSmpTimer_init(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
-extern struct ysf_timer_t *ysf_evtDstrSmpTimer_init(uint16_t);      
 
 extern ysf_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t, int16_t);                                          
 extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*); 
-extern ysf_err_t ysf_timer_handler(uint16_t);
+
+extern ysf_err_t ysf_cbTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*), void*); 
+extern ysf_err_t ysf_evtTimer_init(struct ysf_timer_t*, ysf_err_t (*)(uint16_t), uint16_t);
+extern ysf_err_t ysf_evtDistTimer_init(struct ysf_timer_t*, uint16_t);
+extern ysf_err_t ysf_smTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+
+extern struct ysf_timer_t *ysf_cbSimpTimer_init(ysf_err_t (*)(void*), void*);
+extern struct ysf_timer_t *ysf_evtSimpTimer_init(ysf_err_t (*)(uint16_t), uint16_t);
+extern struct ysf_timer_t *ysf_evtDistSimpTimer_init(uint16_t);  
+extern struct ysf_timer_t *ysf_smSimpTimer_init(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

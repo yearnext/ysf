@@ -168,9 +168,9 @@ ysf_err_t ysf_cbTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), 
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->handler.cb    = func;
-    timer->handler.param = param;
-    timer->type          = YSF_CALL_BACK_TIMER;
+    timer->task.handler.cb = func;
+    timer->task.param      = param;
+    timer->type            = YSF_CALL_BACK_TIMER;
     
     return YSF_ERR_NONE;
 }
@@ -185,7 +185,7 @@ ysf_err_t ysf_cbTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*), 
  * @note        None
  *******************************************************************************
  */
-struct ysf_timer_t *ysf_cbSmpTimer_init(ysf_err_t (*func)(void*), void *param)
+struct ysf_timer_t *ysf_cbSimpTimer_init(ysf_err_t (*func)(void*), void *param)
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
     if(IS_PTR_NULL(func))
@@ -200,15 +200,127 @@ struct ysf_timer_t *ysf_cbSmpTimer_init(ysf_err_t (*func)(void*), void *param)
         return NULL;
     }
     
-    timer->handler.cb    = func;
-    timer->handler.param = param;
-    timer->type          = YSF_CALL_BACK_TIMER;
+    timer->task.handler.cb = func;
+    timer->task.param      = param;
+    timer->type            = YSF_CALL_BACK_TIMER;
     
     return timer;
 #else
     return NULL;
 #endif
 }
+
+
+/**
+ *******************************************************************************
+ * @brief       event distribute timer init
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  event              distribute event
+ * @return      [in/out]  YSF_ERR_NONE       init success
+ * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_evtTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(uint16_t), uint16_t evt)
+{
+    if(IS_PTR_NULL(timer))
+    {
+        return YSF_ERR_INVAILD_PTR;
+    }
+    
+    timer->task.handler.evt = func;
+    timer->task.evt         = evt;
+    timer->type             = YSF_EVENT_HANDLER_TIMER;
+    
+    return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       event distribute timer init
+ * @param       [in/out]  event              distribute event
+ * @return      [in/out]  YSF_ERR_NONE       init success
+ * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
+struct ysf_timer_t *ysf_evtSimpTimer_init(ysf_err_t (*func)(uint16_t), uint16_t evt)
+{
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t));
+    
+    if(IS_PTR_NULL(timer))
+    {
+        return NULL;
+    }
+    
+    timer->task.handler.evt = func;
+    timer->task.evt         = evt;
+    timer->type             = YSF_EVENT_HANDLER_TIMER;
+    
+    return timer;
+#else
+    return NULL;
+#endif
+}
+
+/**
+ *******************************************************************************
+ * @brief       event distribute timer init
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  event              distribute event
+ * @return      [in/out]  YSF_ERR_NONE       init success
+ * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
+ysf_err_t ysf_evtDistTimer_init(struct ysf_timer_t *timer, uint16_t evt)
+{
+//    if(IS_PTR_NULL(timer))
+//    {
+//        return YSF_ERR_INVAILD_PTR;
+//    }
+//    
+//    timer->task.handler.evt = ysf_event_post;
+//    timer->task.evt         = evt;
+//    timer->type             = YSF_EVENT_HANDLER_TIMER;
+//    
+//    return YSF_ERR_NONE;
+    
+    return ysf_evtTimer_init(timer, ysf_event_post, evt);
+}
+
+/**
+ *******************************************************************************
+ * @brief       event distribute timer init
+ * @param       [in/out]  event              distribute event
+ * @return      [in/out]  YSF_ERR_NONE       init success
+ * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
+struct ysf_timer_t *ysf_evtDistSimpTimer_init(uint16_t evt)
+{
+//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+//    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t));
+//    
+//    if(IS_PTR_NULL(timer))
+//    {
+//        return NULL;
+//    }
+//    
+//    timer->task.handler.evt = ysf_event_post;
+//    timer->task.evt         = evt;
+//    timer->type             = YSF_EVENT_HANDLER_TIMER;
+//    
+//    return timer;
+//#else
+//    return NULL;
+//#endif
+    
+    return ysf_evtSimpTimer_init(ysf_event_post, evt);
+}
+
 
 /**
  *******************************************************************************
@@ -222,17 +334,17 @@ struct ysf_timer_t *ysf_cbSmpTimer_init(ysf_err_t (*func)(void*), void *param)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_evtTriggerTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t event)
+ysf_err_t ysf_smTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
     {
         return YSF_ERR_INVAILD_PTR;
     }
     
-    timer->handler.evt_handler = func;
-    timer->handler.param       = param;
-    timer->handler.event       = event;
-    timer->type                = YSF_EVENT_TRIGGER_TIMER;
+    timer->task.handler.sm = func;
+    timer->task.param      = param;
+    timer->task.evt        = evt;
+    timer->type            = YSF_STATE_MACHINE_TIMER;
     
     return YSF_ERR_NONE;
 }
@@ -248,7 +360,7 @@ ysf_err_t ysf_evtTriggerTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(
  * @note        None
  *******************************************************************************
  */
-struct ysf_timer_t *ysf_evtTriggerSmpTimer_init(ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t event)
+struct ysf_timer_t *ysf_smSimpTimer_init(ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
     if(IS_PTR_NULL(func))
@@ -263,61 +375,10 @@ struct ysf_timer_t *ysf_evtTriggerSmpTimer_init(ysf_err_t (*func)(void*, uint16_
         return NULL;
     }
     
-    timer->handler.evt_handler = func;
-    timer->handler.param       = param;
-    timer->handler.event       = event;
-    timer->type                = YSF_EVENT_TRIGGER_TIMER;
-    
-    return timer;
-#else
-    return NULL;
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       event distribute timer init
- * @param       [in/out]  *timer             timer block
- * @param       [in/out]  event              distribute event
- * @return      [in/out]  YSF_ERR_NONE       init success
- * @return      [in/out]  YSF_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_evtDstrTimer_init(struct ysf_timer_t *timer, uint16_t event)
-{
-    if(IS_PTR_NULL(timer))
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-    
-    timer->event = event;
-    timer->type  = YSF_EVENT_DISTRIBUTE_TIMER;
-    
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       event distribute timer init
- * @param       [in/out]  event              distribute event
- * @return      [in/out]  YSF_ERR_NONE       init success
- * @return      [in/out]  YSF_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-struct ysf_timer_t *ysf_evtDstrSmpTimer_init(uint16_t event)
-{
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t));
-    
-    if(IS_PTR_NULL(timer))
-    {
-        return NULL;
-    }
-    
-    timer->event = event;
-    timer->type  = YSF_EVENT_DISTRIBUTE_TIMER;
+    timer->task.handler.sm = func;
+    timer->task.param      = param;
+    timer->task.evt        = evt;
+    timer->type            = YSF_STATE_MACHINE_TIMER;
     
     return timer;
 #else
@@ -386,7 +447,7 @@ ysf_err_t ysf_timer_disarm(struct ysf_timer_t *timer)
 YSF_STATIC_INLINE
 bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
 {    
-//    if( IS_TIMER_DISABLE(timer) )
+//    if( IS_PTR_NULL(timer) )
 //    {
 //        return false;
 //    }
@@ -425,24 +486,25 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
 {    
     switch(timer->type)
     {
-        case YSF_EVENT_DISTRIBUTE_TIMER:
-            if( timer->event != YSF_EVENT_NONE )
-            {
-                ysf_event_post(timer->event);
-            }
-            break;
-        case YSF_EVENT_TRIGGER_TIMER:
-            if(timer->handler.evt_handler != NULL)
-            {
-                ysf_evtHandlerTask_create(&timer->handler, timer->handler.evt_handler, timer->handler.param, timer->handler.event);
-            }
-            break;
         case YSF_CALL_BACK_TIMER:
-            if(timer->handler.cb != NULL)
+            if( IS_PTR_NULL(timer->task.handler.cb) )
             {
-                ysf_cbTask_create(&timer->handler, timer->handler.cb, timer->handler.param);
+                ysf_cbTask_create(&timer->task, timer->task.handler.cb, timer->task.param);
             }
             break;
+        case YSF_EVENT_HANDLER_TIMER:
+            if( IS_PTR_NULL(timer->task.handler.evt) )
+            {
+                ysf_evtTask_create(&timer->task, timer->task.handler.evt, timer->task.evt);
+            }
+            break;
+        case YSF_STATE_MACHINE_TIMER:
+            if( IS_PTR_NULL(timer->task.handler.sm) )
+            {
+                ysf_smTask_create(&timer->task, timer->task.handler.sm, timer->task.param, timer->task.evt);
+            }
+            break;
+
         default:
 //            return false;
             break;
@@ -473,11 +535,19 @@ static bool ysf_timer_walk(void **node, void **ctx, void **expand)
         return true;
     }
     
-    if( IS_TIMER_ENABLE(timer) && isTimerTrigger(timer, tick) == true )
-    {
-        timerTriggerHandler(timer);
-    }
+//    if( IS_TIMER_ENABLE(timer) && isTimerTrigger(timer, tick) == true )
+//    {
+//        timerTriggerHandler(timer);
+//    }
     
+    if( IS_TIMER_ENABLE(timer) )
+    {
+        if( isTimerTrigger(timer, tick) == true )
+        {
+            timerTriggerHandler(timer);
+        }
+    }
+
     if( IS_TIMER_DISABLE(timer) )
     {
         if( (void *)last == (void *)tcb.head )

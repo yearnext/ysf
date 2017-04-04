@@ -32,6 +32,7 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
+#include YSF_COMPONENT_DEBUG_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**

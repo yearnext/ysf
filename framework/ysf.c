@@ -43,63 +43,64 @@ void ysf_start(void);
 #if defined(USE_YSF_API) && USE_YSF_API
 const struct YSF_API ysf = 
 {
-    .init                      = ysf_init,
-    .start                     = ysf_start,
-    .ver                       = YSF_VERSION,
+    .init                       = ysf_init,
+    .start                      = ysf_start,
+    .ver                        = YSF_VERSION,
     
 #if defined(USE_YSF_TICK_API) && USE_YSF_TICK_API
-    .tick.init                 = ysf_tick_init,
-    .tick.inc                  = ysf_tick_inc,
-    .tick.read                 = ysf_tick_get,
-    .tick.cal                  = ysf_past_tick_cal,
+    .tick.init                  = ysf_tick_init,
+    .tick.inc                   = ysf_tick_inc,
+    .tick.read                  = ysf_tick_get,
+    .tick.cal                   = ysf_past_tick_cal,
 #endif
     
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    .memory.init               = ysf_memory_init,
-    .memory.malloc             = ysf_memory_malloc,
-    .memory.free               = ysf_memory_free,
-    .memory.len                = ysf_memory_get_len,
-    .memory.alignment          = ysf_memory_get_alignment,
-    .memory.useRate            = ysf_memory_cal_use_rate,
-    .memory.isIn               = ysf_memory_is_in,
+    .memory.init                = ysf_memory_init,
+    .memory.malloc              = ysf_memory_malloc,
+    .memory.free                = ysf_memory_free,
+    .memory.len                 = ysf_memory_get_len,
+    .memory.alignment           = ysf_memory_get_alignment,
+    .memory.useRate             = ysf_memory_cal_use_rate,
+    .memory.isIn                = ysf_memory_is_in,
 #endif
     
 #if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
-    .event.init                = ysf_event_init,
-    .event.post                = ysf_event_post,
-    .event.read                = ysf_event_read,
-    .event.reg                 = ysf_event_handler_register,
-    .event.writeoff            = ysf_event_handler_writeoff,
-    .event.handler             = ysf_event_handler,
+    .event.init                 = ysf_event_init,
+    .event.post                 = ysf_event_post,
+    .event.read                 = ysf_event_read,
+    .event.reg                  = ysf_event_handler_register,
+    .event.writeoff             = ysf_event_handler_writeoff,
+    .event.handler              = ysf_event_handler,
 #endif
     
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
-    .timer.init                = ysf_timer_init,
-    .timer.handler             = ysf_timer_handler,
+    .timer.init                 = ysf_timer_init,
+    .timer.handler              = ysf_timer_handler,
     
-    .timer.arm                 = ysf_timer_arm,
-    .timer.disarm              = ysf_timer_disarm,
+    .timer.arm                  = ysf_timer_arm,
+    .timer.disarm               = ysf_timer_disarm,
     
-    .timer.getStatus           = ysf_timerGetStatus,
+    .timer.getStatus            = ysf_timerGetStatus,
 
-    .timer.ex.cb_init          = ysf_cbTimer_init,
-    .timer.ex.evt_init         = ysf_evtTriggerTimer_init,
-    .timer.ex.evt_dis_init     = ysf_evtDstrTimer_init,
-
-    .timer.simple.cb_init      = ysf_cbSmpTimer_init,
-    .timer.simple.evt_init     = ysf_evtTriggerSmpTimer_init,
-    .timer.simple.evt_dis_init = ysf_evtDstrSmpTimer_init,
+    .timer.cb_init              = ysf_cbTimer_init,
+    .timer.evt_init             = ysf_evtTimer_init,
+    .timer.evt_dist_init        = ysf_evtDistTimer_init,
+    .timer.sm_init              = ysf_smTimer_init,
+    
+    .timer.simple.cb_init       = ysf_cbSimpTimer_init,
+    .timer.simple.evt_init      = ysf_evtSimpTimer_init,
+    .timer.simple.evt_dist_init = ysf_evtDistSimpTimer_init,
+    .timer.simple.sm_init       = ysf_smSimpTimer_init,
 #endif
 
 #if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
-    .signal.init               = ysf_signal_init,
-    .signal.handler            = ysf_signal_handler,
+    .signal.init                = ysf_signal_init,
+    .signal.handler             = ysf_signal_handler,
 
-    .signal.simple.arm         = ysf_signalSimple_arm,
-    .signal.simple.disarm      = ysf_signal_disarm,
+    .signal.arm                 = ysf_evtSignal_arm,
+    .signal.disarm              = ysf_signal_disarm,
     
-    .signal.ex.arm             = ysf_signalEx_arm,
-    .signal.ex.disarm          = ysf_signal_disarm,
+    .signal.simple.arm          = ysf_evtSimpSignal_arm,
 #endif
 
 #if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
@@ -111,9 +112,9 @@ const struct YSF_API ysf =
     .task.init                 = ysf_task_init,
     .task.poll                 = ysf_task_poll,
     
-    .task.create.evt_handler   = ysf_evtHandlerTask_create,
-    .task.create.evt_sample    = ysf_evtSampleTask_create,
-    .task.create.call_back     = ysf_cbTask_create,
+    .task.create.cb            = ysf_cbTask_create,
+    .task.create.evt           = ysf_evtTask_create,
+    .task.create.sm            = ysf_smTask_create,
 #endif
 };
 #endif

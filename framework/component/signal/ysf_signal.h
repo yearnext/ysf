@@ -90,14 +90,19 @@ struct ysf_signal_t
 {
     struct
     {
-        struct ysf_sList_t *next;
+        struct ysf_signal_t *next;
         ysf_status_t useStatus;
+        
+        enum
+        {
+            YSF_EVENT_HANDLER_SIGNAL,
+        }type;
     };
     
     struct
     {
-        ysf_err_t (*detect)(void*);
-        ysf_err_t (*handler)(void *);
+        enum ysf_signal_status_t (*detect)(void);
+//        ysf_err_t (*handler)(void *, uint16_t);
         enum ysf_signal_status_t status;
         
         struct ysf_task_t task;
@@ -113,11 +118,18 @@ struct ysf_signal_t
 struct YSF_SIGNAL_API
 {
     ysf_err_t (*init)(void);
-//    ysf_err_t (*handler)(void*);
+    ysf_err_t (*handler)(uint16_t);
     
-    ysf_err_t (*cb_init)(struct ysf_signal_t*, void (*)(void*, void*), void*, void*);
-    ysf_err_t (*evt_init)(struct ysf_signal_t*, uint16_t);
-    ysf_err_t (*arm)(struct ysf_signal_t*, enum ysf_signal_status_t (*)(void));            
+    struct
+    {
+        ysf_err_t (*arm)(struct ysf_signal_t*, enum ysf_signal_status_t (*)(void), ysf_err_t (*)(uint16_t));
+    };
+    
+    struct
+    {
+        struct ysf_signal_t *(*arm)(enum ysf_signal_status_t (*)(void), ysf_err_t (*)(uint16_t));
+    }simple;
+              
     ysf_err_t (*disarm)(struct ysf_signal_t*);
 };
 #endif
@@ -132,16 +144,16 @@ struct YSF_SIGNAL_API
 #if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
 extern ysf_err_t ysf_signal_init(void);
 
-extern struct ysf_signal_t *ysf_signalSimple_arm(enum ysf_signal_status_t (*detect)(void), 
-                                                 void (*handler)(enum ysf_signal_status_t));
-
-extern ysf_err_t ysf_signalEx_arm(struct ysf_signal_t*, 
-                                  enum ysf_signal_status_t (*detect)(void), 
-                                  void (*handler)(enum ysf_signal_status_t));
+extern ysf_err_t ysf_evtSignal_arm(struct ysf_signal_t*, 
+                                   enum ysf_signal_status_t (*)(void), 
+                                   ysf_err_t (*)(uint16_t) );
+                                   
+extern struct ysf_signal_t *ysf_evtSimpSignal_arm(enum ysf_signal_status_t (*)(void), 
+                                                  ysf_err_t (*)(uint16_t) );
                                        
 extern ysf_err_t ysf_signal_disarm(struct ysf_signal_t*);
                                        
-//extern ysf_err_t ysf_signal_handler(void *);
+extern ysf_err_t ysf_signal_handler(uint16_t);
 #endif
                                        
 /* Add c++ compatibility------------------------------------------------------*/
