@@ -71,8 +71,8 @@ struct YSF_EVENT_API
 extern ysf_err_t ysf_event_init( void );
 extern ysf_err_t ysf_event_post( uint16_t );
 extern ysf_err_t ysf_event_read( uint16_t* );
-extern ysf_err_t ysf_event_handler_register(uint16_t, ysf_err_t (*handler)(uint16_t));
-extern ysf_err_t ysf_event_handler_writeoff(uint16_t, ysf_err_t (*handler)(uint16_t));
+extern ysf_err_t ysf_evtHandlerReg(uint16_t, ysf_err_t (*handler)(uint16_t));
+extern ysf_err_t ysf_evtHandlerWriteOff(uint16_t, ysf_err_t (*handler)(uint16_t));
 extern ysf_err_t ysf_event_handler( void );
 #endif
 

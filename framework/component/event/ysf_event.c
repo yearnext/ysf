@@ -45,7 +45,7 @@
  *******************************************************************************
  */
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-typedef ysf_err_t (*ysf_evt_handler)(uint16_t);
+typedef ysf_err_t (*ysf_evt_handler_t)(uint16_t);
 #endif
 
 /**
@@ -54,10 +54,10 @@ typedef ysf_err_t (*ysf_evt_handler)(uint16_t);
  *******************************************************************************
  */
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-struct ysf_evt_handler_t
+struct ysf_evt_node_t
 {
     void *next;
-    ysf_evt_handler handler;
+    ysf_evt_handler_t handler;
 };
 #endif
 
@@ -69,13 +69,9 @@ struct ysf_evt_handler_t
  */
 #if USE_YSF_EVENT_API
 static int16_t buffer[YSF_EVENT_MAX];
-static struct  ysf_rb_t QCB;
+static struct  ysf_rb_t evt_queue;
 
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-static struct ysf_evt_handler_t *evt_hander[YSF_EVENT_MAX]; 
-#else
-static ysf_evt_handler evt_hander[YSF_EVENT_MAX]; 
-#endif
+static struct ysf_evt_node_t evt_hander[YSF_EVENT_MAX]; 
 
 #endif
 
@@ -111,12 +107,13 @@ ysf_err_t ysf_event_init( void )
     
     for( i=0; i<YSF_EVENT_MAX; i++ )
     {
-        evt_hander[i] = NULL;
+        evt_hander[i].next    = NULL;
+        evt_hander[i].handler = NULL;
     }
     
-    ysf_event_handler_register(YSF_EVENT_NONE, ysf_empty_event_handler);
+    ysf_evtHandlerReg(YSF_EVENT_NONE, ysf_empty_event_handler);
     
-    ysf_rbInit(&QCB, (uint8_t *)&buffer, YSF_EVENT_SIZE_CAL(buffer));
+    ysf_rbInit(&evt_queue, (uint8_t *)&buffer, YSF_EVENT_SIZE_CAL(buffer));
     
 	return YSF_ERR_NONE;
 }
@@ -132,7 +129,7 @@ ysf_err_t ysf_event_init( void )
  */
 ysf_err_t ysf_event_post( uint16_t event )
 {
-    ysf_rbWrite( &QCB, (uint8_t *)&event, YSF_EVENT_SIZE_CAL(int16_t) );
+    ysf_rbWrite( &evt_queue, (uint8_t *)&event, YSF_EVENT_SIZE_CAL(int16_t) );
     
 	return YSF_ERR_NONE;
 }
@@ -148,7 +145,7 @@ ysf_err_t ysf_event_post( uint16_t event )
  */
 ysf_err_t ysf_event_read( uint16_t *event )
 {
-    ysf_rbRead( &QCB, (uint8_t *)event, YSF_EVENT_SIZE_CAL(int16_t) );
+    ysf_rbRead( &evt_queue, (uint8_t *)event, YSF_EVENT_SIZE_CAL(int16_t) );
 	
     return YSF_ERR_NONE;
 }
@@ -167,15 +164,15 @@ ysf_err_t ysf_event_read( uint16_t *event )
  */
 static bool ysf_event_walk(void **node, void **ctx, void **expand)
 {
-    struct ysf_evt_handler_t *evt_handler_node = (struct ysf_evt_handler_t *)*node;
-    uint16_t events = *((uint16_t *)ctx);
+    struct ysf_evt_node_t *evt_node = (struct ysf_evt_node_t *)*node;
+    uint16_t evt = *((uint16_t *)ctx);
     
     if( *node == NULL )
     {
         return true;
     }
     
-    evt_handler_node->handler(events);
+    evt_node->handler(evt);
     
     return false;
 }
@@ -195,9 +192,9 @@ static bool ysf_event_handler_delte(void **node, void **ctx, void **expand)
 {
     ysf_assert(IS_PTR_NULL(*ctx));
     
-    struct ysf_evt_handler_t *now  = (struct ysf_evt_handler_t *)(*node);
-    struct ysf_evt_handler_t *last = (struct ysf_evt_handler_t *)(*expand);
-    ysf_evt_handler condition = (ysf_evt_handler)(*ctx);
+    struct ysf_evt_node_t *now  = (struct ysf_evt_node_t *)(*node);
+    struct ysf_evt_node_t *last = (struct ysf_evt_node_t *)(*expand);
+    ysf_evt_handler_t condition = (ysf_evt_handler_t)(*ctx);
     
     if( now == NULL )
     {
@@ -240,8 +237,8 @@ static bool ysf_event_handler_delte(void **node, void **ctx, void **expand)
  */
 static bool evtHandlerIsInList( void **node, void **ctx, void **expand )
 {
-    struct ysf_evt_handler_t *evtHandlerNode = (struct ysf_evt_handler_t *)(*node);
-    ysf_evt_handler evtHandler = (ysf_evt_handler)(ctx);
+    struct ysf_evt_node_t *evtHandlerNode = (struct ysf_evt_node_t *)(*node);
+    ysf_evt_handler_t evtHandler = (ysf_evt_handler_t)(ctx);
     
     if( *node == NULL )
     {
@@ -270,9 +267,9 @@ static bool evtHandlerIsInList( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint16_t) )
+ysf_err_t ysf_evtHandlerReg( uint16_t event, ysf_err_t (*handler)(uint16_t) )
 {
-    struct ysf_evt_handler_t *evt_handler_node = NULL;
+    struct ysf_evt_node_t *evt_handler_node = NULL;
     
     if( IS_PTR_NULL(handler) )
     {
@@ -281,7 +278,7 @@ ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint1
     
     if( ysf_slist_walk((void**)&evt_hander[event], evtHandlerIsInList, (void **)handler, NULL) == false )
     {
-        evt_handler_node = (struct ysf_evt_handler_t *)ysf_memory_malloc(CalTypeByteSize(struct ysf_evt_handler_t));
+        evt_handler_node = (struct ysf_evt_node_t *)ysf_memory_malloc(CalTypeByteSize(struct ysf_evt_node_t));
         
         if( evt_handler_node == NULL )
         {
@@ -309,10 +306,10 @@ ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint1
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_handler_writeoff( uint16_t event, ysf_err_t (*handler)(uint16_t) )
+ysf_err_t ysf_evtHandlerWriteOff( uint16_t event, ysf_err_t (*handler)(uint16_t) )
 {
     ysf_assert(event>=YSF_EVENT_MAX);
-    struct ysf_evt_handler_t *head = evt_hander[event];
+    struct ysf_evt_node_t *head = &evt_hander[event];
 
     return ysf_slist_walk( (void **)&evt_hander[event], ysf_event_handler_delte, (void **)handler, (void **)&head );
 }
