@@ -38,8 +38,7 @@ extern "C"
  */
 #define _YSF_DEFINE_EVENT_START     enum ysf_evt_enum                          \
                                     {                                          \
-                                        YSF_EVENT_NONE = 0,                    \
-                                        YSF_CORE_TICK_UPDATE,                                          
+                                        YSF_EVENT_NONE = 0,                                                            
                                         
 #define _YSF_DEFINE_EVENT_END           YSF_EVENT_MAX,                         \
                                     };

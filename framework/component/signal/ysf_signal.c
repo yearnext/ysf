@@ -101,7 +101,7 @@ ysf_err_t ysf_signal_push(struct ysf_signal_t *signal)
 YSF_STATIC_INLINE
 struct ysf_signal_t *ysf_signal_pop(void)
 {
-    struct ysf_signal_t *signal;
+    struct ysf_signal_t *signal = NULL;
     
     ysf_sListControlBlock_pop(scb, signal);
     

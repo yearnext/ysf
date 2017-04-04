@@ -424,7 +424,7 @@ ysf_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *sListFifo)
 {
     ysf_assert(IS_PTR_NULL(sListFifo));
     
-    struct ysf_sList_t *status;
+    struct ysf_sList_t *status = NULL;
     
     do
     {

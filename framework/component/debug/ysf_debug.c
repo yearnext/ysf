@@ -60,7 +60,7 @@ void ysf_assert_failed(uint8_t* file, uint32_t line)
 {
     YSF_ENTER_CRITICAL();
     while(1);
-    YSF_EXIT_CRITICAL();
+//    YSF_EXIT_CRITICAL();
 }
 #endif
 

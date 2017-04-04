@@ -39,28 +39,6 @@
 #define YSF_EVENT_SIZE_CAL(event) CalTypeByteSize(event)
 
 /* Private typedef -----------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define event handler type
- *******************************************************************************
- */
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-typedef ysf_err_t (*ysf_evt_handler_t)(uint16_t);
-#endif
-
-/**
- *******************************************************************************
- * @brief       define event handler list type
- *******************************************************************************
- */
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-struct ysf_evt_node_t
-{
-    void *next;
-    ysf_evt_handler_t handler;
-};
-#endif
-
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -70,25 +48,22 @@ struct ysf_evt_node_t
 #if USE_YSF_EVENT_API
 static int16_t buffer[YSF_EVENT_MAX];
 static struct  ysf_rb_t evt_queue;
-
-static struct ysf_evt_node_t evt_hander[YSF_EVENT_MAX]; 
-
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       empty event handler
- * @param       [in/out]  event              events
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @note        None
- *******************************************************************************
- */
-static ysf_err_t ysf_empty_event_handler(uint16_t event)
-{
-    return YSF_ERR_NONE;
-}
+///**
+// *******************************************************************************
+// * @brief       empty event handler
+// * @param       [in/out]  event              events
+// * @return      [in/out]  YSF_ERR_NONE       init finish
+// * @note        None
+// *******************************************************************************
+// */
+//static ysf_err_t ysf_empty_event_handler(uint16_t event)
+//{
+//    return YSF_ERR_NONE;
+//}
 
 /* Exported functions --------------------------------------------------------*/
 #if USE_YSF_EVENT_API
@@ -103,17 +78,17 @@ static ysf_err_t ysf_empty_event_handler(uint16_t event)
  */
 ysf_err_t ysf_event_init( void )
 {
-    uint16_t i;
-    
-    for( i=0; i<YSF_EVENT_MAX; i++ )
-    {
-        evt_hander[i].next    = NULL;
-        evt_hander[i].handler = NULL;
-    }
-    
-    ysf_evtHandlerReg(YSF_EVENT_NONE, ysf_empty_event_handler);
-    
-    ysf_rbInit(&evt_queue, (uint8_t *)&buffer, YSF_EVENT_SIZE_CAL(buffer));
+//    uint16_t i;
+//    
+//    for( i=0; i<YSF_EVENT_MAX; i++ )
+//    {
+//        evt_hander[i].next    = NULL;
+//        evt_hander[i].handler = NULL;
+//    }
+//    
+//    ysf_event_writeoff(YSF_EVENT_NONE, ysf_empty_event_handler);
+//    
+    ysf_rbInit(&evt_queue, (uint8_t *)buffer, YSF_EVENT_SIZE_CAL(buffer));
     
 	return YSF_ERR_NONE;
 }
@@ -149,250 +124,6 @@ ysf_err_t ysf_event_read( uint16_t *event )
 	
     return YSF_ERR_NONE;
 }
-
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-/**
- *******************************************************************************
- * @brief       event list walk
- * @param       [in/out]  **node            list point head
- * @param       [in/out]  **ctx             events
- * @param       [in/out]  **expand          NULL
- * @return      [in/out]  true              walk end
- * @return      [in/out]  false             continue walk
- * @note        None
- *******************************************************************************
- */
-static bool ysf_event_walk(void **node, void **ctx, void **expand)
-{
-    struct ysf_evt_node_t *evt_node = (struct ysf_evt_node_t *)*node;
-    uint16_t evt = *((uint16_t *)ctx);
-    
-    if( *node == NULL )
-    {
-        return true;
-    }
-    
-    evt_node->handler(evt);
-    
-    return false;
-}
-
-/**
- *******************************************************************************
- * @brief       delete event handler in list
- * @param       [in/out]  **node            list point head
- * @param       [in/out]  **ctx             events
- * @param       [in/out]  **expand          NULL
- * @return      [in/out]  true              walk end
- * @return      [in/out]  false             continue walk
- * @note        None
- *******************************************************************************
- */
-static bool ysf_event_handler_delte(void **node, void **ctx, void **expand)
-{
-    ysf_assert(IS_PTR_NULL(*ctx));
-    
-    struct ysf_evt_node_t *now  = (struct ysf_evt_node_t *)(*node);
-    struct ysf_evt_node_t *last = (struct ysf_evt_node_t *)(*expand);
-    ysf_evt_handler_t condition = (ysf_evt_handler_t)(*ctx);
-    
-    if( now == NULL )
-    {
-        return false;
-    }
-
-    if( now->handler == condition )
-    {
-        if( now != last )
-        {
-            now->handler = NULL;
-            last->next = now->next;
-            now->next = NULL;
-            ysf_memory_free(now);
-            now = last;
-        }
-        else
-        {
-            now->handler = NULL;
-            now = now->next;
-            last->next = NULL;
-            ysf_memory_free(last);
-            last = now;
-        }
-    }
-    
-    return false;
-}
-
-/**
- *******************************************************************************
- * @brief       detection event handler is in list
- * @param       [in/out]  **node            list point head
- * @param       [in/out]  **ctx             events
- * @param       [in/out]  **expand          NULL
- * @return      [in/out]  true              walk end
- * @return      [in/out]  false             continue walk
- * @note        None
- *******************************************************************************
- */
-static bool evtHandlerIsInList( void **node, void **ctx, void **expand )
-{
-    struct ysf_evt_node_t *evtHandlerNode = (struct ysf_evt_node_t *)(*node);
-    ysf_evt_handler_t evtHandler = (ysf_evt_handler_t)(ctx);
-    
-    if( *node == NULL )
-    {
-        return false;
-    }
-    if( evtHandler == NULL )
-    {
-        return false;
-    }
-    
-    if( evtHandlerNode->handler != NULL && evtHandlerNode->handler == evtHandler )
-    {
-        return true;
-    }
-    
-    return false;
-}
-
-/**
- *******************************************************************************
- * @brief       event register
- * @param       [in/out]  event                  event
- * @param       [in/out]  *handler               event handler
- * @return      [in/out]  YSF_ERR_INVAILD_PTR    event handler point is null
- * @return      [in/out]  YSF_ERR_NONE           register success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_evtHandlerReg( uint16_t event, ysf_err_t (*handler)(uint16_t) )
-{
-    struct ysf_evt_node_t *evt_handler_node = NULL;
-    
-    if( IS_PTR_NULL(handler) )
-    {
-        return YSF_ERR_INVAILD_PTR;
-    }
-    
-    if( ysf_slist_walk((void**)&evt_hander[event], evtHandlerIsInList, (void **)handler, NULL) == false )
-    {
-        evt_handler_node = (struct ysf_evt_node_t *)ysf_memory_malloc(CalTypeByteSize(struct ysf_evt_node_t));
-        
-        if( evt_handler_node == NULL )
-        {
-            return YSF_ERR_INVAILD_PTR;
-        }
-    }
-    else
-    {
-        return YSF_ERR_NONE;
-    }
-    
-    evt_handler_node->handler = handler;
-    evt_handler_node->next    = NULL;
-    
-    return ysf_slist_add((void**)&evt_hander[event], (void **)&evt_handler_node);
-}
-
-/**
- *******************************************************************************
- * @brief       event write off
- * @param       [in/out]  event                  event
- * @param       [in/out]  *handler               event handler
- * @return      [in/out]  YSF_ERR_INVAILD_PTR    event handler point is null
- * @return      [in/out]  YSF_ERR_NONE           write off success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_evtHandlerWriteOff( uint16_t event, ysf_err_t (*handler)(uint16_t) )
-{
-    ysf_assert(event>=YSF_EVENT_MAX);
-    struct ysf_evt_node_t *head = &evt_hander[event];
-
-    return ysf_slist_walk( (void **)&evt_hander[event], ysf_event_handler_delte, (void **)handler, (void **)&head );
-}
-
-/**
- *******************************************************************************
- * @brief       event handler
- * @param       [in/out]  none
- * @return      [in/out]  YSF_ERR_NONE           write off success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_event_handler(void)
-{
-    uint16_t event = YSF_EVENT_NONE;
-    ysf_event_read(&event);
-    
-    ysf_slist_walk( (void **)&evt_hander[event], ysf_event_walk, (void **)((ysf_addr_t)&event), NULL );
-    
-    return YSF_ERR_NONE;
-}
-
-#else
-/**
- *******************************************************************************
- * @brief       event register
- * @param       [in/out]  event                  event
- * @param       [in/out]  *handler               event handler
- * @return      [in/out]  YSF_ERR_INVAILD_PTR    event handler point is null
- * @return      [in/out]  YSF_ERR_NONE           register success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_event_handler_register( uint16_t event, ysf_err_t (*handler)(uint16_t) )
-{
-    ysf_assert(IS_PTR_NULL(handler));
-    ysf_assert(event>=YSF_EVENT_MAX);
-    
-    evt_hander[event] = handler;
-
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       event write off
- * @param       [in/out]  event                  event
- * @param       [in/out]  *handler               event handler
- * @return      [in/out]  YSF_ERR_INVAILD_PTR    event handler point is null
- * @return      [in/out]  YSF_ERR_NONE           write off success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_event_handler_writeoff( uint16_t event, ysf_err_t (*handler)(uint16_t) )
-{
-    ysf_assert(event>=YSF_EVENT_MAX);
-    
-    evt_hander[event] = NULL;
-
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       event handler
- * @param       [in/out]  none
- * @return      [in/out]  YSF_ERR_NONE           write off success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_event_handler( void )
-{
-    uint16_t event = YSF_EVENT_NONE;
-    ysf_event_read(&event);
-    
-    if( !IS_PTR_NULL(evt_hander[event]))
-    {
-        evt_hander[event](event);
-    }
-    
-    return YSF_ERR_NONE;
-}
-#endif
 
 #endif
 

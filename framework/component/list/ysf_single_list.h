@@ -173,7 +173,7 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
         return NULL;                                                           \
     }                                                                          \
                                                                                \
-    popData    = popData;                                                      \
+    popData    = block.head;                                                   \
     block.head = block.head->next;                                             \
                                                                                \
     if( block.head->next == NULL )                                             \

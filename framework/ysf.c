@@ -22,6 +22,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf.h"
+#include "ysf_path.h"
+#include YSF_COMPILER_PATH
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -68,9 +70,9 @@ const struct YSF_API ysf =
     .event.init                 = ysf_event_init,
     .event.post                 = ysf_event_post,
     .event.read                 = ysf_event_read,
-    .event.reg                  = ysf_event_handler_register,
-    .event.writeoff             = ysf_event_handler_writeoff,
-    .event.handler              = ysf_event_handler,
+//    .event.reg                  = ysf_event_register,
+//    .event.writeoff             = ysf_event_writeoff,
+//    .event.handler              = ysf_event_handler,
 #endif
     
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
@@ -84,12 +86,12 @@ const struct YSF_API ysf =
 
     .timer.cb_init              = ysf_cbTimer_init,
     .timer.evt_init             = ysf_evtTimer_init,
-    .timer.evt_dist_init        = ysf_evtDistTimer_init,
+//    .timer.evt_dist_init        = ysf_evtDistTimer_init,
     .timer.sm_init              = ysf_smTimer_init,
     
     .timer.simple.cb_init       = ysf_cbSimpTimer_init,
     .timer.simple.evt_init      = ysf_evtSimpTimer_init,
-    .timer.simple.evt_dist_init = ysf_evtDistSimpTimer_init,
+//    .timer.simple.evt_dist_init = ysf_evtDistSimpTimer_init,
     .timer.simple.sm_init       = ysf_smSimpTimer_init,
 #endif
 
@@ -130,46 +132,45 @@ const struct YSF_API ysf =
  */
 void ysf_init( ysf_err_t (*user_init)(void) )
 {
-//    YSF_ENTER_CRITICAL();
-//#if defined(USE_YSF_TICK_API) && USE_YSF_TICK_API
-//    ysf.tick.init();
-//    
-//#if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
-//    msp.timer.tick.init(ysf.tick.inc);
-//#endif
-//    
-//#endif
-//    
-//#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-//    ysf.memory.init();
-//#endif
-//    
-//#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
-//    ysf.event.init();
-//#endif
-//    
-//#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
-//    ysf.timer.init();
-//    ysf.event.reg(YSF_CORE_TICK_UPDATE, ysf_timer_handler);
-//#endif
-//    
-//#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
-//    ysf.signal.init();
-//#endif
+    YSF_ENTER_CRITICAL();
+#if defined(USE_YSF_TICK_API) && USE_YSF_TICK_API
+    ysf.tick.init();
+    
+#if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
+    msp.timer.tick.init(ysf.tick.inc);
+#endif
+    
+#endif
+    
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+    ysf.memory.init();
+#endif
+    
+#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
+    ysf.event.init();
+#endif
+    
+#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
+    ysf.timer.init();
+#endif
+    
+#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
+    ysf.signal.init();
+#endif
 
-//#if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
-//    ysf.debug.init();
-//#endif  
+#if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
+    ysf.debug.init();
+#endif  
 
-//#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
-//    ysf.task.init();
-//#endif
-//    if(!IS_PTR_NULL(user_init))
-//    {
-//        user_init();
-//    }
-//    
-//    YSF_EXIT_CRITICAL();
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+    ysf.task.init();
+#endif
+    if(!IS_PTR_NULL(user_init))
+    {
+        user_init();
+    }
+    
+    YSF_EXIT_CRITICAL();
 }
 
 /**
@@ -186,7 +187,7 @@ void ysf_start(void)
     {
 #if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
         YSF_ENTER_CRITICAL();
-        ysf_event_handler();
+        ysf_task_poll();
         YSF_EXIT_CRITICAL();
 #endif
     }
