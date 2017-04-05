@@ -28,6 +28,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
 #include YSF_COMPONENT_TASK_PATH
@@ -40,7 +41,11 @@ extern "C"
  * @brief        config timer api switch
  *******************************************************************************
  */
+#if defined(USE_YSF_TIMER_COMPONENT) && USE_YSF_TIMER_COMPONENT
 #define USE_YSF_TIMER_API        (1)
+#else
+#define USE_YSF_TIMER_API        (0)
+#endif
 
 /**
  *******************************************************************************

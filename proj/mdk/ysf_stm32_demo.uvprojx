@@ -426,24 +426,14 @@
               <FilePath>..\..\framework\component\timer\ysf_timer.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_message.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\component\message\ysf_message.c</FilePath>
-            </File>
-            <File>
               <FileName>ysf_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\framework\component\task\ysf_task.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_sm.c</FileName>
+              <FileName>ysf_pt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\sm\ysf_sm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_pt.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\framework\component\pt\ysf_pt.h</FilePath>
+              <FilePath>..\..\framework\component\pt\ysf_pt.c</FilePath>
             </File>
           </Files>
         </Group>

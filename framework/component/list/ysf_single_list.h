@@ -30,9 +30,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
-#include YSF_COMPONENT_DEBUG_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -40,7 +40,11 @@ extern "C"
  * @brief       config single list api switch
  *******************************************************************************
  */
+#if defined(USE_YSF_SINGLE_LIST_COMPONENT) && USE_YSF_SINGLE_LIST_COMPONENT
 #define USE_YSF_SINGLE_LIST_API (1)
+#else
+#define USE_YSF_SINGLE_LIST_API (0)
+#endif
     
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -125,8 +129,6 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
                                                     
 #define ysf_sListControlBlock_isIn(type, block, node)                          \
 {                                                                              \
-    ysf_assert(IS_PTR_NULL(node));                                             \
-                                                                               \
     type *temp = block.head;                                                   \
                                                                                \
     while(temp != NULL)                                                        \
@@ -142,8 +144,6 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
 
 #define ysf_sListControlBlock_push(isInFunc, block, node)                      \
 {                                                                              \
-    ysf_assert(IS_PTR_NULL(node));                                             \
-                                                                               \
     if( isInFunc(node) == false )                                              \
     {                                                                          \
         node->next = NULL;                                                     \

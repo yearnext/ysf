@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include "ysf_path.h"
 #include YSF_COMPONENT_BUFFER_PATH
 
@@ -39,8 +40,12 @@ extern "C"
  * @brief        config ysf memory management switch
  *******************************************************************************
  */
+#if defined(USE_YSF_MEMORY_MANAGEMENT_COMPONENT) && USE_YSF_MEMORY_MANAGEMENT_COMPONENT   
 #define USE_YSF_MEMORY_API  (1)
-
+#else
+#define USE_YSF_MEMORY_API  (0)
+#endif
+    
 /**
  *******************************************************************************
  * @brief        config ysf memory pool size

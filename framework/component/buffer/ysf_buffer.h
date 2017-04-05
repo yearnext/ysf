@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
 #include YSF_COMPILER_PATH
@@ -40,8 +41,13 @@ extern "C"
  * @brief       buffer debug switch
  *******************************************************************************
  */
+#if defined(USE_YSF_BUFFER_COMPONENT) && USE_YSF_BUFFER_COMPONENT
 #define USE_YSF_BUFFER_API              (1)
 #define USE_YSF_MEMORY_MANAGEMENT_API   (1)  
+#else
+#define USE_YSF_BUFFER_API              (0)
+#define USE_YSF_MEMORY_MANAGEMENT_API   (0)  
+#endif
 
 /**
  *******************************************************************************

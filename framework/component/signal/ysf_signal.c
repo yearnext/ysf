@@ -22,10 +22,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ysf_path.h"
+#include YSF_TYPE_PATH
 #include YSF_COMPONENT_SIGNAL_PATH
 #include YSF_COMPONENT_TIMER_PATH
 #include YSF_COMPONENT_MEMORY_PATH
-#include YSF_TYPE_PATH
+#include YSF_COMPONENT_DEBUG_PATH
 #include YSF_COMPONENT_EVENT_PATH
 #include YSF_COMPONENT_SINGLE_LIST_PATH
 

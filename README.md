@@ -21,13 +21,12 @@
 ## 例程
 本例程主要演示单片机GPIO的配置、ysf定时器的使用方式以及ysf事件结构的使用。
 	
-    /**
-	 *******************************************************************************
-	 * @brief       head file
-	 *******************************************************************************
-	 */
+	/* Includes ------------------------------------------------------------------*/
 	#include "ysf.h"
-
+	
+	/* Private define ------------------------------------------------------------*/                                                        
+	/* Private typedef -----------------------------------------------------------*/
+	/* Private variables ---------------------------------------------------------*/
 	/**
 	 *******************************************************************************
 	 * @brief       device port define
@@ -61,23 +60,29 @@
 	 *******************************************************************************
 	 * @brief       timer variable define
 	 *******************************************************************************
-	 */  
-	static struct ysf_timer_t *led1Timer;
-	static struct ysf_timer_t led2Timer;
-  	
+	 */ 
+	static struct ysf_timer_t led1Timer;
+	//static struct ysf_task_t  led2Task;
+	static struct ysf_pt_t    led2PT;
+	
 	/**
 	 *******************************************************************************
 	 * @brief       signal variable define
 	 *******************************************************************************
-	 */  
-	static struct ysf_signal_t key1Signal;
-    
+	 */
+	static struct ysf_signal_t *key1Signal;
+	static struct ysf_signal_t key2Signal;
+	
+	/* Exported variables --------------------------------------------------------*/
+	/* Private functions ---------------------------------------------------------*/
+	/* Exported functions --------------------------------------------------------*/
+	
 	/**
 	 *******************************************************************************
 	 * @brief       led1 blink function
 	 *******************************************************************************
 	 */
-	static ysf_err_t led1_blink_event_handler( uint16_t event )
+	static ysf_err_t led1_blink_handler( uint16_t event )
 	{   
 	    if( msp.gpio.pin.get(MCU_PORT_D, MCU_PIN_13) == true )
 	    {
@@ -96,37 +101,24 @@
 	 * @brief       led2 blink function
 	 *******************************************************************************
 	 */
-	//static ysf_err_t bsp_led2_blink( void *param )
-	//{   
-	//    if( msp.gpio.pin.get(led2.port, led2.pin) == true )
-	//    {
-	//        msp.gpio.pin.clr(led2.port, led2.pin);
-	//    }
-	//    else
-	//    {
-	//        msp.gpio.pin.set(led2.port, led2.pin);
-	//    }
-	//    
-	//    return YSF_ERR_NONE;
-	//}
-	
 	static YSF_PT_THREAD(bsp_led2_blink)
 	{
-	    ysf_pt_init(bsp_led2_blink);
 	    ysf_pt_begin();
 	    
 	    while(1)
 	    {
-	        msp.gpio.pin.clr(led2.port, led2.pin);
-	        ysf_pt_delay(500);
-	        
 	        msp.gpio.pin.set(led2.port, led2.pin);
-	        ysf_pt_delay(500);
+	        
+	        ysf_pt_delay(500);            
+	
+	        msp.gpio.pin.clr(led2.port, led2.pin);
+	        
+	        ysf_pt_delay(500); 
 	    }
 	    
 	    ysf_pt_end();
 	}
-
+	
 	/**
 	 *******************************************************************************
 	 * @brief       device led init function
@@ -136,13 +128,16 @@
 	{
 	    msp.gpio.port.config.init(MCU_PORT_D);
 	    msp.gpio.pin.config.output(MCU_PORT_D, MCU_PIN_13, GPIO_PIN_O_PP_LS_MODE);    
-	    ysf.event.reg(LED1_BLINK_EVENT, led1_blink_event_handler);
-	    led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
-	
+	    
+	    ysf.timer.evt_init(&led1Timer, led1_blink_handler, YSF_EVENT_NONE);
+	    ysf.timer.arm(&led1Timer, YSF_TIME_2_TICK(500), YSF_TIMER_CYCLE_PARAM);
+	    
 	    map.gpio.port.config.init(&led2);
 	    map.gpio.pin.config.output(&led2, GPIO_PIN_O_PP_LS_MODE);  
-	    ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
-	    ysf.timer.ex.arm(&led2Timer, YSF_TIME_2_TICK(1000), 0);
+	    
+	    ysf.pt.init(&led2PT, bsp_led2_blink);
+	//    ysf.pt.arm(&led2Task, &led2PT);
+	    ysf.pt.simple.arm(&led2PT);
 	}
 	
 	/**
@@ -170,28 +165,31 @@
 	 * @brief       key1 handler function
 	 *******************************************************************************
 	 */
-	static void key1_handler(enum ysf_signal_status_t status)
+	static ysf_err_t key1_handler(uint16_t status)
 	{
 	    switch(status)
 	    {
 	        case SIGNAL_STATUS_PRESS_EDGE:
-	            ysf.timer.simple.disarm(led1Timer);
-	            ysf.timer.ex.disarm(&led2Timer);
+	            ysf.timer.disarm(&led1Timer);
+	        
+	            ysf.pt.disarm(&led2PT);
 	            break;
 	        case SIGNAL_STATUS_PRESS:
 	            msp.gpio.pin.clr(MCU_PORT_D, MCU_PIN_13);
 	            map.gpio.pin.clr(&led2);
 	            break;
 	        case SIGNAL_STATUS_RELEASE_EDGE:
-	            ysf.event.reg(LED1_BLINK_EVENT, led1_blink_event_handler);
-	            led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
-	
-	            ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
-	            ysf.timer.ex.arm(&led2Timer, YSF_TIME_2_TICK(1000), 0);
+	            ysf.timer.evt_init(&led1Timer, led1_blink_handler, YSF_EVENT_NONE);
+	            ysf.timer.arm(&led1Timer, YSF_TIME_2_TICK(500), YSF_TIMER_CYCLE_PARAM);
+	        
+	            ysf.pt.init(&led2PT, bsp_led2_blink);
+	            ysf.pt.simple.arm(&led2PT);
 	            break;
 	        default:
 	            break;
 	    }
+	    
+	    return YSF_ERR_NONE;
 	}
 	
 	/**
@@ -199,28 +197,31 @@
 	 * @brief       key2 handler function
 	 *******************************************************************************
 	 */
-	static void key2_handler(enum ysf_signal_status_t status)
+	static ysf_err_t key2_handler(uint16_t status)
 	{
 	    switch(status)
 	    {
 	        case SIGNAL_STATUS_PRESS_EDGE:
-	            ysf.timer.simple.disarm(led1Timer);
-	            ysf.timer.ex.disarm(&led2Timer);
+	            ysf.timer.disarm(&led1Timer);
+	        
+	            ysf.pt.disarm(&led2PT);
 	            break;
 	        case SIGNAL_STATUS_PRESS:
 	            msp.gpio.pin.set(MCU_PORT_D, MCU_PIN_13);
 	            map.gpio.pin.set(&led2);
 	            break;
 	        case SIGNAL_STATUS_RELEASE_EDGE:
-	            ysf.event.reg(LED1_BLINK_EVENT, led1_blink_event_handler);
-	            led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
-	            
-	            ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
-	            ysf.timer.ex.arm(&led2Timer, YSF_TIME_2_TICK(1000), 0);
+	            ysf.timer.evt_init(&led1Timer, led1_blink_handler, YSF_EVENT_NONE);
+	            ysf.timer.arm(&led1Timer, YSF_TIME_2_TICK(500), YSF_TIMER_CYCLE_PARAM);
+	        
+	            ysf.pt.init(&led2PT, bsp_led2_blink);
+	            ysf.pt.simple.arm(&led2PT);
 	            break;
 	        default:
 	            break;
 	    }
+	    
+	    return YSF_ERR_NONE;
 	}
 	
 	/**
@@ -232,11 +233,12 @@
 	{
 	    msp.gpio.port.config.init(MCU_PORT_E);
 	    msp.gpio.pin.config.input(MCU_PORT_E, MCU_PIN_0, GPIO_PIN_I_UD_MODE);
-	    ysf.signal.simple.arm(key1_scan, key1_handler);
+	    
+	    key1Signal = ysf.signal.simple.arm(key1_scan, key1_handler);
 	    
 	    map.gpio.port.config.init(&key2);
 	    map.gpio.pin.config.input(&key2, GPIO_PIN_I_UD_MODE);
-	    ysf.signal.ex.arm(&key1Signal, key2_scan, key2_handler);
+	    ysf.signal.arm(&key2Signal, key2_scan, key2_handler);
 	}
 	
 	/**
@@ -248,7 +250,7 @@
 	{
 	    bsp_led_init();
 	    bsp_key_init();
-	    
+	
 	    return YSF_ERR_NONE;
 	}
 	
@@ -262,3 +264,4 @@
 	    ysf.init(user_init);
 	    ysf.start();
 	}
+

@@ -125,10 +125,9 @@ ysf_err_t ysf_task_init(void)
     return YSF_ERR_NONE;
 }
 
-
 /**
  *******************************************************************************
- * @brief       add task in task queue
+ * @brief       add task to task queue
  * @param       [in/out]  *task                     task block
  * @param       [in/out]  *func                     task function
  * @param       [in/out]  *param                    task param
@@ -156,7 +155,45 @@ ysf_err_t ysf_cbTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*), v
 
 /**
  *******************************************************************************
- * @brief       add task in task queue
+ * @brief       add task to task queue
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  *param                    task param
+ * @return      [in/out]  NULL                      add failed
+ * @return      [in/out]  ARRDESS                   add success
+ * @note        None
+ *******************************************************************************
+ */
+struct ysf_task_t *ysf_cbSimpTask_create(ysf_err_t (*func)(void*), void *param)
+{
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+    if(IS_PTR_NULL(func))
+    {
+        return NULL;
+    }
+    
+    struct ysf_task_t *task = (struct ysf_task_t *)ysf_memory_malloc(sizeof(struct ysf_task_t));
+     
+    if(IS_PTR_NULL(task))
+    {
+        return NULL;
+    }
+    
+    task->handler.cb = func;
+    task->param      = param;
+    task->type       = YSF_CALL_BACK_TASK;
+    
+//    task->next         = NULL;
+    ysf_task_push(task);
+    
+    return task;
+#else
+    return NULL;
+#endif
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task to task queue
  * @param       [in/out]  *task                     task block
  * @param       [in/out]  *func                     task function
  * @param       [in/out]  event                     task event
@@ -184,7 +221,45 @@ ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t
 
 /**
  *******************************************************************************
- * @brief       add task in task queue
+ * @brief       add task to task queue
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  event                     task event
+ * @return      [in/out]  NULL                      add failed
+ * @return      [in/out]  ARRDESS                   add success
+ * @note        None
+ *******************************************************************************
+ */
+struct ysf_task_t *ysf_evtSimpTask_create(ysf_err_t (*func)(uint16_t), uint16_t evt)
+{
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+    if(IS_PTR_NULL(func))
+    {
+        return NULL;
+    }
+    
+    struct ysf_task_t *task = (struct ysf_task_t *)ysf_memory_malloc(sizeof(struct ysf_task_t));
+     
+    if(IS_PTR_NULL(task))
+    {
+        return NULL;
+    }
+    
+    task->handler.evt = func;
+    task->evt         = evt;
+    task->type        = YSF_STATE_MECHINE_TASK;
+    
+//    task->next         = NULL;
+    ysf_task_push(task);
+    
+    return task;
+#else
+    return NULL;
+#endif
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task to task queue
  * @param       [in/out]  *task                     task block
  * @param       [in/out]  *func                     task function
  * @param       [in/out]  *param                    task param
@@ -210,6 +285,46 @@ ysf_err_t ysf_smTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, ui
     ysf_task_push(task);
     
     return YSF_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task to task queue
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  *param                    task param
+ * @param       [in/out]  *expand                   task expand param
+ * @return      [in/out]  NULL                      add failed
+ * @return      [in/out]  ARRDESS                   add success
+ * @note        None
+ *******************************************************************************
+ */
+struct ysf_task_t *ysf_smSimpTask_create(ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+{
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+    if(IS_PTR_NULL(func))
+    {
+        return NULL;
+    }
+    
+    struct ysf_task_t *task = (struct ysf_task_t *)ysf_memory_malloc(sizeof(struct ysf_task_t));
+     
+    if(IS_PTR_NULL(task))
+    {
+        return NULL;
+    }
+    
+    task->handler.sm = func;
+    task->param      = param;
+    task->evt        = evt;
+    task->type       = YSF_EVENT_HANDLER_TASK;
+    
+//    task->next         = NULL;
+    ysf_task_push(task);
+    
+    return task;
+#else
+    return NULL;
+#endif
 }
 
 /**
@@ -276,7 +391,14 @@ ysf_err_t ysf_task_poll(void)
     
     // task trigger handler
     ysf_task_handler(task);
-
+    
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+        if( ysf_memory_is_in(task) == true )
+        {
+            ysf_memory_free(task);
+        }
+#endif
+        
     return YSF_ERR_NONE;
 }
 

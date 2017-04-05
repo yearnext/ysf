@@ -73,7 +73,7 @@
 /** @addtogroup STM32F1xx_System_Private_Includes
   * @{
   */
-#include "../framework/hal/stm32f1xx/mal/mal.h"
+#include "../framework/hal/stm32f1xx/mal/stm32f1xx.h"
 
 /**
   * @}

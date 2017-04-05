@@ -104,18 +104,32 @@ const struct YSF_API ysf =
 #endif
 
 #if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
-    .debug.init                = ysf_debug_init,
-    .debug.assert_failed       = ysf_assert_failed,
+    .debug.init                 = ysf_debug_init,
+    .debug.assert_failed        = ysf_assert_failed,
 #endif
 
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
-    .task.init                 = ysf_task_init,
-    .task.poll                 = ysf_task_poll,
+    .task.init                  = ysf_task_init,
+    .task.poll                  = ysf_task_poll,
     
-    .task.create.cb            = ysf_cbTask_create,
-    .task.create.evt           = ysf_evtTask_create,
-    .task.create.sm            = ysf_smTask_create,
+    .task.create.cb             = ysf_cbTask_create,
+    .task.create.evt            = ysf_evtTask_create,
+    .task.create.sm             = ysf_smTask_create,
+    
+    .task.create.simple.cb      = ysf_cbSimpTask_create,
+    .task.create.simple.evt     = ysf_evtSimpTask_create,
+    .task.create.simple.sm      = ysf_smSimpTask_create,
 #endif
+
+#if defined(USE_YSF_PT_API) && USE_YSF_PT_API
+    .pt.init                    = ysf_pt_init,
+    
+    .pt.disarm                  = ysf_pt_disarm,
+    
+    .pt.arm                     = ysf_pt_arm,
+    .pt.simple.arm              = ysf_pt_simp_arm,
+#endif
+
 };
 #endif
 

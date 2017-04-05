@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
 #include YSF_COMPONENT_EVENT_PATH
@@ -42,7 +43,11 @@ extern "C"
  * @brief       config signal api switch
  *******************************************************************************
  */
+#if defined(USE_YSF_SIGNAL_SCAN_COMPONENT) && USE_YSF_SIGNAL_SCAN_COMPONENT
 #define USE_YSF_SIGNAL_API          (1)
+#else
+#define USE_YSF_SIGNAL_API          (0)
+#endif
     
 /**
  *******************************************************************************
@@ -64,7 +69,7 @@ extern "C"
  */
 enum ysf_signal_status_t
 {
-    SIGNAL_STATUS_INIT,
+    SIGNAL_STATUS_INIT = 0,
 
     SIGNAL_STATUS_PRESS_FILTER_STEP1,
     SIGNAL_STATUS_PRESS_FILTER_STEP2,

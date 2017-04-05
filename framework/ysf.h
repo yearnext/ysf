@@ -74,7 +74,7 @@ struct YSF_API
     void (*start)(void);
     char *ver;
     
-#if defined(USE_YSF_TICK_API) && USE_YSF_TICK_API
+#if defined(USE_YSF_TICK_API)   && USE_YSF_TICK_API
     struct YSF_TICK_API tick;
 #endif
         
@@ -82,11 +82,11 @@ struct YSF_API
     struct YSF_MEMORY_API memory;
 #endif
     
-#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
+#if defined(USE_YSF_EVENT_API)  && USE_YSF_EVENT_API
     struct YSF_EVENT_API event;
 #endif
     
-#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
+#if defined(USE_YSF_TIMER_API)  && USE_YSF_TIMER_API
     struct YSF_TIMER_API timer;
 #endif
 
@@ -94,12 +94,16 @@ struct YSF_API
     struct YSF_SIGNAL_API signal;
 #endif
 
-#if defined(USE_YSF_DEBUG_API) && USE_YSF_DEBUG_API
+#if defined(USE_YSF_DEBUG_API)  && USE_YSF_DEBUG_API
     struct YSF_DEBUG_API debug;
 #endif
 
-#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+#if defined(USE_YSF_TASK_API)   && USE_YSF_TASK_API
     struct YSF_TASK_API task;
+#endif
+
+#if defined(USE_YSF_PT_API)     && USE_YSF_PT_API
+    struct YSF_PT_API pt;
 #endif
 };
 #endif    

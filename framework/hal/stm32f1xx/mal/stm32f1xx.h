@@ -60,6 +60,8 @@
  extern "C" {
 #endif /* __cplusplus */
   
+#include "ysf_conf.h"
+     
 /** @addtogroup Library_configuration_section
   * @{
   */

@@ -40,7 +40,11 @@ extern "C"
  * @brief       event component debug config
  *******************************************************************************
  */
+#if defined(USE_YSF_EVENT_COMPONENT) && USE_YSF_EVENT_COMPONENT
+#define USE_YSF_EVENT_API (1)
+#else
 #define USE_YSF_EVENT_API (0)
+#endif
 
 /* Exported types ------------------------------------------------------------*/
 /**

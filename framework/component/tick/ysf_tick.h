@@ -30,6 +30,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "ysf_conf.h"
 #include "ysf_path.h"
 #include YSF_TYPE_PATH
 
@@ -39,7 +40,11 @@ extern "C"
  * @brief       ysf tick api enable switch
  *******************************************************************************
  */
+#if defined(USE_YSF_TICK_COMPONENT) &&USE_YSF_TICK_COMPONENT
 #define USE_YSF_TICK_API (1)
+#else
+#define USE_YSF_TICK_API (0)
+#endif
 
 /**
  *******************************************************************************

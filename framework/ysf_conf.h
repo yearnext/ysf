@@ -52,48 +52,24 @@ extern "C"
 #define RegistrarionEvent(event)    event,
                                     
 /* YSF config ----------------------------------------------------------------*/
-///**
-// *******************************************************************************
-// * @brief       YSF COMPONENT CONFIG
-// * @note        1             enable
-// * @note        0             disable
-// *******************************************************************************
-// */
-//#define USE_YSF_BUFFER_COMPONENT            (1)
-//#define USE_YSF_DEBUG_COMPONENT             (1)
-//#define USE_YSF_EVENT_COMPONENT             (1)
-//#define USE_YSF_SINGLE_LIST_COMPONENT       (1)
-//#define USE_YSF_MEMORY_MANAGEMENT_COMPONENT (1)
-//#define USE_YSF_SIGNAL_SCAN_COMPONENT       (1)
-//#define USE_YSF_TICK_COMPONENT              (1)
-//#define USE_YSF_TIMER_COMPONENT             (1)
-//#define USE_YSF_HAL_COMPONENT               (1)
-//                                    
-///**
-// *******************************************************************************
-// * @brief       YSF COMPONENT CONFIG PARAM CHECK
-// *******************************************************************************
-// */ 
-//#if !USE_YSF_BUFFER_COMPONENT
-//    #if USE_YSF_EVENT_COMPONENT
-//        #error "You open the event component, but you turn off buffer component configuration failed!" 
-//    #elif USE_YSF_MEMORY_MANAGEMENT_COMPONENT
-//        #error "You open the memory management component, but you turn off buffer component configuration failed!" 
-//    #endif
-//#endif       
-//                                    
-//#if !USE_YSF_SINGLE_LIST_COMPONENT
-//    #if USE_YSF_EVENT_COMPONENT
-//        #error "You open the event component, but you turn off buffer component configuration failed!" 
-//    #elif USE_YSF_MEMORY_MANAGEMENT_COMPONENT
-//        #error "You open the memory management component, but you turn off buffer component configuration failed!" 
-//    #elif USE_YSF_SIGNAL_SCAN_COMPONENT
-//        #error "You open the signal scan component, but you turn off buffer component configuration failed!" 
-//    #elif USE_YSF_TIMER_COMPONENT
-//        #error "You open the timer component, but you turn off buffer component configuration failed!" 
-//    #endif
-//#endif   
-                                    
+/**
+ *******************************************************************************
+ * @brief       YSF COMPONENT CONFIG
+ * @note        1             enable
+ * @note        0             disable
+ *******************************************************************************
+ */
+#define USE_YSF_BUFFER_COMPONENT                                             (1)
+#define USE_YSF_DEBUG_COMPONENT                                              (1)
+#define USE_YSF_EVENT_COMPONENT                                              (0)
+#define USE_YSF_SINGLE_LIST_COMPONENT                                        (1)
+#define USE_YSF_MEMORY_MANAGEMENT_COMPONENT                                  (1)
+#define USE_YSF_SIGNAL_SCAN_COMPONENT                                        (1)
+#define USE_YSF_TICK_COMPONENT                                               (1)
+#define USE_YSF_TIMER_COMPONENT                                              (1)
+#define USE_YSF_TASK_COMPONENT                                               (1)
+#define USE_YSF_PROTOTHREADS_COMPONENT                                       (1)
+                                                                        
 /**
  *******************************************************************************
  * @brief      EVENTS DEFINE
@@ -107,7 +83,7 @@ _YSF_DEFINE_EVENT_END
  * @brief       YSF VERSION CONFIG
  *******************************************************************************
  */
-#define YSF_VERSION "YSF_DEBUG_0.0.1_201703021407"
+#define YSF_VERSION "YSF_DEBUG_0.0.2_201704052135"
 
 /**
  *******************************************************************************
