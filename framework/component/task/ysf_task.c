@@ -227,7 +227,7 @@ ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t
     
     task->handler.evt = func;
     task->evt         = evt;
-    task->type        = YSF_STATE_MECHINE_TASK;
+    task->type        = YSF_EVENT_HANDLER_TASK;
     
 //    task->next         = NULL;
     ysf_task_push(task);
@@ -262,7 +262,7 @@ struct ysf_task_t *ysf_evtSimpTask_create(ysf_err_t (*func)(uint16_t), uint16_t 
     
     task->handler.evt = func;
     task->evt         = evt;
-    task->type        = YSF_STATE_MECHINE_TASK;
+    task->type        = YSF_EVENT_HANDLER_TASK;
     
 //    task->next         = NULL;
     ysf_task_push(task);
@@ -295,7 +295,7 @@ ysf_err_t ysf_smTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, ui
     task->handler.sm = func;
     task->param      = param;
     task->evt        = evt;
-    task->type       = YSF_EVENT_HANDLER_TASK;
+    task->type       = YSF_STATE_MECHINE_TASK;
     
 //    task->next   = NULL;
     ysf_task_push(task);
@@ -332,7 +332,7 @@ struct ysf_task_t *ysf_smSimpTask_create(ysf_err_t (*func)(void*, uint16_t), voi
     task->handler.sm = func;
     task->param      = param;
     task->evt        = evt;
-    task->type       = YSF_EVENT_HANDLER_TASK;
+    task->type       = YSF_STATE_MECHINE_TASK;
     
 //    task->next         = NULL;
     ysf_task_push(task);

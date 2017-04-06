@@ -213,7 +213,7 @@ void ysf_start(void)
 {
     while(1)
     {
-#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
+#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
         YSF_ENTER_CRITICAL();
         ysf_task_poll();
         YSF_EXIT_CRITICAL();
