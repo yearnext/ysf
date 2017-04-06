@@ -38,13 +38,23 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        config timer api switch
+ * @brief        ysf config
  *******************************************************************************
  */
-#if defined(USE_YSF_TIMER_COMPONENT) && USE_YSF_TIMER_COMPONENT
+#ifdef USE_YSF_TIMER_COMPONENT
+#if USE_YSF_TIMER_COMPONENT
 #define USE_YSF_TIMER_API        (1)
 #else
 #define USE_YSF_TIMER_API        (0)
+#endif
+
+/**
+ *******************************************************************************
+ * @brief        user config
+ *******************************************************************************
+ */
+#else
+#define USE_YSF_TIMER_API        (1)
 #endif
 
 /**

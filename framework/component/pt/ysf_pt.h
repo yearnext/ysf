@@ -41,12 +41,22 @@ extern "C"
  * @brief      protothreads config falgs
  *******************************************************************************
  */  
-#if defined(USE_YSF_PROTOTHREADS_COMPONENT) && USE_YSF_PROTOTHREADS_COMPONENT 
+#ifdef USE_YSF_PROTOTHREADS_COMPONENT
+#if USE_YSF_PROTOTHREADS_COMPONENT 
 #define USE_YSF_PT_API           (1)
 #else
 #define USE_YSF_PT_API           (0)
 #endif
     
+/**
+ *******************************************************************************
+ * @brief      user config
+ *******************************************************************************
+ */  
+#else
+#define USE_YSF_PT_API           (1)
+#endif
+
 /**
  *******************************************************************************
  * @brief      protothreads handler function
@@ -66,7 +76,7 @@ extern "C"
  * @brief      protothreads deinit functon
  *******************************************************************************
  */    
-#define ysf_pt_deinit(thread_name) ysf_pt_init(pt, thread_name)
+#define ysf_pt_deinit()          (pt->state = 0)
 
 /**
  *******************************************************************************

@@ -38,10 +38,11 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       buffer debug switch
+ * @brief       use ysf config
  *******************************************************************************
  */
-#if defined(USE_YSF_BUFFER_COMPONENT) && USE_YSF_BUFFER_COMPONENT
+#ifdef USE_YSF_BUFFER_COMPONENT
+#if USE_YSF_BUFFER_COMPONENT
 #define USE_YSF_BUFFER_API              (1)
 #define USE_YSF_MEMORY_MANAGEMENT_API   (1)  
 #else
@@ -49,6 +50,15 @@ extern "C"
 #define USE_YSF_MEMORY_MANAGEMENT_API   (0)  
 #endif
 
+/**
+ *******************************************************************************
+ * @brief       not use ysf config
+ *******************************************************************************
+ */
+#else
+#define USE_YSF_BUFFER_API              (1)
+#define USE_YSF_MEMORY_MANAGEMENT_API   (1)  
+#endif
 /**
  *******************************************************************************
  * @brief       buffer debug switch

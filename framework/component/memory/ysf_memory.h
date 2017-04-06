@@ -37,13 +37,23 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        config ysf memory management switch
+ * @brief        ysf config
  *******************************************************************************
  */
-#if defined(USE_YSF_MEMORY_MANAGEMENT_COMPONENT) && USE_YSF_MEMORY_MANAGEMENT_COMPONENT   
+#ifdef USE_YSF_MEMORY_MANAGEMENT_COMPONENT
+#if USE_YSF_MEMORY_MANAGEMENT_COMPONENT   
 #define USE_YSF_MEMORY_API  (1)
 #else
 #define USE_YSF_MEMORY_API  (0)
+#endif
+    
+/**
+ *******************************************************************************
+ * @brief        user config
+ *******************************************************************************
+ */
+#else
+#define USE_YSF_MEMORY_API  (1)
 #endif
     
 /**

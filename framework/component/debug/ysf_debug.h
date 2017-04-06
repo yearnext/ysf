@@ -37,13 +37,23 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf tick api enable switch
+ * @brief       ysf config
  *******************************************************************************
  */
-#if defined(USE_YSF_DEBUG_COMPONENT) && USE_YSF_DEBUG_COMPONENT
+#ifdef USE_YSF_DEBUG_COMPONENT
+#if USE_YSF_DEBUG_COMPONENT
 #define USE_YSF_DEBUG_API (1)
 #else
 #define USE_YSF_DEBUG_API (0)
+#endif
+    
+/**
+ *******************************************************************************
+ * @brief       user config
+ *******************************************************************************
+ */
+#else
+#define USE_YSF_DEBUG_API (1)
 #endif
  
 /**

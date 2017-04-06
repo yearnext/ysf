@@ -40,13 +40,23 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       config signal api switch
+ * @brief       ysf config
  *******************************************************************************
  */
-#if defined(USE_YSF_SIGNAL_SCAN_COMPONENT) && USE_YSF_SIGNAL_SCAN_COMPONENT
+#ifdef USE_YSF_SIGNAL_SCAN_COMPONENT
+#if USE_YSF_SIGNAL_SCAN_COMPONENT
 #define USE_YSF_SIGNAL_API          (1)
 #else
 #define USE_YSF_SIGNAL_API          (0)
+#endif
+
+/**
+ *******************************************************************************
+ * @brief       user config
+ *******************************************************************************
+ */
+#else
+#define USE_YSF_SIGNAL_API          (1)
 #endif
     
 /**

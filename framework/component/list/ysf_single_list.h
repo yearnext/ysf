@@ -37,13 +37,23 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       config single list api switch
+ * @brief       ysf config
  *******************************************************************************
  */
-#if defined(USE_YSF_SINGLE_LIST_COMPONENT) && USE_YSF_SINGLE_LIST_COMPONENT
+#ifdef USE_YSF_SINGLE_LIST_COMPONENT
+#if USE_YSF_SINGLE_LIST_COMPONENT
 #define USE_YSF_SINGLE_LIST_API (1)
 #else
 #define USE_YSF_SINGLE_LIST_API (0)
+#endif
+    
+/**
+ *******************************************************************************
+ * @brief       user config
+ *******************************************************************************
+ */
+#else
+#define USE_YSF_SINGLE_LIST_API (1)
 #endif
     
 /* Exported types ------------------------------------------------------------*/
