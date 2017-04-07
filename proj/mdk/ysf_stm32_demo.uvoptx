@@ -118,7 +118,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>0驌</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -160,9 +159,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>118</LineNumber>
+          <LineNumber>273</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218866</Address>
+          <Address>134219914</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -171,14 +170,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\..\app\key_control.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../app/key_control.c\118</Expression>
+          <Expression>\\ysf_stm32_demo\../../app/key_control.c\273</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>275</LineNumber>
+          <LineNumber>86</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134219906</Address>
+          <Address>134219860</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -187,7 +186,39 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\..\app\key_control.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../app/key_control.c\275</Expression>
+          <Expression>\\ysf_stm32_demo\../../app/key_control.c\86</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>105</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134218726</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\app\key_control.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../app/key_control.c\105</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>105</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134218736</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\app\key_control.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../app/key_control.c\105</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

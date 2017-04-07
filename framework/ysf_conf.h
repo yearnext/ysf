@@ -70,7 +70,7 @@ extern "C"
 #define USE_YSF_DEBUG_COMPONENT                                              (1)
 #define USE_YSF_EVENT_COMPONENT                                              (0)
 #define USE_YSF_SINGLE_LIST_COMPONENT                                        (1)
-#define USE_YSF_MEMORY_MANAGEMENT_COMPONENT                                  (1)
+#define USE_YSF_MEMORY_MANAGEMENT_COMPONENT                                  (0)
 #define USE_YSF_SIGNAL_SCAN_COMPONENT                                        (1)
 #define USE_YSF_TICK_COMPONENT                                               (1)
 #define USE_YSF_TIMER_COMPONENT                                              (1)

@@ -443,19 +443,19 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
     switch(timer->type)
     {
         case YSF_CALL_BACK_TIMER:
-            if( IS_PTR_NULL(timer->task.handler.cb) )
+            if( timer->task.handler.cb != NULL )
             {
                 ysf_cbTask_create(&timer->task, timer->task.handler.cb, timer->task.param);
             }
             break;
         case YSF_EVENT_HANDLER_TIMER:
-            if( IS_PTR_NULL(timer->task.handler.evt) )
+            if( timer->task.handler.evt != NULL )
             {
                 ysf_evtTask_create(&timer->task, timer->task.handler.evt, timer->task.evt);
             }
             break;
         case YSF_STATE_MACHINE_TIMER:
-            if( IS_PTR_NULL(timer->task.handler.sm) )
+            if( timer->task.handler.sm != NULL )
             {
                 ysf_smTask_create(&timer->task, timer->task.handler.sm, timer->task.param, timer->task.evt);
             }
