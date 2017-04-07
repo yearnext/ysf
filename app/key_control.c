@@ -61,7 +61,7 @@ static struct ysf_map_gpio_t key2 =
  *******************************************************************************
  */ 
 static struct ysf_timer_t led1Timer;
-//static struct ysf_task_t  led2Task;
+static struct ysf_task_t  led2Task;
 static struct ysf_pt_t    led2PT;
 
 /**
@@ -69,7 +69,7 @@ static struct ysf_pt_t    led2PT;
  * @brief       signal variable define
  *******************************************************************************
  */
-static struct ysf_signal_t *key1Signal;
+static struct ysf_signal_t key1Signal;
 static struct ysf_signal_t key2Signal;
 
 /* Exported variables --------------------------------------------------------*/
@@ -146,8 +146,7 @@ static void app_led1_deinit(void)
 static void app_led2_init(void)
 {
     ysf.pt.init(&led2PT, bsp_led2_blink);
-//    ysf.pt.arm(&led2Task, &led2PT);
-    ysf.pt.simple.arm(&led2PT);
+    ysf.pt.arm(&led2Task, &led2PT);
 }
 
 static void app_led2_deinit(void)
@@ -240,8 +239,7 @@ static void bsp_key_init(void)
 {
     msp.gpio.port.config.init(MCU_PORT_E);
     msp.gpio.pin.config.input(MCU_PORT_E, MCU_PIN_0, GPIO_PIN_I_UD_MODE);
-    
-    key1Signal = ysf.signal.simple.arm(key1_scan, key1_handler);
+    ysf.signal.arm(&key1Signal, key1_scan, key1_handler);
     
     map.gpio.port.config.init(&key2);
     map.gpio.pin.config.input(&key2, GPIO_PIN_I_UD_MODE);
