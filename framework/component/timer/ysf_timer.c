@@ -517,6 +517,12 @@ void ysf_timer_walk(ysf_tick_t tick)
                 now->next              = NULL;
                 now                    = TimerControlBlock.head;
             }
+            else if( now == TimerControlBlock.tail )
+            {
+                last->next             = NULL;
+                now->next              = NULL;
+                TimerControlBlock.tail = last;
+            }
             else
             { 
                 last->next = now->next;
