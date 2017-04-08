@@ -76,7 +76,7 @@
  * @brief       ysf timer control block
  *******************************************************************************
  */
-static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_timer_t, tcb);
+static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_timer_t, TimerControlBlock);
 #endif
 
 /* Private functions ---------------------------------------------------------*/
@@ -94,7 +94,7 @@ static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_timer_t, tcb);
 YSF_STATIC_INLINE
 bool ysf_timer_isIn(struct ysf_timer_t *timer)
 {
-    ysf_sListControlBlock_isIn(struct ysf_timer_t, tcb, timer);
+    ysf_sListFIFO_isIn(struct ysf_timer_t, TimerControlBlock, timer);
     
     return false;
 }
@@ -110,7 +110,7 @@ bool ysf_timer_isIn(struct ysf_timer_t *timer)
 YSF_STATIC_INLINE
 ysf_err_t ysf_timer_push(struct ysf_timer_t *timer)
 {
-    ysf_sListControlBlock_push(ysf_timer_isIn, tcb, timer);
+    ysf_sListFIFO_push(ysf_timer_isIn, TimerControlBlock, timer);
     
     return YSF_ERR_NONE;
 }
@@ -128,7 +128,7 @@ struct ysf_timer_t *ysf_timer_pop(void)
 {
     struct ysf_timer_t *timer = NULL;
     
-    ysf_sListControlBlock_pop(tcb, timer);
+    ysf_sListFIFO_pop(TimerControlBlock, timer);
     
     return timer;
 }
@@ -237,7 +237,7 @@ struct ysf_timer_t *ysf_cbSimpTimer_init(ysf_err_t (*func)(void*), void *param)
  */
 ysf_err_t ysf_evtTimer_init(struct ysf_timer_t *timer, ysf_err_t (*func)(uint16_t), uint16_t evt)
 {
-    if(IS_PTR_NULL(timer))
+    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
     {
         return YSF_ERR_INVAILD_PTR;
     }
@@ -479,56 +479,64 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
  * @note        this is a static type function
  *******************************************************************************
  */
-static bool ysf_timer_walk(void **node, void **ctx, void **expand)
+YSF_STATIC_INLINE
+void ysf_timer_walk(ysf_tick_t tick)
 {
-    struct ysf_timer_t *timer = (struct ysf_timer_t *)(*node);
-    struct ysf_timer_t *last  = (struct ysf_timer_t *)(*expand);
-    ysf_tick_t tick = (ysf_tick_t)(*(ctx));
+    struct ysf_timer_t *now  = TimerControlBlock.head;
+    struct ysf_timer_t *last = now;
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+    struct ysf_timer_t *del  = NULL;
+#endif
     
-    if( *node == NULL )
+    while(1)
     {
-        return true;
-    }
-    
-//    if( IS_TIMER_ENABLE(timer) && isTimerTrigger(timer, tick) == true )
-//    {
-//        timerTriggerHandler(timer);
-//    }
-    
-    if( IS_TIMER_ENABLE(timer) )
-    {
-        if( isTimerTrigger(timer, tick) == true )
+        // break
+        if( now == NULL )
         {
-            timerTriggerHandler(timer);
-        }
-    }
-
-    if( IS_TIMER_DISABLE(timer) )
-    {
-        if( (void *)last == (void *)tcb.head )
-        {
-            *node = last->next;
-            last->next = NULL;
-        }
-        else
-        { 
-            last->next = timer->next;
-            timer->next = NULL;
-            
-            *node = *expand;
+            return;
         }
         
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-        if( ysf_memory_is_in(timer) == true )
+        // timer handler
+        if( IS_TIMER_ENABLE(now) )
         {
-            ysf_memory_free(timer);
+            if( isTimerTrigger(now, tick) == true )
+            {
+                timerTriggerHandler(now);
+            }
         }
+
+        // timer list delete
+        if( IS_TIMER_DISABLE(now) )
+        {   
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+            del = now;
+#endif      
+            if( now == TimerControlBlock.head )
+            {
+                TimerControlBlock.head = now->next;
+                now->next              = NULL;
+                now                    = TimerControlBlock.head;
+            }
+            else
+            { 
+                last->next = now->next;
+                now->next  = NULL;
+                now        = last->next;
+            }
+            
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+            if( ysf_memory_is_in(del) == true )
+            {
+                ysf_memory_free(del);
+            }
 #endif
+        }
+        else
+        {
+            last = now;
+            now  = now->next;
+        }
     }
-    
-    *expand = *node;
-    
-    return false;
 }
 
 /**
@@ -541,15 +549,12 @@ static bool ysf_timer_walk(void **node, void **ctx, void **expand)
  */
 ysf_err_t ysf_timer_handler(uint16_t event)
 {
-    if( tcb.head == NULL )
+    if( TimerControlBlock.head == NULL )
     {
         return YSF_ERR_NONE;
     }
     
-    ysf_tick_t tick = ysf_past_tick_cal();
-    void *expand = (void *)tcb.head;
-    
-    ysf_slist_walk((void **)&tcb.head, ysf_timer_walk, (void **)&tick, (void **)&expand);
+    ysf_timer_walk(ysf_past_tick_cal());
     
     return YSF_ERR_NONE;
 }

@@ -86,7 +86,7 @@ static struct ysf_timer_t signal_timer;
 YSF_STATIC_INLINE
 bool ysf_signal_isIn(struct ysf_signal_t *signal)
 {
-    ysf_sListControlBlock_isIn(struct ysf_signal_t, scb, signal);
+    ysf_sListFIFO_isIn(struct ysf_signal_t, scb, signal);
     
     return false;
 }
@@ -102,7 +102,7 @@ bool ysf_signal_isIn(struct ysf_signal_t *signal)
 YSF_STATIC_INLINE
 ysf_err_t ysf_signal_push(struct ysf_signal_t *signal)
 {
-    ysf_sListControlBlock_push(ysf_signal_isIn, scb, signal);
+    ysf_sListFIFO_push(ysf_signal_isIn, scb, signal);
     
     return YSF_ERR_NONE;
 }
@@ -120,7 +120,7 @@ struct ysf_signal_t *ysf_signal_pop(void)
 {
     struct ysf_signal_t *signal = NULL;
     
-    ysf_sListControlBlock_pop(scb, signal);
+    ysf_sListFIFO_pop(scb, signal);
     
     return signal;
 }

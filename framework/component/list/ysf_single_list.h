@@ -137,7 +137,7 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
                                                         .tail = NULL,          \
                                                     }
                                                     
-#define ysf_sListControlBlock_isIn(type, block, node)                          \
+#define ysf_sListFIFO_isIn(type, block, node)                                  \
 {                                                                              \
     type *temp = block.head;                                                   \
                                                                                \
@@ -152,7 +152,7 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     }                                                                          \
 }
 
-#define ysf_sListControlBlock_push(isInFunc, block, node)                      \
+#define ysf_sListFIFO_push(isInFunc, block, node)                              \
 {                                                                              \
     if( isInFunc(node) == false )                                              \
     {                                                                          \
@@ -175,7 +175,7 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     }                                                                          \
 }
 
-#define ysf_sListControlBlock_pop(block, popData)                              \
+#define ysf_sListFIFO_pop(block, popData)                                      \
 {                                                                              \
     if( block.head == NULL )                                                   \
     {                                                                          \
@@ -183,22 +183,19 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
         return NULL;                                                           \
     }                                                                          \
                                                                                \
-    popData    = block.head;                                                   \
-    block.head = block.head->next;                                             \
+    popData       = block.head;                                                \
+    block.head    = block.head->next;                                          \
+    popData->next = NULL;                                                      \
                                                                                \
-    if( block.head->next == NULL )                                             \
+    if( block.head == NULL )                                                   \
     {                                                                          \
         block.tail = NULL;                                                     \
     }                                                                          \
-                                                                               \
-    popData->next     = NULL;                                                  \
 }
 
-#define ysf_sListControlBlock_clear(sListPOPFunc)                              \
+#define ysf_sListFIFO_clear(sListPOPFunc)                                      \
 {                                                                              \
     while(sListPOPFunc() != NULL);                                             \
-                                                                               \
-    return YSF_ERR_NONE;                                                       \
 }
 
 #endif

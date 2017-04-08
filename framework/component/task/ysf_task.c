@@ -52,7 +52,7 @@
  * @brief       ysf task control block
  *******************************************************************************
  */
-static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, tcb);
+static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, TaskControlBlock);
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -71,7 +71,7 @@ static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, tcb);
 YSF_STATIC_INLINE
 bool ysf_task_isIn(struct ysf_task_t *task)
 {
-    ysf_sListControlBlock_isIn(struct ysf_task_t, tcb, task);
+    ysf_sListFIFO_isIn(struct ysf_task_t, TaskControlBlock, task);
     
     return false;
 }
@@ -87,7 +87,7 @@ bool ysf_task_isIn(struct ysf_task_t *task)
 YSF_STATIC_INLINE
 ysf_err_t ysf_task_push(struct ysf_task_t *task)
 {
-    ysf_sListControlBlock_push(ysf_task_isIn, tcb, task);
+    ysf_sListFIFO_push(ysf_task_isIn, TaskControlBlock, task);
     
     return YSF_ERR_NONE;
 }
@@ -105,7 +105,7 @@ struct ysf_task_t *ysf_task_pop(void)
 {
     struct ysf_task_t *task;
     
-    ysf_sListControlBlock_pop(tcb, task);
+    ysf_sListFIFO_pop(TaskControlBlock, task);
     
     return task;
 }
@@ -121,9 +121,9 @@ struct ysf_task_t *ysf_task_pop(void)
 YSF_STATIC_INLINE
 ysf_err_t ysf_task_clear(void)
 {    
-    ysf_sListControlBlock_clear(ysf_task_pop);
+    ysf_sListFIFO_clear(ysf_task_pop);
 
-//    return YSF_ERR_NONE;
+    return YSF_ERR_NONE;
 }
 
 /**
