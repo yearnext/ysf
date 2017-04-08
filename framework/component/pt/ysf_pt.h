@@ -140,6 +140,7 @@ extern "C"
                                     struct ysf_timer_t *timer;                                               \
                                     timer = ysf_smSimpTimer_init(pt->thread, ptTask, YSF_PT_DELAY_EVENT);    \
                                     ysf_timer_arm(timer, YSF_TIME_2_TICK(tick), 1);                          \
+                                    evt = YSF_EVENT_NONE;                                                    \
                                     ysf_pt_wfe(evt != YSF_PT_DELAY_EVENT);                                   \
                                 }while(0)
 #else
@@ -147,6 +148,7 @@ extern "C"
                                 {                                                                            \
                                     ysf_smTimer_init(&pt->timer, pt->thread, ptTask, YSF_PT_DELAY_EVENT);    \
                                     ysf_timer_arm(&pt->timer, YSF_TIME_2_TICK(tick), 1);                     \
+                                    evt = YSF_EVENT_NONE;                                                    \
                                     ysf_pt_wfe(evt != YSF_PT_DELAY_EVENT);                                   \
                                 }while(0)                        
 #endif

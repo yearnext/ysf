@@ -81,7 +81,7 @@ static struct ysf_signal_t key2Signal;
  * @brief       led1 blink function
  *******************************************************************************
  */
-static ysf_err_t led1_blink_handler( uint16_t event )
+static ysf_err_t led1_blink_handler( void *param )
 {   
     if( msp.gpio.pin.get(MCU_PORT_D, MCU_PIN_13) == true )
     {
@@ -134,7 +134,7 @@ static void bsp_led_init( void )
 
 static void app_led1_init(void)
 {
-    ysf.timer.evt_init(&led1Timer, led1_blink_handler, YSF_EVENT_NONE);
+    ysf.timer.cb_init(&led1Timer, led1_blink_handler, NULL);
     ysf.timer.arm(&led1Timer, YSF_TIME_2_TICK(500), YSF_TIMER_CYCLE_PARAM);
 }
 
