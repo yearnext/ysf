@@ -60,8 +60,8 @@ static struct ysf_map_gpio_t key2 =
  * @brief       timer variable define
  *******************************************************************************
  */ 
-static struct ysf_timer_t led1Timer;
-static struct ysf_task_t  led2Task;
+static struct ysf_timer_t *led1Timer;
+//static struct ysf_task_t  led2Task;
 static struct ysf_pt_t    led2PT;
 
 /**
@@ -134,19 +134,19 @@ static void bsp_led_init( void )
 
 static void app_led1_init(void)
 {
-    ysf.timer.cb_init(&led1Timer, led1_blink_handler, NULL);
-    ysf.timer.arm(&led1Timer, YSF_TIME_2_TICK(1000), YSF_TIMER_CYCLE_PARAM);
+    led1Timer = ysf.timer.simple.cb_init(led1_blink_handler, NULL);
+    ysf.timer.arm(led1Timer, YSF_TIME_2_TICK(1000), YSF_TIMER_CYCLE_MODE);
 }
 
 static void app_led1_deinit(void)
 {
-    ysf.timer.disarm(&led1Timer);
+    ysf.timer.disarm(led1Timer);
 }
 
 static void app_led2_init(void)
 {
     ysf.pt.init(&led2PT, bsp_led2_blink);
-    ysf.pt.arm(&led2Task, &led2PT);
+    ysf.pt.simple.arm(&led2PT);
 }
 
 static void app_led2_deinit(void)

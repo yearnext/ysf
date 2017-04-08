@@ -79,7 +79,7 @@ extern "C"
 #define YSF_TIMER_PERIOD         YSF_TICK_TIME
 #define YSF_TIME_2_TICK(time)    ((time)/YSF_TIMER_PERIOD)
 
-#define YSF_TIMER_CYCLE_PARAM    (-1)
+#define YSF_TIMER_CYCLE_MODE     (-1)
 
 /* Exported types ------------------------------------------------------------*/
 /**

@@ -184,7 +184,7 @@ ysf_err_t ysf_signal_init( void )
     ysf_signal_clear();
     
     ysf_evtTimer_init(&signal_timer, ysf_signal_handler, YSF_EVENT_NONE);
-    ysf_timer_arm(&signal_timer, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_PARAM);
+    ysf_timer_arm(&signal_timer, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_MODE);
     
     return YSF_ERR_NONE;
 }
