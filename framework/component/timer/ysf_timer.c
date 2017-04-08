@@ -438,7 +438,7 @@ bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
  *******************************************************************************
  */
 YSF_STATIC_INLINE
-bool timerTriggerHandler(struct ysf_timer_t *timer)
+void TimerTriggerHandler(struct ysf_timer_t *timer)
 {    
     switch(timer->type)
     {
@@ -460,12 +460,9 @@ bool timerTriggerHandler(struct ysf_timer_t *timer)
                 ysf_smTask_create(&timer->task, timer->task.handler.sm, timer->task.param, timer->task.evt);
             }
             break;
-//        default:
-//            return false;
-//            break;
+        default:
+            break;
     }
-    
-    return true;
 }
 
 /**
@@ -501,7 +498,7 @@ void ysf_timer_walk(ysf_tick_t tick)
         {
             if( isTimerTrigger(now, tick) == true )
             {
-                timerTriggerHandler(now);
+                TimerTriggerHandler(now);
             }
         }
 

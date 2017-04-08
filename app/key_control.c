@@ -108,11 +108,11 @@ static YSF_PT_THREAD(bsp_led2_blink)
     {
         msp.gpio.pin.set(led2.port, led2.pin);
         
-        ysf_pt_delay(500);            
+        ysf_pt_delay(250);            
 
         msp.gpio.pin.clr(led2.port, led2.pin);
         
-        ysf_pt_delay(500); 
+        ysf_pt_delay(250); 
     }
     
     ysf_pt_end();
@@ -135,7 +135,7 @@ static void bsp_led_init( void )
 static void app_led1_init(void)
 {
     ysf.timer.cb_init(&led1Timer, led1_blink_handler, NULL);
-    ysf.timer.arm(&led1Timer, YSF_TIME_2_TICK(1500), YSF_TIMER_CYCLE_PARAM);
+    ysf.timer.arm(&led1Timer, YSF_TIME_2_TICK(1000), YSF_TIMER_CYCLE_PARAM);
 }
 
 static void app_led1_deinit(void)
