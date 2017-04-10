@@ -413,7 +413,7 @@ ysf_err_t ysf_memInit(struct ysf_mem_cb_t *mem, uint8_t *buffer, ysf_mem_size_t 
     ysf_assert(IS_PTR_NULL(mem));
     ysf_assert(IS_PTR_NULL(buffer));
     ysf_assert(size == 0);
-    ysf_assert((size % alignment) != 0);
+//    ysf_assert((size % alignment) != 0);
 
     mem->buffer.buffer = buffer;
     mem->buffer.size   = size;
