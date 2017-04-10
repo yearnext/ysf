@@ -117,11 +117,6 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>DLGUARM</Key>
-          <Name>葛?</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>DLGTARM</Key>
           <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=883,395,1259,631,0)(1009=-1,-1,-1,-1,0)(100=524,50,1170,723,0)(110=-1,-1,-1,-1,0)(111=413,123,633,583,0)(1011=-1,-1,-1,-1,0)(180=-1,-1,-1,-1,0)(120=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(123=622,200,1043,605,0)(124=-1,-1,-1,-1,0)(125=-1,-1,-1,-1,0)(126=-1,-1,-1,-1,0)(140=-1,-1,-1,-1,0)(240=-1,-1,-1,-1,0)(190=-1,-1,-1,-1,0)(200=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(133=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(210=-1,-1,-1,-1,0)(211=-1,-1,-1,-1,0)(220=-1,-1,-1,-1,0)(221=-1,-1,-1,-1,0)(230=-1,-1,-1,-1,0)(231=-1,-1,-1,-1,0)(232=-1,-1,-1,-1,0)(233=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
@@ -162,7 +157,7 @@
           <Type>0</Type>
           <LineNumber>460</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134221100</Address>
+          <Address>134218538</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -178,7 +173,7 @@
           <Type>0</Type>
           <LineNumber>115</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218826</Address>
+          <Address>134218910</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -194,7 +189,7 @@
           <Type>0</Type>
           <LineNumber>111</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218764</Address>
+          <Address>134218852</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -204,6 +199,22 @@
           <Filename>..\..\app\key_control.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\ysf_stm32_demo\../../app/key_control.c\111</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>272</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134219990</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\app\key_control.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../app/key_control.c\272</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -292,7 +303,7 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>2</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\framework\component\buffer\ysf_buffer.c</PathWithFileName>

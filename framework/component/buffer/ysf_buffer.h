@@ -60,7 +60,7 @@ extern "C"
 #ifdef USE_YSF_BUFFER_COMPONENT
 #if USE_YSF_BUFFER_COMPONENT
 #define USE_YSF_BUFFER_API              (1)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (1)  
+#define USE_YSF_MEMORY_MANAGEMENT_API   (0)  
 #else
 #define USE_YSF_BUFFER_API              (0)
 #define USE_YSF_MEMORY_MANAGEMENT_API   (0)  
