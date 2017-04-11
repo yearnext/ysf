@@ -124,7 +124,7 @@ ysf_err_t map_timer_fini(struct ysf_msp_timer_t *timer)
 
 ysf_err_t tick_timer_init( uint32_t tick, void (*func)(void) )
 {
-    if( SysTick_Config(MCU_CLOCK_FREQ/10000) )
+    if( SysTick_Config(MCU_CLOCK_FREQ/10000*tick) )
     {
         return YSF_ERR_INVAILD_PARAM;
     }
