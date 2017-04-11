@@ -48,7 +48,7 @@ const struct YSF_MSP_API msp =
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
     .timer.enable                = msp_timer_init,
     .timer.disable               = msp_timer_fini,
-    .timer.tick.init             = msp_tick_timer_init,
+    .timer.init.tick             = tick_timer_init,
 #endif
 };
     

@@ -76,6 +76,13 @@ extern "C"
 #define USE_YSF_MEMORY_MANAGEMENT_API   (1)
 #endif
 
+/**
+ *******************************************************************************
+ * @brief       define buffer component debug switch
+ *******************************************************************************
+ */
+#define USE_YSF_BUFFER_DEBUG            (0)
+
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -125,8 +132,8 @@ YSF_ALIGN_HEAD(4)
 struct ysf_mem_block_t
 {
 	struct ysf_mem_block_t *next;
-	uint16_t              size;
-    bool                  status;
+	uint16_t               size;
+    bool                   status;
 };
 YSF_ALIGN_TAIL(4)
 
@@ -143,7 +150,7 @@ struct ysf_mem_ctrl_t
         struct ysf_mem_block_t *head; 
     };
     
-    uint32_t size;
+    uint16_t size;
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -166,8 +173,8 @@ extern ysf_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, uint16_t);
  *******************************************************************************
  */
 #if USE_YSF_MEMORY_MANAGEMENT_API
-extern ysf_err_t ysf_mem_init(struct ysf_mem_ctrl_t*, uint8_t*, uint32_t);
-extern ysf_err_t mem_deinit(struct ysf_mem_ctrl_t *);
+extern ysf_err_t ysf_mem_init(struct ysf_mem_ctrl_t*, uint8_t*, uint16_t);
+//extern ysf_err_t mem_deinit(struct ysf_mem_ctrl_t *);
 extern void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t);
 extern void ysf_mem_free(struct ysf_mem_ctrl_t*, void*);
 extern bool ysf_mem_is_in(struct ysf_mem_ctrl_t*, void*);

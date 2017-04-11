@@ -466,8 +466,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\framework\hal\stm32f1xx\gpio.c</PathWithFileName>
-      <FilenameWithoutPath>gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\framework\hal\stm32f1xx\hal.c</PathWithFileName>
+      <FilenameWithoutPath>hal.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -478,8 +478,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\framework\hal\stm32f1xx\hal.c</PathWithFileName>
-      <FilenameWithoutPath>hal.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\framework\hal\stm32f1xx\hal_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>hal_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -490,8 +490,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\framework\hal\stm32f1xx\timer.c</PathWithFileName>
-      <FilenameWithoutPath>timer.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\framework\hal\stm32f1xx\hal_timer.c</PathWithFileName>
+      <FilenameWithoutPath>hal_timer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

@@ -271,7 +271,7 @@ ysf_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize)
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint32_t size)
+ysf_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint16_t size)
 {
 	if (mem == NULL || buffer == NULL || size < sizeof(struct ysf_mem_block_t))
 	{
@@ -288,27 +288,27 @@ ysf_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint32_t siz
     return YSF_ERR_NONE;
 }
 
-/**
- *******************************************************************************
- * @brief       memory deinit
- * @param       [in/out]  **mem               memory control block
- * @return      [in/out]  YSF_ERR_NONE        ring buffer read success
- * @return      [in/out]  YSF_ERR_FAIL        ring buffer read failed
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_mem_deinit(struct ysf_mem_ctrl_t *mem)
-{
-    if (mem == NULL)
-	{
-		return YSF_ERR_FAIL;
-	}
-    
-	mem->buffer = NULL;
-    mem->size   = 0;
-    
-    return YSF_ERR_NONE;
-}
+///**
+// *******************************************************************************
+// * @brief       memory deinit
+// * @param       [in/out]  **mem               memory control block
+// * @return      [in/out]  YSF_ERR_NONE        ring buffer read success
+// * @return      [in/out]  YSF_ERR_FAIL        ring buffer read failed
+// * @note        None
+// *******************************************************************************
+// */
+//ysf_err_t ysf_mem_deinit(struct ysf_mem_ctrl_t *mem)
+//{
+//    if (mem == NULL)
+//	{
+//		return YSF_ERR_FAIL;
+//	}
+//    
+//	mem->buffer = NULL;
+//    mem->size   = 0;
+//    
+//    return YSF_ERR_NONE;
+//}
 
 /**
  *******************************************************************************
@@ -367,7 +367,7 @@ void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t size)
             {
 				freeSize     = now->size;
 				now->size    = useSize;
-                next         = (struct ysf_mem_block_t *)((uint8_t *)now + useSize);
+                next         = (struct ysf_mem_block_t *)((void *)((uint8_t *)now + useSize));
 				next->size   = freeSize - useSize;
 
                 next->next   = now->next;
@@ -427,12 +427,12 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
                 if(now->status == false)
                 {
                     last->next = NULL;
-                    last->size = (now - last) * sizeof(struct ysf_mem_block_t) + now->size;
+                    last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t) + now->size;
                 }
                 else
                 {
                     last->next = now;
-                    last->size = (now - last) * sizeof(struct ysf_mem_block_t);
+                    last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t);
                 }
                 
                 last->status = false;
@@ -446,7 +446,7 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
 				if (last->next != now)
 				{
 					last->next = now;
-					last->size = (now - last) * sizeof(struct ysf_mem_block_t);
+					last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t);
 					last->status = false;
 				}
 

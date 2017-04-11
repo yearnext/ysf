@@ -456,19 +456,19 @@
           <GroupName>ysf/hal/hal</GroupName>
           <Files>
             <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\hal\stm32f1xx\gpio.c</FilePath>
-            </File>
-            <File>
               <FileName>hal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\framework\hal\stm32f1xx\hal.c</FilePath>
             </File>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\hal\stm32f1xx\timer.c</FilePath>
+              <FilePath>..\..\framework\hal\stm32f1xx\hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\hal\stm32f1xx\hal_timer.c</FilePath>
             </File>
           </Files>
         </Group>

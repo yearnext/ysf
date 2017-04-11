@@ -460,8 +460,8 @@ void TimerTriggerHandler(struct ysf_timer_t *timer)
                 ysf_smTask_create(&timer->task, timer->task.handler.sm, timer->task.param, timer->task.evt);
             }
             break;
-        default:
-            break;
+//        default:
+//            break;
     }
 }
 

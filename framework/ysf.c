@@ -159,7 +159,7 @@ void ysf_init( ysf_err_t (*user_init)(void) )
     ysf.tick.init();
     
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
-    msp.timer.tick.init(YSF_TICK_PERIOD_TIME, ysf.tick.inc);
+    msp.timer.init.tick(YSF_TICK_PERIOD_TIME, ysf.tick.inc);
 #endif
     
 #endif
