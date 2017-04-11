@@ -60,44 +60,23 @@ extern "C"
 #ifdef USE_YSF_BUFFER_COMPONENT
 #if USE_YSF_BUFFER_COMPONENT
 #define USE_YSF_BUFFER_API              (1)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (0)  
+#define USE_YSF_MEMORY_MANAGEMENT_API   (1)
 #else
 #define USE_YSF_BUFFER_API              (0)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (0)  
+#define USE_YSF_MEMORY_MANAGEMENT_API   (0)
 #endif
 
+#else
 /**
  *******************************************************************************
  * @brief       not use ysf config
  *******************************************************************************
  */
-#else
 #define USE_YSF_BUFFER_API              (1)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (1)  
+#define USE_YSF_MEMORY_MANAGEMENT_API   (1)
 #endif
-/**
- *******************************************************************************
- * @brief       buffer debug switch
- *******************************************************************************
- */
-#define USE_YSF_BUFFER_DEBUG            (0)
-#define USE_YSF_MEMORY_MANAGEMENT_DEBUG (0)
 
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define buffer size type
- *******************************************************************************
- */
-typedef uint16_t ysf_buf_size_t;
-
-/**
- *******************************************************************************
- * @brief       define buffer indicator type
- *******************************************************************************
- */
-typedef uint16_t ysf_buf_ptr_t;
-
 /**
  *******************************************************************************
  * @brief       define buffer type
@@ -105,8 +84,8 @@ typedef uint16_t ysf_buf_ptr_t;
  */
 struct ysf_buffer_t 
 {
-    uint8_t    *buffer;
-    ysf_buf_size_t size;
+    uint8_t  *buffer;
+    uint16_t size;
 };
 
 /**
@@ -117,23 +96,9 @@ struct ysf_buffer_t
 struct ysf_rb_t
 {
     struct ysf_buffer_t buffer;
-    ysf_buf_ptr_t       head;
-    ysf_buf_ptr_t       tail;
+    uint16_t            head;
+    uint16_t            tail;
 };
-
-/**
- *******************************************************************************
- * @brief       define queue type
- *******************************************************************************
- */
-typedef struct ysf_rb_t ysf_queue_t;
-
-/**
- *******************************************************************************
- * @brief       define fifo type
- *******************************************************************************
- */
-typedef struct ysf_rb_t ysf_fifo_t;
 
 /**
  *******************************************************************************
@@ -143,78 +108,43 @@ typedef struct ysf_rb_t ysf_fifo_t;
 #if USE_YSF_BUFFER_API
 struct YSF_RING_BUFFER_API
 {
-    ysf_err_t (*init)(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
-    ysf_buf_size_t (*len)(struct ysf_rb_t*);
-    ysf_err_t (*write)(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
-    ysf_err_t (*read)(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
+    ysf_err_t (*init)(struct ysf_rb_t*, uint8_t*, uint16_t);
+    uint16_t (*len)(struct ysf_rb_t*);
+    ysf_err_t (*write)(struct ysf_rb_t*, uint8_t*, uint16_t);
+    ysf_err_t (*read)(struct ysf_rb_t*, uint8_t*, uint16_t);
 };
 #endif
 
-/**
- *******************************************************************************
- * @brief       define memory pool size type
- *******************************************************************************
- */
-typedef uint16_t ysf_mem_size_t;
 
 /**
  *******************************************************************************
- * @brief       define memory block type
+ * @brief       define memory block
  *******************************************************************************
  */
 YSF_ALIGN_HEAD(4)
-struct ysf_mem_block_t 
+struct ysf_mem_block_t
 {
-#define YSF_MEMORY_CB_NEXT_END (0)
-    ysf_mem_size_t next;
-
-#define IS_MEM_FREE (0)
-#define IS_MEM_USE  (1)
-    uint8_t status;
-
-    uint8_t data[];
+	struct ysf_mem_block_t *next;
+	uint16_t              size;
+    bool                  status;
 };
-YSF_ALIGN_TAIL(1)
+YSF_ALIGN_TAIL(4)
 
 /**
  *******************************************************************************
- * @brief       define memory management block type
+ * @brief       define memory control block
  *******************************************************************************
  */
-struct ysf_mem_cb_t
+struct ysf_mem_ctrl_t
 {
-    struct
+    union
     {
-        uint8_t    *buffer;
-        ysf_mem_size_t size;
-    }buffer;
-
-    ysf_mem_size_t alignment;
+        uint8_t  *buffer;
+        struct ysf_mem_block_t *head; 
+    };
     
-    enum
-    {
-        IS_YSF_POOL_NOT_INIT = 0,
-        IS_YSF_POOL_INIT     = 1,
-    }status;
+    uint32_t size;
 };
-
-/**
- *******************************************************************************
- * @brief       define memory management api
- *******************************************************************************
- */
-#if USE_YSF_MEMORY_MANAGEMENT_API
-struct YSF_MEM_API
-{
-    ysf_err_t (*init)(struct ysf_mem_cb_t*, uint8_t*, ysf_mem_size_t);
-    ysf_mem_size_t (*len)(struct ysf_mem_cb_t*);
-    ysf_mem_size_t (*alignment)(struct ysf_mem_cb_t*);
-    ysf_mem_size_t (*rate)(struct ysf_mem_cb_t*);
-    void *(*malloc)(struct ysf_mem_cb_t*, ysf_mem_size_t);
-    ysf_err_t (*free)(struct ysf_mem_cb_t*, void*);
-    bool (*isIn)(struct ysf_mem_cb_t*, void*);
-};
-#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -224,10 +154,10 @@ struct YSF_MEM_API
  *******************************************************************************
  */
 #if USE_YSF_BUFFER_API
-extern ysf_err_t ysf_rbInit(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
-extern ysf_buf_size_t ysf_rbGetLen(struct ysf_rb_t*);
-extern ysf_err_t ysf_rbWrite(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
-extern ysf_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
+extern ysf_err_t ysf_rbInit(struct ysf_rb_t*, uint8_t*, uint16_t);
+extern uint16_t ysf_rbGetLen(struct ysf_rb_t*);
+extern ysf_err_t ysf_rbWrite(struct ysf_rb_t*, uint8_t*, uint16_t);
+extern ysf_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, uint16_t);
 #endif
 
 /**
@@ -236,13 +166,11 @@ extern ysf_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, ysf_buf_size_t);
  *******************************************************************************
  */
 #if USE_YSF_MEMORY_MANAGEMENT_API
-extern ysf_err_t ysf_memInit(struct ysf_mem_cb_t*, uint8_t*, ysf_mem_size_t);
-extern ysf_mem_size_t ysf_memGetLen(struct ysf_mem_cb_t*);
-extern ysf_mem_size_t ysf_memGetAlignment(struct ysf_mem_cb_t*);
-extern ysf_mem_size_t ysf_memUseRateCal(struct ysf_mem_cb_t*);
-extern void *ysf_memMalloc(struct ysf_mem_cb_t*, ysf_mem_size_t);
-extern ysf_err_t ysf_memFree(struct ysf_mem_cb_t*, void*);
-extern bool ysf_memIsIn(struct ysf_mem_cb_t*, void*);
+extern ysf_err_t ysf_mem_init(struct ysf_mem_ctrl_t*, uint8_t*, uint32_t);
+extern ysf_err_t mem_deinit(struct ysf_mem_ctrl_t *);
+extern void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t);
+extern void ysf_mem_free(struct ysf_mem_ctrl_t*, void*);
+extern bool ysf_mem_is_in(struct ysf_mem_ctrl_t*, void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

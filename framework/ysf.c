@@ -76,10 +76,7 @@ const struct YSF_API ysf =
     .memory.init                = ysf_memory_init,
     .memory.malloc              = ysf_memory_malloc,
     .memory.free                = ysf_memory_free,
-    .memory.len                 = ysf_memory_get_len,
-    .memory.alignment           = ysf_memory_get_alignment,
-    .memory.useRate             = ysf_memory_cal_use_rate,
-    .memory.isIn                = ysf_memory_is_in,
+    .memory.is_in               = ysf_memory_is_in,
 #endif
     
 #if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API

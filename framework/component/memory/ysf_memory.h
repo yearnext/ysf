@@ -89,12 +89,9 @@ extern "C"
 struct YSF_MEMORY_API
 {
     void (*init)(void);
-    void *(*malloc)(ysf_mem_size_t);
+    void *(*malloc)(uint16_t);
     void (*free)(void*);
-    ysf_mem_size_t (*len)(void);
-    ysf_mem_size_t (*alignment)(void);
-    ysf_mem_size_t (*useRate)(void);
-    bool (*isIn)(void *);
+    bool (*is_in)(void *);
 };
 #endif
 
@@ -107,11 +104,8 @@ struct YSF_MEMORY_API
  */
 #if USE_YSF_MEMORY_API
 extern void ysf_memory_init( void );
-extern void *ysf_memory_malloc(ysf_mem_size_t);
+extern void *ysf_memory_malloc(uint16_t);
 extern void ysf_memory_free(void*);
-extern ysf_mem_size_t ysf_memory_get_len(void);
-extern ysf_mem_size_t ysf_memory_get_alignment(void);
-extern ysf_mem_size_t ysf_memory_cal_use_rate(void);
 extern bool ysf_memory_is_in(void*);
 #endif
 

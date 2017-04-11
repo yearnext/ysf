@@ -59,15 +59,17 @@
     #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
         #ifndef MCU_HEAP_HEAD_ADDR
             #define YSF_HEAP_SIZE         (4096)    
+            
             YSF_ALIGN_HEAD(4)
-            static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
+                static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
             YSF_ALIGN_TAIL(4)
+            
             #define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
             #define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
             #define MCU_HEAP_SIZE         YSF_HEAP_SIZE
         #endif
     
-        static struct ysf_mem_cb_t memoryManagemrntCB;
+        static struct ysf_mem_ctrl_t managemrnt;
     #endif
 #endif
 
@@ -86,7 +88,7 @@
 void ysf_memory_init( void )
 {
 #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    ysf_memInit(&memoryManagemrntCB, (uint8_t *)MCU_HEAP_HEAD_ADDR, MCU_HEAP_SIZE);
+    ysf_mem_init(&managemrnt, (uint8_t *)MCU_HEAP_HEAD_ADDR, MCU_HEAP_SIZE);
 #endif
 }
 
@@ -98,12 +100,12 @@ void ysf_memory_init( void )
  * @note        None
  *******************************************************************************
  */
-void *ysf_memory_malloc( ysf_mem_size_t size )
+void *ysf_memory_malloc( uint16_t size )
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return malloc(size);
 #else 
-    return ysf_memMalloc(&memoryManagemrntCB, size);
+    return ysf_mem_alloc(&managemrnt, size);
 #endif
 }
 
@@ -115,63 +117,12 @@ void *ysf_memory_malloc( ysf_mem_size_t size )
  * @note        None
  *******************************************************************************
  */
-void ysf_memory_free( void *mem )
+void ysf_memory_free( void *memory )
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
-    free(mem);
+    free(memory);
 #else
-    ysf_memFree(&memoryManagemrntCB, mem);
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       get memory len
- * @param       [in/out]  void
- * @return      [in/out]  ysf_mem_size_t    memory len
- * @note        None
- *******************************************************************************
- */
-ysf_mem_size_t ysf_memory_get_len(void)
-{
-#if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
-    return 0;
-#else
-    return ysf_memGetLen(&memoryManagemrntCB);
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       get memory alignment
- * @param       [in/out]  void
- * @return      [in/out]  ysf_mem_size_t    memory alignment size
- * @note        None
- *******************************************************************************
- */
-ysf_mem_size_t ysf_memory_get_alignment(void)
-{
-#if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
-    return 4;
-#else
-    return ysf_memGetAlignment(&memoryManagemrntCB);
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       get memory use rate
- * @param       [in/out]  void
- * @return      [in/out]  ysf_mem_size_t    use rate
- * @note        None
- *******************************************************************************
- */
-ysf_mem_size_t ysf_memory_cal_use_rate(void)
-{
-#if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
-    return 0;
-#else
-    return ysf_memUseRateCal(&memoryManagemrntCB);
+    ysf_mem_free(&managemrnt, memory);
 #endif
 }
 
@@ -184,12 +135,12 @@ ysf_mem_size_t ysf_memory_cal_use_rate(void)
  * @note        None
  *******************************************************************************
  */
-bool ysf_memory_is_in(void *mem)
+bool ysf_memory_is_in(void *memory)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return true;
 #else
-    return ysf_memIsIn(&memoryManagemrntCB, mem);
+    return ysf_mem_is_in(&managemrnt, memory);
 #endif
 }
 

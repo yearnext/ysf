@@ -60,7 +60,7 @@
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_rbInit( struct ysf_rb_t *rb, uint8_t *buffer, ysf_buf_size_t size )
+ysf_err_t ysf_rbInit( struct ysf_rb_t *rb, uint8_t *buffer, uint16_t size )
 {
     ysf_assert(IS_PTR_NULL(rb));
     ysf_assert(IS_PTR_NULL(buffer));
@@ -82,7 +82,7 @@ ysf_err_t ysf_rbInit( struct ysf_rb_t *rb, uint8_t *buffer, ysf_buf_size_t size 
  * @note        None
  *******************************************************************************
  */
-ysf_buf_size_t ysf_rbGetLen( struct ysf_rb_t *rb )
+uint16_t ysf_rbGetLen( struct ysf_rb_t *rb )
 {
     ysf_assert(IS_PTR_NULL(rb));
     return rb->buffer.size;
@@ -97,17 +97,17 @@ ysf_buf_size_t ysf_rbGetLen( struct ysf_rb_t *rb )
  *******************************************************************************
  */
 YSF_STATIC_INLINE 
-ysf_buf_size_t ysf_rbCanRead( struct ysf_rb_t *rb )
+uint16_t ysf_rbCanRead( struct ysf_rb_t *rb )
 {
     ysf_assert(IS_PTR_NULL(rb));
 
     if( rb->tail >= rb->head )
     {
-        return ((ysf_buf_size_t)(rb->tail - rb->head));
+        return ((uint16_t)(rb->tail - rb->head));
     }
     else
     {
-        return ((ysf_buf_size_t)(rb->buffer.size - (rb->head - rb->tail)));
+        return ((uint16_t)(rb->buffer.size - (rb->head - rb->tail)));
     }
 
 //    return 0;
@@ -122,11 +122,11 @@ ysf_buf_size_t ysf_rbCanRead( struct ysf_rb_t *rb )
  *******************************************************************************
  */
 YSF_STATIC_INLINE 
-ysf_buf_size_t ysf_rbCanWrite( struct ysf_rb_t *rb )
+uint16_t ysf_rbCanWrite( struct ysf_rb_t *rb )
 {
     ysf_assert(IS_PTR_NULL(rb));
 
-    ysf_buf_size_t size = 0;
+    uint16_t size = 0;
 
     if( rb->tail >= rb->head )
     {
@@ -155,10 +155,10 @@ ysf_buf_size_t ysf_rbCanWrite( struct ysf_rb_t *rb )
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_rbWrite( struct ysf_rb_t *rb, uint8_t *buff, ysf_buf_size_t rbSize )
+ysf_err_t ysf_rbWrite( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize )
 {
-    ysf_buf_size_t free = 0;
-    ysf_buf_size_t i = 0;
+    uint16_t free = 0;
+    uint16_t i = 0;
 
     ysf_assert(IS_PTR_NULL(rb));
     ysf_assert(IS_PTR_NULL(buff));
@@ -212,10 +212,10 @@ ysf_err_t ysf_rbWrite( struct ysf_rb_t *rb, uint8_t *buff, ysf_buf_size_t rbSize
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, ysf_buf_size_t rbSize)
+ysf_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize)
 {
-    ysf_buf_size_t free = 0;
-    ysf_buf_size_t i = 0;
+    uint16_t free = 0;
+    uint16_t i = 0;
 
     ysf_assert(IS_PTR_NULL(rb));
     ysf_assert(IS_PTR_NULL(buff));
@@ -262,397 +262,227 @@ ysf_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, ysf_buf_size_t rbSize)
 #if USE_YSF_MEMORY_MANAGEMENT_API
 /**
  *******************************************************************************
- * @brief       memory block init
- * @param       [in/out]  *mem                memory block
- * @return      [in/out]  YSF_ERR_NONE        memory block init finish
+ * @brief       memory init
+ * @param       [in/out]  **mem               memory control block
+ * @param       [in/out]  *buffer             memory buffer address
+ * @param       [in/out]  rbSize              memory buffer size
+ * @return      [in/out]  YSF_ERR_NONE        ring buffer read success
+ * @return      [in/out]  YSF_ERR_FAIL        ring buffer read failed
  * @note        None
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_err_t ysf_memBlockInit( struct ysf_mem_cb_t *mem )
+ysf_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint32_t size)
 {
-    ysf_assert(IS_PTR_NULL(mem));
-    ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
+	if (mem == NULL || buffer == NULL || size < sizeof(struct ysf_mem_block_t))
+	{
+		return YSF_ERR_FAIL;
+	}
 
-    struct ysf_mem_block_t *memCB = NULL;
-    ysf_mem_size_t nowNode = 0, nextNode = 0;
-
-    while(1)
-    {
-        memCB = (struct ysf_mem_block_t *)((void *)&mem->buffer.buffer[nowNode]);
-        nextNode = nowNode + mem->alignment;
-
-        memCB->status = IS_MEM_FREE;
-
-        if( nextNode >= mem->buffer.size )
-        {
-            memCB->next = YSF_MEMORY_CB_NEXT_END;
-
-            break;
-        }
-
-        memCB->next = nextNode;
-
-        nowNode = nextNode;
-    }
-
+    mem->buffer       = buffer;
+    mem->size         = size;
+    
+    mem->head->next   = NULL;
+	mem->head->size   = size - sizeof(struct ysf_mem_block_t);
+    mem->head->status = false;
+    
     return YSF_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       calculation memory alignment size
- * @param       [in/out]  memCBSize           memory control block size
- * @return      [in/out]  ysf_buffer_size_t   calculation results
+ * @brief       memory deinit
+ * @param       [in/out]  **mem               memory control block
+ * @return      [in/out]  YSF_ERR_NONE        ring buffer read success
+ * @return      [in/out]  YSF_ERR_FAIL        ring buffer read failed
  * @note        None
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_mem_size_t ysf_memAlignmentCal( ysf_mem_size_t memSize )
+ysf_err_t ysf_mem_deinit(struct ysf_mem_ctrl_t *mem)
 {
-    ysf_mem_size_t size = 0;
-    ysf_mem_size_t temp = memSize / 8;
-
-    ((memSize%8) == 0) ? (0) : (temp++);
-
-    size = temp  * 2;
-    size = size  * 8;
+    if (mem == NULL)
+	{
+		return YSF_ERR_FAIL;
+	}
     
-    return size;
-}
-
-/**
- *******************************************************************************
- * @brief       malloc need block size calculate
- * @param       [in/out]  *mem                memory block
- * @param       [in/out]  size                need malloc memory size
- * @return      [in/out]  ysf_buffer_size_t   the calculate results
- * @note        None
- *******************************************************************************
- */
-YSF_STATIC_INLINE
-ysf_mem_size_t ysf_memNeedBlockCal( struct ysf_mem_cb_t *mem, ysf_mem_size_t size )
-{
-    ysf_mem_size_t needSize = size / mem->alignment;
-
-    return ((size % mem->alignment) == 0) ? (needSize) : (++needSize);
-}
-
-/**
- *******************************************************************************
- * @brief       free use block size calculate
- * @param       [in/out]  *mem                memory block
- * @param       [in/out]  *block              use memory block
- * @return      [in/out]  ysf_buffer_size_t   the calculate results
- * @note        None
- *******************************************************************************
- */
-YSF_STATIC_INLINE
-ysf_mem_size_t ysf_memUseBlockCal(struct ysf_mem_cb_t *mem, struct ysf_mem_block_t *block)
-{
-    ysf_assert(IS_PTR_NULL(mem));
-    ysf_assert(IS_PTR_NULL(block));
-
-    ysf_mem_size_t size = 0;
-
-    if( block->next != YSF_MEMORY_CB_NEXT_END )
-    {
-        size = (ysf_mem_size_t)((ysf_addr_t)&mem->buffer.buffer[block->next] - (ysf_addr_t)block);
-    }
-    else
-    {
-        size = (ysf_mem_size_t)((ysf_addr_t)&mem->buffer.buffer[mem->buffer.size] - (ysf_addr_t)block);
-    }
-
-    return (size / mem->alignment);
-}
-
-/**
- *******************************************************************************
- * @brief       detection this memory is init
- * @param       [in/out]  *mem           memory management block
- * @return      [in/out]  false          this memory is not initialized
- * @return      [in/out]  true           this memory is initialized
- * @note        None
- *******************************************************************************
- */
-YSF_STATIC_INLINE
-bool ysf_memIsInit(struct ysf_mem_cb_t *mem)
-{
-    if( mem == NULL )
-    {
-        return false;
-    }
+	mem->buffer = NULL;
+    mem->size   = 0;
     
-    if( mem->status == IS_YSF_POOL_INIT )
-    {
-        return true;
-    }
-    else
-    {
-        return true;
-    }
-    
-//    return false;
-}
-
-/**
- *******************************************************************************
- * @brief       memory init function
- * @param       [in/out]  *mem           memory block
- * @param       [in/out]  *buffer        buffer
- * @param       [in/out]  size           buffer size
- * @return      [in/out]  YSF_ERR_NONE   init success
- * @note        None
- *******************************************************************************
- */
-ysf_err_t ysf_memInit(struct ysf_mem_cb_t *mem, uint8_t *buffer, ysf_mem_size_t size)
-{
-    ysf_mem_size_t alignment = ysf_memAlignmentCal(sizeof(struct ysf_mem_block_t)/sizeof(char));
-
-    ysf_assert(IS_PTR_NULL(mem));
-    ysf_assert(IS_PTR_NULL(buffer));
-    ysf_assert(size == 0);
-//    ysf_assert((size % alignment) != 0);
-
-    mem->buffer.buffer = buffer;
-    mem->buffer.size   = size;
-    mem->status        = IS_YSF_POOL_INIT;
-    mem->alignment     = alignment;
-
-    ysf_memBlockInit(mem);
-
     return YSF_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       get memory length
- * @param       [in/out]  *mem                memory block
- * @return      [in/out]  ysf_buffer_size_t   memory length
+ * @brief       cal need memory block size
+ * @param       [in/out]  size                memory control block
+ * @param       [in/out]  alignment           memory alignment size
+ * @return      [in/out]  value               need block size
  * @note        None
  *******************************************************************************
  */
-ysf_mem_size_t ysf_memGetLen(struct ysf_mem_cb_t *mem)
+YSF_STATIC_INLINE
+uint16_t ysf_mem_cal_alignment(uint16_t size, uint16_t alignment)
 {
-    if( ysf_memIsInit(mem) == false )
-    {
-        return 0;
-    }
-    
-    return mem->buffer.size;
+	uint16_t temp = size % alignment;
+	uint16_t value = size;
+
+	if (temp)
+	{
+		value += alignment - temp;
+	}
+
+	return value;
 }
 
 /**
  *******************************************************************************
- * @brief       get memory alignment
- * @param       [in/out]  *mem                memory block
- * @return      [in/out]  ysf_buffer_size_t   memory alignment
+ * @brief       memory alloc 
+ * @param       [in/out]  *mem                memory control block
+ * @param       [in/out]  size                alloc memory size
+ * @return      [in/out]  void*               alloc memory address
  * @note        None
  *******************************************************************************
  */
-ysf_mem_size_t ysf_memGetAlignment(struct ysf_mem_cb_t *mem)
+void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t size)
 {
-    if( ysf_memIsInit(mem) == false )
-    {
-        return 0;
-    }
-    
-    return mem->alignment;
-}
+    struct ysf_mem_block_t *now     = mem->head;
+    struct ysf_mem_block_t *next    = mem->head;
+	uint16_t freeSize = 0;
+	uint16_t useSize  = ysf_mem_cal_alignment(size, 4) + sizeof(struct ysf_mem_block_t);
 
-/**
- *******************************************************************************
- * @brief       calculate use memory rate
- * @param       [in/out]  *mem                memory block
- * @return      [in/out]  ysf_buffer_size_t   use memory rate
- * @note        None
- *******************************************************************************
- */
-ysf_mem_size_t ysf_memUseRateCal(struct ysf_mem_cb_t *mem)
-{
-    struct ysf_mem_block_t *node = (struct ysf_mem_block_t *)((void *)&mem->buffer.buffer);
-    ysf_mem_size_t use = 0;
-    
-    if( ysf_memIsInit(mem) == false )
-    {
-        return 0;
-    }
-    
-    while(1)
-    {
-        if(node->status == IS_MEM_USE)
-        {
-            use = ysf_memUseBlockCal(mem, node);
-            use = use * 8;
-        }
-
-        if( node->next == YSF_MEMORY_CB_NEXT_END )
-        {
-            break;
-        }
-
-        node = (struct ysf_mem_block_t *)((void *)&mem->buffer.buffer[node->next]);
-    }
-
-    return (use / mem->buffer.size);
-}
-
-/**
- *******************************************************************************
- * @brief       memory malloc
- * @param       [in/out]  *mem           memory block
- * @param       [in/out]  size           malloc size
- * @return      [in/out]  NULL       malloc failed
- * @return      [in/out]  addr           malloc success
- * @note        None
- *******************************************************************************
- */
-void *ysf_memMalloc( struct ysf_mem_cb_t *mem, ysf_mem_size_t size )
-{
-    ysf_assert(IS_PTR_NULL(mem));
-    ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
-
-    struct ysf_mem_block_t *nowNode  = (struct ysf_mem_block_t *)((void *)mem->buffer.buffer);
-    struct ysf_mem_block_t *startNode = NULL;
-
-    const ysf_mem_size_t needSize = ysf_memNeedBlockCal(mem, ((sizeof(struct ysf_mem_block_t)/sizeof(char))+size));
-    ysf_mem_size_t getSize  = 0;
-
-    if( ysf_memIsInit(mem) == false )
+    if(mem == NULL || size == 0)
     {
         return NULL;
     }
+
+    while(1)
+    {
+        if(now == NULL)
+        {
+            return NULL;
+        }
+        
+        if(now->status == false)
+        {
+            if( now->size >= useSize )
+            {
+				freeSize     = now->size;
+				now->size    = useSize;
+                next         = (struct ysf_mem_block_t *)((uint8_t *)now + useSize);
+				next->size   = freeSize - useSize;
+
+                next->next   = now->next;
+                now->next    = next;
+                
+                next->status = false;
+                now->status  = true;
+                
+                return (void *)(now+1);
+            }
+        }
+        
+        now = now->next;
+    }
+    
+//    return NULL;
+}
+
+/**
+ *******************************************************************************
+ * @brief       memory free 
+ * @param       [in/out]  *mem                memory control block
+ * @param       [in/out]  *buffer             need free memory address
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
+{
+    struct ysf_mem_block_t *now       = mem->head;
+    struct ysf_mem_block_t *last      = NULL;
+    struct ysf_mem_block_t *data_addr = NULL;
+    
+    if(buffer == NULL || mem == NULL)
+    {
+        return;
+    }
     
     while(1)
     {
-        if( nowNode->status == IS_MEM_FREE )
+        // free memory
+        data_addr = now + 1;
+        if( data_addr == buffer )
         {
-            (startNode == NULL) ? (startNode = nowNode) : (0);
+            now->status = false;
+        }
 
-            if( ++getSize >= needSize )
+        // merge memory block
+        if( now->status == false )
+        {
+            if( last == NULL )
             {
-                startNode->next   = nowNode->next;
-                startNode->status = IS_MEM_USE;
-
-                return ((void *)startNode->data);
+                last = now;
+            }
+            else if(now->next == NULL)
+            {
+                if(now->status == false)
+                {
+                    last->next = NULL;
+                    last->size = (now - last) * sizeof(struct ysf_mem_block_t) + now->size;
+                }
+                else
+                {
+                    last->next = now;
+                    last->size = (now - last) * sizeof(struct ysf_mem_block_t);
+                }
+                
+                last->status = false;
+                last = NULL;
             }
         }
         else
         {
-            getSize   = 0;
-            startNode = NULL;
+            if( last != NULL )
+            {
+				if (last->next != now)
+				{
+					last->next = now;
+					last->size = (now - last) * sizeof(struct ysf_mem_block_t);
+					last->status = false;
+				}
+
+				last = NULL;
+            }
         }
 
-        if( nowNode->next == YSF_MEMORY_CB_NEXT_END )
+        now = now->next;        
+		
+		if(now == NULL)
         {
-            break;
+            return;
         }
-
-        nowNode = (struct ysf_mem_block_t *)((void *)&mem->buffer.buffer[nowNode->next]);
     }
-
-    return NULL;
 }
 
 /**
  *******************************************************************************
- * @brief       memory free
- * @param       [in/out]  *mem           memory block
- * @param       [in/out]  size           use memory addr
- * @return      [in/out]  YSF_ERR_FAIL   free failed
- * @return      [in/out]  YSF_ERR_NONE   free success
+ * @brief       detedt the address is in the memory buffer 
+ * @param       [in/out]  *mem                memory control block
+ * @param       [in/out]  *buffer             need free memory address
+ * @return      [in/out]  true                is in
+ * @return      [in/out]  false               not in
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_memFree(struct ysf_mem_cb_t *mem, void *useMem)
+bool ysf_mem_is_in(struct ysf_mem_ctrl_t *mem, void *buffer)
 {
-    ysf_assert(IS_PTR_NULL(mem));
-    ysf_assert(mem->status == IS_YSF_POOL_NOT_INIT);
-
-    struct ysf_mem_block_t *node  = (struct ysf_mem_block_t *)((void *)mem->buffer.buffer);
-    ysf_mem_size_t next;
-    ysf_mem_size_t block;
-
-    if( ysf_memIsInit(mem) == false )
-    {
-        return YSF_ERR_FAIL;
-    }
-    
-    if(useMem == NULL)
-    {
-        return YSF_ERR_FAIL;
-    }
-
-    while(1)
-    {
-        if( node->data == useMem )
-        {
-            if( node->status == IS_MEM_FREE )
-            {
-                return YSF_ERR_FAIL;
-            }
-
-            break;
-        }
-
-        if( node->next == YSF_MEMORY_CB_NEXT_END )
-        {
-            return YSF_ERR_FAIL;
-        }
-
-        node = (struct ysf_mem_block_t *)((void *)&mem->buffer.buffer[node->next]);
-    }
-
-    block = ysf_memUseBlockCal(mem, node);
-    next  = (ysf_mem_size_t)((ysf_addr_t)node - (ysf_addr_t)mem->buffer.buffer);
-    next  = next + mem->alignment;
-
-    for( ; block>0; block-- )
-    {
-        node->status = IS_MEM_FREE;
-        node->next   = next;
-
-        node = (struct ysf_mem_block_t *)((void *)&mem->buffer.buffer[node->next]);
-        next += mem->alignment;
-    }
-
-    return YSF_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       detection whether memory areas
- * @param       [in/out]  *mem           memory management block
- * @param       [in/out]  *useMem        need to test addresses
- * @return      [in/out]  false          the address not in this memory areas
- * @return      [in/out]  true           the address is in this memory areas
- * @note        None 
- *******************************************************************************
- */
-bool ysf_memIsIn(struct ysf_mem_cb_t *mem, void *useMem)
-{    
-    if( useMem == NULL )
-    {
-        return false;
-    }
-    
-    if( mem == NULL )
-    {
-        return false;
-    }
-    
-    if( (useMem >= (void *)&mem->buffer.buffer[0]) && (useMem < (void *)&mem->buffer.buffer[mem->buffer.size]) )
+    if( buffer >= (void *)mem->buffer && buffer <= (void *)&mem->buffer[mem->size] )
     {
         return true;
     }
-    else
-    {
-        return false;
-    }
     
-//    return false;
+    return false;
 }
+
 #endif
 
 /** @}*/     /** ysf buffer component */
