@@ -435,7 +435,7 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
                     last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t);
                 }
                 
-                last->status = false;
+//                last->status = false;
                 last = NULL;
             }
         }
@@ -447,7 +447,7 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
 				{
 					last->next = now;
 					last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t);
-					last->status = false;
+//					last->status = false;
 				}
 
 				last = NULL;

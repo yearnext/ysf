@@ -173,6 +173,22 @@
           <ExecCommand></ExecCommand>
           <Expression>\\ysf_stm32_demo\../../app/key_control.c\272</Expression>
         </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>91</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134222154</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\framework\component\memory\ysf_memory.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ysf_stm32_demo\../../framework/component/memory/ysf_memory.c\91</Expression>
+        </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>

@@ -2324,10 +2324,10 @@
         <group>
             <name>gpio</name>
             <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\gpio.c</name>
+                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_gpio.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\gpio.h</name>
+                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_gpio.h</name>
             </file>
         </group>
         <group>
@@ -2351,10 +2351,10 @@
         <group>
             <name>timer</name>
             <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\timer.c</name>
+                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_timer.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\timer.h</name>
+                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_timer.h</name>
             </file>
         </group>
         <file>
@@ -2414,12 +2414,30 @@
                 </file>
             </group>
             <group>
+                <name>pt</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\framework\component\pt\ysf_pt.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\framework\component\pt\ysf_pt.h</name>
+                </file>
+            </group>
+            <group>
                 <name>signal</name>
                 <file>
                     <name>$PROJ_DIR$\..\..\framework\component\signal\ysf_signal.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\framework\component\signal\ysf_signal.h</name>
+                </file>
+            </group>
+            <group>
+                <name>task</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\framework\component\task\ysf_task.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\framework\component\task\ysf_task.h</name>
                 </file>
             </group>
             <group>
