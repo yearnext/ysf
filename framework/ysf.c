@@ -83,9 +83,6 @@ const struct YSF_API ysf =
     .event.init                 = ysf_event_init,
     .event.post                 = ysf_event_post,
     .event.read                 = ysf_event_read,
-//    .event.reg                  = ysf_event_register,
-//    .event.writeoff             = ysf_event_writeoff,
-//    .event.handler              = ysf_event_handler,
 #endif
     
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
@@ -162,7 +159,7 @@ void ysf_init( ysf_err_t (*user_init)(void) )
     ysf.tick.init();
     
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
-    msp.timer.tick.init(ysf.tick.inc);
+    msp.timer.tick.init(YSF_TICK_PERIOD_TIME, ysf.tick.inc);
 #endif
     
 #endif

@@ -31,16 +31,18 @@
 const struct YSF_MSP_API msp = 
 {
 #if defined(USE_MSP_GPIO_API) && USE_MSP_GPIO_API
-    .gpio.port.config.init       = msp_gpio_init,
-    .gpio.port.config.fini       = msp_gpio_fini,
+    .gpio.enable                 = msp_gpio_init,
+    .gpio.disable                = msp_gpio_fini,
     
-    .gpio.pin.config.fini        = msp_gpio_pin_fini,
-    .gpio.pin.config.input       = msp_gpio_config,
-    .gpio.pin.config.output      = msp_gpio_config,
+    .gpio.input.init             = msp_gpio_config,
+    .gpio.input.get              = msp_gpio_get_input,
     
-    .gpio.pin.set                = msp_gpio_set,
-    .gpio.pin.clr                = msp_gpio_clr,
-    .gpio.pin.get                = msp_gpio_get,
+    .gpio.output.init            = msp_gpio_config,
+    .gpio.output.get             = msp_gpio_get_output,
+    .gpio.output.set             = msp_gpio_set,
+    .gpio.output.clr             = msp_gpio_clr,
+    
+    .gpio.multi.init             = msp_gpio_config,   
 #endif
         
 #if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
@@ -53,16 +55,18 @@ const struct YSF_MSP_API msp =
 const struct YSF_MAP_API map = 
 {
 #if defined(USE_MAP_GPIO_API) && USE_MAP_GPIO_API
-    .gpio.port.config.init       = map_gpio_init,
-    .gpio.port.config.fini       = map_gpio_fini,
+    .gpio.enable                 = map_gpio_init,
+    .gpio.disable                = map_gpio_fini,
     
-    .gpio.pin.config.fini        = map_gpio_pin_fini,
-    .gpio.pin.config.input       = map_gpio_config,
-    .gpio.pin.config.output      = map_gpio_config,
+    .gpio.input.init             = map_gpio_config,
+    .gpio.input.get              = map_gpio_get_input,
     
-    .gpio.pin.set                = map_gpio_set,
-    .gpio.pin.clr                = map_gpio_clr,
-    .gpio.pin.get                = map_gpio_get,
+    .gpio.output.init            = map_gpio_config,
+    .gpio.output.get             = map_gpio_get_output,
+    .gpio.output.set             = map_gpio_set,
+    .gpio.output.clr             = map_gpio_clr,
+    
+    .gpio.multi.init             = map_gpio_config,   
 #endif
         
 #if defined(USE_MAP_TIMER_API) && USE_MAP_TIMER_API

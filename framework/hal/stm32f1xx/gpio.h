@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F10X_GPIO_H__
-#define __STM32F10X_GPIO_H__
+#ifndef __STM32F1XX_GPIO_H__
+#define __STM32F1XX_GPIO_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -50,11 +50,21 @@ extern "C"
 #include YSF_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define gpio use status
+ *******************************************************************************
+ */ 
 #define USE_MSP_GPIO_API (1)
 #define USE_MAP_GPIO_API (1)
-    
+ 
+/**
+ *******************************************************************************
+ * @brief      define gpio port
+ *******************************************************************************
+ */  
 enum
-{
+{    
     MCU_PORT_A = 0,
     MCU_PORT_B = 1,
     MCU_PORT_C = 2,
@@ -62,7 +72,7 @@ enum
     MCU_PORT_E = 4,
     MCU_PORT_F = 5,
     MCU_PORT_G = 6,
-    
+
     MCU_PORT_0 = 0,
     MCU_PORT_1 = 1,
     MCU_PORT_2 = 2,
@@ -70,7 +80,15 @@ enum
     MCU_PORT_4 = 4,
     MCU_PORT_5 = 5,
     MCU_PORT_6 = 6,
-    
+};
+
+/**
+ *******************************************************************************
+ * @brief      define gpio pin
+ *******************************************************************************
+ */
+enum
+{    
     MCU_PIN_0  = 0,
     MCU_PIN_1  = 1,
     MCU_PIN_2  = 2,
@@ -88,7 +106,12 @@ enum
     MCU_PIN_14 = 14,
     MCU_PIN_15 = 15,
 };
-    
+
+/**
+ *******************************************************************************
+ * @brief      define gpio mode
+ *******************************************************************************
+ */    
 #define PIN_INPUT_MODE              (0x00)
                             
 #define PIN_ANALOG_INPUT            (0x00)
@@ -129,82 +152,113 @@ enum
 };
     
 /* Exported types ------------------------------------------------------------*/
-struct ysf_map_gpio_t
+/**
+ *******************************************************************************
+ * @brief      define gpio type
+ *******************************************************************************
+ */    
+struct map_gpio_t
 {
     uint8_t port;
     uint8_t pin;
-//    uint8_t mode;
 };
-    
+  
+/**
+ *******************************************************************************
+ * @brief      define msp gpio api
+ *******************************************************************************
+ */   
 struct MSP_GPIO_API
 {
-    struct
-    {
-        struct
-        {
-            ysf_err_t (*init)(uint8_t);
-            ysf_err_t (*fini)(uint8_t);
-        }config;
-    }port;
+    void          (*enable)(uint8_t port);
+    void          (*disable)(uint8_t port);
+    
+	struct
+	{
+        void      (*init)(uint8_t port, uint8_t pin, uint8_t mode);
+        
+        bool      (*get)(uint8_t port, uint8_t pin);
+	}input;
+	
+	struct
+	{
+        void      (*init)(uint8_t port, uint8_t pin, uint8_t mode);
+        
+        bool      (*get)(uint8_t port, uint8_t pin);
+        void      (*set)(uint8_t port, uint8_t pin);
+        void      (*clr)(uint8_t port, uint8_t pin);
+	}output;
     
     struct
     {
-        struct
-        {
-            ysf_err_t (*fini)(uint8_t, uint8_t);
-            ysf_err_t (*input)(uint8_t, uint8_t, uint8_t);
-            ysf_err_t (*output)(uint8_t, uint8_t, uint8_t);
-        }config;
-        
-        ysf_err_t (*set)(uint8_t,uint8_t);
-        ysf_err_t (*clr)(uint8_t,uint8_t);
-        bool (*get)(uint8_t,uint8_t);
-    }pin;
-}; 
-
+        void (*init)(uint8_t port, uint8_t pin, uint8_t mode);
+    }multi;
+};
+  
+/**
+ *******************************************************************************
+ * @brief      define map gpio api
+ *******************************************************************************
+ */   
 struct MAP_GPIO_API
 {
-    struct
-    {
-        struct
-        {
-            ysf_err_t (*init)(struct ysf_map_gpio_t*);
-            ysf_err_t (*fini)(struct ysf_map_gpio_t*);
-        }config;
-    }port;
+    void          (*enable)(struct map_gpio_t*);
+    void          (*disable)(struct map_gpio_t*);
+    
+	struct
+	{
+        void      (*init)(struct map_gpio_t*, uint8_t mode);
+        
+        bool      (*get)(struct map_gpio_t*);
+	}input;
+	
+	struct
+	{
+        void      (*init)(struct map_gpio_t*, uint8_t mode);
+        
+        bool      (*get)(struct map_gpio_t*);
+        void      (*set)(struct map_gpio_t*);
+        void      (*clr)(struct map_gpio_t*);
+	}output;
     
     struct
     {
-        struct
-        {
-            ysf_err_t (*fini)(struct ysf_map_gpio_t*);
-            ysf_err_t (*input)(struct ysf_map_gpio_t*, uint8_t);
-            ysf_err_t (*output)(struct ysf_map_gpio_t*, uint8_t);
-        }config;
-        
-        ysf_err_t (*set)(struct ysf_map_gpio_t*);
-        ysf_err_t (*clr)(struct ysf_map_gpio_t*);
-        bool (*get)(struct ysf_map_gpio_t*);
-    }pin;
+        void      (*init)(struct map_gpio_t*, uint8_t mode);
+    }multi;
 };
     
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-extern ysf_err_t msp_gpio_init(uint8_t);
-extern ysf_err_t msp_gpio_fini(uint8_t);
-extern ysf_err_t msp_gpio_pin_fini(uint8_t, uint8_t);
-extern ysf_err_t msp_gpio_config(uint8_t,uint8_t,uint8_t);
-extern ysf_err_t msp_gpio_set(uint8_t,uint8_t);
-extern ysf_err_t msp_gpio_clr(uint8_t,uint8_t);
-extern bool msp_gpio_get(uint8_t,uint8_t);
+/**
+ *******************************************************************************
+ * @brief      msp gpio interface
+ *******************************************************************************
+ */   
+#if USE_MSP_GPIO_API
+extern void msp_gpio_init(uint8_t);
+extern void msp_gpio_fini(uint8_t);
+extern void msp_gpio_config(uint8_t, uint8_t, uint8_t);
+extern void msp_gpio_set(uint8_t, uint8_t);
+extern void msp_gpio_clr(uint8_t, uint8_t);
+extern bool msp_gpio_get_input(uint8_t, uint8_t);
+extern bool msp_gpio_get_output(uint8_t, uint8_t);
+#endif
 
-extern ysf_err_t map_gpio_init(struct ysf_map_gpio_t*);
-extern ysf_err_t map_gpio_fini(struct ysf_map_gpio_t*);
-extern ysf_err_t map_gpio_config(struct ysf_map_gpio_t*, uint8_t);
-extern ysf_err_t map_gpio_pin_fini(struct ysf_map_gpio_t*);
-extern ysf_err_t map_gpio_set(struct ysf_map_gpio_t*);
-extern ysf_err_t map_gpio_clr(struct ysf_map_gpio_t*);
-extern bool map_gpio_get(struct ysf_map_gpio_t*);
+  
+/**
+ *******************************************************************************
+ * @brief      map gpio interface
+ *******************************************************************************
+ */   
+#if USE_MAP_GPIO_API
+extern void map_gpio_init(struct map_gpio_t*);
+extern void map_gpio_fini(struct map_gpio_t*);
+extern void map_gpio_config(struct map_gpio_t*, uint8_t);
+extern void map_gpio_set(struct map_gpio_t*);
+extern void map_gpio_clr(struct map_gpio_t*);
+extern bool map_gpio_get_input(struct map_gpio_t*);
+extern bool map_gpio_get_output(struct map_gpio_t*);
+#endif
 
 #ifdef __cplusplus
 }

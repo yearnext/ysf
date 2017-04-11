@@ -80,7 +80,7 @@ struct MSP_TIMER_API
 #if USE_TICK_TIMER
     struct
     {
-        ysf_err_t (*init)(void (*func)(void));
+        ysf_err_t (*init)(uint32_t, void (*func)(void));
     }tick;
 #endif
 };
@@ -96,7 +96,7 @@ struct MAP_TIMER_API
 extern ysf_err_t msp_timer_init(uint8_t);
 extern ysf_err_t msp_timer_fini(uint8_t);
 #if USE_TICK_TIMER
-extern ysf_err_t msp_tick_timer_init(void (*func)(void));
+extern ysf_err_t msp_tick_timer_init(uint32_t, void (*func)(void));
 #endif
 
 extern ysf_err_t map_timer_init(struct ysf_msp_timer_t*);
