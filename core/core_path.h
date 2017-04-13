@@ -19,7 +19,7 @@
  * @file       core_path.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-03-07                                                      *
+ * @date       2017-04-13                                                      *
  * @brief      core path head files                                            *
  * @par        work platform                                                   *
  *                 Windows                                                     *
@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_PATH_H__
-#define __FRAMEWORK_PATH_H__
+#ifndef __CORE_PATH_H__
+#define __CORE_PATH_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,24 +46,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "comm_path.h"
-    
 /* Exported macro ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      framework component path
- *******************************************************************************
- */
-#define _FW_TICK_COMPONENT_PATH               "../core/component/tick/fw_tick.h"
-#define _FW_BUFFER_COMPONENT_PATH             "../core/component/buffer/fw_buffer.h"
-#define _FW_MEMORY_COMPONENT_PATH             "../core/component/memory/fw_memory.h"
-#define _FW_TIMER_COMPONENT_PATH              "../core/component/timer/fw_timer.h"
-#define _FW_EVENT_COMPONENT_PATH              "../core/component/event/fw_event.h"
-#define _FW_SIGNAL_COMPONENT_PATH             "../core/component/signal/fw_signal.h"
-#define _FW_DEBUG_COMPONENT_PATH              "../core/component/debug/fw_debug.h"
-#define _FW_LIST_COMPONENT_PATH               "../core/component/list/fw_list.h"
-#define _FW_PT_COMPONENT_PATH                 "../core/component/pt/fw_pt.h"
-#define _FW_TASK_COMPONENT_PATH               "../core/component/task/fw_task.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
