@@ -46,9 +46,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-#include "ysf_path.h"
-#include YSF_COMPONENT_BUFFER_PATH
+#include "core_conf.h"
+#include "core_path.h"
+#include _FW_BUFFER_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**

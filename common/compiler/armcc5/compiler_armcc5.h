@@ -101,10 +101,10 @@ extern "C"
  * @brief      define compiler alignment cmd 
  *******************************************************************************
  */
-#define ALIGN_HEAD(n)           PRAGMA(pack(push, n))
-#define ALIGN_TAIL(n)           PRAGMA(pack(pop))
-#define PACKED_HEAD             __packed
-#define PACKED_TAIL
+#define __ALIGN_HEAD(n)         PRAGMA(pack(push, n))
+#define __ALIGN_TAIL(n)         PRAGMA(pack(pop))
+#define __PACKED_HEAD           __packed
+#define __PACKED_TAIL
 
 /**
  *******************************************************************************

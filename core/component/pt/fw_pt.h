@@ -46,10 +46,10 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
-#include YSF_COMPONENT_TIMER_PATH
+#include "core_conf.h"
+#include "core_path.h"
+#include _COMM_TYPE_PATH
+#include _FW_TIMER_COMPONENT_PATH
     
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -78,14 +78,14 @@ extern "C"
  * @brief      protothreads handler function
  *******************************************************************************
  */ 
-#define YSF_PT_THREAD(func_name)   ysf_err_t func_name(void *ptTask, uint16_t evt)
+#define YSF_PT_THREAD(func_name)   fw_err_t func_name(void *ptTask, uint16_t evt)
     
 /**
  *******************************************************************************
  * @brief      protothreads handler function type
  *******************************************************************************
  */ 
-#define YSF_PT_THREAD_NAME         ysf_err_t (*pt_thread)(void*, uint16_t)
+#define YSF_PT_THREAD_NAME         fw_err_t (*pt_thread)(void*, uint16_t)
        
 /**
  *******************************************************************************
@@ -101,9 +101,9 @@ extern "C"
  */                              
 #define ysf_pt_begin()           struct ysf_pt_t *pt = (struct ysf_pt_t*)ptTask;                             \
                                                                                                              \
-                                 if(pt->useStatus == ysf_disable)                                            \
+                                 if(pt->useStatus == false)                                            \
                                  {                                                                           \
-                                     return YSF_ERR_NONE;                                                    \
+                                     return FW_ERR_NONE;                                                    \
                                  }                                                                           \
                                                                                                              \
                                  switch(pt->state)                                                           \
@@ -174,14 +174,14 @@ extern "C"
  * @brief      protothreads exit functon
  *******************************************************************************
  */
-#define ysf_pt_exit()           pt->useStatus = ysf_disable; ysf_pt_entry(); return YSF_ERR_NONE
+#define ysf_pt_exit()           pt->useStatus = false; ysf_pt_entry(); return FW_ERR_NONE
                                  
 /**
  *******************************************************************************
  * @brief      protothreads end functon
  *******************************************************************************
  */
-#define ysf_pt_end()            } return YSF_ERR_NONE
+#define ysf_pt_end()            } return FW_ERR_NONE
     
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -192,8 +192,8 @@ extern "C"
 struct ysf_pt_t
 {
     uint16_t state;
-    ysf_status_t useStatus;
-    ysf_err_t (*thread)(void*, uint16_t);
+    bool useStatus;
+    fw_err_t (*thread)(void*, uint16_t);
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
 #else
     struct ysf_timer_t timer;
@@ -208,24 +208,24 @@ struct ysf_pt_t
 #if defined(USE_YSF_PT_API) && USE_YSF_PT_API
 struct YSF_PT_API
 {
-    ysf_err_t (*init)(struct ysf_pt_t*, YSF_PT_THREAD_NAME);
-    ysf_err_t (*disarm)(struct ysf_pt_t*);
+    fw_err_t (*init)(struct ysf_pt_t*, YSF_PT_THREAD_NAME);
+    fw_err_t (*disarm)(struct ysf_pt_t*);
 
-    ysf_err_t (*arm)(struct ysf_task_t*, struct ysf_pt_t*);
+    fw_err_t (*arm)(struct ysf_task_t*, struct ysf_pt_t*);
 
     struct
     {
-        ysf_err_t (*arm)(struct ysf_pt_t*);
+        fw_err_t (*arm)(struct ysf_pt_t*);
     }simple;
 };
 #endif
 
 /* Exported functions --------------------------------------------------------*/
 #if defined(USE_YSF_PT_API) && USE_YSF_PT_API
-extern ysf_err_t ysf_pt_init(struct ysf_pt_t*, YSF_PT_THREAD_NAME);
-extern ysf_err_t ysf_pt_arm(struct ysf_task_t*, struct ysf_pt_t*);
-extern ysf_err_t ysf_pt_simp_arm(struct ysf_pt_t*);
-extern ysf_err_t ysf_pt_disarm(struct ysf_pt_t*);
+extern fw_err_t ysf_pt_init(struct ysf_pt_t*, YSF_PT_THREAD_NAME);
+extern fw_err_t ysf_pt_arm(struct ysf_task_t*, struct ysf_pt_t*);
+extern fw_err_t ysf_pt_simp_arm(struct ysf_pt_t*);
+extern fw_err_t ysf_pt_disarm(struct ysf_pt_t*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

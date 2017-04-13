@@ -42,12 +42,12 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
-#include YSF_COMPONENT_TASK_PATH
-#include YSF_COMPONENT_TICK_PATH
-#include YSF_COMPONENT_SINGLE_LIST_PATH
+#include "core_conf.h"
+#include "core_path.h"
+#include _COMM_TYPE_PATH
+#include _FW_TASK_COMPONENT_PATH
+#include _FW_TICK_COMPONENT_PATH
+#include _FW_LIST_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -123,26 +123,26 @@ struct ysf_timer_t
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
 struct YSF_TIMER_API
 {
-    ysf_err_t (*init)(void);
-    ysf_err_t (*handler)(uint16_t);
+    fw_err_t (*init)(void);
+    fw_err_t (*handler)(uint16_t);
 
-    ysf_err_t (*arm)(struct ysf_timer_t*, uint32_t, int16_t);
-    ysf_err_t (*disarm)(struct ysf_timer_t*);
+    fw_err_t (*arm)(struct ysf_timer_t*, uint32_t, int16_t);
+    fw_err_t (*disarm)(struct ysf_timer_t*);
     
     bool (*getStatus)(struct ysf_timer_t*);
     
     struct
     {
-        ysf_err_t (*cb_init)(struct ysf_timer_t*, ysf_err_t (*)(void*), void*);
-        ysf_err_t (*evt_init)(struct ysf_timer_t*, ysf_err_t (*)(uint16_t), uint16_t);
-        ysf_err_t (*sm_init)(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+        fw_err_t (*cb_init)(struct ysf_timer_t*, fw_err_t (*)(void*), void*);
+        fw_err_t (*evt_init)(struct ysf_timer_t*, fw_err_t (*)(uint16_t), uint16_t);
+        fw_err_t (*sm_init)(struct ysf_timer_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
     };
     
     struct
     {
-        struct ysf_timer_t *(*cb_init)(ysf_err_t (*)(void*), void*);
-        struct ysf_timer_t *(*evt_init)(ysf_err_t (*)(uint16_t), uint16_t);
-        struct ysf_timer_t *(*sm_init)(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+        struct ysf_timer_t *(*cb_init)(fw_err_t (*)(void*), void*);
+        struct ysf_timer_t *(*evt_init)(fw_err_t (*)(uint16_t), uint16_t);
+        struct ysf_timer_t *(*sm_init)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
     }simple;
 };
 #endif
@@ -155,22 +155,22 @@ struct YSF_TIMER_API
  *******************************************************************************
  */
 #if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
-extern ysf_err_t ysf_timer_init(void);
+extern fw_err_t ysf_timer_init(void);
 
-extern ysf_err_t ysf_timer_handler(uint16_t);
+extern fw_err_t ysf_timer_handler(uint16_t);
 
 extern bool ysf_timerGetStatus(struct ysf_timer_t*);
 
-extern ysf_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t, int16_t);                                          
-extern ysf_err_t ysf_timer_disarm(struct ysf_timer_t*); 
+extern fw_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t, int16_t);                                          
+extern fw_err_t ysf_timer_disarm(struct ysf_timer_t*); 
 
-extern ysf_err_t ysf_cbTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*), void*); 
-extern ysf_err_t ysf_evtTimer_init(struct ysf_timer_t*, ysf_err_t (*)(uint16_t), uint16_t);
-extern ysf_err_t ysf_smTimer_init(struct ysf_timer_t*, ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern fw_err_t ysf_cbTimer_init(struct ysf_timer_t*, fw_err_t (*)(void*), void*); 
+extern fw_err_t ysf_evtTimer_init(struct ysf_timer_t*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t ysf_smTimer_init(struct ysf_timer_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 
-extern struct ysf_timer_t *ysf_cbSimpTimer_init(ysf_err_t (*)(void*), void*);
-extern struct ysf_timer_t *ysf_evtSimpTimer_init(ysf_err_t (*)(uint16_t), uint16_t);
-extern struct ysf_timer_t *ysf_smSimpTimer_init(ysf_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern struct ysf_timer_t *ysf_cbSimpTimer_init(fw_err_t (*)(void*), void*);
+extern struct ysf_timer_t *ysf_evtSimpTimer_init(fw_err_t (*)(uint16_t), uint16_t);
+extern struct ysf_timer_t *ysf_smSimpTimer_init(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

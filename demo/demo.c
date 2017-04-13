@@ -21,7 +21,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf.h"
+#include "interface.h"
 
 /* Private define ------------------------------------------------------------*/                                                        
 /* Private typedef -----------------------------------------------------------*/
@@ -81,7 +81,7 @@ static struct ysf_signal_t key2Signal;
  * @brief       led1 blink function
  *******************************************************************************
  */
-static ysf_err_t led1_blink_handler( void *param )
+static fw_err_t led1_blink_handler( void *param )
 {   
     if( msp.gpio.output.get(MCU_PORT_D, MCU_PIN_13) == true )
     {
@@ -92,7 +92,7 @@ static ysf_err_t led1_blink_handler( void *param )
         msp.gpio.output.set(MCU_PORT_D, MCU_PIN_13);
     }
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -179,7 +179,7 @@ static enum ysf_signal_status_t key2_scan( void )
  * @brief       key1 handler function
  *******************************************************************************
  */
-static ysf_err_t key1_handler(uint16_t status)
+static fw_err_t key1_handler(uint16_t status)
 {
     switch(status)
     {
@@ -199,7 +199,7 @@ static ysf_err_t key1_handler(uint16_t status)
             break;
     }
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -207,7 +207,7 @@ static ysf_err_t key1_handler(uint16_t status)
  * @brief       key2 handler function
  *******************************************************************************
  */
-static ysf_err_t key2_handler(uint16_t status)
+static fw_err_t key2_handler(uint16_t status)
 {
     switch(status)
     {
@@ -227,7 +227,7 @@ static ysf_err_t key2_handler(uint16_t status)
             break;
     }
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -251,7 +251,7 @@ static void bsp_key_init(void)
  * @brief       user init function
  *******************************************************************************
  */
-static ysf_err_t user_init( void )
+static fw_err_t user_init( void )
 {
     bsp_led_init();
     app_led1_init();
@@ -259,7 +259,7 @@ static ysf_err_t user_init( void )
     
     bsp_key_init();
 
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**

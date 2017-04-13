@@ -37,11 +37,11 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_COMPONENT_TASK_PATH
-#include YSF_COMPONENT_DEBUG_PATH
-#include YSF_COMPONENT_MEMORY_PATH
-#include YSF_COMPONENT_SINGLE_LIST_PATH
+#include "core_path.h"
+#include _FW_TASK_COMPONENT_PATH
+#include _FW_DEBUG_COMPONENT_PATH
+#include _FW_MEMORY_COMPONENT_PATH
+#include _FW_LIST_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -68,7 +68,7 @@ static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, TaskControlBlock);
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
+__STATIC_INLINE
 bool ysf_task_isIn(struct ysf_task_t *task)
 {
     ysf_sListFIFO_isIn(struct ysf_task_t, TaskControlBlock, task);
@@ -80,16 +80,16 @@ bool ysf_task_isIn(struct ysf_task_t *task)
  *******************************************************************************
  * @brief       pop task to queue
  * @param       [in/out]  task                 will add task
- * @return      [in/out]  YSF_ERR_NONE         no error
+ * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_err_t ysf_task_push(struct ysf_task_t *task)
+__STATIC_INLINE
+fw_err_t ysf_task_push(struct ysf_task_t *task)
 {
     ysf_sListFIFO_push(ysf_task_isIn, TaskControlBlock, task);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -100,7 +100,7 @@ ysf_err_t ysf_task_push(struct ysf_task_t *task)
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
+__STATIC_INLINE
 struct ysf_task_t *ysf_task_pop(void)
 {
     struct ysf_task_t *task;
@@ -114,31 +114,31 @@ struct ysf_task_t *ysf_task_pop(void)
  *******************************************************************************
  * @brief       task queue clear
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE         no error
+ * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_err_t ysf_task_clear(void)
+__STATIC_INLINE
+fw_err_t ysf_task_clear(void)
 {    
     ysf_sListFIFO_clear(ysf_task_pop);
 
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       ysf task component init
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @return      [in/out]  FW_ERR_NONE       init finish
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_task_init(void)
+fw_err_t ysf_task_init(void)
 {
     ysf_task_clear();
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -147,16 +147,16 @@ ysf_err_t ysf_task_init(void)
  * @param       [in/out]  *task                     task block
  * @param       [in/out]  *func                     task function
  * @param       [in/out]  *param                    task param
- * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
- * @return      [in/out]  YSF_ERR_NONE              add success
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_cbTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*), void *param)
+fw_err_t ysf_cbTask_create(struct ysf_task_t *task, fw_err_t (*func)(void*), void *param)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
-        return YSF_ERR_INVAILD_PTR;
+        return FW_ERR_INVAILD_PTR;
     }
     
     task->handler.cb = func;
@@ -166,7 +166,7 @@ ysf_err_t ysf_cbTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*), v
 //    task->next       = NULL;
     ysf_task_push(task);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -179,7 +179,7 @@ ysf_err_t ysf_cbTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*), v
  * @note        None
  *******************************************************************************
  */
-struct ysf_task_t *ysf_cbSimpTask_create(ysf_err_t (*func)(void*), void *param)
+struct ysf_task_t *ysf_cbSimpTask_create(fw_err_t (*func)(void*), void *param)
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
     if(IS_PTR_NULL(func))
@@ -213,16 +213,16 @@ struct ysf_task_t *ysf_cbSimpTask_create(ysf_err_t (*func)(void*), void *param)
  * @param       [in/out]  *task                     task block
  * @param       [in/out]  *func                     task function
  * @param       [in/out]  event                     task event
- * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
- * @return      [in/out]  YSF_ERR_NONE              add success
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t), uint16_t evt)
+fw_err_t ysf_evtTask_create(struct ysf_task_t *task, fw_err_t (*func)(uint16_t), uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
-        return YSF_ERR_INVAILD_PTR;
+        return FW_ERR_INVAILD_PTR;
     }
     
     task->handler.evt = func;
@@ -232,7 +232,7 @@ ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t
 //    task->next         = NULL;
     ysf_task_push(task);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -245,7 +245,7 @@ ysf_err_t ysf_evtTask_create(struct ysf_task_t *task, ysf_err_t (*func)(uint16_t
  * @note        None
  *******************************************************************************
  */
-struct ysf_task_t *ysf_evtSimpTask_create(ysf_err_t (*func)(uint16_t), uint16_t evt)
+struct ysf_task_t *ysf_evtSimpTask_create(fw_err_t (*func)(uint16_t), uint16_t evt)
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
     if(IS_PTR_NULL(func))
@@ -280,16 +280,16 @@ struct ysf_task_t *ysf_evtSimpTask_create(ysf_err_t (*func)(uint16_t), uint16_t 
  * @param       [in/out]  *func                     task function
  * @param       [in/out]  *param                    task param
  * @param       [in/out]  *expand                   task expand param
- * @return      [in/out]  YSF_ERR_INVAILD_PTR       add failed
- * @return      [in/out]  YSF_ERR_NONE              add success
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_smTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+fw_err_t ysf_smTask_create(struct ysf_task_t *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
-        return YSF_ERR_INVAILD_PTR;
+        return FW_ERR_INVAILD_PTR;
     }
     
     task->handler.sm = func;
@@ -300,7 +300,7 @@ ysf_err_t ysf_smTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, ui
 //    task->next   = NULL;
     ysf_task_push(task);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -314,7 +314,7 @@ ysf_err_t ysf_smTask_create(struct ysf_task_t *task, ysf_err_t (*func)(void*, ui
  * @note        None
  *******************************************************************************
  */
-struct ysf_task_t *ysf_smSimpTask_create(ysf_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+struct ysf_task_t *ysf_smSimpTask_create(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
     if(IS_PTR_NULL(func))
@@ -347,16 +347,16 @@ struct ysf_task_t *ysf_smSimpTask_create(ysf_err_t (*func)(void*, uint16_t), voi
  *******************************************************************************
  * @brief       task handler function
  * @param       [in/out]  task                 will handler task
- * @return      [in/out]  YSF_ERR_NONE         no error
+ * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_err_t ysf_task_handler(struct ysf_task_t *task)
+__STATIC_INLINE
+fw_err_t ysf_task_handler(struct ysf_task_t *task)
 {
 //    if( IS_PTR_NULL(task) )
 //    {
-//        return YSF_ERR_NONE;
+//        return FW_ERR_NONE;
 //    }
     
     switch(task->type)
@@ -380,29 +380,29 @@ ysf_err_t ysf_task_handler(struct ysf_task_t *task)
             }
             break;
 //        default:
-//            return YSF_ERR_FAIL;
+//            return FW_ERR_FAIL;
 //            break;
     }
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       task poll
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE              walking
+ * @return      [in/out]  FW_ERR_NONE              walking
  * @note        this function is dependent on ysf memory management
  *******************************************************************************
  */
-ysf_err_t ysf_task_poll(void)
+fw_err_t ysf_task_poll(void)
 {   
     // read task from the task queue    
     struct ysf_task_t *task = ysf_task_pop();
 
     if( task == NULL )
     {
-        return YSF_ERR_NONE;
+        return FW_ERR_NONE;
     }
     
     // task trigger handler
@@ -415,7 +415,7 @@ ysf_err_t ysf_task_poll(void)
         }
 #endif
         
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 #endif

@@ -37,11 +37,11 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_COMPONENT_TICK_PATH
-#include YSF_COMPONENT_EVENT_PATH
-#include YSF_COMPONENT_TASK_PATH
-#include YSF_COMPONENT_TIMER_PATH
+#include "core_path.h"
+#include _FW_TICK_COMPONENT_PATH
+#include _FW_EVENT_COMPONENT_PATH
+#include _FW_TASK_COMPONENT_PATH
+#include _FW_TIMER_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -83,12 +83,12 @@ void ysf_tick_init( void )
  */
 void ysf_tick_inc( void )
 {
-    YSF_ENTER_CRITICAL();
+    ENTER_CRITICAL();
     tick++;
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
     ysf_evtTask_create(&tick_task, ysf_timer_handler, YSF_EVENT_NONE);
 #endif
-    YSF_EXIT_CRITICAL();
+    EXIT_CRITICAL();
 }
 
 /**

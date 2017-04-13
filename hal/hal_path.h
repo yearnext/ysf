@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       type.h                                                          *
+ * @file       hal_path.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-01-10                                                      *
- * @brief      common type define head files                                   *
+ * @date       2017-03-07                                                      *
+ * @brief      hla path head files                                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,65 +32,64 @@
  */
 
 /**
- * @defgroup common type
+ * @defgroup path
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __COMMON_TYPE_H__
-#define __COMMON_TYPE_H__
+#ifndef __HAL_PATH_H__
+#define __HAL_PATH_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
+    
 /* Includes ------------------------------------------------------------------*/
-#include "path.h"
-#include _COMPILER_PATH
-
-/* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      define status type
- *******************************************************************************
- */
-typedef enum
-{
-   disable_status = 0,
-   enable_status  = !disable_status,
-}_status_t;
-
-/**
- *******************************************************************************
- * @brief      define error type
- *******************************************************************************
- */
-enum
-{
-    ERR_NONE,
-    ERR_FAIL,
+#include "comm_path.h"
     
-    ERR_NOT_READY,
-    ERR_NOT_SUPPORT,
-    
-    ERR_INVAILD_PTR,
-    ERR_INVAILD_PARAM,
+/* Exported macro ------------------------------------------------------------*/
+///**
+// *******************************************************************************
+// * @brief      common component path
+// *******************************************************************************
+// */
+//#ifndef _COMM_TOOLS_PATH
+//#define _COMM_TOOLS_PATH                      "../common/tools.h"	
+//#endif
+//    
+//#ifndef _TYPE_PATH
+//#define _TYPE_PATH         		              "../common/type.h"
+//#endif
+//    
+///**
+// *******************************************************************************
+// * @brief      compiler path
+// *******************************************************************************
+// */
+//#ifndef _COMPILER_PATH
+//#define _COMPILER_PATH                        "../common/compiler/compiler.h"
+//#endif
 
-    ERR_IO,
-    
-    ERR_BUG,
-    ERR_UNKNOW,
-};
+//#ifndef _ARMCC5_COMPILER_PATH
+//#define _ARMCC5_COMPILER_PATH                 "../common/compiler/armcc5/compiler_armcc5.h"
+//#endif
 
-typedef int16_t _err_t;
+//#ifndef _ARMCC6_COMPILER_PATH
+//#define _ARMCC6_COMPILER_PATH                 "../common/compiler/armcc6/compiler_armcc6.h"
+//#endif
 
+//#ifndef _ICCARM_COMPILER_PATH
+//#define _ICCARM_COMPILER_PATH                 "../common/compiler/iccarm/compiler_iar_arm.h"
+//#endif
+
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /** common type  */
+/** @}*/     /** path  */
 
 /**********************************END OF FILE*********************************/

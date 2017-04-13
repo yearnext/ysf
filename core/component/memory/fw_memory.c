@@ -37,11 +37,11 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_COMPILER_PATH
-#include YSF_COMPONENT_MEMORY_PATH
-#include YSF_COMPONENT_BUFFER_PATH
-#include YSF_TYPE_PATH
+#include "core_path.h"
+#include _COMPILER_PATH
+#include _COMM_TYPE_PATH
+#include _FW_MEMORY_COMPONENT_PATH
+#include _FW_BUFFER_COMPONENT_PATH
 
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
 #include <stdlib.h>
@@ -60,9 +60,9 @@
         #ifndef MCU_HEAP_HEAD_ADDR
             #define YSF_HEAP_SIZE         (4096)    
             
-            YSF_ALIGN_HEAD(4)
+            __ALIGN_HEAD(8)
                 static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
-            YSF_ALIGN_TAIL(4)
+            __ALIGN_TAIL(8)
             
             #define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
             #define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])

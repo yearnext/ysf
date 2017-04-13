@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_buffer.h                                                    *
+ * @file       core_conf.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-01-16                                                      *
- * @brief      ysf_buffer head files                                           *
+ * @date       2017-02-18                                                      *
+ * @brief      core config head files                                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup ysf buffer component
+ * @defgroup core config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_BUFFER_H__
-#define __YSF_BUFFER_H__
+#ifndef __CORE_CONF_H__
+#define __CORE_CONF_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -45,139 +45,113 @@ extern "C"
 {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
-#include "core_path.h"
-#include _COMM_TYPE_PATH
-#include _COMPILER_PATH
-
-/* Exported macro ------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/    
+/* Define and config ---------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       use ysf config
+ * @brief       ysf tick time(unit: ms)
  *******************************************************************************
  */
-#ifdef USE_YSF_BUFFER_COMPONENT
-#if USE_YSF_BUFFER_COMPONENT
-#define USE_YSF_BUFFER_API              (1)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (1)
-#else
-#define USE_YSF_BUFFER_API              (0)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (0)
-#endif
-
-#else
-/**
- *******************************************************************************
- * @brief       not use ysf config
- *******************************************************************************
- */
-#define USE_YSF_BUFFER_API              (1)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (1)
-#endif
-
-/**
- *******************************************************************************
- * @brief       define buffer component debug switch
- *******************************************************************************
- */
-#define USE_YSF_BUFFER_DEBUG            (0)
-
-/* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define buffer type
- *******************************************************************************
- */
-struct ysf_buffer_t 
-{
-    uint8_t  *buffer;
-    uint16_t size;
-};
-
-/**
- *******************************************************************************
- * @brief       define ring buffer type
- *******************************************************************************
- */
-struct ysf_rb_t
-{
-    struct ysf_buffer_t buffer;
-    uint16_t            head;
-    uint16_t            tail;
-};
-
-/**
- *******************************************************************************
- * @brief       define ring buffer api
- *******************************************************************************
- */
-#if USE_YSF_BUFFER_API
-struct YSF_RING_BUFFER_API
-{
-    fw_err_t (*init)(struct ysf_rb_t*, uint8_t*, uint16_t);
-    uint16_t (*len)(struct ysf_rb_t*);
-    fw_err_t (*write)(struct ysf_rb_t*, uint8_t*, uint16_t);
-    fw_err_t (*read)(struct ysf_rb_t*, uint8_t*, uint16_t);
-};
-#endif
-
-
-/**
- *******************************************************************************
- * @brief       define memory block
- *******************************************************************************
- */
-__ALIGN_HEAD(8)
-struct ysf_mem_block_t
-{
-	struct ysf_mem_block_t *next;
-	uint16_t               size;
-    bool                   status;
-};
-__ALIGN_TAIL(8)
-
-/**
- *******************************************************************************
- * @brief       define memory control block
- *******************************************************************************
- */
-struct ysf_mem_ctrl_t
-{
-    union
-    {
-        uint8_t  *buffer;
-        struct ysf_mem_block_t *head; 
-    };
+#define YSF_TICK_PERIOD_TIME        (10)
     
-    uint16_t size;
-};
-
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ring buffer function interface
+ * @brief       EVENT PACKAGE
  *******************************************************************************
  */
-#if USE_YSF_BUFFER_API
-extern fw_err_t ysf_rbInit(struct ysf_rb_t*, uint8_t*, uint16_t);
-extern uint16_t ysf_rbGetLen(struct ysf_rb_t*);
-extern fw_err_t ysf_rbWrite(struct ysf_rb_t*, uint8_t*, uint16_t);
-extern fw_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, uint16_t);
-#endif
+#define _YSF_DEFINE_EVENT_START     enum ysf_evt_enum                          \
+                                    {                                          \
+                                        YSF_EVENT_NONE = 0,                    \
+                                        YSF_PT_DELAY_EVENT,                   
+                                        
+#define _YSF_DEFINE_EVENT_END           YSF_EVENT_MAX,                         \
+                                    };
 
 /**
  *******************************************************************************
- * @brief       memory management function interface
+ * @brief       EVENT REGISTER FUNCTION
  *******************************************************************************
  */
-#if USE_YSF_MEMORY_MANAGEMENT_API
-extern fw_err_t ysf_mem_init(struct ysf_mem_ctrl_t*, uint8_t*, uint16_t);
-//extern fw_err_t mem_deinit(struct ysf_mem_ctrl_t *);
-extern void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t);
-extern void ysf_mem_free(struct ysf_mem_ctrl_t*, void*);
-extern bool ysf_mem_is_in(struct ysf_mem_ctrl_t*, void*);
+#define RegistrarionEvent(event)    event,
+                                    
+/* YSF config ----------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       YSF COMPONENT CONFIG
+ * @note        1             enable
+ * @note        0             disable
+ *******************************************************************************
+ */
+#define USE_STD_LIBRARY                                                      (0)
+#define USE_YSF_BUFFER_COMPONENT                                             (1)
+#define USE_YSF_DEBUG_COMPONENT                                              (1)
+#define USE_YSF_EVENT_COMPONENT                                              (0)
+#define USE_YSF_SINGLE_LIST_COMPONENT                                        (1)
+#define USE_YSF_MEMORY_MANAGEMENT_COMPONENT                                  (1)
+#define USE_YSF_SIGNAL_SCAN_COMPONENT                                        (1)
+#define USE_YSF_TICK_COMPONENT                                               (1)
+#define USE_YSF_TIMER_COMPONENT                                              (1)
+#define USE_YSF_TASK_COMPONENT                                               (1)
+#define USE_YSF_PROTOTHREADS_COMPONENT                                       (1)
+                                                                        
+/**
+ *******************************************************************************
+ * @brief      EVENTS DEFINE
+ *******************************************************************************
+ */
+_YSF_DEFINE_EVENT_START
+_YSF_DEFINE_EVENT_END	
+
+/**
+ *******************************************************************************
+ * @brief       YSF VERSION CONFIG
+ *******************************************************************************
+ */
+#define YSF_VERSION "YSF_DEBUG_0.0.2_201704052135"
+
+/**
+ *******************************************************************************
+ * @brief       CHOOSE YOUR CHIP SERIES
+ *******************************************************************************
+ */
+#define USE_MCU_STM32F1xx (1)
+#define USE_MCU_STM8S     (2)
+
+#define __TARGET_CHIP__   USE_MCU_STM32F1xx
+        
+/**
+ *******************************************************************************
+ * @brief      DEFINE CHIP NEED TO MACRO
+ *******************************************************************************
+ */
+/* STM32F1xx config ----------------------------------------------------------*/
+#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU CLOCK SPEED
+ *******************************************************************************
+ */
+#define MCU_CLOCK_FREQ ((uint32_t)72000000) 
+#define MCU_HSE_FREQ   ((uint32_t)8000000)  
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU RAM SIZE
+ *******************************************************************************
+ */
+#define MCU_SRAM_SIZE         64
+#define MCU_SRAM_END_ADDR     ((uint32_t)((uint32_t)0x20000000 + MCU_SRAM_SIZE * 1024))
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU CLOCK MODEL
+ *******************************************************************************
+ */
+#define STM32F103xE
+/* STM8S config --------------------------------------------------------------*/
+#elif __TARGET_CHIP__ == USE_MCU_STM8S
+    #define STM8S003
+#else
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -187,6 +161,6 @@ extern bool ysf_mem_is_in(struct ysf_mem_ctrl_t*, void*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf buffer component  */
+/** @}*/     /** ysf config  */
 
 /**********************************END OF FILE*********************************/

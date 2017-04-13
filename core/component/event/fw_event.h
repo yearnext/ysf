@@ -46,9 +46,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
+#include "core_conf.h"
+#include "core_path.h"
+#include _COMM_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -81,9 +81,9 @@ extern "C"
 #if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
 struct YSF_EVENT_API
 {
-    ysf_err_t (*init)(void);
-    ysf_err_t (*post)(uint16_t);
-    ysf_err_t (*read)(uint16_t*);
+    fw_err_t (*init)(void);
+    fw_err_t (*post)(uint16_t);
+    fw_err_t (*read)(uint16_t*);
 };
 #endif
 
@@ -95,9 +95,9 @@ struct YSF_EVENT_API
  *******************************************************************************
  */
 #if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
-extern ysf_err_t ysf_event_init( void );
-extern ysf_err_t ysf_event_post( uint16_t );
-extern ysf_err_t ysf_event_read( uint16_t* );
+extern fw_err_t ysf_event_init( void );
+extern fw_err_t ysf_event_post( uint16_t );
+extern fw_err_t ysf_event_read( uint16_t* );
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

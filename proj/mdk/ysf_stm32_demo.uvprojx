@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\app;..\..\framework</IncludePath>
+              <IncludePath>..\..\app;..\..\core;..\..\hal;..\..\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,59 +381,54 @@
           <GroupName>ysf/framework</GroupName>
           <Files>
             <File>
-              <FileName>ysf.c</FileName>
+              <FileName>fw_buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\ysf.c</FilePath>
+              <FilePath>..\..\core\component\buffer\fw_buffer.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_buffer.c</FileName>
+              <FileName>fw_debug.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\buffer\ysf_buffer.c</FilePath>
+              <FilePath>..\..\core\component\debug\fw_debug.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_debug.c</FileName>
+              <FileName>fw_event.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\debug\ysf_debug.c</FilePath>
+              <FilePath>..\..\core\component\event\fw_event.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_event.c</FileName>
+              <FileName>fw_list.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\event\ysf_event.c</FilePath>
+              <FilePath>..\..\core\component\list\fw_list.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_single_list.c</FileName>
+              <FileName>fw_memory.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\list\ysf_single_list.c</FilePath>
+              <FilePath>..\..\core\component\memory\fw_memory.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_memory.c</FileName>
+              <FileName>fw_pt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\memory\ysf_memory.c</FilePath>
+              <FilePath>..\..\core\component\pt\fw_pt.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_signal.c</FileName>
+              <FileName>fw_signal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\signal\ysf_signal.c</FilePath>
+              <FilePath>..\..\core\component\signal\fw_signal.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_tick.c</FileName>
+              <FileName>fw_task.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\tick\ysf_tick.c</FilePath>
+              <FilePath>..\..\core\component\task\fw_task.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_timer.c</FileName>
+              <FileName>fw_tick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\timer\ysf_timer.c</FilePath>
+              <FilePath>..\..\core\component\tick\fw_tick.c</FilePath>
             </File>
             <File>
-              <FileName>ysf_task.c</FileName>
+              <FileName>fw_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\component\task\ysf_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>ysf_pt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\component\pt\ysf_pt.c</FilePath>
+              <FilePath>..\..\core\component\timer\fw_timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -443,12 +438,12 @@
             <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\hal\stm32f1xx\startup\system_stm32f1xx.c</FilePath>
+              <FilePath>..\..\hal\stm32f1xx\device\system_stm32f1xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f103xe.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\framework\hal\stm32f1xx\startup\arm\startup_stm32f103xe.s</FilePath>
+              <FilePath>..\..\hal\stm32f1xx\device\arm\startup_stm32f103xe.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -458,17 +453,17 @@
             <File>
               <FileName>hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\hal\stm32f1xx\hal.c</FilePath>
+              <FilePath>..\..\hal\hal.c</FilePath>
             </File>
             <File>
               <FileName>hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\hal\stm32f1xx\hal_gpio.c</FilePath>
+              <FilePath>..\..\hal\stm32f1xx\hal_gpio.c</FilePath>
             </File>
             <File>
               <FileName>hal_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\framework\hal\stm32f1xx\hal_timer.c</FilePath>
+              <FilePath>..\..\hal\stm32f1xx\hal_timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -476,9 +471,9 @@
           <GroupName>app</GroupName>
           <Files>
             <File>
-              <FileName>key_control.c</FileName>
+              <FileName>demo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\app\key_control.c</FilePath>
+              <FilePath>..\..\demo\demo.c</FilePath>
             </File>
           </Files>
         </Group>

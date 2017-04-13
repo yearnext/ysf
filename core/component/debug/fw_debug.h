@@ -46,9 +46,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
+#include "core_conf.h"
+#include "core_path.h"
+#include _COMM_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -95,7 +95,7 @@ extern "C"
 #if USE_YSF_DEBUG_API
 struct YSF_DEBUG_API
 {
-    ysf_err_t (*init)(void);
+    fw_err_t (*init)(void);
     void (*assert_failed)(uint8_t*, uint32_t);
 };
 #endif
@@ -108,7 +108,7 @@ struct YSF_DEBUG_API
  *******************************************************************************
  */ 
 #if USE_YSF_DEBUG_API
-extern ysf_err_t ysf_debug_init(void);
+extern fw_err_t ysf_debug_init(void);
 extern void ysf_assert_failed(uint8_t*, uint32_t);
 #endif        
 

@@ -37,9 +37,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_COMPONENT_DEBUG_PATH
-#include YSF_TYPE_PATH
+#include "core_path.h"
+#include _COMM_TYPE_PATH
+#include _FW_DEBUG_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -54,13 +54,13 @@
  *******************************************************************************
  * @brief       ysf debug component initialization
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE    without exception
+ * @return      [in/out]  FW_ERR_NONE    without exception
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_debug_init( void )
+fw_err_t ysf_debug_init( void )
 {
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -74,9 +74,9 @@ ysf_err_t ysf_debug_init( void )
  */
 void ysf_assert_failed(uint8_t* file, uint32_t line)
 {
-    YSF_ENTER_CRITICAL();
+    ENTER_CRITICAL();
     while(1);
-//    YSF_EXIT_CRITICAL();
+//    EXIT_CRITICAL();
 }
 #endif
 

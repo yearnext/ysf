@@ -47,8 +47,13 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "path.h"
-	
+#include "comm_path.h"
+
+/**
+ *******************************************************************************
+ * @brief      compiler config
+ *******************************************************************************
+ */
 #if defined(__CC_ARM)
 #include _ARMCC5_COMPILER_PATH
 #elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)

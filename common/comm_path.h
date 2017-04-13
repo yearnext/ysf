@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       path.h                                                          *
+ * @file       comm_path.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-07                                                      *
- * @brief       path head files                                                *
+ * @brief      common path head files                                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup path
+ * @defgroup common path
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_PATH_H__
-#define __FRAMEWORK_PATH_H__
+#ifndef __COMMON_PATH_H__
+#define __COMMON_PATH_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -51,42 +51,34 @@ extern "C"
  * @brief      common component path
  *******************************************************************************
  */
-#define _COMMTOOLS_PATH                       "../common/tools.h"	
-#define _TYPE_PATH         		              "../common/type.h"
+#ifndef _COMM_TOOLS_PATH
+#define _COMM_TOOLS_PATH                      "../common/comm_tools.h"	
+#endif
+    
+#ifndef _COMM_TYPE_PATH
+#define _COMM_TYPE_PATH         		      "../common/comm_type.h"
+#endif
 
 /**
  *******************************************************************************
  * @brief      compiler path
  *******************************************************************************
  */	
+#ifndef _COMPILER_PATH
 #define _COMPILER_PATH                        "../common/compiler/compiler.h"
+#endif
+
+#ifndef _ARMCC5_COMPILER_PATH
 #define _ARMCC5_COMPILER_PATH                 "../common/compiler/armcc5/compiler_armcc5.h"
+#endif
+
+#ifndef _ARMCC6_COMPILER_PATH
 #define _ARMCC6_COMPILER_PATH                 "../common/compiler/armcc6/compiler_armcc6.h"
+#endif
+
+#ifndef _ICCARM_COMPILER_PATH
 #define _ICCARM_COMPILER_PATH                 "../common/compiler/iccarm/compiler_iar_arm.h"
-
-/**
- *******************************************************************************
- * @brief      hal path
- *******************************************************************************
- */	
-#define _HAL_DIR_PATH                         "../hal/path.h"
-#define _HAL_PATH                             "../hal/hal.h"
-
-/**
- *******************************************************************************
- * @brief      framework component path
- *******************************************************************************
- */
-#define _FW_TICK_COMPONENT_PATH               "../framework/component/tick/ysf_tick.h"
-#define _FW_BUFFER_COMPONENT_PATH             "../framework/component/buffer/ysf_buffer.h"
-#define _FW_MEMORY_COMPONENT_PATH             "../framework/component/memory/FW_memory.h"
-#define _FW_TIMER_COMPONENT_PATH              "../framework/component/timer/ysf_timer.h"
-#define _FW_EVENT_COMPONENT_PATH              "../framework/component/event/ysf_event.h"
-#define _FW_SIGNAL_COMPONENT_PATH             "../framework/component/signal/ysf_signal.h"
-#define _FW_DEBUG_COMPONENT_PATH              "../framework/component/debug/ysf_debug.h"
-#define _FW_LIST_COMPONENT_PATH               "../framework/component/list/ysf_list.h"
-#define _FW_PT_COMPONENT_PATH                 "../framework/component/pt/ysf_pt.h"
-#define _FW_TASK_COMPONENT_PATH               "../framework/component/task/ysf_task.h"
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -95,6 +87,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** path  */
+/** @}*/     /** common path  */
 
 /**********************************END OF FILE*********************************/

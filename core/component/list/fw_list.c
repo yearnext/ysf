@@ -37,10 +37,10 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_COMPONENT_SINGLE_LIST_PATH
-#include YSF_TYPE_PATH
-#include YSF_COMPONENT_DEBUG_PATH
+#include "core_path.h"
+#include _COMM_TYPE_PATH
+#include _FW_LIST_COMPONENT_PATH
+#include _FW_DEBUG_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -53,17 +53,17 @@
  *******************************************************************************
  * @brief       single list init
  * @param       [in/out]  **listHead    single list node head
- * @return      [in/out]  YSF_ERR_NONE  init success
+ * @return      [in/out]  FW_ERR_NONE  init success
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_slist_init( void **listHead )
+fw_err_t ysf_slist_init( void **listHead )
 {
     ysf_assert(IS_PTR_NULL(listHead));
 
     *listHead = NULL;
 
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -255,22 +255,22 @@ bool ysf_slist_module_findLastNode( void **node, void **ctx, void **expand )
  * @brief       add node to signle list
  * @param       [in/out]  **listHead    now single list node
  * @param       [in/out]  **ctx         wait add node
- * @return      [in/out]  YSF_ERR_FAIL  add node failed
- * @return      [in/out]  YSF_ERR_NONE  add node success
+ * @return      [in/out]  FW_ERR_FAIL  add node failed
+ * @return      [in/out]  FW_ERR_NONE  add node success
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_slist_add( void **listHead, void **ctx )
+fw_err_t ysf_slist_add( void **listHead, void **ctx )
 {
     ysf_assert(IS_PTR_NULL(listHead));
     ysf_assert(IS_PTR_NULL(*ctx));
 
     if( ysf_slist_walk(listHead, ysf_slist_module_add, ctx, NULL) == false )
     {
-        return YSF_ERR_FAIL;
+        return FW_ERR_FAIL;
     }
 
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -278,22 +278,22 @@ ysf_err_t ysf_slist_add( void **listHead, void **ctx )
  * @brief       detele node to signle list
  * @param       [in/out]  **listHead    now single list node
  * @param       [in/out]  **ctx         wait detele node
- * @return      [in/out]  YSF_ERR_FAIL  detele node failed
- * @return      [in/out]  YSF_ERR_NONE  detele node success
+ * @return      [in/out]  FW_ERR_FAIL  detele node failed
+ * @return      [in/out]  FW_ERR_NONE  detele node success
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_slist_del( void **listHead, void **ctx )
+fw_err_t ysf_slist_del( void **listHead, void **ctx )
 {
     ysf_assert(IS_PTR_NULL(listHead));
     ysf_assert(IS_PTR_NULL(*ctx));
 
     if( ysf_slist_walk(listHead, ysf_slist_module_del, ctx, NULL) == false )
     {
-        return YSF_ERR_FAIL;
+        return FW_ERR_FAIL;
     }
 
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -301,27 +301,27 @@ ysf_err_t ysf_slist_del( void **listHead, void **ctx )
  * @brief       detection node is in signle list
  * @param       [in/out]  **listHead    now single list node
  * @param       [in/out]  **ctx         wait detection node
- * @return      [in/out]  YSF_ERR_FAIL  node not in list
- * @return      [in/out]  YSF_ERR_NONE  node is in list
+ * @return      [in/out]  FW_ERR_FAIL  node not in list
+ * @return      [in/out]  FW_ERR_NONE  node is in list
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_slist_isExist( void **listHead, void **ctx )
+fw_err_t ysf_slist_isExist( void **listHead, void **ctx )
 {
     ysf_assert(IS_PTR_NULL(listHead));
     ysf_assert(IS_PTR_NULL(*ctx));
 
     if( ysf_slist_walk(listHead, ysf_slist_module_isExist, ctx, NULL) == false )
     {
-        return YSF_ERR_FAIL;
+        return FW_ERR_FAIL;
     }
 
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 #endif
 
 // 遍历函数
-ysf_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t **sListFifo, sListFunc func, void **param, void **expand)
+fw_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t **sListFifo, sListFunc func, void **param, void **expand)
 {
     ysf_assert(IS_PTR_NULL(sListFifo));
     ysf_assert(IS_PTR_NULL(func));
@@ -336,7 +336,7 @@ ysf_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t **sListFifo, sListFunc func,
         temp = (struct ysf_sList_t **)(&((struct ysf_sList_t *)(*temp))->next);
     }
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 // 检测是否存在于链表中
@@ -366,7 +366,7 @@ bool ysf_sListFifo_isIn(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *f
 }
 
 // 入栈
-ysf_err_t ysf_sListFifo_push(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *wrData)
+fw_err_t ysf_sListFifo_push(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *wrData)
 {
     ysf_assert(IS_PTR_NULL(sListFifo));
     ysf_assert(IS_PTR_NULL(wrData));
@@ -399,14 +399,14 @@ ysf_err_t ysf_sListFifo_push(struct ysf_sListFifo_t *sListFifo, struct ysf_sList
     }
     else
     {
-        return YSF_ERR_INVAILD_PARAM;
+        return FW_ERR_INVAILD_PARAM;
     }
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 // 出栈
-ysf_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *rdData)
+fw_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *rdData)
 {
     ysf_assert(IS_PTR_NULL(sListFifo));
     ysf_assert(IS_PTR_NULL(rdData));
@@ -432,11 +432,11 @@ ysf_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_
 
     rdData->next        = NULL;
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 // 清空链表fifo
-ysf_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *sListFifo)
+fw_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *sListFifo)
 {
     ysf_assert(IS_PTR_NULL(sListFifo));
     
@@ -447,17 +447,17 @@ ysf_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *sListFifo)
         ysf_sListFifo_pop(sListFifo, status);
     }while(status != NULL);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 // 链表fifo初始化
-ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t *sListFifo)
+fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t *sListFifo)
 {
     ysf_assert(IS_PTR_NULL(sListFifo));
 
     ysf_sListFifo_clear(sListFifo);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /** @}*/     /** ysf single list component  */

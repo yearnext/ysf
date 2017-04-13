@@ -16,7 +16,7 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_event.c                                                     *
+ * @file       fw_event.c                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
@@ -32,19 +32,20 @@
  */
  
 /**
- * @defgroup ysf event component
+ * @defgroup event component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_COMMTOOLS_PATH
-#include YSF_COMPONENT_EVENT_PATH
-#include YSF_TYPE_PATH
-#include YSF_COMPONENT_BUFFER_PATH
-#include YSF_COMPONENT_SINGLE_LIST_PATH
-#include YSF_COMPONENT_MEMORY_PATH
-#include YSF_COMPONENT_DEBUG_PATH
+#include "core_path.h"
+#include _COMPILER_PATH
+#include _COMM_TYPE_PATH
+#include _COMM_TOOLS_PATH
+#include _FW_EVENT_COMPONENT_PATH
+#include _FW_BUFFER_COMPONENT_PATH
+#include _FW_LIST_COMPONENT_PATH
+#include _FW_MEMORY_COMPONENT_PATH
+#include _FW_DEBUG_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -74,48 +75,48 @@ static struct  ysf_rb_t evt_queue;
  *******************************************************************************
  * @brief       ysf event component init
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE       init finish
- * @return      [in/out]  YSF_ERR_FAIL       init failed
+ * @return      [in/out]  FW_ERR_NONE       init finish
+ * @return      [in/out]  FW_ERR_FAIL       init failed
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_init( void )
+fw_err_t ysf_event_init( void )
 {
     ysf_rbInit(&evt_queue, (uint8_t *)buffer, YSF_EVENT_SIZE_CAL(buffer));
     
-	return YSF_ERR_NONE;
+	return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       ysf write event to event queue
  * @param       [in/out]  event             write events
- * @return      [in/out]  YSF_ERR_NONE      write success
- * @return      [in/out]  YSF_ERR_FAIL      write failed
+ * @return      [in/out]  FW_ERR_NONE      write success
+ * @return      [in/out]  FW_ERR_FAIL      write failed
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_post( uint16_t event )
+fw_err_t ysf_event_post( uint16_t event )
 {
     ysf_rbWrite( &evt_queue, (uint8_t *)&event, YSF_EVENT_SIZE_CAL(int16_t) );
     
-	return YSF_ERR_NONE;
+	return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       read events from event queue
  * @param       [in/out]  *event            read events
- * @return      [in/out]  YSF_ERR_NONE      read success
- * @return      [in/out]  YSF_ERR_FAIL      read failed
+ * @return      [in/out]  FW_ERR_NONE      read success
+ * @return      [in/out]  FW_ERR_FAIL      read failed
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_event_read( uint16_t *event )
+fw_err_t ysf_event_read( uint16_t *event )
 {
     ysf_rbRead( &evt_queue, (uint8_t *)event, YSF_EVENT_SIZE_CAL(int16_t) );
 	
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 #endif

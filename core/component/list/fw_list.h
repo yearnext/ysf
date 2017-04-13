@@ -46,9 +46,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
+#include "core_conf.h"
+#include "core_path.h"
+#include _COMM_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -110,10 +110,10 @@ typedef bool (*sListFunc)(void **, void **, void **);
 #if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
 struct YSF_SLIST_API
 {
-    ysf_err_t (*init)(void**);
-    ysf_err_t (*add)(void**, void **);
-    ysf_err_t (*del)(void**, void **);
-    ysf_err_t (*isExist)(void**, void **);
+    fw_err_t (*init)(void**);
+    fw_err_t (*add)(void**, void **);
+    fw_err_t (*del)(void**, void **);
+    fw_err_t (*isExist)(void**, void **);
 };
 #endif
 
@@ -131,17 +131,17 @@ extern bool ysf_slist_module_del(void**, void**, void**);
 extern bool ysf_slist_module_isExist(void**, void**, void**);
 extern bool ysf_slist_module_findLastNode(void **, void**, void**);
 
-extern ysf_err_t ysf_slist_init(void**);
-extern ysf_err_t ysf_slist_add(void**, void**);
-extern ysf_err_t ysf_slist_del(void**, void**);
-extern ysf_err_t ysf_slist_isExist(void**, void**);
+extern fw_err_t ysf_slist_init(void**);
+extern fw_err_t ysf_slist_add(void**, void**);
+extern fw_err_t ysf_slist_del(void**, void**);
+extern fw_err_t ysf_slist_isExist(void**, void**);
 
-extern ysf_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t**, sListFunc, void**, void**);
+extern fw_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t**, sListFunc, void**, void**);
 extern bool ysf_sListFifo_isIn(struct ysf_sListFifo_t*, struct ysf_sList_t*);
-extern ysf_err_t ysf_sListFifo_push(struct ysf_sListFifo_t*, struct ysf_sList_t*);
-extern ysf_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t*, struct ysf_sList_t*);
-extern ysf_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *);
-extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
+extern fw_err_t ysf_sListFifo_push(struct ysf_sListFifo_t*, struct ysf_sList_t*);
+extern fw_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t*, struct ysf_sList_t*);
+extern fw_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *);
+extern fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
 
 #define DEFINE_SLIST_FIFO_CONTROL_BLOCK(type, name) struct                     \
                                                     {                          \
@@ -187,7 +187,7 @@ extern ysf_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     }                                                                          \
     else                                                                       \
     {                                                                          \
-        return YSF_ERR_INVAILD_PARAM;                                          \
+        return FW_ERR_INVAILD_PARAM;                                           \
     }                                                                          \
 }
 

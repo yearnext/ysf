@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_conf.h                                                      *
+ * @file       core_path.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-02-18                                                      *
- * @brief      ysf hal conf head files                                         *
+ * @date       2017-03-07                                                      *
+ * @brief      core path head files                                            *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup ysf hal config
+ * @defgroup core path
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HAL_CONF_H__
-#define __HAL_CONF_H__
+#ifndef __FRAMEWORK_PATH_H__
+#define __FRAMEWORK_PATH_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,77 +46,24 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
+#include "comm_path.h"
     
+/* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief     CHIP CHECK
- *******************************************************************************
- */    
-#ifndef __TARGET_CHIP__
-    #define __TARGET_CHIP__ 
-#endif
-  
-/**
- *******************************************************************************
- * @brief      INCLUDE HAL COMPONENT
- *******************************************************************************
- */    
-#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-    #define HAL_PATH "../framework/hal/stm32f1xx/hal.h"
-#else
-    #error "TARGET CHIP IS NOT CONFIG, PLEASE CONFIG IT!"
-#endif
-    
-/**
- *******************************************************************************
- * @brief      INCLUDE YSF DEBUG COMPONENT
+ * @brief      framework component path
  *******************************************************************************
  */
-#if defined(USE_YSF_DEBUG_COMPONENT) && USE_YSF_DEBUG_COMPONENT
-    #include "ysf_path.h"
-    #include YSF_COMPONENT_DEBUG_PATH
-#endif
-
-/* Private define ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      DEFINE HAL COMPONENT CONFIG SWITCH
- *******************************************************************************
- */
-#define USE_HAL_GPIO_COMPONENT                                               (1)
-#define USE_HAL_TIMER_COMPONENT                                              (1)
-#define USE_HAL_UART_COMPONENT                                               (1)
-
-/**
- *******************************************************************************
- * @brief      DEFINE HAL ASSERT
- *******************************************************************************
- */
-#if defined(USE_YSF_DEBUG_COMPONENT) && USE_YSF_DEBUG_COMPONENT
-#define hal_assert(expr) ysf_assert(expr)
-#else
-#define hal_assert(expr) 
-#endif
-
-#ifndef IS_PTR_NULL
-#define IS_PTR_NULL(ptr) ((ptr) == NULL)
-#endif
- 
-/* Exported types ------------------------------------------------------------*/    
-/**
- *******************************************************************************
- * @brief      DEFINE HAL ERROR TYPE
- *******************************************************************************
- */
-typedef enum
-{
-    HAL_ERR_NONE,
-    HAL_ERR_FAIL,
-
-    HAL_ERR_INVAILD_PTR,
-    HAL_ERR_INVAILD_PARAM,
-}hal_err_t;
+#define _FW_TICK_COMPONENT_PATH               "../core/component/tick/fw_tick.h"
+#define _FW_BUFFER_COMPONENT_PATH             "../core/component/buffer/fw_buffer.h"
+#define _FW_MEMORY_COMPONENT_PATH             "../core/component/memory/fw_memory.h"
+#define _FW_TIMER_COMPONENT_PATH              "../core/component/timer/fw_timer.h"
+#define _FW_EVENT_COMPONENT_PATH              "../core/component/event/fw_event.h"
+#define _FW_SIGNAL_COMPONENT_PATH             "../core/component/signal/fw_signal.h"
+#define _FW_DEBUG_COMPONENT_PATH              "../core/component/debug/fw_debug.h"
+#define _FW_LIST_COMPONENT_PATH               "../core/component/list/fw_list.h"
+#define _FW_PT_COMPONENT_PATH                 "../core/component/pt/fw_pt.h"
+#define _FW_TASK_COMPONENT_PATH               "../core/component/task/fw_task.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -125,6 +72,6 @@ typedef enum
 	
 #endif       /** end include define */
 
-/** @}*/     /** hal config  */
+/** @}*/     /** core path  */
 
 /**********************************END OF FILE*********************************/

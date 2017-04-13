@@ -21,10 +21,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
+#include "hal_path.h"
 #include "hal_conf.h"
-#include HAL_PATH
-#include YSF_COMPILER_PATH
+#include _COMPILER_PATH
 
 /* Private define ------------------------------------------------------------*/
 /**

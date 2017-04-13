@@ -37,14 +37,14 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
-#include YSF_COMPONENT_SIGNAL_PATH
-#include YSF_COMPONENT_TIMER_PATH
-#include YSF_COMPONENT_MEMORY_PATH
-#include YSF_COMPONENT_DEBUG_PATH
-#include YSF_COMPONENT_EVENT_PATH
-#include YSF_COMPONENT_SINGLE_LIST_PATH
+#include "core_path.h"
+#include _COMM_TYPE_PATH
+#include _FW_SIGNAL_COMPONENT_PATH
+#include _FW_TIMER_COMPONENT_PATH
+#include _FW_MEMORY_COMPONENT_PATH
+#include _FW_DEBUG_COMPONENT_PATH
+#include _FW_EVENT_COMPONENT_PATH
+#include _FW_LIST_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -83,7 +83,7 @@ static struct ysf_timer_t signal_timer;
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
+__STATIC_INLINE
 bool ysf_signal_isIn(struct ysf_signal_t *signal)
 {
     ysf_sListFIFO_isIn(struct ysf_signal_t, scb, signal);
@@ -95,16 +95,16 @@ bool ysf_signal_isIn(struct ysf_signal_t *signal)
  *******************************************************************************
  * @brief       pop timer to queue
  * @param       [in/out]  timer                will timer task
- * @return      [in/out]  YSF_ERR_NONE         no error
+ * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_err_t ysf_signal_push(struct ysf_signal_t *signal)
+__STATIC_INLINE
+fw_err_t ysf_signal_push(struct ysf_signal_t *signal)
 {
     ysf_sListFIFO_push(ysf_signal_isIn, scb, signal);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -115,7 +115,7 @@ ysf_err_t ysf_signal_push(struct ysf_signal_t *signal)
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
+__STATIC_INLINE
 struct ysf_signal_t *ysf_signal_pop(void)
 {
     struct ysf_signal_t *signal = NULL;
@@ -129,32 +129,32 @@ struct ysf_signal_t *ysf_signal_pop(void)
  *******************************************************************************
  * @brief       timer queue clear
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE         no error
+ * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_err_t ysf_signal_clear(void)
+__STATIC_INLINE
+fw_err_t ysf_signal_clear(void)
 {    
     while(ysf_signal_pop() != NULL);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       timer queue clear
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE         no error
+ * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
-YSF_STATIC_INLINE
-ysf_err_t signalTriggerHandler(struct ysf_signal_t *signal, uint16_t evt)
+__STATIC_INLINE
+fw_err_t signalTriggerHandler(struct ysf_signal_t *signal, uint16_t evt)
 {
 //    if( IS_PTR_NULL(signal) )
 //    {
-//        return YSF_ERR_FAIL;
+//        return FW_ERR_FAIL;
 //    }
 
 //    switch(signal->type)
@@ -168,25 +168,25 @@ ysf_err_t signalTriggerHandler(struct ysf_signal_t *signal, uint16_t evt)
     
     ysf_evtTask_create(&signal->task, signal->task.handler.evt, evt);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       ysf timer component init
  * @param       [in/out]  void
- * @return      [in/out]  YSF_ERR_NONE       init finish
+ * @return      [in/out]  FW_ERR_NONE       init finish
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_signal_init( void )
+fw_err_t ysf_signal_init( void )
 {
     ysf_signal_clear();
     
     ysf_evtTimer_init(&signal_timer, ysf_signal_handler, YSF_EVENT_NONE);
     ysf_timer_arm(&signal_timer, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_MODE);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -195,34 +195,34 @@ ysf_err_t ysf_signal_init( void )
  * @param       [in/out]  *signal            signal ex component
  * @param       [in/out]  *detect            signal detect function
  * @param       [in/out]  *handler           handler detect function
- * @return      [in/out]  YSF_ERR_NONE       arm success
- * @return      [in/out]  YSF_ERR_FAIL       arm failed
+ * @return      [in/out]  FW_ERR_NONE       arm success
+ * @return      [in/out]  FW_ERR_FAIL       arm failed
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_evtSignal_arm(struct ysf_signal_t *signal, 
+fw_err_t ysf_evtSignal_arm(struct ysf_signal_t *signal, 
                             enum ysf_signal_status_t (*detect)(void), 
-                            ysf_err_t (*handler)(uint16_t) )
+                            fw_err_t (*handler)(uint16_t) )
 {
     if( IS_PTR_NULL(signal) || IS_PTR_NULL(detect) )
     {
-        return YSF_ERR_FAIL;
+        return FW_ERR_FAIL;
     }
 
     signal->status             = SIGNAL_STATUS_RELEASE;
     signal->detect             = detect;
     signal->task.handler.evt   = handler;
     signal->type               = YSF_EVENT_HANDLER_SIGNAL;
-    signal->useStatus          = ysf_enable;
+    signal->useStatus          = true;
 //    signal->next          = NULL;
     
     ysf_signal_push(signal);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 struct ysf_signal_t *ysf_evtSimpSignal_arm(enum ysf_signal_status_t (*detect)(void), 
-                                           ysf_err_t (*handler)(uint16_t) )
+                                           fw_err_t (*handler)(uint16_t) )
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
     if( IS_PTR_NULL(detect) || IS_PTR_NULL(handler) )
@@ -236,7 +236,7 @@ struct ysf_signal_t *ysf_evtSimpSignal_arm(enum ysf_signal_status_t (*detect)(vo
     signal->detect             = detect;
     signal->task.handler.evt   = handler;
     signal->type               = YSF_EVENT_HANDLER_SIGNAL;
-    signal->useStatus          = ysf_enable;
+    signal->useStatus          = true;
 //    signal->next          = NULL;
     
     ysf_signal_push(signal);
@@ -251,16 +251,16 @@ struct ysf_signal_t *ysf_evtSimpSignal_arm(enum ysf_signal_status_t (*detect)(vo
  *******************************************************************************
  * @brief       signal component disarm
  * @param       [in/out]  *signal            signal component
- * @return      [in/out]  YSF_ERR_NONE       disarm success
- * @return      [in/out]  YSF_ERR_FAIL       disarm failed
+ * @return      [in/out]  FW_ERR_NONE       disarm success
+ * @return      [in/out]  FW_ERR_FAIL       disarm failed
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_signal_disarm(struct ysf_signal_t *signal)
+fw_err_t ysf_signal_disarm(struct ysf_signal_t *signal)
 {
-    signal->useStatus = ysf_disable;
+    signal->useStatus = false;
 
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 /**
@@ -271,7 +271,7 @@ ysf_err_t ysf_signal_disarm(struct ysf_signal_t *signal)
  * @note        None
  *******************************************************************************
  */
-YSF_STATIC_INLINE
+__STATIC_INLINE
 void ysf_signal_judge( struct ysf_signal_t *signal )
 {
     enum ysf_signal_status_t status;
@@ -433,7 +433,7 @@ static bool ysf_signal_pool( void **node, void **ctx, void **expand )
     
     ysf_signal_judge(signal);
     
-    if( signal->useStatus == ysf_disable )
+    if( signal->useStatus == false )
     {
         if( (void *)last == (void *)scb.head )
         {
@@ -462,17 +462,17 @@ static bool ysf_signal_pool( void **node, void **ctx, void **expand )
  *******************************************************************************
  * @brief       signal handler
  * @param       [in/out]  *param         none
- * @return      [in/out]  YSF_ERR_NONE   handler end
+ * @return      [in/out]  FW_ERR_NONE   handler end
  * @note        None
  *******************************************************************************
  */
-ysf_err_t ysf_signal_handler(uint16_t event)
+fw_err_t ysf_signal_handler(uint16_t event)
 {
     void *last = (void *)scb.head;
     
     ysf_slist_walk((void **)&scb.head, ysf_signal_pool, NULL, (void **)&last);
     
-    return YSF_ERR_NONE;
+    return FW_ERR_NONE;
 }
 
 #endif
