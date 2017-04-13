@@ -45,9 +45,7 @@ extern "C"
 {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-    
+/* Includes ------------------------------------------------------------------*/    
 /**
  *******************************************************************************
  * @brief     CHIP CHECK
@@ -62,11 +60,11 @@ extern "C"
  * @brief      INCLUDE HAL COMPONENT
  *******************************************************************************
  */    
-#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-    #define HAL_PATH "../framework/hal/stm32f1xx/hal.h"
-#else
-    #error "TARGET CHIP IS NOT CONFIG, PLEASE CONFIG IT!"
-#endif
+//#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
+//    #define HAL_PATH "../framework/hal/stm32f1xx/hal.h"
+//#else
+//    #error "TARGET CHIP IS NOT CONFIG, PLEASE CONFIG IT!"
+//#endif
     
 /**
  *******************************************************************************
