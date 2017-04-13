@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf.h                                                           *
+ * @file       hal_conf.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-18                                                      *
- * @brief      ysf head files                                                  *
+ * @brief      ysf hal conf head files                                         *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -30,14 +30,14 @@
  * 1.XXXXX                                                                     *
  *******************************************************************************
  */
- 
+
 /**
- * @defgroup ysf
+ * @defgroup ysf hal config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_H__
-#define __YSF_H__
+#ifndef __HAL_CONF_H__
+#define __HAL_CONF_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -45,96 +45,77 @@ extern "C"
 {
 #endif
 
-/* YSF_API config macro ------------------------------------------------------*/   
+/* Includes ------------------------------------------------------------------*/    
 /**
  *******************************************************************************
- * @brief      YSF API USE STATUS CONFIG
+ * @brief     CHIP CHECK
  *******************************************************************************
- */
-#define USE_YSF_API (1)  
-    
-/* Includes ------------------------------------------------------------------*/
-#include "ysf_conf.h"
-#include "hal_conf.h"
-#include "ysf_path.h"
-#include YSF_TYPE_PATH 
-#include HAL_PATH
+ */    
+#ifndef __TARGET_CHIP__
+    #define __TARGET_CHIP__ 
+#endif
   
 /**
  *******************************************************************************
- * @brief      INCLUDE YSF COMPONENTS
+ * @brief      INCLUDE HAL COMPONENT
+ *******************************************************************************
+ */    
+//#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
+//    #define HAL_PATH "../framework/hal/stm32f1xx/hal.h"
+//#else
+//    #error "TARGET CHIP IS NOT CONFIG, PLEASE CONFIG IT!"
+//#endif
+    
+/**
+ *******************************************************************************
+ * @brief      INCLUDE YSF DEBUG COMPONENT
  *******************************************************************************
  */
-#if USE_YSF_API
-#include YSF_COMPONENT_TICK_PATH
-#include YSF_COMPONENT_MEMORY_PATH
-#include YSF_COMPONENT_EVENT_PATH
-#include YSF_COMPONENT_TIMER_PATH
-#include YSF_COMPONENT_SIGNAL_PATH
-#include YSF_COMPONENT_DEBUG_PATH
-#include YSF_COMPONENT_PT_PATH
-#include YSF_COMPONENT_TASK_PATH
+#if defined(USE_YSF_DEBUG_COMPONENT) && USE_YSF_DEBUG_COMPONENT
+    #include "ysf_path.h"
+    #include YSF_COMPONENT_DEBUG_PATH
+#endif
+
+/* Private define ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      DEFINE HAL COMPONENT CONFIG SWITCH
+ *******************************************************************************
+ */
+#define USE_HAL_GPIO_COMPONENT                                               (1)
+#define USE_HAL_TIMER_COMPONENT                                              (1)
+#define USE_HAL_UART_COMPONENT                                               (1)
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE HAL ASSERT
+ *******************************************************************************
+ */
+#if defined(USE_YSF_DEBUG_COMPONENT) && USE_YSF_DEBUG_COMPONENT
+#define hal_assert(expr) ysf_assert(expr)
 #else
-#warning "YSF is not use YSF_API!"
+#define hal_assert(expr) 
 #endif
 
-/* Exported types ------------------------------------------------------------*/
+#ifndef IS_PTR_NULL
+#define IS_PTR_NULL(ptr) ((ptr) == NULL)
+#endif
+ 
+/* Exported types ------------------------------------------------------------*/    
 /**
  *******************************************************************************
- * @brief      define ysf api
+ * @brief      DEFINE HAL ERROR TYPE
  *******************************************************************************
  */
-#if defined(USE_YSF_API) && USE_YSF_API   
-struct YSF_API
+typedef enum
 {
-    void (*init)(ysf_err_t (*user_init)(void));
-    void (*start)(void);
-    char *ver;
-    
-#if defined(USE_YSF_TICK_API)   && USE_YSF_TICK_API
-    struct YSF_TICK_API tick;
-#endif
-        
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct YSF_MEMORY_API memory;
-#endif
-    
-#if defined(USE_YSF_EVENT_API)  && USE_YSF_EVENT_API
-    struct YSF_EVENT_API event;
-#endif
-    
-#if defined(USE_YSF_TIMER_API)  && USE_YSF_TIMER_API
-    struct YSF_TIMER_API timer;
-#endif
+    HAL_ERR_NONE,
+    HAL_ERR_FAIL,
 
-#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
-    struct YSF_SIGNAL_API signal;
-#endif
+    HAL_ERR_INVAILD_PTR,
+    HAL_ERR_INVAILD_PARAM,
+}hal_err_t;
 
-#if defined(USE_YSF_DEBUG_API)  && USE_YSF_DEBUG_API
-    struct YSF_DEBUG_API debug;
-#endif
-
-#if defined(USE_YSF_TASK_API)   && USE_YSF_TASK_API
-    struct YSF_TASK_API task;
-#endif
-
-#if defined(USE_YSF_PT_API)     && USE_YSF_PT_API
-    struct YSF_PT_API pt;
-#endif
-};
-#endif    
-
-/* Exported variables --------------------------------------------------------*/    
-/**
- *******************************************************************************
- * @brief      define ysf api
- *******************************************************************************
- */
-#if defined(USE_YSF_API) && USE_YSF_API
-extern const struct YSF_API ysf;
-#endif
-    
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
@@ -142,6 +123,6 @@ extern const struct YSF_API ysf;
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf */
+/** @}*/     /** hal config  */
 
 /**********************************END OF FILE*********************************/
