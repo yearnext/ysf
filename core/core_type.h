@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_debug.c                                                     *
+ * @file       core_path.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-01-10                                                      *
- * @brief      debug component source files                                    *
+ * @date       2017-03-07                                                      *
+ * @brief      core path head files                                            *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,54 +32,46 @@
  */
 
 /**
- * @defgroup ysf debug
+ * @defgroup core path
  * @{
  */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __FRAMEWORK_PATH_H__
+#define __FRAMEWORK_PATH_H__
 
-/* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _COMM_TYPE_PATH
-#include _FW_DEBUG_COMPONENT_PATH
-
-/* Private define ------------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Private typedef -----------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-#if USE_YSF_DEBUG_API
-/**
- *******************************************************************************
- * @brief       ysf debug component initialization
- * @param       [in/out]  void
- * @return      [in/out]  FW_ERR_NONE    without exception
- * @note        None
- *******************************************************************************
- */
-fw_err_t ysf_debug_init( void )
+/* Add c++ compatibility------------------------------------------------------*/
+#ifdef __cplusplus
+extern "C"
 {
-    return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       ysf assert failed handler
- * @param       [in/out]  *file           assertion failed file name
- * @param       [in/out]  line            assertion failed file line
- * @return      [in/out]  none
- * @note        None
- *******************************************************************************
- */
-void ysf_assert_failed(uint8_t* file, uint32_t line)
-{
-    ENTER_CRITICAL();
-    while(1);
-//    EXIT_CRITICAL();
-}
 #endif
 
-/** @}*/     /** ysf debug component */
+/* Includes ------------------------------------------------------------------*/
+#include "comm_path.h"
+    
+/* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      framework component path
+ *******************************************************************************
+ */
+#define _FW_TICK_COMPONENT_PATH               "../core/component/tick/fw_tick.h"
+#define _FW_BUFFER_COMPONENT_PATH             "../core/component/buffer/fw_buffer.h"
+#define _FW_MEMORY_COMPONENT_PATH             "../core/component/memory/fw_memory.h"
+#define _FW_TIMER_COMPONENT_PATH              "../core/component/timer/fw_timer.h"
+#define _FW_EVENT_COMPONENT_PATH              "../core/component/event/fw_event.h"
+#define _FW_SIGNAL_COMPONENT_PATH             "../core/component/signal/fw_signal.h"
+#define _FW_DEBUG_COMPONENT_PATH              "../core/component/debug/fw_debug.h"
+#define _FW_LIST_COMPONENT_PATH               "../core/component/list/fw_list.h"
+#define _FW_PT_COMPONENT_PATH                 "../core/component/pt/fw_pt.h"
+#define _FW_TASK_COMPONENT_PATH               "../core/component/task/fw_task.h"
+
+/* Add c++ compatibility------------------------------------------------------*/
+#ifdef __cplusplus
+}
+#endif
+	
+#endif       /** end include define */
+
+/** @}*/     /** core path  */
 
 /**********************************END OF FILE*********************************/
