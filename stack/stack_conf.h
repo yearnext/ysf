@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
- * @brief      ysf hal conf head files                                         *
+ * @brief      stack conf head files                                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -54,6 +54,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** hal config  */
+/** @}*/     /** stack config  */
 
 /**********************************END OF FILE*********************************/

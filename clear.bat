@@ -13,4 +13,7 @@ del *.out /s
 del *.axf /s
 del *.lnp /s
 del *.lst /s
+del *.sim /s
+del *.iex /s
+del *.pbd /s
 del *.browse /s

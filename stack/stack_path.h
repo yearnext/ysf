@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
- * @brief      hla path head files                                             *
+ * @brief      stack path head files                                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
 
 /**
- * @defgroup path
+ * @defgroup stack path
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -54,6 +54,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** path  */
+/** @}*/     /** stack path  */
 
 /**********************************END OF FILE*********************************/

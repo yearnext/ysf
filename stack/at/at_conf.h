@@ -54,6 +54,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** hal config  */
+/** @}*/     /** at stack config  */
 
 /**********************************END OF FILE*********************************/
