@@ -38,8 +38,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _COMPILER_PATH
-#include _COMM_TYPE_PATH
+#include _FW_PATH
+#include _FW_TYPE_PATH
 #include _FW_MEMORY_COMPONENT_PATH
 #include _FW_BUFFER_COMPONENT_PATH
 

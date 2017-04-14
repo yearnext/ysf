@@ -38,7 +38,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_PATH
+#include _FW_TYPE_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/

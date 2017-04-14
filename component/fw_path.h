@@ -49,6 +49,14 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
+ * @brief      framework common path
+ *******************************************************************************
+ */
+#define _FW_TYPE_PATH                        "../component/fw_type.h"
+#define _FW_CONF_PATH                        "../component/fw_conf.h"
+    
+/**
+ *******************************************************************************
  * @brief      framework component path
  *******************************************************************************
  */
@@ -59,7 +67,7 @@ extern "C"
 #define _FW_EVENT_COMPONENT_PATH              "../component/event/fw_event.h"
 #define _FW_SIGNAL_COMPONENT_PATH             "../component/signal/fw_signal.h"
 #define _FW_DEBUG_COMPONENT_PATH              "../component/debug/fw_debug.h"
-#define _FW_LIST_COMPONENT_PATH               "../component/list/fw_list.h"
+#define _FW_LINK_LIST_COMPONENT_PATH          "../component/linklist/fw_linklist.h"
 #define _FW_PT_COMPONENT_PATH                 "../component/pt/fw_pt.h"
 #define _FW_TASK_COMPONENT_PATH               "../component/task/fw_task.h"
 

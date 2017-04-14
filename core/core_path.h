@@ -45,7 +45,11 @@ extern "C"
 {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+/* Define path ---------------------------------------------------------------*/
+#define _COMM_PATH                            "../common/comm_path.h"
+#define _FW_PATH                              "../component/fw_path.h"
+#define _HAL_PATH                             "../hal/hal_path.h"
+
 /* Exported macro ------------------------------------------------------------*/
 
 /* Add c++ compatibility------------------------------------------------------*/

@@ -46,7 +46,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "comm_path.h"
+#include "core_path.h"
+#include _COMM_PATH
 #include _COMPILER_PATH
 
 /* Exported types ------------------------------------------------------------*/
@@ -55,31 +56,22 @@ extern "C"
  * @brief      define error type
  *******************************************************************************
  */
-enum
+typedef enum
 {
-    ERR_NONE,
-    ERR_FAIL,
+    _ERR_NONE,
+    _ERR_FAIL,
     
-    ERR_NOT_READY,
-    ERR_NOT_SUPPORT,
+    _ERR_NOT_READY,
+    _ERR_NOT_SUPPORT,
     
-    ERR_INVAILD_PTR,
-    ERR_INVAILD_PARAM,
+    _ERR_INVAILD_PTR,
+    _ERR_INVAILD_PARAM,
 
-    ERR_IO,
+    _ERR_IO,
     
-    ERR_BUG,
-    ERR_UNKNOW,
-};
-
-typedef int16_t _err_t;
-
-#define FW_ERR_NONE          (0)
-#define FW_ERR_FAIL          (1)
-#define FW_ERR_INVAILD_PARAM (2)
-#define FW_ERR_INVAILD_PTR   (3)
-
-typedef _err_t fw_err_t;
+    _ERR_BUG,
+    _ERR_UNKNOW,
+}_err_t;
 
 #define HAL_ERR_NONE (0)
 #define HAL_ERR_FAIL (1)

@@ -383,52 +383,52 @@
             <File>
               <FileName>fw_buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\buffer\fw_buffer.c</FilePath>
+              <FilePath>..\..\component\buffer\fw_buffer.c</FilePath>
             </File>
             <File>
               <FileName>fw_debug.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\debug\fw_debug.c</FilePath>
+              <FilePath>..\..\component\debug\fw_debug.c</FilePath>
             </File>
             <File>
               <FileName>fw_event.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\event\fw_event.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_list.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\core\component\list\fw_list.c</FilePath>
+              <FilePath>..\..\component\event\fw_event.c</FilePath>
             </File>
             <File>
               <FileName>fw_memory.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\memory\fw_memory.c</FilePath>
+              <FilePath>..\..\component\memory\fw_memory.c</FilePath>
             </File>
             <File>
               <FileName>fw_pt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\pt\fw_pt.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\core\component\signal\fw_signal.c</FilePath>
+              <FilePath>..\..\component\pt\fw_pt.c</FilePath>
             </File>
             <File>
               <FileName>fw_task.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\task\fw_task.c</FilePath>
+              <FilePath>..\..\component\task\fw_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\component\signal\fw_signal.c</FilePath>
             </File>
             <File>
               <FileName>fw_tick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\tick\fw_tick.c</FilePath>
+              <FilePath>..\..\component\tick\fw_tick.c</FilePath>
             </File>
             <File>
               <FileName>fw_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\timer\fw_timer.c</FilePath>
+              <FilePath>..\..\component\timer\fw_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_linklist.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\component\linklist\fw_linklist.c</FilePath>
             </File>
           </Files>
         </Group>

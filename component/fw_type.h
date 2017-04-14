@@ -45,9 +45,30 @@ extern "C"
 {
 #endif
 
-/* Includes ------------------------------------------------------------------*/    
+/* Includes ------------------------------------------------------------------*/
+#include "core_path.h"
+#include _COMM_PATH
+#include _COMM_TYPE_PATH
+    
 /* Exported macro ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define framework error type
+ *******************************************************************************
+ */
+#define FW_ERR_NONE                                      (_ERR_NONE)
+#define FW_ERR_FAIL                                      (_ERR_FAIL)
+#define FW_ERR_NOT_READY                                 (_ERR_NOT_READY)
+#define FW_ERR_NOT_SUPPORT                               (_ERR_NOT_SUPPORT)
+#define FW_ERR_INVAILD_PTR                               (_ERR_INVAILD_PTR)
+#define FW_ERR_INVAILD_PARAM                             (_ERR_INVAILD_PARAM)
+#define FW_ERR_IO                                        (_ERR_IO)
+#define FW_ERR_BUG                                       (_ERR_BUG)
+#define FW_ERR_UNKNOW                                    (_ERR_UNKNOW)
 
+typedef _err_t                                           fw_err_t;
+    
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

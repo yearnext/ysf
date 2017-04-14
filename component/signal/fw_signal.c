@@ -38,13 +38,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_PATH
+#include _FW_TYPE_PATH
 #include _FW_SIGNAL_COMPONENT_PATH
 #include _FW_TIMER_COMPONENT_PATH
 #include _FW_MEMORY_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 #include _FW_EVENT_COMPONENT_PATH
-#include _FW_LIST_COMPONENT_PATH
+#include _FW_LINK_LIST_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/

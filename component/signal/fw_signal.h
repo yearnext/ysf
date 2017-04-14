@@ -46,11 +46,12 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_PATH
+#include _FW_TYPE_PATH
+#include _FW_CONF_PATH
 #include _FW_EVENT_COMPONENT_PATH
-#include _FW_LIST_COMPONENT_PATH
+#include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/
