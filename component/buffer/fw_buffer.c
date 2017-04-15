@@ -259,7 +259,7 @@ fw_err_t fw_rb_read( struct fw_buffer_t *rb, uint8_t *buffer, uint16_t rbSize)
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_mem_init(struct fw_memcontrol_t *mem, uint8_t *buffer, uint32_t size)
+fw_err_t fw_heap_init(struct fw_memcontrol_t *mem, uint8_t *buffer, uint32_t size)
 {
 	if (mem == NULL || buffer == NULL || size > INT32_MAX ||size < sizeof(struct fw_memblock_t))
 	{
@@ -308,7 +308,7 @@ fw_err_t fw_mem_init(struct fw_memcontrol_t *mem, uint8_t *buffer, uint32_t size
  *******************************************************************************
  */
 __STATIC_INLINE
-uint32_t _mem_cal_block_size(uint32_t size, uint32_t alignment)
+uint32_t _heap_cal_block_size(uint32_t size, uint32_t alignment)
 {
 	uint32_t temp = size % alignment;
 	uint32_t value = size;
@@ -332,12 +332,12 @@ uint32_t _mem_cal_block_size(uint32_t size, uint32_t alignment)
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_mem_alloc(struct fw_memcontrol_t *mem, uint32_t size, void *ret_addr)
+fw_err_t fw_heap_alloc(struct fw_memcontrol_t *mem, uint32_t size, void *ret_addr)
 {
     struct fw_memblock_t *now     = mem->head;
     struct fw_memblock_t *next    = mem->head;
 	uint32_t freeSize             = 0;
-	uint32_t useSize              = _mem_cal_block_size(size, 4) + sizeof(struct fw_memblock_t);
+	uint32_t useSize              = _heap_cal_block_size(size, 4) + sizeof(struct fw_memblock_t);
 
     if(mem == NULL || size == 0)
     {
@@ -391,7 +391,7 @@ fw_err_t fw_mem_alloc(struct fw_memcontrol_t *mem, uint32_t size, void *ret_addr
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_mem_free(struct fw_memcontrol_t *mem, void *buffer)
+fw_err_t fw_heap_free(struct fw_memcontrol_t *mem, void *buffer)
 {
     struct fw_memblock_t *now       = mem->head;
     struct fw_memblock_t *last      = NULL;
@@ -476,7 +476,7 @@ fw_err_t fw_mem_free(struct fw_memcontrol_t *mem, void *buffer)
  * @note        None
  *******************************************************************************
  */
-bool fw_mem_isIn(struct fw_memcontrol_t *mem, void *buffer)
+bool fw_heap_isIn(struct fw_memcontrol_t *mem, void *buffer)
 {
     if(mem == NULL || buffer == NULL)
     {

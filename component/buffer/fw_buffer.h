@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_BUFFER_H__
-#define __FRAMEWORK_BUFFER_H__
+#ifndef __FRAMEWORK_BUFFER_COMPONENT_H__
+#define __FRAMEWORK_BUFFER_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -174,10 +174,10 @@ extern fw_err_t fw_rb_read(struct fw_buffer_t*, uint8_t*, uint16_t);
  *******************************************************************************
  */
 #if USE_FRAMEWORK_MEMORY_MANAGEMENT_API
-extern fw_err_t fw_mem_init(struct fw_memcontrol_t*, uint8_t*, uint32_t);
-extern fw_err_t fw_mem_alloc(struct fw_memcontrol_t*, uint32_t, void*);
-extern fw_err_t fw_mem_free(struct fw_memcontrol_t*, void*);
-extern bool     fw_mem_isIn(struct fw_memcontrol_t*, void*);
+extern fw_err_t fw_heap_init(struct fw_memcontrol_t*, uint8_t*, uint32_t);
+extern fw_err_t fw_heap_alloc(struct fw_memcontrol_t*, uint32_t, void*);
+extern fw_err_t fw_heap_free(struct fw_memcontrol_t*, void*);
+extern bool     fw_heap_isIn(struct fw_memcontrol_t*, void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

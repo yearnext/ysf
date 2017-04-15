@@ -66,6 +66,8 @@ extern "C"
 extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
 
 #define __HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
+    
+#define USE_COMPILER_HEAP_ADDR                                               (1)
 
 /**
  *******************************************************************************

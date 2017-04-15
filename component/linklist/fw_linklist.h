@@ -37,8 +37,8 @@
  */
  
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_LINK_LIST_H__
-#define __FRAMEWORK_LINK_LIST_H__
+#ifndef __FRAMEWORK_LINK_LIST_COMPONENT_H__
+#define __FRAMEWORK_LINK_LIST_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -112,7 +112,7 @@ struct fw_slinklist_fifo_t
  *******************************************************************************
  */
 #if USE_FRAMEWORK_SINGLE_LIST_API
-struct FRAMEWORK_SINGLE_LINK_LIST_API
+struct _SINGLE_LINK_LIST_API
 {
     fw_err_t (*Init)(void**);
     bool     (*Walk)(void**, bool (*)(void**, void**, void**), void**, void**);

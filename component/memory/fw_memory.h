@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_memory.h                                                    *
+ * @file       fw_memory.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-20                                                      *
- * @brief      ysf memory management head files                                *
+ * @brief      framework memory component head files                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup ysf_memory component
+ * @defgroup framework memory component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_MEMORY_H__
-#define __YSF_MEMORY_H__
+#ifndef __FRAMEWORK_MEMORY_COMPONENT_H__
+#define __FRAMEWORK_MEMORY_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,38 +46,35 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
+#include _FW_PATH
 #include _FW_BUFFER_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_MEMORY_MANAGEMENT_COMPONENT
-#if USE_YSF_MEMORY_MANAGEMENT_COMPONENT   
-#define USE_YSF_MEMORY_API  (1)
+#ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT
+#if USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT   
+#define USE_FRAMEWORK_MEMORY_API                                             (1)
 #else
-#define USE_YSF_MEMORY_API  (0)
+#define USE_FRAMEWORK_MEMORY_API                                             (0)
 #endif
-    
+
 /**
  *******************************************************************************
- * @brief        user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-#define USE_YSF_MEMORY_API  (1)
+#define USE_FRAMEWORK_MEMORY_API                                             (1)
 #endif
-    
-/**
- *******************************************************************************
- * @brief        config ysf memory pool size
- *******************************************************************************
- */
-#define YSF_USE_MEMORY_SIZE (4096)
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -85,13 +82,13 @@ extern "C"
  * @brief        ysf memory management api
  *******************************************************************************
  */
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-struct YSF_MEMORY_API
+#if USE_FRAMEWORK_MEMORY_API
+struct FRAMEWORK_MEMORY_API
 {
-    void (*init)(void);
-    void *(*malloc)(uint16_t);
-    void (*free)(void*);
-    bool (*is_in)(void *);
+    void  (*Init)(void);
+    void* (*Malloc)(uint16_t);
+    void  (*Free)(void*);
+    bool  (*IsIn)(void *);
 };
 #endif
 
@@ -102,11 +99,11 @@ struct YSF_MEMORY_API
  * @brief        memory management function interface
  *******************************************************************************
  */
-#if USE_YSF_MEMORY_API
-extern void ysf_memory_init( void );
-extern void *ysf_memory_malloc(uint16_t);
-extern void ysf_memory_free(void*);
-extern bool ysf_memory_is_in(void*);
+#if USE_FRAMEWORK_MEMORY_API
+extern void  fw_memory_init(void);
+extern void* fw_memory_malloc(uint32_t);
+extern void  fw_memory_free(void*);
+extern bool  fw_memory_isIn(void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -116,6 +113,6 @@ extern bool ysf_memory_is_in(void*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf memory component  */
+/** @}*/     /** framework memory component */
 
 /**********************************END OF FILE*********************************/

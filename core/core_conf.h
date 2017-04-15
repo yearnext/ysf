@@ -52,7 +52,7 @@ extern "C"
  * @brief       define version
  *******************************************************************************
  */
-#define _CORE_VERSION                   "CORE_ALPHA_0.0.1_2017040132135
+#define _CORE_VERSION                   "CORE_ALPHA_0.0.1_2017040132135"
 #define _HAL_VERSION                    "HAL_ALPHA_0.0.1_201704132135"
 #define _STACK_VERSION                  "STACK_ALPHA_0.0.1_201704132135"
 
@@ -103,7 +103,21 @@ extern "C"
 #define USE_FRAMEWORK_TIMER_COMPONENT                                        (1)
 #define USE_FRAMEWORK_TASK_COMPONENT                                         (1)
 #define USE_FRAMEWORK_PROTOTHREADS_COMPONENT                                 (1)
-                                                                        
+
+/**
+ *******************************************************************************
+ * @brief      define use memory pool size
+ *******************************************************************************
+ */
+#if !USE_STD_LIBRARY
+#define FRAMEWORK_MEMORY_POOL_SIZE                                        (4096)
+
+#if (FRAMEWORK_MEMORY_POOL_SIZE % 8)
+#error "This memory pool is not 8 byte alignment!"
+#endif
+
+#endif
+
 /**
  *******************************************************************************
  * @brief      define events
@@ -136,7 +150,63 @@ __DEFINE_EVENT_END
 #define USE_MCU_GPIO_COMPONENT                                               (1)
 #define USE_MCU_TIMER_COMPONENT                                              (1)
 #define USE_MCU_USART_COMPONENT                                              (1)
-	   
+
+/**
+ *******************************************************************************
+ * @brief      define constants must be defined
+ *******************************************************************************
+ */
+/* STM32F1xx config ----------------------------------------------------------*/
+#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
+	#define STM32F103xE
+	
+/**
+ *******************************************************************************
+ * @brief      define mcu clock freq
+ *******************************************************************************
+ */
+	#define MCU_CLOCK_FREQ                                          (72000000UL) 
+	#define MCU_HSE_FREQ                                             (8000000UL)  
+
+/**
+ *******************************************************************************
+ * @brief      define mcu sram constants
+ *******************************************************************************
+ */
+	#define MCU_SRAM_SIZE                                                   (64)
+	#define MCU_SRAM_HEAD_ADDR                                    (0x20000000UL)
+	#define MCU_SRAM_END_ADDR        (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
+	
+/* STM8S config --------------------------------------------------------------*/
+#elif __TARGET_CHIP__ == USE_MCU_STM8S
+    #define STM8S003
+	
+/**
+ *******************************************************************************
+ * @brief      define mcu clock freq
+ *******************************************************************************
+ */
+	#define MCU_CLOCK_FREQ                                          (16000000UL) 
+	#define MCU_HSE_FREQ                                             (8000000UL)  
+
+/**
+ *******************************************************************************
+ * @brief      define mcu sram constants
+ *******************************************************************************
+ */
+	#define MCU_SRAM_SIZE                                                    (1)
+	#define MCU_SRAM_HEAD_ADDR                                        (0x03FFUL)
+	#define MCU_SRAM_END_ADDR        (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
+
+/**
+ *******************************************************************************
+ * @brief      invaild define
+ *******************************************************************************
+ */
+#else
+	#error "The __TARGET_CHIP__ is not support type!"
+#endif
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

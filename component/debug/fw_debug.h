@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_DEBUG_H__
-#define __FRAMEWORK_DEBUG_H__
+#ifndef __FRAMEWORK_DEBUG_COMPONENT_H__
+#define __FRAMEWORK_DEBUG_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -93,7 +93,7 @@ extern "C"
  *******************************************************************************
  */ 
 #if USE_FRAMEWORK_DEBUG_API
-struct FRAMEWORK_DEBUG_API
+struct _DEBUG_API
 {
     fw_err_t (*Init)(void);
     void (*AssertFailed)(uint8_t*, uint32_t);

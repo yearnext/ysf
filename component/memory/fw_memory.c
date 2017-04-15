@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_memory.c                                                    *
+ * @file       fw_memory.c                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-20                                                      *
- * @brief      memory component source files                                   *
+ * @brief      framework memory component source files                         *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
 
 /**
- * @defgroup ysf_memory component
+ * @defgroup framework memory component
  * @{
  */
 
@@ -56,19 +56,21 @@
  */
 #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
     #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-        #ifndef MCU_HEAP_HEAD_ADDR
-            #define YSF_HEAP_SIZE         (4096)    
-            
+        #ifndef USE_COMPILER_HEAP_ADDR            
             __ALIGN_HEAD(8)
-                static uint8_t MCU_HEAP[YSF_HEAP_SIZE];
+                static uint8_t MCU_HEAP[FRAMEWORK_MEMORY_POOL_SIZE];
             __ALIGN_TAIL(8)
             
-            #define MCU_HEAP_HEAD_ADDR    (&MCU_HEAP)
-            #define MCU_HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
-            #define MCU_HEAP_SIZE         YSF_HEAP_SIZE
+            #define _HEAP_HEAD_ADDR    (&MCU_HEAP)
+            #define _HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
+            #define _HEAP_SIZE         FRAMEWORK_MEMORY_POOL_SIZE
+        #else
+            #define _HEAP_HEAD_ADDR    __HEAP_HEAD_ADDR
+            #define _HEAP_TAIL_ADDR    MCU_SRAM_END_ADDR
+            #define _HEAP_SIZE         (_HEAP_TAIL_ADDR - _HEAP_HEAD_ADDR)
         #endif
     
-        static struct ysf_mem_ctrl_t managemrnt;
+        static struct fw_memcontrol_t managemrnt;
     #endif
 #endif
 
@@ -84,10 +86,10 @@
  * @note        None
  *******************************************************************************
  */
-void ysf_memory_init( void )
+void fw_memory_init(void)
 {
 #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    ysf_mem_init(&managemrnt, (uint8_t *)MCU_HEAP_HEAD_ADDR, MCU_HEAP_SIZE);
+    fw_heap_init(&managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
 #endif
 }
 
@@ -99,12 +101,14 @@ void ysf_memory_init( void )
  * @note        None
  *******************************************************************************
  */
-void *ysf_memory_malloc( uint16_t size )
+void *fw_memory_malloc(uint32_t size)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return malloc(size);
 #else 
-    return ysf_mem_alloc(&managemrnt, size);
+    void *mem = NULL;
+    fw_heap_alloc(&managemrnt, mem);
+    return mem;
 #endif
 }
 
@@ -116,12 +120,12 @@ void *ysf_memory_malloc( uint16_t size )
  * @note        None
  *******************************************************************************
  */
-void ysf_memory_free( void *memory )
+void fw_memory_free(void *memory)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     free(memory);
 #else
-    ysf_mem_free(&managemrnt, memory);
+    fw_heap_free(&managemrnt, memory);
 #endif
 }
 
@@ -134,17 +138,17 @@ void ysf_memory_free( void *memory )
  * @note        None
  *******************************************************************************
  */
-bool ysf_memory_is_in(void *memory)
+bool fw_memory_isIn(void *memory)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return true;
 #else
-    return ysf_mem_is_in(&managemrnt, memory);
+    return fw_heap_isIn(&managemrnt, memory);
 #endif
 }
 
 #endif
 
-/** @}*/     /** ysf_memory component  */
+/** @}*/     /** framework memory component */
 
 /**********************************END OF FILE*********************************/
