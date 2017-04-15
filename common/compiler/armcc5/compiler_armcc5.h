@@ -58,16 +58,14 @@ extern "C"
  */
 #define __FUNCNAME__            __func__
     
-///**
-// *******************************************************************************
-// * @brief      DEFINE MCU HEAP ADDRESS
-// *******************************************************************************
-// */
-//extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU HEAP ADDRESS
+ *******************************************************************************
+ */
+extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
 
-//#define MCU_HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
-//#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
-//#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - MCU_HEAP_HEAD_ADDR) 
+#define __HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
 
 /**
  *******************************************************************************
@@ -83,6 +81,11 @@ extern "C"
  */
 #define PRAGMA(pragma)          _Pragma(#pragma)
 
+/**
+ *******************************************************************************
+ * @brief      define compiler pragma cmd
+ *******************************************************************************
+ */
 #if !defined(__CORTEX_M)
 #define __ASM                   __asm
 #define __INLINE                __inline
@@ -111,8 +114,16 @@ extern "C"
  * @brief      define compiler critical cmd
  *******************************************************************************
  */
-#define ENTER_CRITICAL()       __disable_irq()
-#define EXIT_CRITICAL()        __enable_irq()
+#define ENTER_CRITICAL()        __disable_irq()
+#define EXIT_CRITICAL()         __enable_irq()
+
+/**
+ *******************************************************************************
+ * @brief      define atom opera
+ *******************************************************************************
+ */    
+#define __ATOM_ACTIVE_BEGIN()   ENTER_CRITICAL()
+#define __ATOM_ACTIVE_END()     EXIT_CRITICAL()
 
 /**
  *******************************************************************************
@@ -149,25 +160,25 @@ typedef long long               int64_t;
  * @brief      define int max value and min value
  *******************************************************************************
  */
-#define INT8_MAX   (-128)
-#define INT16_MAX  (-32768)
-#define INT32_MAX  (-2147483647 - 1)
-#define INT64_MAX  (-9223372036854775807LL - 1)
+#define INT8_MAX                (-128)
+#define INT16_MAX               (-32768)
+#define INT32_MAX               (-2147483647 - 1)
+#define INT64_MAX               (-9223372036854775807LL - 1)
 
-#define INT8_MIN   (127)
-#define INT16_MIN  (32767)
-#define INT32_MIN  (2147483647U)
-#define INT64_MIN  (9223372036854775807LL)
+#define INT8_MIN                (127)
+#define INT16_MIN               (32767)
+#define INT32_MIN               (2147483647U)
+#define INT64_MIN               (9223372036854775807LL)
 
-#define UINT8_MAX  (0xFF)
-#define UINT16_MAX (0xFFFF)
-#define UINT32_MAX (0xFFFFFFFFU)
-#define UINT64_MAX (0xFFFFFFFFFFFFFFFFULL)
+#define UINT8_MAX               (0xFF)
+#define UINT16_MAX              (0xFFFF)
+#define UINT32_MAX              (0xFFFFFFFFU)
+#define UINT64_MAX              (0xFFFFFFFFFFFFFFFFULL)
 
-#define UINT8_MIN  (0)
-#define UINT16_MIN (0)
-#define UINT32_MIN (0U)
-#define UINT64_MIN (0ULL)
+#define UINT8_MIN               (0)
+#define UINT16_MIN              (0)
+#define UINT32_MIN              (0U)
+#define UINT64_MIN              (0ULL)
 #endif
 
 /**
@@ -198,9 +209,9 @@ typedef enum
  *******************************************************************************
  */
 #if 1
-typedef uint32_t addr_t;
+typedef uint32_t _addr_t;
 #else
-typedef uint64_t addr_t;
+typedef uint64_t _addr_t;
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

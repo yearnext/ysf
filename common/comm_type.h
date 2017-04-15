@@ -47,7 +47,6 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _COMM_PATH
 #include _COMPILER_PATH
 
 /* Exported types ------------------------------------------------------------*/
@@ -72,10 +71,6 @@ typedef enum
     _ERR_BUG,
     _ERR_UNKNOW,
 }_err_t;
-
-#define HAL_ERR_NONE (0)
-#define HAL_ERR_FAIL (1)
-typedef _err_t hal_err_t;
 
 #ifdef __cplusplus
 }

@@ -61,7 +61,7 @@ extern "C"
  * @brief       define core events
  *******************************************************************************
  */
-#define __DEFINE_EVENT_START            typedef enum                           \
+#define __DEFINE_EVENT_BEGIN            typedef enum                           \
                                         {                                      \
                                             _EVENT_NONE = 0,                   \
                                             _EVENT_DELAY,                   
@@ -108,7 +108,7 @@ extern "C"
  * @brief      define events
  *******************************************************************************
  */
-__DEFINE_EVENT_START
+__DEFINE_EVENT_BEGIN
 /** register user events */
 
 /** register user events */

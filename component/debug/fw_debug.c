@@ -74,9 +74,7 @@ fw_err_t fw_debug_init( void )
  */
 void fw_assert_failed(uint8_t* file, uint32_t line)
 {
-    ENTER_CRITICAL();
     while(1);
-//    EXIT_CRITICAL();
 }
 #endif
 
