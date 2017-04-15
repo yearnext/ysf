@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_debug.c                                                     *
+ * @file       fw_debug.c                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      debug component source files                                    *
+ * @brief      framework debug component source files                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,13 +32,12 @@
  */
 
 /**
- * @defgroup ysf debug
+ * @defgroup framework debug component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_PATH
 #include _FW_TYPE_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
@@ -50,30 +49,30 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_DEBUG_API
+#if USE_FRAMEWORK_DEBUG_API
 /**
  *******************************************************************************
- * @brief       ysf debug component initialization
+ * @brief       framework debug component initialization
  * @param       [in/out]  void
  * @return      [in/out]  FW_ERR_NONE    without exception
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_debug_init( void )
+fw_err_t fw_debug_init( void )
 {
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       ysf assert failed handler
+ * @brief       framework assert failed handler
  * @param       [in/out]  *file           assertion failed file name
  * @param       [in/out]  line            assertion failed file line
  * @return      [in/out]  none
  * @note        None
  *******************************************************************************
  */
-void ysf_assert_failed(uint8_t* file, uint32_t line)
+void fw_assert_failed(uint8_t* file, uint32_t line)
 {
     ENTER_CRITICAL();
     while(1);
@@ -81,6 +80,6 @@ void ysf_assert_failed(uint8_t* file, uint32_t line)
 }
 #endif
 
-/** @}*/     /** ysf debug component */
+/** @}*/     /** framework debug component */
 
 /**********************************END OF FILE*********************************/

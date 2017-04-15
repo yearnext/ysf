@@ -49,7 +49,12 @@ extern "C"
 #define _COMM_PATH                            "../common/comm_path.h"
 #define _FW_PATH                              "../component/fw_path.h"
 #define _HAL_PATH                             "../hal/hal_path.h"
-
+    
+/* Includes ------------------------------------------------------------------*/
+#include _COMM_PATH
+#include _FW_PATH
+#include _HAL_PATH
+    
 /* Exported macro ------------------------------------------------------------*/
 
 /* Add c++ compatibility------------------------------------------------------*/

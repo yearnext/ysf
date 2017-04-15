@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_debug.h                                                     *
+ * @file       fw_debug.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      ysf debug component header files                                *
+ * @brief      framework debug component header files                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup ysf debug component
+ * @defgroup framework debug component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_DEBUG_H__
-#define __YSF_DEBUG_H__
+#ifndef __FRAMEWORK_DEBUG_H__
+#define __FRAMEWORK_DEBUG_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -48,19 +48,19 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_TYPE_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf config
+ * @brief       framework debug component config
  *******************************************************************************
  */
-#ifdef USE_YSF_DEBUG_COMPONENT
-#if USE_YSF_DEBUG_COMPONENT
-#define USE_YSF_DEBUG_API (1)
+#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+#if USE_FRAMEWORK_DEBUG_COMPONENT
+#define USE_FRAMEWORK_DEBUG_API (1)
 #else
-#define USE_YSF_DEBUG_API (0)
+#define USE_FRAMEWORK_DEBUG_API (0)
 #endif
     
 /**
@@ -69,7 +69,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_YSF_DEBUG_API (1)
+#define USE_FRAMEWORK_DEBUG_API (1)
 #endif
  
 /**
@@ -84,16 +84,16 @@ extern "C"
  * @brief       define assert macros
  *******************************************************************************
  */ 
-#define ysf_assert(expr) ((expr) ? ysf_assert_failed((uint8_t *)__FILE__, __LINE__) :(void)0 )
+#define fw_assert(expr) ((expr) ? ysf_assert_failed((uint8_t *)__FILE__, __LINE__) :(void)0 )
                              
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define ysf debug api
+ * @brief       define framework debug api
  *******************************************************************************
  */ 
-#if USE_YSF_DEBUG_API
-struct YSF_DEBUG_API
+#if USE_FRAMEWORK_DEBUG_API
+struct FRAMEWORK_DEBUG_API
 {
     fw_err_t (*init)(void);
     void (*assert_failed)(uint8_t*, uint32_t);
@@ -107,7 +107,7 @@ struct YSF_DEBUG_API
  * @brief       define ysf debug function interface
  *******************************************************************************
  */ 
-#if USE_YSF_DEBUG_API
+#if USE_FRAMEWORK_DEBUG_API
 extern fw_err_t ysf_debug_init(void);
 extern void ysf_assert_failed(uint8_t*, uint32_t);
 #endif        
@@ -121,6 +121,6 @@ extern void ysf_assert_failed(uint8_t*, uint32_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf debug component  */
+/** @}*/     /** framework debug component  */
 
 /**********************************END OF FILE*********************************/

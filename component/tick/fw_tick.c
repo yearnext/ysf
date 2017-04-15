@@ -38,7 +38,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_PATH
 #include _FW_TYPE_PATH
 #include _FW_TICK_COMPONENT_PATH
 #include _FW_EVENT_COMPONENT_PATH

@@ -45,7 +45,7 @@ extern "C"
 {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -70,6 +70,8 @@ extern "C"
 #define _FW_LINK_LIST_COMPONENT_PATH          "../component/linklist/fw_linklist.h"
 #define _FW_PT_COMPONENT_PATH                 "../component/pt/fw_pt.h"
 #define _FW_TASK_COMPONENT_PATH               "../component/task/fw_task.h"
+
+/* Includes ------------------------------------------------------------------*/
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

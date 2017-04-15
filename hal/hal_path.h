@@ -46,42 +46,8 @@ extern "C"
 #endif
     
 /* Includes ------------------------------------------------------------------*/
-#include "comm_path.h"
-    
 /* Exported macro ------------------------------------------------------------*/
-///**
-// *******************************************************************************
-// * @brief      common component path
-// *******************************************************************************
-// */
-//#ifndef _COMM_TOOLS_PATH
-//#define _COMM_TOOLS_PATH                      "../common/tools.h"	
-//#endif
-//    
-//#ifndef _TYPE_PATH
-//#define _TYPE_PATH         		              "../common/type.h"
-//#endif
-//    
-///**
-// *******************************************************************************
-// * @brief      compiler path
-// *******************************************************************************
-// */
-//#ifndef _COMPILER_PATH
-//#define _COMPILER_PATH                        "../common/compiler/compiler.h"
-//#endif
 
-//#ifndef _ARMCC5_COMPILER_PATH
-//#define _ARMCC5_COMPILER_PATH                 "../common/compiler/armcc5/compiler_armcc5.h"
-//#endif
-
-//#ifndef _ARMCC6_COMPILER_PATH
-//#define _ARMCC6_COMPILER_PATH                 "../common/compiler/armcc6/compiler_armcc6.h"
-//#endif
-
-//#ifndef _ICCARM_COMPILER_PATH
-//#define _ICCARM_COMPILER_PATH                 "../common/compiler/iccarm/compiler_iar_arm.h"
-//#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

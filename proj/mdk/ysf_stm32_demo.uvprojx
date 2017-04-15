@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\app;..\..\core;..\..\hal;..\..\common</IncludePath>
+              <IncludePath>..\..\app;..\..\core</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
