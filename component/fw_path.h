@@ -72,6 +72,8 @@ extern "C"
 #define _FW_TASK_COMPONENT_PATH               "../component/task/fw_task.h"
 
 /* Includes ------------------------------------------------------------------*/
+#include _FW_TYPE_PATH
+#include _FW_CONF_PATH
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

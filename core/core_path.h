@@ -52,8 +52,6 @@ extern "C"
     
 /* Includes ------------------------------------------------------------------*/
 #include _COMM_PATH
-#include _FW_PATH
-#include _HAL_PATH
     
 /* Exported macro ------------------------------------------------------------*/
 

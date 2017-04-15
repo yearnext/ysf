@@ -46,39 +46,35 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _FW_TYPE_PATH
+#include _FW_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       framework debug component config
+ * @brief       framework debug component config flags
+ * @note        1                              enable
+ * @note        0                              disable
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
 #if USE_FRAMEWORK_DEBUG_COMPONENT
-#define USE_FRAMEWORK_DEBUG_API (1)
+#define USE_FRAMEWORK_DEBUG_API                                              (1)
 #else
-#define USE_FRAMEWORK_DEBUG_API (0)
+#define USE_FRAMEWORK_DEBUG_API                                              (0)
 #endif
     
 /**
  *******************************************************************************
- * @brief       user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_DEBUG_API (1)
+#define USE_FRAMEWORK_DEBUG_API                                              (1)
 #endif
  
-/**
- *******************************************************************************
- * @brief       define detecting null pointer macros
- *******************************************************************************
- */    
-#define IS_PTR_NULL(ptr) ((ptr) == NULL)
-
 /**
  *******************************************************************************
  * @brief       define assert macros

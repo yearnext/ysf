@@ -63,6 +63,10 @@ extern "C"
 #define _ARMCC5_COMPILER_PATH                 "../common/compiler/armcc5/compiler_armcc5.h"
 #define _ARMCC6_COMPILER_PATH                 "../common/compiler/armcc6/compiler_armcc6.h"
 #define _ICCARM_COMPILER_PATH                 "../common/compiler/iccarm/compiler_iar_arm.h"
+    
+/* Includes ------------------------------------------------------------------*/
+#include _COMM_TOOLS_PATH
+#include _COMM_TYPE_PATH
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
