@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_buffer.c                                                    *
+ * @file       fw_buffer.c                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-06                                                      *
- * @brief      ysf_buffer source file                                          *
+ * @brief      framework buffer component source file                          *
  * @par        work platform                                                   * 
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup ysf buffer component
+ * @defgroup framework buffer component
  * @{
  */
 
@@ -48,7 +48,7 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_BUFFER_API
+#if USE_FRAMEWORK_BUFFER_API
 /**
  *******************************************************************************
  * @brief       ring buffer init
@@ -59,16 +59,15 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_rbInit( struct ysf_rb_t *rb, uint8_t *buffer, uint16_t size )
+fw_err_t fw_rb_init(struct fw_buffer_t *rb, uint8_t *buffer, uint16_t size )
 {
     fw_assert(IS_PTR_NULL(rb));
     fw_assert(IS_PTR_NULL(buffer));
 
-    rb->buffer.buffer = buffer;
-    rb->buffer.size   = size;
-
-    rb->head          = 0;
-    rb->tail          = 0;
+    rb->buffer = buffer;
+    rb->size   = size;
+    rb->head   = 0;
+    rb->tail   = 0;
 
     return FW_ERR_NONE;
 }
@@ -77,14 +76,18 @@ fw_err_t ysf_rbInit( struct ysf_rb_t *rb, uint8_t *buffer, uint16_t size )
  *******************************************************************************
  * @brief       get ring buffer length
  * @param       [in/out]  *rb                 ring buff control block
- * @return      [in/out]  ysf_buffer_size_t   ring buffer length
+ * @param       [in/out]  *size               return data point
+ * @return      [in/out]  FW_ERR_NONE   ring buffer init success
  * @note        None
  *******************************************************************************
  */
-uint16_t ysf_rbGetLen( struct ysf_rb_t *rb )
+fw_err_t fw_rb_getlen(struct fw_buffer_t *rb, uint16_t *size)
 {
     fw_assert(IS_PTR_NULL(rb));
-    return rb->buffer.size;
+    
+    *size =  rb->size;
+    
+    return FW_ERR_NONE;
 }
 
 /**
@@ -96,7 +99,7 @@ uint16_t ysf_rbGetLen( struct ysf_rb_t *rb )
  *******************************************************************************
  */
 __STATIC_INLINE 
-uint16_t ysf_rbCanRead( struct ysf_rb_t *rb )
+uint16_t _rb_can_read(struct fw_buffer_t *rb )
 {
     fw_assert(IS_PTR_NULL(rb));
 
@@ -106,7 +109,7 @@ uint16_t ysf_rbCanRead( struct ysf_rb_t *rb )
     }
     else
     {
-        return ((uint16_t)(rb->buffer.size - (rb->head - rb->tail)));
+        return ((uint16_t)(rb->size - (rb->head - rb->tail)));
     }
 
 //    return 0;
@@ -121,7 +124,7 @@ uint16_t ysf_rbCanRead( struct ysf_rb_t *rb )
  *******************************************************************************
  */
 __STATIC_INLINE 
-uint16_t ysf_rbCanWrite( struct ysf_rb_t *rb )
+uint16_t _rb_can_write(struct fw_buffer_t *rb)
 {
     fw_assert(IS_PTR_NULL(rb));
 
@@ -129,7 +132,7 @@ uint16_t ysf_rbCanWrite( struct ysf_rb_t *rb )
 
     if( rb->tail >= rb->head )
     {
-        size = rb->buffer.size - (rb->tail - rb->head);
+        size = rb->size - (rb->tail - rb->head);
 
         return size;
     }
@@ -146,56 +149,49 @@ uint16_t ysf_rbCanWrite( struct ysf_rb_t *rb )
 /**
  *******************************************************************************
  * @brief       write data to ring buffer
- * @param       [in/out]  *rb                 ring buffer control block
- * @param       [in/out]  *buff               write data buffer
- * @param       [in/out]  rbSize              write data buffer size
+ * @param       [in/out]  *rb                ring buffer control block
+ * @param       [in/out]  *buff              write data buffer
+ * @param       [in/out]  rbSize             write data buffer size
  * @return      [in/out]  FW_ERR_NONE        ring buffer write success
  * @return      [in/out]  FW_ERR_FAIL        ring buffer write failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_rbWrite( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize )
+fw_err_t fw_rb_write(struct fw_buffer_t *rb, uint8_t *buffer, uint16_t rbSize)
 {
     uint16_t free = 0;
     uint16_t i = 0;
 
     fw_assert(IS_PTR_NULL(rb));
-    fw_assert(IS_PTR_NULL(buff));
+    fw_assert(IS_PTR_NULL(buffer));
     fw_assert(rbSize == 0);
 
-    if( rbSize <= ysf_rbCanWrite(rb) )
+    if( rbSize <= _rb_can_write(rb) )
     {
-        if( (rb->tail + rbSize) >= rb->buffer.size )
+        if( (rb->tail + rbSize) >= rb->size )
         {
-            free = rb->buffer.size - rb->tail;
+            free = rb->size - rb->tail;
 
             for(i=0; i<free; i++)
             {
-                rb->buffer.buffer[rb->tail++] = buff[i];
+                rb->buffer[rb->tail++] = buffer[i];
             }
 
             for(rb->tail=0; i<rbSize; i++)
             {
-                rb->buffer.buffer[rb->tail++] = buff[i];
+                rb->buffer[rb->tail++] = buffer[i];
             }
         }
         else
         {
             for(i=0; i<rbSize; i++)
             {
-                rb->buffer.buffer[rb->tail++] = buff[i];
+                rb->buffer[rb->tail++] = buffer[i];
             }
         }
 
         return FW_ERR_NONE;
     }
-#if USE_YSF_BUFFER_DEBUG
-    else
-    {
-        ysf_log("%s Write data size is too long! \n",__FUNCTION__);
-        return FW_ERR_INVAILD_PARAM;
-    }
-#endif
 
     return FW_ERR_FAIL;
 }
@@ -203,76 +199,69 @@ fw_err_t ysf_rbWrite( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize )
 /**
  *******************************************************************************
  * @brief       read data from ring buffer
- * @param       [in/out]  *rb                 ring buffer control block
- * @param       [in/out]  *buff               read data buffer
- * @param       [in/out]  rbSize              read data size
+ * @param       [in/out]  *rb                ring buffer control block
+ * @param       [in/out]  *buff              read data buffer
+ * @param       [in/out]  rbSize             read data size
  * @return      [in/out]  FW_ERR_NONE        ring buffer read success
  * @return      [in/out]  FW_ERR_FAIL        ring buffer read failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize)
+fw_err_t fw_rb_read( struct fw_buffer_t *rb, uint8_t *buffer, uint16_t rbSize)
 {
     uint16_t free = 0;
     uint16_t i = 0;
 
     fw_assert(IS_PTR_NULL(rb));
-    fw_assert(IS_PTR_NULL(buff));
+    fw_assert(IS_PTR_NULL(buffer));
     fw_assert(rbSize == 0);
 
-    if (rbSize <= ysf_rbCanRead(rb))
+    if (rbSize <= _rb_can_read(rb))
     {
-        if ((rb->head + rbSize) >= rb->buffer.size)
+        if ((rb->head + rbSize) >= rb->size)
         {
-            free = rb->buffer.size - rb->head;
+            free = rb->size - rb->head;
 
             for (i=0; i<free; i++)
             {
-                 buff[i] = rb->buffer.buffer[rb->head++];
+                 buffer[i] = rb->buffer[rb->head++];
             }
 
             for (rb->head=0; i<rbSize; i++)
             {
-                buff[i] = rb->buffer.buffer[rb->head++];
+                buffer[i] = rb->buffer[rb->head++];
             }
         }
         else
         {
             for (i=0; i<rbSize; i++)
             {
-                buff[i] = rb->buffer.buffer[rb->head++];
+                buffer[i] = rb->buffer[rb->head++];
             }
         }
 
         return FW_ERR_NONE;
     }
-#if defined(USE_YSF_BUFFER_DEBUG) && USE_YSF_BUFFER_DEBUG
-    else
-    {
-        ysf_log("%s Read data size is too long! \n",__FUNCTION__);
-        return FW_ERR_INVAILD_PARAM;
-    }
-#endif
 
     return FW_ERR_FAIL;
 }
 #endif
 
-#if USE_YSF_MEMORY_MANAGEMENT_API
+#if USE_FRAMEWORK_MEMORY_MANAGEMENT_API
 /**
  *******************************************************************************
  * @brief       memory init
- * @param       [in/out]  **mem               memory control block
- * @param       [in/out]  *buffer             memory buffer address
- * @param       [in/out]  rbSize              memory buffer size
- * @return      [in/out]  FW_ERR_NONE        ring buffer read success
- * @return      [in/out]  FW_ERR_FAIL        ring buffer read failed
+ * @param       [in/out]  **mem              memory control block
+ * @param       [in/out]  *buffer            memory buffer address
+ * @param       [in/out]  rbSize             memory buffer size
+ * @return      [in/out]  FW_ERR_NONE        memory init success
+ * @return      [in/out]  FW_ERR_FAIL        memory init failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint16_t size)
+fw_err_t fw_mem_init(struct fw_memcontrol_t *mem, uint8_t *buffer, uint32_t size)
 {
-	if (mem == NULL || buffer == NULL || size < sizeof(struct ysf_mem_block_t))
+	if (mem == NULL || buffer == NULL || size > INT32_MAX ||size < sizeof(struct fw_memblock_t))
 	{
 		return FW_ERR_FAIL;
 	}
@@ -281,8 +270,8 @@ fw_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint16_t size
     mem->size         = size;
     
     mem->head->next   = NULL;
-	mem->head->size   = size - sizeof(struct ysf_mem_block_t);
-    mem->head->status = false;
+	mem->head->size   = size - sizeof(struct fw_memblock_t);
+    mem->head->status = 0;
     
     return FW_ERR_NONE;
 }
@@ -290,13 +279,13 @@ fw_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint16_t size
 ///**
 // *******************************************************************************
 // * @brief       memory deinit
-// * @param       [in/out]  **mem               memory control block
+// * @param       [in/out]  **mem              memory control block
 // * @return      [in/out]  FW_ERR_NONE        ring buffer read success
 // * @return      [in/out]  FW_ERR_FAIL        ring buffer read failed
 // * @note        None
 // *******************************************************************************
 // */
-//fw_err_t ysf_mem_deinit(struct ysf_mem_ctrl_t *mem)
+//fw_err_t ysf_mem_deinit(struct fw_memcontrol_t *mem)
 //{
 //    if (mem == NULL)
 //	{
@@ -319,10 +308,10 @@ fw_err_t ysf_mem_init(struct ysf_mem_ctrl_t *mem, uint8_t *buffer, uint16_t size
  *******************************************************************************
  */
 __STATIC_INLINE
-uint16_t ysf_mem_cal_alignment(uint16_t size, uint16_t alignment)
+uint32_t _mem_cal_block_size(uint32_t size, uint32_t alignment)
 {
-	uint16_t temp = size % alignment;
-	uint16_t value = size;
+	uint32_t temp = size % alignment;
+	uint32_t value = size;
 
 	if (temp)
 	{
@@ -337,36 +326,41 @@ uint16_t ysf_mem_cal_alignment(uint16_t size, uint16_t alignment)
  * @brief       memory alloc 
  * @param       [in/out]  *mem                memory control block
  * @param       [in/out]  size                alloc memory size
- * @return      [in/out]  void*               alloc memory address
+ * @param       [in/out]  void*               alloc memory address
+ * @return      [in/out]  FW_ERR_NONE         alloc success
+ * @return      [in/out]  FW_ERR_FAIL         alloc failed
  * @note        None
  *******************************************************************************
  */
-void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t size)
+fw_err_t fw_mem_alloc(struct fw_memcontrol_t *mem, uint32_t size, void *ret_addr)
 {
-    struct ysf_mem_block_t *now     = mem->head;
-    struct ysf_mem_block_t *next    = mem->head;
-	uint16_t freeSize = 0;
-	uint16_t useSize  = ysf_mem_cal_alignment(size, 4) + sizeof(struct ysf_mem_block_t);
+    struct fw_memblock_t *now     = mem->head;
+    struct fw_memblock_t *next    = mem->head;
+	uint32_t freeSize             = 0;
+	uint32_t useSize              = _mem_cal_block_size(size, 4) + sizeof(struct fw_memblock_t);
 
     if(mem == NULL || size == 0)
     {
-        return NULL;
+        ret_addr = NULL;
+        return FW_ERR_FAIL;
     }
 
+    ret_addr = NULL;
+    
     while(1)
     {
         if(now == NULL)
         {
-            return NULL;
+            return FW_ERR_FAIL;
         }
         
-        if(now->status == false)
+        if(now->status == 0)
         {
             if( now->size >= useSize )
             {
 				freeSize     = now->size;
 				now->size    = useSize;
-                next         = (struct ysf_mem_block_t *)((void *)((uint8_t *)now + useSize));
+                next         = (struct fw_memblock_t *)((void *)((uint8_t *)now + useSize));
 				next->size   = freeSize - useSize;
 
                 next->next   = now->next;
@@ -375,7 +369,9 @@ void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t size)
                 next->status = false;
                 now->status  = true;
                 
-                return (void *)(now+1);
+                ret_addr = (void *)(now + 1);
+                
+                return FW_ERR_NONE;
             }
         }
         
@@ -390,19 +386,21 @@ void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t size)
  * @brief       memory free 
  * @param       [in/out]  *mem                memory control block
  * @param       [in/out]  *buffer             need free memory address
- * @return      [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE         free success
+ * @return      [in/out]  FW_ERR_FAIL         free failed
  * @note        None
  *******************************************************************************
  */
-void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
+fw_err_t fw_mem_free(struct fw_memcontrol_t *mem, void *buffer)
 {
-    struct ysf_mem_block_t *now       = mem->head;
-    struct ysf_mem_block_t *last      = NULL;
-    struct ysf_mem_block_t *data_addr = NULL;
+    struct fw_memblock_t *now       = mem->head;
+    struct fw_memblock_t *last      = NULL;
+    struct fw_memblock_t *data_addr = NULL;
+    bool                 status     = false;
     
     if(buffer == NULL || mem == NULL)
     {
-        return;
+        return FW_ERR_FAIL;
     }
     
     while(1)
@@ -411,11 +409,12 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
         data_addr = now + 1;
         if( data_addr == buffer )
         {
-            now->status = false;
+            status      = true;
+            now->status = 0;
         }
 
         // merge memory block
-        if( now->status == false )
+        if( now->status == 0 )
         {
             if( last == NULL )
             {
@@ -423,18 +422,17 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
             }
             else if(now->next == NULL)
             {
-                if(now->status == false)
+                if(now->status == 0)
                 {
                     last->next = NULL;
-                    last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t) + now->size;
+                    last->size = ((uint32_t)(now - last)) * sizeof(struct fw_memblock_t) + now->size;
                 }
                 else
                 {
                     last->next = now;
-                    last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t);
+                    last->size = ((uint32_t)(now - last)) * sizeof(struct fw_memblock_t);
                 }
                 
-//                last->status = false;
                 last = NULL;
             }
         }
@@ -445,8 +443,7 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
 				if (last->next != now)
 				{
 					last->next = now;
-					last->size = ((uint16_t)(now - last)) * sizeof(struct ysf_mem_block_t);
-//					last->status = false;
+					last->size = ((uint16_t)(now - last)) * sizeof(struct fw_memblock_t);
 				}
 
 				last = NULL;
@@ -457,9 +454,16 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
 		
 		if(now == NULL)
         {
-            return;
+            break;
         }
     }
+    
+    if( status == true )
+    {
+        return FW_ERR_NONE;
+    }
+    
+    return FW_ERR_FAIL;
 }
 
 /**
@@ -472,9 +476,16 @@ void ysf_mem_free(struct ysf_mem_ctrl_t *mem, void *buffer)
  * @note        None
  *******************************************************************************
  */
-bool ysf_mem_is_in(struct ysf_mem_ctrl_t *mem, void *buffer)
+bool fw_mem_isIn(struct fw_memcontrol_t *mem, void *buffer)
 {
-    if( buffer >= (void *)mem->buffer && buffer <= (void *)&mem->buffer[mem->size] )
+    if(mem == NULL || buffer == NULL)
+    {
+        return false;
+    }
+    
+    void *end_addr = (void *)((uint8_t *)mem->buffer + mem->size - 1);
+    
+    if( buffer >= mem->buffer && buffer <= end_addr)
     {
         return true;
     }
@@ -484,6 +495,6 @@ bool ysf_mem_is_in(struct ysf_mem_ctrl_t *mem, void *buffer)
 
 #endif
 
-/** @}*/     /** ysf buffer component */
+/** @}*/     /** framework buffer component */
 
 /**********************************END OF FILE*********************************/

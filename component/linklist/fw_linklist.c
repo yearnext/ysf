@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-18                                                      *
- * @brief      framework link list source files                                *
+ * @brief      framework link list component source files                      *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
