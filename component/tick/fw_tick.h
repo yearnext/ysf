@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_tick.h                                                      *
+ * @file       fw_tick.h                                                       *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      ysf tick head files                                             *
+ * @brief      framework tick component head files                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup ysf tick
+ * @defgroup framework tick component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_TICK_H__
-#define __YSF_TICK_H__
+#ifndef __FRAMEWORK_TICK_H__
+#define __FRAMEWORK_TICK_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -127,6 +127,6 @@ extern ysf_tick_t ysf_past_tick_cal( void );
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf tick component  */
+/** @}*/     /** framework tick component  */
 
 /**********************************END OF FILE*********************************/
