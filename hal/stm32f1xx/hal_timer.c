@@ -346,75 +346,75 @@ hal_err_t timer_stop(uint8_t id)
 /* Exported functions --------------------------------------------------------*/
 void msp_timer_enable(uint8_t id)
 {
-    ysf_assert(IS_TIMER_ID_INVAILD(id));
+    fw_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_enable(id);
 }
 
 void msp_timer_disable(uint8_t id)
 {
-    ysf_assert(IS_TIMER_ID_INVAILD(id));
+    fw_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_disable(id);
 }
 
 void msp_timer_base_init(uint8_t id, uint32_t tick, void (*func)(void))
 {
-    ysf_assert(IS_TIMER_ID_INVAILD(id));
+    fw_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_base_init(id, tick, func); 
 }
 
 void msp_timer_start(uint8_t id)
 {
-    ysf_assert(IS_TIMER_ID_INVAILD(id));
+    fw_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_start(id); 
 }
 
 void msp_timer_stop(uint8_t id)
 {
-    ysf_assert(IS_TIMER_ID_INVAILD(id));
+    fw_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_stop(id); 
 }
 
 void map_timer_enable(struct map_timer_t *timer)
 {
-    ysf_assert(IS_PTR_NULL(timer));
-    ysf_assert(IS_TIMER_ID_INVAILD(timer->id));
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_enable(timer->id);
 }
 
 void map_timer_disable(struct map_timer_t *timer)
 {
-    ysf_assert(IS_PTR_NULL(timer));
-    ysf_assert(IS_TIMER_ID_INVAILD(timer->id));
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_disable(timer->id);
 }
 
 void map_timer_base_init(struct map_timer_t *timer, uint32_t tick, void (*func)(void))
 {
-    ysf_assert(IS_PTR_NULL(timer));
-    ysf_assert(IS_TIMER_ID_INVAILD(timer->id));
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_base_init(timer->id, tick, func); 
 }
 
 void map_timer_start(struct map_timer_t *timer)
 {
-    ysf_assert(IS_PTR_NULL(timer));
-    ysf_assert(IS_TIMER_ID_INVAILD(timer->id));
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_start(timer->id); 
 }
 
 void map_timer_stop(struct map_timer_t *timer)
 {
-    ysf_assert(IS_PTR_NULL(timer));
-    ysf_assert(IS_TIMER_ID_INVAILD(timer->id));
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_stop(timer->id); 
 }

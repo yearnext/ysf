@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_single_list.c                                               *
+ * @file       fw_linklist.c                                                   *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-18                                                      *
- * @brief      single list component source files                              *
+ * @brief      framework link list source files                                *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,13 +32,13 @@
  */
  
 /**
- * @defgroup ysf single list component
+ * @defgroup framework link list component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_TYPE_PATH
+#include _FW_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
@@ -48,18 +48,18 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
+#if USE_FRAMEWORK_SINGLE_LIST_API
 /**
  *******************************************************************************
- * @brief       single list init
- * @param       [in/out]  **listHead    single list node head
+ * @brief       single link list init
+ * @param       [in/out]  **listHead    single link list node head
  * @return      [in/out]  FW_ERR_NONE  init success
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_slist_init( void **listHead )
+fw_err_t fw_slinklist_init( void **listHead )
 {
-    ysf_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(listHead));
 
     *listHead = NULL;
 
@@ -68,9 +68,9 @@ fw_err_t ysf_slist_init( void **listHead )
 
 /**
  *******************************************************************************
- * @brief       single list traversal function
- * @param       [in/out]  **listHead    single list head
- * @param       [in/out]  func          single list visit function
+ * @brief       single link list traversal function
+ * @param       [in/out]  **listHead    single link list head
+ * @param       [in/out]  func          single link list visit function
  * @param       [in/out]  **ctx         context
  * @param       [in/out]  **expand      expand
  * @return      [in/out]  true          visit success
@@ -78,13 +78,11 @@ fw_err_t ysf_slist_init( void **listHead )
  * @note        None
  *******************************************************************************
  */
-bool ysf_slist_walk(void **listHead,
-                    sListFunc func,
-                    void **ctx,
-                    void **expand)
+bool fw_slinklist_walk(void **listHead, bool (*func)(void**, void**, void**),
+                       void **ctx,      void **expand)
 {
     bool status = false;
-    struct ysf_sList_t **sList = (struct ysf_sList_t **)listHead;
+    struct fw_slinklist_t **sList = (struct fw_slinklist_t **)listHead;
 
     while(1)
     {
@@ -95,7 +93,7 @@ bool ysf_slist_walk(void **listHead,
             break;
         }
 
-        sList = (struct ysf_sList_t **)(&((struct ysf_sList_t *)(*sList))->next);
+        sList = (struct fw_slinklist_t **)(&((struct fw_slinklist_t *)(*sList))->next);
     }
 
     return status;
@@ -104,7 +102,7 @@ bool ysf_slist_walk(void **listHead,
 /**
  *******************************************************************************
  * @brief       add node to signle list
- * @param       [in/out]  **listHead    now single list node
+ * @param       [in/out]  **listHead    now single link list node
  * @param       [in/out]  **ctx         wait add node
  * @param       [in/out]  **expand      expand
  * @return      [in/out]  true          add node success
@@ -112,12 +110,12 @@ bool ysf_slist_walk(void **listHead,
  * @note        None
  *******************************************************************************
  */
-bool ysf_slist_module_add( void **node, void **ctx, void **expand )
+bool fw_slinklist_module_add( void **node, void **ctx, void **expand )
 {
-    ysf_assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
-    struct ysf_sList_t *temp = (struct ysf_sList_t *)(*ctx);
+    struct fw_slinklist_t *temp = (struct fw_slinklist_t *)(*ctx);
     
     if( *node == NULL )
     {
@@ -128,10 +126,10 @@ bool ysf_slist_module_add( void **node, void **ctx, void **expand )
     }
     else  if( *node == *ctx )
     {
-        temp = ((struct ysf_sList_t *)(*node))->next;
+        temp = ((struct fw_slinklist_t *)(*node))->next;
 
         *node = *ctx;
-        ((struct ysf_sList_t *)(*node))->next = temp;
+        ((struct fw_slinklist_t *)(*node))->next = temp;
 
         status = true;
     }
@@ -146,7 +144,7 @@ bool ysf_slist_module_add( void **node, void **ctx, void **expand )
 /**
  *******************************************************************************
  * @brief       delete node to signle list
- * @param       [in/out]  **listHead    now single list node
+ * @param       [in/out]  **listHead    now single link list node
  * @param       [in/out]  **ctx         wait delete node
  * @param       [in/out]  **expand      expand
  * @return      [in/out]  true          delete node success
@@ -154,12 +152,12 @@ bool ysf_slist_module_add( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-bool ysf_slist_module_del( void **node, void **ctx, void **expand )
+bool fw_slinklist_module_del( void **node, void **ctx, void **expand )
 {
-    ysf_assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(*ctx));
 
-    struct ysf_sList_t *now = (struct ysf_sList_t *)(*node);
-    struct ysf_sList_t *next = (struct ysf_sList_t *)(*ctx);
+    struct fw_slinklist_t *now = (struct fw_slinklist_t *)(*node);
+    struct fw_slinklist_t *next = (struct fw_slinklist_t *)(*ctx);
 
     bool status = false;
     
@@ -192,7 +190,7 @@ bool ysf_slist_module_del( void **node, void **ctx, void **expand )
 /**
  *******************************************************************************
  * @brief       detection node is in signle list
- * @param       [in/out]  **listHead    now single list node
+ * @param       [in/out]  **listHead    now single link list node
  * @param       [in/out]  **ctx         wait detection node
  * @param       [in/out]  **expand      expand
  * @return      [in/out]  true          detection node is in list
@@ -200,9 +198,9 @@ bool ysf_slist_module_del( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-bool ysf_slist_module_isExist( void **node, void **ctx, void **expand )
+bool fw_slinklist_module_isExist( void **node, void **ctx, void **expand )
 {
-    ysf_assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
 
@@ -222,7 +220,7 @@ bool ysf_slist_module_isExist( void **node, void **ctx, void **expand )
 /**
  *******************************************************************************
  * @brief       find the last node of the node 
- * @param       [in/out]  **listHead    now single list node
+ * @param       [in/out]  **listHead    now single link list node
  * @param       [in/out]  **ctx         find node
  * @param       [in/out]  **expand      find node
  * @return      [in/out]  true          detection node is in list
@@ -230,11 +228,11 @@ bool ysf_slist_module_isExist( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-bool ysf_slist_module_findLastNode( void **node, void **ctx, void **expand )
+bool fw_slinklist_module_findLastNode( void **node, void **ctx, void **expand )
 {
     bool status = false;
 
-    struct ysf_sList_t *now = (struct ysf_sList_t *)(*node);
+    struct fw_slinklist_t *now = (struct fw_slinklist_t *)(*node);
 
     if( *node == NULL )
     {
@@ -253,19 +251,19 @@ bool ysf_slist_module_findLastNode( void **node, void **ctx, void **expand )
 /**
  *******************************************************************************
  * @brief       add node to signle list
- * @param       [in/out]  **listHead    now single list node
+ * @param       [in/out]  **listHead    now single link list node
  * @param       [in/out]  **ctx         wait add node
  * @return      [in/out]  FW_ERR_FAIL  add node failed
  * @return      [in/out]  FW_ERR_NONE  add node success
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_slist_add( void **listHead, void **ctx )
+fw_err_t fw_slinklist_add( void **listHead, void **ctx )
 {
-    ysf_assert(IS_PTR_NULL(listHead));
-    ysf_assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(*ctx));
 
-    if( ysf_slist_walk(listHead, ysf_slist_module_add, ctx, NULL) == false )
+    if( fw_slinklist_walk(listHead, fw_slinklist_module_add, ctx, NULL) == false )
     {
         return FW_ERR_FAIL;
     }
@@ -276,19 +274,19 @@ fw_err_t ysf_slist_add( void **listHead, void **ctx )
 /**
  *******************************************************************************
  * @brief       detele node to signle list
- * @param       [in/out]  **listHead    now single list node
+ * @param       [in/out]  **listHead    now single link list node
  * @param       [in/out]  **ctx         wait detele node
  * @return      [in/out]  FW_ERR_FAIL  detele node failed
  * @return      [in/out]  FW_ERR_NONE  detele node success
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_slist_del( void **listHead, void **ctx )
+fw_err_t fw_slinklist_del( void **listHead, void **ctx )
 {
-    ysf_assert(IS_PTR_NULL(listHead));
-    ysf_assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(*ctx));
 
-    if( ysf_slist_walk(listHead, ysf_slist_module_del, ctx, NULL) == false )
+    if( fw_slinklist_walk(listHead, fw_slinklist_module_del, ctx, NULL) == false )
     {
         return FW_ERR_FAIL;
     }
@@ -299,167 +297,28 @@ fw_err_t ysf_slist_del( void **listHead, void **ctx )
 /**
  *******************************************************************************
  * @brief       detection node is in signle list
- * @param       [in/out]  **listHead    now single list node
+ * @param       [in/out]  **listHead    now single link list node
  * @param       [in/out]  **ctx         wait detection node
  * @return      [in/out]  FW_ERR_FAIL  node not in list
  * @return      [in/out]  FW_ERR_NONE  node is in list
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_slist_isExist( void **listHead, void **ctx )
+fw_err_t fw_slinklist_isExist( void **listHead, void **ctx )
 {
-    ysf_assert(IS_PTR_NULL(listHead));
-    ysf_assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(*ctx));
 
-    if( ysf_slist_walk(listHead, ysf_slist_module_isExist, ctx, NULL) == false )
+    if( fw_slinklist_walk(listHead, fw_slinklist_module_isExist, ctx, NULL) == false )
     {
         return FW_ERR_FAIL;
     }
 
     return FW_ERR_NONE;
 }
+
 #endif
 
-// 遍历函数
-fw_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t **sListFifo, sListFunc func, void **param, void **expand)
-{
-    ysf_assert(IS_PTR_NULL(sListFifo));
-    ysf_assert(IS_PTR_NULL(func));
-
-    struct ysf_sList_t **temp = (struct ysf_sList_t **)(&((struct ysf_sListFifo_t *)(*sListFifo))->head);
-    bool status = false;
-    
-    while(*temp != NULL && status == false)
-    {
-        status = func((void **)temp, param, expand);
-        
-        temp = (struct ysf_sList_t **)(&((struct ysf_sList_t *)(*temp))->next);
-    }
-    
-    return FW_ERR_NONE;
-}
-
-// 检测是否存在于链表中
-bool ysf_sListFifo_isIn(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *findData)
-{
-    ysf_assert(IS_PTR_NULL(sListFifo));
-    ysf_assert(IS_PTR_NULL(findData));
-    
-    struct ysf_sList_t *temp = sListFifo->head;
-    
-    if( temp == NULL )
-    {
-        return false;
-    }
-    
-    while(temp != NULL)
-    {
-        if( temp == findData )
-        {
-            return true;
-        }
-        
-        temp = temp->next;
-    }
-
-    return false;
-}
-
-// 入栈
-fw_err_t ysf_sListFifo_push(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *wrData)
-{
-    ysf_assert(IS_PTR_NULL(sListFifo));
-    ysf_assert(IS_PTR_NULL(wrData));
-    
-//    if( sListFifo->tail == NULL )
-//    {
-//        sListFifo->head = wrData;
-//        sListFifo->tail = wrData;
-//    }
-//    else
-//    {
-//        sListFifo->tail->next = wrData;
-//        sListFifo->tail       = wrData;
-//    }
-    
-    if( ysf_sListFifo_isIn(sListFifo, wrData) == false )
-    {
-        wrData->next = NULL;
-        
-        if(sListFifo->tail != NULL)
-        {
-            sListFifo->tail->next = wrData;
-            sListFifo->tail       = wrData;
-        }
-        else
-        {
-            sListFifo->head = wrData;
-            sListFifo->tail = wrData;
-        }
-    }
-    else
-    {
-        return FW_ERR_INVAILD_PARAM;
-    }
-    
-    return FW_ERR_NONE;
-}
-
-// 出栈
-fw_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t *sListFifo, struct ysf_sList_t *rdData)
-{
-    ysf_assert(IS_PTR_NULL(sListFifo));
-    ysf_assert(IS_PTR_NULL(rdData));
-
-    rdData = sListFifo->head;
-    
-//    if( sListFifo->head->next == NULL )
-//    {
-//        sListFifo->head = NULL;
-//        sListFifo->tail = NULL;
-//    }
-//    else
-//    {
-//        sListFifo->head = sListFifo->head->next;
-//    }
-    
-    sListFifo->head = sListFifo->head->next;
-    
-    if( sListFifo->head->next == NULL )
-    {
-        sListFifo->tail = NULL;
-    }
-
-    rdData->next        = NULL;
-    
-    return FW_ERR_NONE;
-}
-
-// 清空链表fifo
-fw_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *sListFifo)
-{
-    ysf_assert(IS_PTR_NULL(sListFifo));
-    
-    struct ysf_sList_t *status = NULL;
-    
-    do
-    {
-        ysf_sListFifo_pop(sListFifo, status);
-    }while(status != NULL);
-    
-    return FW_ERR_NONE;
-}
-
-// 链表fifo初始化
-fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t *sListFifo)
-{
-    ysf_assert(IS_PTR_NULL(sListFifo));
-
-    ysf_sListFifo_clear(sListFifo);
-    
-    return FW_ERR_NONE;
-}
-
-/** @}*/     /** ysf single list component  */
+/** @}*/     /** framework link list component */
 
 /**********************************END OF FILE*********************************/

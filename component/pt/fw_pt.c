@@ -38,7 +38,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_TYPE_PATH
+#include _FW_PATH
 #include _FW_PT_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
@@ -92,7 +92,7 @@ fw_err_t ysf_pt_arm(struct ysf_task_t *task, struct ysf_pt_t *pt)
         return FW_ERR_INVAILD_PTR;
     }
     
-    ysf_smTask_create(task, pt->thread, pt, YSF_EVENT_NONE);
+    ysf_smTask_create(task, pt->thread, pt, FW_EVENT_NONE);
     
     return FW_ERR_NONE;
 }
@@ -115,7 +115,7 @@ fw_err_t ysf_pt_simp_arm(struct ysf_pt_t *pt)
         return FW_ERR_INVAILD_PTR;
     }
 
-    if(ysf_smSimpTask_create(pt->thread, pt, YSF_EVENT_NONE) == NULL)
+    if(ysf_smSimpTask_create(pt->thread, pt, FW_EVENT_NONE) == NULL)
     {
         return FW_ERR_FAIL;
     }

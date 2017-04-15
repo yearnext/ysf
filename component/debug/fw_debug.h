@@ -52,9 +52,9 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       framework debug component config flags
- * @note        1                              enable
- * @note        0                              disable
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
@@ -80,8 +80,12 @@ extern "C"
  * @brief       define assert macros
  *******************************************************************************
  */ 
-#define fw_assert(expr) ((expr) ? ysf_assert_failed((uint8_t *)__FILE__, __LINE__) :(void)0 )
-                             
+#if defined(USE_FRAMEWORK_DEBUG) && USE_FRAMEWORK_DEBUG
+#define fw_assert(expr) ((expr) ? fw_assert_failed((uint8_t *)__FILE__, __LINE__) :(void)0 )
+#else
+#define fw_assert(expr)
+#endif 
+
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -91,8 +95,8 @@ extern "C"
 #if USE_FRAMEWORK_DEBUG_API
 struct FRAMEWORK_DEBUG_API
 {
-    fw_err_t (*init)(void);
-    void (*assert_failed)(uint8_t*, uint32_t);
+    fw_err_t (*Init)(void);
+    void (*AssertFailed)(uint8_t*, uint32_t);
 };
 #endif
       
@@ -100,12 +104,12 @@ struct FRAMEWORK_DEBUG_API
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define ysf debug function interface
+ * @brief       define framework debug function interface
  *******************************************************************************
  */ 
 #if USE_FRAMEWORK_DEBUG_API
-extern fw_err_t ysf_debug_init(void);
-extern void ysf_assert_failed(uint8_t*, uint32_t);
+extern fw_err_t fw_debug_init(void);
+extern void fw_assert_failed(uint8_t*, uint32_t);
 #endif        
 
 /**@} */

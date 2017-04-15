@@ -39,7 +39,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
-#include _FW_TYPE_PATH
 #include _FW_BUFFER_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
@@ -62,8 +61,8 @@
  */
 fw_err_t ysf_rbInit( struct ysf_rb_t *rb, uint8_t *buffer, uint16_t size )
 {
-    ysf_assert(IS_PTR_NULL(rb));
-    ysf_assert(IS_PTR_NULL(buffer));
+    fw_assert(IS_PTR_NULL(rb));
+    fw_assert(IS_PTR_NULL(buffer));
 
     rb->buffer.buffer = buffer;
     rb->buffer.size   = size;
@@ -84,7 +83,7 @@ fw_err_t ysf_rbInit( struct ysf_rb_t *rb, uint8_t *buffer, uint16_t size )
  */
 uint16_t ysf_rbGetLen( struct ysf_rb_t *rb )
 {
-    ysf_assert(IS_PTR_NULL(rb));
+    fw_assert(IS_PTR_NULL(rb));
     return rb->buffer.size;
 }
 
@@ -99,7 +98,7 @@ uint16_t ysf_rbGetLen( struct ysf_rb_t *rb )
 __STATIC_INLINE 
 uint16_t ysf_rbCanRead( struct ysf_rb_t *rb )
 {
-    ysf_assert(IS_PTR_NULL(rb));
+    fw_assert(IS_PTR_NULL(rb));
 
     if( rb->tail >= rb->head )
     {
@@ -124,7 +123,7 @@ uint16_t ysf_rbCanRead( struct ysf_rb_t *rb )
 __STATIC_INLINE 
 uint16_t ysf_rbCanWrite( struct ysf_rb_t *rb )
 {
-    ysf_assert(IS_PTR_NULL(rb));
+    fw_assert(IS_PTR_NULL(rb));
 
     uint16_t size = 0;
 
@@ -160,9 +159,9 @@ fw_err_t ysf_rbWrite( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize )
     uint16_t free = 0;
     uint16_t i = 0;
 
-    ysf_assert(IS_PTR_NULL(rb));
-    ysf_assert(IS_PTR_NULL(buff));
-    ysf_assert(rbSize == 0);
+    fw_assert(IS_PTR_NULL(rb));
+    fw_assert(IS_PTR_NULL(buff));
+    fw_assert(rbSize == 0);
 
     if( rbSize <= ysf_rbCanWrite(rb) )
     {
@@ -217,9 +216,9 @@ fw_err_t ysf_rbRead( struct ysf_rb_t *rb, uint8_t *buff, uint16_t rbSize)
     uint16_t free = 0;
     uint16_t i = 0;
 
-    ysf_assert(IS_PTR_NULL(rb));
-    ysf_assert(IS_PTR_NULL(buff));
-    ysf_assert(rbSize == 0);
+    fw_assert(IS_PTR_NULL(rb));
+    fw_assert(IS_PTR_NULL(buff));
+    fw_assert(rbSize == 0);
 
     if (rbSize <= ysf_rbCanRead(rb))
     {

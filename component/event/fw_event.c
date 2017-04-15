@@ -38,7 +38,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_TYPE_PATH
+#include _FW_PATH
 #include _FW_EVENT_COMPONENT_PATH
 #include _FW_BUFFER_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH

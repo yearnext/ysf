@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_single_list.h                                               *
+ * @file       fw_linklist.h                                                   *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-18                                                      *
- * @brief      ysf single list head files                                      *
+ * @brief      framework link list head files                                  *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,13 @@
  */
  
 /**
- * @defgroup ysf single list component
+ * @defgroup framework link list component
  * @{
  */
+ 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_SINGLE_LIST_H__
-#define __YSF_SINGLE_LIST_H__
+#ifndef __FRAMEWORK_LINK_LIST_H__
+#define __FRAMEWORK_LINK_LIST_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,74 +47,78 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_SINGLE_LIST_COMPONENT
-#if USE_YSF_SINGLE_LIST_COMPONENT
-#define USE_YSF_SINGLE_LIST_API (1)
+#ifdef USE_FRAMEWORK_LINK_LIST_COMPONENT
+#if USE_FRAMEWORK_LINK_LIST_COMPONENT
+#define USE_FRAMEWORK_SINGLE_LIST_API                                        (1)
 #else
-#define USE_YSF_SINGLE_LIST_API (0)
+#define USE_FRAMEWORK_SINGLE_LIST_API                                        (0)
 #endif
     
 /**
  *******************************************************************************
- * @brief       user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-#define USE_YSF_SINGLE_LIST_API (1)
+#define USE_FRAMEWORK_SINGLE_LIST_API                                        (1)
 #endif
     
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf single list type
+ * @brief       framework single link list type
  *******************************************************************************
  */
-struct ysf_sList_t
+struct fw_slinklist_t
 {
-    struct ysf_sList_t *next;
-    uint8_t            user_data[];
+    struct fw_slinklist_t *next;
+    uint8_t               user_data[];
 };
 
 /**
  *******************************************************************************
- * @brief       ysf single list fifo type
+ * @brief       framework single link list fifo type
  *******************************************************************************
  */
-struct ysf_sListFifo_t
+struct fw_slinklist_fifo_t
 {
-    struct ysf_sList_t *head;
-    struct ysf_sList_t *tail;
+    struct fw_slinklist_t *head;
+    struct fw_slinklist_t *tail;
 };
 
-/**
- *******************************************************************************
- * @brief       define visit list function type
- *******************************************************************************
- */
-typedef bool (*sListFunc)(void **, void **, void **);
+///**
+// *******************************************************************************
+// * @brief       define visit list function type
+// *******************************************************************************
+// */
+//typedef bool (*SLinkListFunc)(void **, void **, void **);
 
 /**
  *******************************************************************************
  * @brief       ysf single list api
  *******************************************************************************
  */
-#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
-struct YSF_SLIST_API
+#if USE_FRAMEWORK_SINGLE_LIST_API
+struct FRAMEWORK_SINGLE_LINK_LIST_API
 {
-    fw_err_t (*init)(void**);
-    fw_err_t (*add)(void**, void **);
-    fw_err_t (*del)(void**, void **);
-    fw_err_t (*isExist)(void**, void **);
+    fw_err_t (*Init)(void**);
+    bool     (*Walk)(void**, bool (*)(void**, void**, void**), void**, void**);
+    fw_err_t (*Add)(void**, void **);
+    fw_err_t (*Del)(void**, void **);
+    fw_err_t (*IsExist)(void**, void **);
 };
 #endif
 
@@ -124,36 +129,46 @@ struct YSF_SLIST_API
  * @brief       define single list function interface
  *******************************************************************************
  */
-#if defined(USE_YSF_SINGLE_LIST_API) && USE_YSF_SINGLE_LIST_API
-extern bool ysf_slist_walk(void**, sListFunc, void**, void**);
-extern bool ysf_slist_module_add(void**, void**, void**);
-extern bool ysf_slist_module_del(void**, void**, void**);
-extern bool ysf_slist_module_isExist(void**, void**, void**);
-extern bool ysf_slist_module_findLastNode(void **, void**, void**);
+#if USE_FRAMEWORK_SINGLE_LIST_API
+extern bool fw_slinklist_walk(void**, bool (*)(void**, void**, void**), void**, void**);
+extern bool fw_slinklist_module_add(void**, void**, void**);
+extern bool fw_slinklist_module_del(void**, void**, void**);
+extern bool fw_slinklist_module_isExist(void**, void**, void**);
+extern bool fw_slinklist_module_findLastNode(void **, void**, void**);
 
-extern fw_err_t ysf_slist_init(void**);
-extern fw_err_t ysf_slist_add(void**, void**);
-extern fw_err_t ysf_slist_del(void**, void**);
-extern fw_err_t ysf_slist_isExist(void**, void**);
+extern fw_err_t fw_slinklist_init(void**);
+extern fw_err_t fw_slinklist_add(void**, void**);
+extern fw_err_t fw_slinklist_del(void**, void**);
+extern fw_err_t fw_slinklist_isExist(void**, void**);
 
-extern fw_err_t ysf_sListFifo_walk(struct ysf_sListFifo_t**, sListFunc, void**, void**);
-extern bool ysf_sListFifo_isIn(struct ysf_sListFifo_t*, struct ysf_sList_t*);
-extern fw_err_t ysf_sListFifo_push(struct ysf_sListFifo_t*, struct ysf_sList_t*);
-extern fw_err_t ysf_sListFifo_pop(struct ysf_sListFifo_t*, struct ysf_sList_t*);
-extern fw_err_t ysf_sListFifo_clear(struct ysf_sListFifo_t *);
-extern fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
-
-#define DEFINE_SLIST_FIFO_CONTROL_BLOCK(type, name) struct                     \
-                                                    {                          \
-                                                        type *head;            \
-                                                        type *tail;            \
-                                                    } name =                   \
-                                                    {                          \
-                                                        .head = NULL,          \
-                                                        .tail = NULL,          \
-                                                    }
-                                                    
-#define ysf_sListFIFO_isIn(type, block, node)                                  \
+/**
+ *******************************************************************************
+ * @brief       define signle link list fifo control block
+ * @param       [in/out]  type          fifo type
+ * @param       [in/out]  name          block name
+ * @note        None
+ *******************************************************************************
+ */
+#define DEFINE_SINGLE_LINK_LIST_FIFO_BLOCK(type, name) struct                  \
+                                                       {                       \
+                                                           type *head;         \
+                                                           type *tail;         \
+                                                       } name =                \
+                                                       {                       \
+                                                           .head = NULL,       \
+                                                           .tail = NULL,       \
+                                                       }
+ 
+/**
+ *******************************************************************************
+ * @brief       detect the node is in fifo
+ * @param       [in/out]  type          fifo type
+ * @param       [in/out]  name          block name
+ * @param       [in/out]  node          find node
+ * @note        None
+ *******************************************************************************
+ */                                                       
+#define fw_slinklistfifo_isIn(type, block, node)                               \
 {                                                                              \
     type *temp = block.head;                                                   \
                                                                                \
@@ -168,7 +183,16 @@ extern fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     }                                                                          \
 }
 
-#define ysf_sListFIFO_push(isInFunc, block, node)                              \
+/**
+ *******************************************************************************
+ * @brief       fifo push
+ * @param       [in/out]  isInFunc      repeated judgment
+ * @param       [in/out]  name          block name
+ * @param       [in/out]  node          find node
+ * @note        None
+ *******************************************************************************
+ */    
+#define fw_slinklistfifo_push(isInFunc, block, node)                           \
 {                                                                              \
     if( isInFunc(node) == false )                                              \
     {                                                                          \
@@ -191,7 +215,15 @@ extern fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     }                                                                          \
 }
 
-#define ysf_sListFIFO_pop(block, popData)                                      \
+/**
+ *******************************************************************************
+ * @brief       fifo pop
+ * @param       [in/out]  name          block name
+ * @param       [in/out]  popData       pop data
+ * @note        None
+ *******************************************************************************
+ */   
+#define fw_slinklistfifo_pop(block, popData)                                   \
 {                                                                              \
     if( block.head == NULL )                                                   \
     {                                                                          \
@@ -209,7 +241,15 @@ extern fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
     }                                                                          \
 }
 
-#define ysf_sListFIFO_clear(sListPOPFunc)                                      \
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  sListPOPFunc    fifo pop function
+ * @param       [in/out]  popData         pop data
+ * @note        None
+ *******************************************************************************
+ */
+#define fw_slinklistfifo_clear(sListPOPFunc)                                   \
 {                                                                              \
     while(sListPOPFunc() != NULL);                                             \
 }
@@ -223,6 +263,6 @@ extern fw_err_t ysf_sListFifo_init(struct ysf_sListFifo_t*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf single list component  */
+/** @}*/     /** framework link list component */
 
 /**********************************END OF FILE*********************************/

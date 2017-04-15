@@ -38,7 +38,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_TYPE_PATH
+#include _FW_PATH
 #include _FW_TICK_COMPONENT_PATH
 #include _FW_EVENT_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
@@ -87,7 +87,7 @@ void ysf_tick_inc( void )
     ENTER_CRITICAL();
     tick++;
 #if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
-    ysf_evtTask_create(&tick_task, ysf_timer_handler, YSF_EVENT_NONE);
+    ysf_evtTask_create(&tick_task, ysf_timer_handler, FW_EVENT_NONE);
 #endif
     EXIT_CRITICAL();
 }

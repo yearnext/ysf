@@ -91,6 +91,7 @@ extern "C"
  * @note        0                       disable
  *******************************************************************************
  */
+#define USE_FRAMEWORK_DEBUG                                                  (1)
 #define USE_STD_LIBRARY                                                      (0)
 #define USE_FRAMEWORK_BUFFER_COMPONENT                                       (1)
 #define USE_FRAMEWORK_DEBUG_COMPONENT                                        (1)

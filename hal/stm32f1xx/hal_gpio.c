@@ -232,7 +232,7 @@ bool gpio_get_output(uint8_t port, uint8_t pin)
 
 hal_err_t msp_gpio_enable(uint8_t port)
 {
-    ysf_assert(IS_PORT_NUM_INVAILD(port));
+    fw_assert(IS_PORT_NUM_INVAILD(port));
 
     gpio_disable(port);
     gpio_enable(port);
@@ -242,7 +242,7 @@ hal_err_t msp_gpio_enable(uint8_t port)
 
 hal_err_t msp_gpio_disable(uint8_t port)
 {
-    ysf_assert(IS_PORT_NUM_INVAILD(port));
+    fw_assert(IS_PORT_NUM_INVAILD(port));
     
     gpio_disable(port);
     
@@ -251,7 +251,7 @@ hal_err_t msp_gpio_disable(uint8_t port)
 
 hal_err_t msp_gpio_init(uint8_t port, uint8_t pin, uint8_t mode)
 {
-    ysf_assert(IS_PORT_NUM_INVAILD(port));
+    fw_assert(IS_PORT_NUM_INVAILD(port));
     
     gpio_config(port, pin, mode);
     
@@ -260,7 +260,7 @@ hal_err_t msp_gpio_init(uint8_t port, uint8_t pin, uint8_t mode)
 
 hal_err_t msp_gpio_fini(uint8_t port, uint8_t pin)
 {
-    ysf_assert(IS_PORT_NUM_INVAILD(port));
+    fw_assert(IS_PORT_NUM_INVAILD(port));
     
     gpio_config(port, pin, GPIO_PIN_INIT_MODE);
     
@@ -269,7 +269,7 @@ hal_err_t msp_gpio_fini(uint8_t port, uint8_t pin)
 
 void msp_gpio_set(uint8_t port, uint8_t pin)
 {
-    ysf_assert(IS_PORT_NUM_INVAILD(port));
+    fw_assert(IS_PORT_NUM_INVAILD(port));
     
     gpio_set(port, pin);
 }
@@ -291,8 +291,8 @@ bool msp_gpio_get_output(uint8_t port, uint8_t pin)
 
 hal_err_t map_gpio_enable(struct map_gpio_t *gpio)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
     
     gpio_disable(gpio->port);
     gpio_enable(gpio->port);
@@ -302,8 +302,8 @@ hal_err_t map_gpio_enable(struct map_gpio_t *gpio)
 
 hal_err_t map_gpio_disable(struct map_gpio_t *gpio)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
     
     gpio_disable(gpio->port);
     
@@ -312,9 +312,9 @@ hal_err_t map_gpio_disable(struct map_gpio_t *gpio)
 
 hal_err_t map_gpio_init(struct map_gpio_t *gpio, uint8_t mode)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    ysf_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PIN_NUM_INVAILD(gpio->pin));
     
     gpio_config(gpio->port, gpio->pin, mode);
     
@@ -323,9 +323,9 @@ hal_err_t map_gpio_init(struct map_gpio_t *gpio, uint8_t mode)
 
 hal_err_t map_gpio_fini(struct map_gpio_t *gpio)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    ysf_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PIN_NUM_INVAILD(gpio->pin));
     
     gpio_config(gpio->port, gpio->pin, GPIO_PIN_INIT_MODE);
     
@@ -334,36 +334,36 @@ hal_err_t map_gpio_fini(struct map_gpio_t *gpio)
 
 void map_gpio_set(struct map_gpio_t *gpio)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    ysf_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PIN_NUM_INVAILD(gpio->pin));
     
     gpio_set(gpio->port, gpio->pin);
 }
 
 void map_gpio_clr(struct map_gpio_t *gpio)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    ysf_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PIN_NUM_INVAILD(gpio->pin));
     
     gpio_clr(gpio->port, gpio->pin);
 }
 
 bool map_gpio_get_input(struct map_gpio_t *gpio)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    ysf_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PIN_NUM_INVAILD(gpio->pin));
     
     return gpio_get_input(gpio->port, gpio->pin);
 }
 
 bool map_gpio_get_output(struct map_gpio_t *gpio)
 {
-    ysf_assert(IS_PTR_NULL(gpio));
-    ysf_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    ysf_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    fw_assert(IS_PTR_NULL(gpio));
+    fw_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    fw_assert(IS_PIN_NUM_INVAILD(gpio->pin));
     
     return gpio_get_output(gpio->port, gpio->pin);
 }

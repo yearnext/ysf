@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_buffer.h                                                    *
+ * @file       fw_buffer.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-16                                                      *
- * @brief      ysf_buffer head files                                           *
+ * @brief      framework buffer head files                                     *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup ysf buffer component
+ * @defgroup framework buffer component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_BUFFER_H__
-#define __YSF_BUFFER_H__
+#ifndef __FRAMEWORK_BUFFER_H__
+#define __FRAMEWORK_BUFFER_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,42 +46,38 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
-#include _COMPILER_PATH
-
+#include _FW_PATH
+#include _FW_LINK_LIST_COMPONENT_PATH
+    
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       use ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_BUFFER_COMPONENT
-#if USE_YSF_BUFFER_COMPONENT
-#define USE_YSF_BUFFER_API              (1)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (1)
+#ifdef USE_FRAMEWORK_BUFFER_COMPONENT
+#if USE_FRAMEWORK_BUFFER_COMPONENT
+    #define USE_FRAMEWORK_BUFFER_API                                         (1)
+    #define USE_FRAMEWORK_MEMORY_MANAGEMENT_API                              (1)
 #else
-#define USE_YSF_BUFFER_API              (0)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (0)
-#endif
-
-#else
-/**
- *******************************************************************************
- * @brief       not use ysf config
- *******************************************************************************
- */
-#define USE_YSF_BUFFER_API              (1)
-#define USE_YSF_MEMORY_MANAGEMENT_API   (1)
+    #define USE_FRAMEWORK_BUFFER_API                                         (0)
+    #define USE_FRAMEWORK_MEMORY_MANAGEMENT_API                              (0)
 #endif
 
 /**
  *******************************************************************************
- * @brief       define buffer component debug switch
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
-#define USE_YSF_BUFFER_DEBUG            (0)
+#else
+    #define USE_FRAMEWORK_BUFFER_API                                         (1)
+    #define USE_FRAMEWORK_MEMORY_MANAGEMENT_API                              (1)
+#endif
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -89,22 +85,12 @@ extern "C"
  * @brief       define buffer type
  *******************************************************************************
  */
-struct ysf_buffer_t 
+struct fw_buffer_t
 {
     uint8_t  *buffer;
     uint16_t size;
-};
-
-/**
- *******************************************************************************
- * @brief       define ring buffer type
- *******************************************************************************
- */
-struct ysf_rb_t
-{
-    struct ysf_buffer_t buffer;
-    uint16_t            head;
-    uint16_t            tail;
+    uint16_t head;
+    uint16_t tail;
 };
 
 /**
@@ -112,16 +98,15 @@ struct ysf_rb_t
  * @brief       define ring buffer api
  *******************************************************************************
  */
-#if USE_YSF_BUFFER_API
-struct YSF_RING_BUFFER_API
+#if USE_FRAMEWORK_BUFFER_API
+struct _RING_BUFFER_API
 {
-    fw_err_t (*init)(struct ysf_rb_t*, uint8_t*, uint16_t);
-    uint16_t (*len)(struct ysf_rb_t*);
-    fw_err_t (*write)(struct ysf_rb_t*, uint8_t*, uint16_t);
-    fw_err_t (*read)(struct ysf_rb_t*, uint8_t*, uint16_t);
+    fw_err_t (*Init)(struct fw_buffer_t*, uint8_t*, uint16_t);
+    fw_err_t (*GetLen)(struct fw_buffer_t*, uint16_t*);
+    fw_err_t (*Write)(struct fw_buffer_t*, uint8_t*, uint16_t);
+    fw_err_t (*Read)(struct fw_buffer_t*, uint8_t*, uint16_t);
 };
 #endif
-
 
 /**
  *******************************************************************************
@@ -129,11 +114,11 @@ struct YSF_RING_BUFFER_API
  *******************************************************************************
  */
 __ALIGN_HEAD(8)
-struct ysf_mem_block_t
+struct fw_memblock_t
 {
-	struct ysf_mem_block_t *next;
-	uint16_t               size;
-    bool                   status;
+	struct fw_memblock_t *next;
+	uint32_t             size   : 31;
+    uint32_t             status :  1;
 };
 __ALIGN_TAIL(8)
 
@@ -142,16 +127,32 @@ __ALIGN_TAIL(8)
  * @brief       define memory control block
  *******************************************************************************
  */
-struct ysf_mem_ctrl_t
+struct fw_memcontrol_t
 {
     union
     {
-        uint8_t  *buffer;
-        struct ysf_mem_block_t *head; 
+        void                 *buffer;
+        struct fw_memblock_t *head; 
     };
     
     uint16_t size;
 };
+
+/**
+ *******************************************************************************
+ * @brief       define memory management api
+ *******************************************************************************
+ */
+#if USE_FRAMEWORK_MEMORY_MANAGEMENT_API
+struct _MEMORY_MANAGEMENT_API
+{
+    fw_err_t (*Init)(struct fw_memcontrol_t*, uint8_t*, uint32_t);
+    fw_err_t (*Alloc)(struct fw_memcontrol_t*, uint16_t, void*);
+    fw_err_t (*Free)(struct fw_memcontrol_t*, void*);
+    fw_err_t (*IsIn)(struct fw_memcontrol_t*, void*);
+};
+#endif
+
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -160,11 +161,11 @@ struct ysf_mem_ctrl_t
  * @brief       ring buffer function interface
  *******************************************************************************
  */
-#if USE_YSF_BUFFER_API
-extern fw_err_t ysf_rbInit(struct ysf_rb_t*, uint8_t*, uint16_t);
-extern uint16_t ysf_rbGetLen(struct ysf_rb_t*);
-extern fw_err_t ysf_rbWrite(struct ysf_rb_t*, uint8_t*, uint16_t);
-extern fw_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, uint16_t);
+#if USE_FRAMEWORK_BUFFER_API
+extern fw_err_t fw_rb_init(struct fw_buffer_t*, uint8_t*, uint16_t);
+extern fw_err_t fw_rb_getlen(struct fw_buffer_t*, uint16_t*);
+extern fw_err_t fw_rb_write(struct fw_buffer_t*, uint8_t*, uint16_t);
+extern fw_err_t fw_rb_read(struct fw_buffer_t*, uint8_t*, uint16_t);
 #endif
 
 /**
@@ -172,12 +173,11 @@ extern fw_err_t ysf_rbRead(struct ysf_rb_t*, uint8_t*, uint16_t);
  * @brief       memory management function interface
  *******************************************************************************
  */
-#if USE_YSF_MEMORY_MANAGEMENT_API
-extern fw_err_t ysf_mem_init(struct ysf_mem_ctrl_t*, uint8_t*, uint16_t);
-//extern fw_err_t mem_deinit(struct ysf_mem_ctrl_t *);
-extern void *ysf_mem_alloc(struct ysf_mem_ctrl_t *mem, uint16_t);
-extern void ysf_mem_free(struct ysf_mem_ctrl_t*, void*);
-extern bool ysf_mem_is_in(struct ysf_mem_ctrl_t*, void*);
+#if USE_FRAMEWORK_MEMORY_MANAGEMENT_API
+extern fw_err_t fw_mem_init(struct fw_memcontrol_t*, uint8_t*, uint32_t);
+extern fw_err_t fw_mem_alloc(struct fw_memcontrol_t*, uint16_t, void*);
+extern fw_err_t ysf_mem_free(struct fw_memcontrol_t*, void*);
+extern fw_err_t ysf_mem_is_in(struct fw_memcontrol_t*, void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -187,6 +187,6 @@ extern bool ysf_mem_is_in(struct ysf_mem_ctrl_t*, void*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf buffer component  */
+/** @}*/     /** framework buffer component  */
 
 /**********************************END OF FILE*********************************/

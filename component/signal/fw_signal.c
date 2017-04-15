@@ -38,7 +38,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_TYPE_PATH
+#include _FW_PATH
 #include _FW_SIGNAL_COMPONENT_PATH
 #include _FW_TIMER_COMPONENT_PATH
 #include _FW_MEMORY_COMPONENT_PATH
@@ -183,7 +183,7 @@ fw_err_t ysf_signal_init( void )
 {
     ysf_signal_clear();
     
-    ysf_evtTimer_init(&signal_timer, ysf_signal_handler, YSF_EVENT_NONE);
+    ysf_evtTimer_init(&signal_timer, ysf_signal_handler, FW_EVENT_NONE);
     ysf_timer_arm(&signal_timer, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_MODE);
     
     return FW_ERR_NONE;

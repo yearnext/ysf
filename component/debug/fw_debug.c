@@ -74,7 +74,9 @@ fw_err_t fw_debug_init( void )
  */
 void fw_assert_failed(uint8_t* file, uint32_t line)
 {
+__ATOM_ACTIVE_BEGIN();
     while(1);
+//__ATOM_ACTIVE_END();
 }
 #endif
 
