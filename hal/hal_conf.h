@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-18                                                      *
- * @brief      ysf hal conf head files                                         *
+ * @brief      hal conf head files                                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
 
 /**
- * @defgroup ysf hal config
+ * @defgroup hal config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -46,75 +46,64 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/    
-/**
- *******************************************************************************
- * @brief     CHIP CHECK
- *******************************************************************************
- */    
-#ifndef __TARGET_CHIP__
-    #define __TARGET_CHIP__ 
-#endif
-  
-/**
- *******************************************************************************
- * @brief      INCLUDE HAL COMPONENT
- *******************************************************************************
- */    
-//#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-//    #define HAL_PATH "../framework/hal/stm32f1xx/hal.h"
-//#else
-//    #error "TARGET CHIP IS NOT CONFIG, PLEASE CONFIG IT!"
-//#endif
-    
-/**
- *******************************************************************************
- * @brief      INCLUDE YSF DEBUG COMPONENT
- *******************************************************************************
- */
-#if defined(USE_YSF_DEBUG_COMPONENT) && USE_YSF_DEBUG_COMPONENT
-    #include "ysf_path.h"
-    #include YSF_COMPONENT_DEBUG_PATH
-#endif
+#include "core_conf.h"
 
-/* Private define ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      DEFINE HAL COMPONENT CONFIG SWITCH
- *******************************************************************************
- */
-#define USE_HAL_GPIO_COMPONENT                                               (1)
-#define USE_HAL_TIMER_COMPONENT                                              (1)
-#define USE_HAL_UART_COMPONENT                                               (1)
-
-/**
- *******************************************************************************
- * @brief      DEFINE HAL ASSERT
- *******************************************************************************
- */
-#if defined(USE_YSF_DEBUG_COMPONENT) && USE_YSF_DEBUG_COMPONENT
-#define hal_assert(expr) ysf_assert(expr)
-#else
-#define hal_assert(expr) 
-#endif
-
-#ifndef IS_PTR_NULL
-#define IS_PTR_NULL(ptr) ((ptr) == NULL)
-#endif
- 
 /* Exported types ------------------------------------------------------------*/    
 /**
  *******************************************************************************
- * @brief      DEFINE HAL ERROR TYPE
+ * @brief      define constants must be defined
  *******************************************************************************
  */
-typedef enum
-{
-    HAL_ERR_NONE,
-    HAL_ERR_FAIL,
+/* STM32F1xx config ----------------------------------------------------------*/
+#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
+	#define STM32F103xE
+	
+/**
+ *******************************************************************************
+ * @brief      define mcu clock freq
+ *******************************************************************************
+ */
+	#define MCU_CLOCK_FREQ                                          (72000000UL) 
+	#define MCU_HSE_FREQ                                             (8000000UL)  
 
-    HAL_ERR_INVAILD_PTR,
-    HAL_ERR_INVAILD_PARAM,
-}hal_err_t;
+/**
+ *******************************************************************************
+ * @brief      define mcu sram constants
+ *******************************************************************************
+ */
+	#define MCU_SRAM_SIZE                                                   (64)
+	#define MCU_SRAM_HEAD_ADDR                                    (0x20000000UL)
+	#define MCU_SRAM_END_ADDR        (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
+	
+/* STM8S config --------------------------------------------------------------*/
+#elif __TARGET_CHIP__ == USE_MCU_STM8S
+    #define STM8S003
+	
+/**
+ *******************************************************************************
+ * @brief      define mcu clock freq
+ *******************************************************************************
+ */
+	#define MCU_CLOCK_FREQ                                          (16000000UL) 
+	#define MCU_HSE_FREQ                                             (8000000UL)  
+
+/**
+ *******************************************************************************
+ * @brief      define mcu sram constants
+ *******************************************************************************
+ */
+	#define MCU_SRAM_SIZE                                                    (1)
+	#define MCU_SRAM_HEAD_ADDR                                        (0x03FFUL)
+	#define MCU_SRAM_END_ADDR        (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
+
+/**
+ *******************************************************************************
+ * @brief      invaild define
+ *******************************************************************************
+ */
+#else
+	#error "The __TARGET_CHIP__ is not support type!"
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
