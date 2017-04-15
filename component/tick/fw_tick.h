@@ -46,45 +46,41 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_TICK_COMPONENT
-#if USE_YSF_TICK_COMPONENT
-#define USE_YSF_TICK_API (1)
+#ifdef USE_FRAMEWORK_TICK_COMPONENT
+#if USE_FRAMEWORK_TICK_COMPONENT
+#define USE_FRAMEWORK_TICK_API (1)
 #else
-#define USE_YSF_TICK_API (0)
+#define USE_FRAMEWORK_TICK_API (0)
 #endif
 
 /**
  *******************************************************************************
- * @brief       user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-#define USE_YSF_TICK_API (1)
+#define USE_FRAMEWORK_TICK_API (1)
 #endif
 
-/**
- *******************************************************************************
- * @brief       ysf tick time(unit: ms)
- *******************************************************************************
- */
-#define YSF_TICK_TIME    (10)
-    
 /**
  *******************************************************************************
  * @brief       ysf tick max value
  *******************************************************************************
  */
-#define YSF_TICK_MAX UINT32_MAX
+#define _TICK_VALUE_MAX         UINT32_MAX
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -92,8 +88,8 @@ extern "C"
  * @brief       ysf tick type
  *******************************************************************************
  */
-#if USE_YSF_TICK_API
-typedef uint32_t ysf_tick_t;
+#if USE_FRAMEWORK_TICK_API
+typedef uint32_t fw_tick_t;
 #endif
 
 /**
@@ -101,23 +97,28 @@ typedef uint32_t ysf_tick_t;
  * @brief       ysf tick func list
  *******************************************************************************
  */
-#if USE_YSF_TICK_API
-struct YSF_TICK_API
+#if USE_FRAMEWORK_TICK_API
+struct _TICK_API
 {
-    void (*init)(void);
-    void (*inc)(void);
-    ysf_tick_t (*read)(void);
-    ysf_tick_t (*cal)(void);
+    void (*Init)(void);
+    void (*Inc)(void);
+    fw_tick_t (*Read)(void);
+    fw_tick_t (*Cal)(void);
 };
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_TICK_API
-extern void ysf_tick_init( void );
-extern void ysf_tick_inc( void );
-extern ysf_tick_t ysf_tick_get( void );
-extern ysf_tick_t ysf_past_tick_cal( void );
+/**
+ *******************************************************************************
+ * @brief       define tick function interface
+ *******************************************************************************
+ */
+#if USE_FRAMEWORK_TICK_API
+extern void      fw_tick_init(void);
+extern void      fw_tick_inc(void);
+extern fw_tick_t fw_tick_get(void);
+extern fw_tick_t fw_past_tick_cal(void );
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

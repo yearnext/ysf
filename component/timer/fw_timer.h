@@ -109,8 +109,8 @@ struct ysf_timer_t
     
     struct
     {
-        ysf_tick_t ticks;
-        ysf_tick_t loadTicks;
+        fw_tick_t ticks;
+        fw_tick_t loadTicks;
         
         int16_t    cycle;
     };

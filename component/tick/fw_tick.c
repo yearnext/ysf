@@ -52,15 +52,15 @@
  * @brief       framework tick
  *******************************************************************************
  */
-#if USE_YSF_TICK_API
-static ysf_tick_t tick = 0;
+#if USE_FRAMEWORK_TICK_API
+static fw_tick_t tick = 0;
 static struct ysf_task_t tick_task;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_TICK_API
+#if USE_FRAMEWORK_TICK_API
 /**
  *******************************************************************************
  * @brief       tick initialization
@@ -69,7 +69,7 @@ static struct ysf_task_t tick_task;
  * @note        None
  *******************************************************************************
  */
-void ysf_tick_init( void )
+void fw_tick_init( void )
 {
     tick = 0;
 }
@@ -82,11 +82,11 @@ void ysf_tick_init( void )
  * @note        None
  *******************************************************************************
  */
-void ysf_tick_inc( void )
+void fw_tick_inc( void )
 {
     ENTER_CRITICAL();
     tick++;
-#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+#if USE_FRAMEWORK_TICK_API
     ysf_evtTask_create(&tick_task, ysf_timer_handler, FW_EVENT_NONE);
 #endif
     EXIT_CRITICAL();
@@ -100,7 +100,7 @@ void ysf_tick_inc( void )
  * @note        None
  *******************************************************************************
  */
-ysf_tick_t ysf_tick_get( void )
+fw_tick_t fw_tick_get( void )
 {
     return tick;
 }
@@ -113,10 +113,10 @@ ysf_tick_t ysf_tick_get( void )
  * @note        None
  *******************************************************************************
  */
-ysf_tick_t ysf_past_tick_cal( void )
+fw_tick_t fw_past_tick_cal( void )
 {
-	static ysf_tick_t lastTick = 0;
-	ysf_tick_t calTick = 0;
+	static fw_tick_t lastTick = 0;
+	fw_tick_t calTick = 0;
 	
 	if( tick >= lastTick )
 	{
@@ -124,7 +124,7 @@ ysf_tick_t ysf_past_tick_cal( void )
 	}
 	else
 	{
-		calTick = YSF_TICK_MAX - lastTick;
+		calTick = _TICK_VALUE_MAX - lastTick;
 		calTick = calTick + tick;
 	}
 	
