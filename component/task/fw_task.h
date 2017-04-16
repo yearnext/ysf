@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-28                                                      *
- * @brief      framework task component head files                             *
+ * @brief      task component head files                                       *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup framework task component
+ * @defgroup task component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_TASK_COMPONENT_H__
-#define __FRAMEWORK_TASK_COMPONENT_H__
+#ifndef __TASK_COMPONENT_H__
+#define __TASK_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -59,9 +59,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_TASK_COMPONENT
 #if USE_FRAMEWORK_TASK_COMPONENT
-#define USE_FRAMEWORK_TASK_API                                               (1)
+#define USE_TASK_COMPONENT                                                   (1)
 #else
-#define USE_FRAMEWORK_TASK_API                                               (0)
+#define USE_TASK_COMPONENT                                                   (0)
 #endif
 
 /**
@@ -72,7 +72,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_TASK_API                                               (1)
+#define USE_TASK_COMPONENT                                                   (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/    
@@ -81,65 +81,74 @@ extern "C"
  * @brief       task block
  *******************************************************************************
  */
-struct fw_task_t
+struct TaskBlock
 {
-    struct fw_task_t *next;
+    struct TaskBlock *Next;
     
     union
     {
-        fw_err_t (*sm)(void*, uint16_t);
-        fw_err_t (*evt)(uint16_t);
-        fw_err_t (*cb)(void*);
-    }handler;
+        fw_err_t (*Message)(void*, uint16_t);
+        fw_err_t (*Event)(uint16_t);
+        fw_err_t (*CallBack)(void*);
+    }Handler;
 
-    void *param;
-    uint16_t evt;
+    void *Param;
+    uint16_t Event;
 
-    enum fw_task_type_t
+    enum
     {
-        FW_CALL_BACK_TASK,
-        FW_EVENT_HANDLER_TASK,
-        FW_STATE_MECHINE_TASK,
-    }type;
+        CALL_BACK_TASK,
+        EVENT_HANDLER_TASK,
+        MESSAGE_HANDLER_TASK,
+        
+        CALL_BACK_EX_TASK,
+        EVENT_HANDLER_EX_TASK,
+        MESSAGE_HANDLER_EX_TASK,
+    }Type;
 };
 
 /**
  *******************************************************************************
- * @brief       framework task api
+ * @brief       framework task interface
  *******************************************************************************
  */
-#if USE_FRAMEWORK_TASK_API
-struct YSF_TASK_API
+#if USE_TASK_COMPONENT
+typedef struct
 {
     fw_err_t (*Init)(void);
     fw_err_t (*Poll)(void);
     
     struct
     {
-        fw_err_t (*Cb)(struct fw_task_t*, fw_err_t (*)(void*), void*);
-        fw_err_t (*Evt)(struct fw_task_t*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*Sm)(struct fw_task_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+        fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
+        fw_err_t (*Event)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
+        fw_err_t (*Message)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
         
-        struct fw_task_t *(*CbEx)(fw_err_t (*)(void*), void*);
-        struct fw_task_t *(*EvtEx)(fw_err_t (*)(uint16_t), uint16_t);
-        struct fw_task_t *(*SmEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+        struct TaskBlock *(*CallBackEx)(fw_err_t (*)(void*), void*);
+        struct TaskBlock *(*EventEx)(fw_err_t (*)(uint16_t), uint16_t);
+        struct TaskBlock *(*MessageEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
     }create;
-};
+}TaskInterfact;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_TASK_API
-extern fw_err_t fwTaskInit(void);
-extern fw_err_t fwTaskPoll(void);
+/**
+ *******************************************************************************
+ * @brief       framework task api
+ *******************************************************************************
+ */
+#if USE_TASK_COMPONENT
+extern fw_err_t TaskInit(void);
+extern fw_err_t TaskPoll(void);
 
-extern fw_err_t fw_cbTask_create(struct fw_task_t*, fw_err_t (*)(void*), void*);
-extern fw_err_t fw_evtTask_create(struct fw_task_t*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t fw_smTask_create(struct fw_task_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern fw_err_t CreateCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
+extern fw_err_t CreateEventHandlerTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t CreateMessageHandlerTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 
-extern struct fw_task_t *fw_cbExTask_create(fw_err_t (*)(void*), void*);
-extern struct fw_task_t *fw_evtExTask_create(fw_err_t (*)(uint16_t), uint16_t);
-extern struct fw_task_t *fw_smExTask_create(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern struct TaskBlock *CreateCallBackHandlerExTask(fw_err_t (*)(void*), void*);
+extern struct TaskBlock *CreateEventHandlerExTask(fw_err_t (*)(uint16_t), uint16_t);
+extern struct TaskBlock *CreateMessageHandlerExTask(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif    
     
 /* Add c++ compatibility------------------------------------------------------*/
@@ -149,6 +158,6 @@ extern struct fw_task_t *fw_smExTask_create(fw_err_t (*)(void*, uint16_t), void*
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework task component  */
+/** @}*/     /** task component  */
 
 /**********************************END OF FILE*********************************/

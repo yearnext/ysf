@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-28                                                      *
- * @brief      framework task component source files                           *
+ * @brief      task component source files                                     *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -47,19 +47,19 @@
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+#if USE_TASK_COMPONENT
 /**
  *******************************************************************************
- * @brief       ysf task control block
+ * @brief       task control block
  *******************************************************************************
  */
-static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, TaskControlBlock);
+static CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(struct TaskBlock, TaskControlBlock);
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+#if USE_TASK_COMPONENT
 /**
  *******************************************************************************
  * @brief       detect the task is in queue
@@ -70,9 +70,9 @@ static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_task_t, TaskControlBlock);
  *******************************************************************************
  */
 __STATIC_INLINE
-bool ysf_task_isIn(struct ysf_task_t *task)
+bool task_is_in(struct TaskBlock *task)
 {
-    ysf_sListFIFO_isIn(struct ysf_task_t, TaskControlBlock, task);
+    SingleListFifoIsIn(struct TaskBlock, TaskControlBlock, task);
     
     return false;
 }
@@ -86,9 +86,9 @@ bool ysf_task_isIn(struct ysf_task_t *task)
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ysf_task_push(struct ysf_task_t *task)
+fw_err_t task_push(struct TaskBlock *task)
 {
-    ysf_sListFIFO_push(ysf_task_isIn, TaskControlBlock, task);
+    SingleListFifoPush(task_is_in, TaskControlBlock, task);
     
     return FW_ERR_NONE;
 }
@@ -97,16 +97,16 @@ fw_err_t ysf_task_push(struct ysf_task_t *task)
  *******************************************************************************
  * @brief       push task from queue
  * @param       [in/out]  void
- * @return      [in/out]  struct ysf_task_t *     push task addr in memory
+ * @return      [in/out]  struct TaskBlock *     push task addr in memory
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-struct ysf_task_t *ysf_task_pop(void)
+struct TaskBlock *task_pop(void)
 {
-    struct ysf_task_t *task;
+    struct TaskBlock *task;
     
-    ysf_sListFIFO_pop(TaskControlBlock, task);
+    SingleListFifoPop(TaskControlBlock, task);
     
     return task;
 }
@@ -120,24 +120,24 @@ struct ysf_task_t *ysf_task_pop(void)
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ysf_task_clear(void)
+fw_err_t task_clear(void)
 {    
-    ysf_sListFIFO_clear(ysf_task_pop);
+    SingleListFifoClear(task_pop);
 
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       ysf task component init
+ * @brief       task component init
  * @param       [in/out]  void
  * @return      [in/out]  FW_ERR_NONE       init finish
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_task_init(void)
+fw_err_t TaskInit(void)
 {
-    ysf_task_clear();
+    task_clear();
     
     return FW_ERR_NONE;
 }
@@ -153,59 +153,21 @@ fw_err_t ysf_task_init(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_cbTask_create(struct ysf_task_t *task, fw_err_t (*func)(void*), void *param)
+fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), void *param)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    task->handler.cb = func;
-    task->param      = param;
-    task->type       = YSF_CALL_BACK_TASK;
+    task->Handler.CallBack = func;
+    task->Param      = param;
+    task->Type       = CALL_BACK_TASK;
     
-//    task->next       = NULL;
-    ysf_task_push(task);
+//    task->Next       = NULL;
+    task_push(task);
     
     return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       add task to task queue
- * @param       [in/out]  *func                     task function
- * @param       [in/out]  *param                    task param
- * @return      [in/out]  NULL                      add failed
- * @return      [in/out]  ARRDESS                   add success
- * @note        None
- *******************************************************************************
- */
-struct ysf_task_t *ysf_cbSimpTask_create(fw_err_t (*func)(void*), void *param)
-{
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
-    if(IS_PTR_NULL(func))
-    {
-        return NULL;
-    }
-    
-    struct ysf_task_t *task = (struct ysf_task_t *)ysf_memory_malloc(sizeof(struct ysf_task_t));
-     
-    if(IS_PTR_NULL(task))
-    {
-        return NULL;
-    }
-    
-    task->handler.cb = func;
-    task->param      = param;
-    task->type       = YSF_CALL_BACK_TASK;
-    
-//    task->next         = NULL;
-    ysf_task_push(task);
-    
-    return task;
-#else
-    return NULL;
-#endif
 }
 
 /**
@@ -219,59 +181,21 @@ struct ysf_task_t *ysf_cbSimpTask_create(fw_err_t (*func)(void*), void *param)
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_evtTask_create(struct ysf_task_t *task, fw_err_t (*func)(uint16_t), uint16_t evt)
+fw_err_t CreateEventHandlerTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t), uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    task->handler.evt = func;
-    task->evt         = evt;
-    task->type        = YSF_EVENT_HANDLER_TASK;
+    task->Handler.Event = func;
+    task->Event         = evt;
+    task->Type          = EVENT_HANDLER_TASK;
     
-//    task->next         = NULL;
-    ysf_task_push(task);
+//    task->Next         = NULL;
+    task_push(task);
     
     return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       add task to task queue
- * @param       [in/out]  *func                     task function
- * @param       [in/out]  event                     task event
- * @return      [in/out]  NULL                      add failed
- * @return      [in/out]  ARRDESS                   add success
- * @note        None
- *******************************************************************************
- */
-struct ysf_task_t *ysf_evtSimpTask_create(fw_err_t (*func)(uint16_t), uint16_t evt)
-{
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
-    if(IS_PTR_NULL(func))
-    {
-        return NULL;
-    }
-    
-    struct ysf_task_t *task = (struct ysf_task_t *)ysf_memory_malloc(sizeof(struct ysf_task_t));
-     
-    if(IS_PTR_NULL(task))
-    {
-        return NULL;
-    }
-    
-    task->handler.evt = func;
-    task->evt         = evt;
-    task->type        = YSF_EVENT_HANDLER_TASK;
-    
-//    task->next         = NULL;
-    ysf_task_push(task);
-    
-    return task;
-#else
-    return NULL;
-#endif
 }
 
 /**
@@ -286,22 +210,98 @@ struct ysf_task_t *ysf_evtSimpTask_create(fw_err_t (*func)(uint16_t), uint16_t e
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_smTask_create(struct ysf_task_t *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+fw_err_t CreateMessageHandlerTask(struct TaskBlock *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    task->handler.sm = func;
-    task->param      = param;
-    task->evt        = evt;
-    task->type       = YSF_STATE_MECHINE_TASK;
+    task->Handler.Message = func;
+    task->Param           = param;
+    task->Event           = evt;
+    task->Type            = MESSAGE_HANDLER_TASK;
     
-//    task->next   = NULL;
-    ysf_task_push(task);
+//    task->Next   = NULL;
+    task_push(task);
     
     return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task to task queue
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  *param                    task param
+ * @return      [in/out]  NULL                      add failed
+ * @return      [in/out]  ARRDESS                   add success
+ * @note        None
+ *******************************************************************************
+ */
+struct TaskBlock *CreateCallBackHandlerExTask(fw_err_t (*func)(void*), void *param)
+{
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+    if(IS_PTR_NULL(func))
+    {
+        return NULL;
+    }
+    
+    struct TaskBlock *task = (struct TaskBlock *)MemoryMalloc(sizeof(struct TaskBlock));
+     
+    if(IS_PTR_NULL(task))
+    {
+        return NULL;
+    }
+    
+    task->Handler.CallBack = func;
+    task->Param            = param;
+    task->Type             = CALL_BACK_EX_TASK;
+    
+//    task->Next         = NULL;
+    task_push(task);
+    
+    return task;
+#else
+    return NULL;
+#endif
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task to task queue
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  event                     task event
+ * @return      [in/out]  NULL                      add failed
+ * @return      [in/out]  ARRDESS                   add success
+ * @note        None
+ *******************************************************************************
+ */
+struct TaskBlock *CreateEventHandlerExTask(fw_err_t (*func)(uint16_t), uint16_t evt)
+{
+#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+    if(IS_PTR_NULL(func))
+    {
+        return NULL;
+    }
+    
+    struct TaskBlock *task = (struct TaskBlock *)MemoryMalloc(sizeof(struct TaskBlock));
+     
+    if(IS_PTR_NULL(task))
+    {
+        return NULL;
+    }
+    
+    task->Handler.Event = func;
+    task->Event         = evt;
+    task->Type          = EVENT_HANDLER_EX_TASK;
+    
+//    task->Next         = NULL;
+    task_push(task);
+    
+    return task;
+#else
+    return NULL;
+#endif
 }
 
 /**
@@ -315,7 +315,7 @@ fw_err_t ysf_smTask_create(struct ysf_task_t *task, fw_err_t (*func)(void*, uint
  * @note        None
  *******************************************************************************
  */
-struct ysf_task_t *ysf_smSimpTask_create(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+struct TaskBlock *CreateMessageHandlerExTask(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
     if(IS_PTR_NULL(func))
@@ -323,20 +323,20 @@ struct ysf_task_t *ysf_smSimpTask_create(fw_err_t (*func)(void*, uint16_t), void
         return NULL;
     }
     
-    struct ysf_task_t *task = (struct ysf_task_t *)ysf_memory_malloc(sizeof(struct ysf_task_t));
+    struct TaskBlock *task = (struct TaskBlock *)MemoryMalloc(sizeof(struct TaskBlock));
      
     if(IS_PTR_NULL(task))
     {
         return NULL;
     }
     
-    task->handler.sm = func;
-    task->param      = param;
-    task->evt        = evt;
-    task->type       = YSF_STATE_MECHINE_TASK;
+    task->Handler.Message = func;
+    task->Param           = param;
+    task->Event           = evt;
+    task->Type            = MESSAGE_HANDLER_EX_TASK;
     
-//    task->next         = NULL;
-    ysf_task_push(task);
+//    task->Next         = NULL;
+    task_push(task);
     
     return task;
 #else
@@ -347,37 +347,40 @@ struct ysf_task_t *ysf_smSimpTask_create(fw_err_t (*func)(void*, uint16_t), void
 /**
  *******************************************************************************
  * @brief       task handler function
- * @param       [in/out]  task                 will handler task
+ * @param       [in/out]  task                will handler task
  * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ysf_task_handler(struct ysf_task_t *task)
+fw_err_t task_handler(struct TaskBlock *task)
 {
 //    if( IS_PTR_NULL(task) )
 //    {
 //        return FW_ERR_NONE;
 //    }
     
-    switch(task->type)
+    switch(task->Type)
     {
-        case YSF_CALL_BACK_TASK:
-            if( task->handler.cb != NULL )
+        case CALL_BACK_TASK:
+        case CALL_BACK_EX_TASK:
+            if( task->Handler.CallBack != NULL )
             {
-                task->handler.cb(task->param);
+                task->Handler.CallBack(task->Param);
             }
             break;
-        case YSF_EVENT_HANDLER_TASK:
-            if( task->handler.evt != NULL )
+        case EVENT_HANDLER_TASK:
+        case EVENT_HANDLER_EX_TASK:
+            if( task->Handler.Event != NULL )
             {
-                task->handler.evt(task->evt);
+                task->Handler.Event(task->Event);
             }
             break;
-        case YSF_STATE_MECHINE_TASK:
-            if( task->handler.sm != NULL )
+        case MESSAGE_HANDLER_TASK:
+        case MESSAGE_HANDLER_EX_TASK:
+            if( task->Handler.Message != NULL )
             {
-                task->handler.sm(task->param, task->evt);
+                task->Handler.Message(task->Param, task->Event);
             }
             break;
 //        default:
@@ -396,10 +399,10 @@ fw_err_t ysf_task_handler(struct ysf_task_t *task)
  * @note        this function is dependent on ysf memory management
  *******************************************************************************
  */
-fw_err_t ysf_task_poll(void)
+fw_err_t TaskPoll(void)
 {   
     // read task from the task queue    
-    struct ysf_task_t *task = ysf_task_pop();
+    struct TaskBlock *task = task_pop();
 
     if( task == NULL )
     {
@@ -407,19 +410,24 @@ fw_err_t ysf_task_poll(void)
     }
     
     // task trigger handler
-    ysf_task_handler(task);
+    task_handler(task);
     
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-        if( ysf_memory_is_in(task) == true )
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    if (task->Type == CALL_BACK_EX_TASK 
+        || task->Type == EVENT_HANDLER_EX_TASK 
+        || task->Type == MESSAGE_HANDLER_EX_TASK)
+    {
+        if( MemoryIsIn(task) == true )
         {
-            ysf_memory_free(task);
+            MemoryFree(task);
         }
+    }
 #endif
         
     return FW_ERR_NONE;
 }
 
 #endif
-/** @}*/     /** ysf task component */
+/** @}*/     /** task component */
 
 /**********************************END OF FILE*********************************/

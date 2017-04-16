@@ -52,7 +52,7 @@
  *******************************************************************************
  */
 #if USE_FRAMEWORK_EVENT_API
-static uint8_t            EventQueue[FW_EVENT_MAX];
+static uint16_t            EventQueue[FW_EVENT_MAX];
 static struct fw_buffer_t EventControlBlock;
 #endif
 
@@ -85,7 +85,7 @@ fw_err_t EventInit(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t EventPost(uint8_t event)
+fw_err_t EventPost(uint16_t event)
 {
     RingBufferWrite(&EventControlBlock, &event, CalTypeByteSize(event));
     
@@ -101,9 +101,9 @@ fw_err_t EventPost(uint8_t event)
  * @note        None
  *******************************************************************************
  */
-fw_err_t EventRead(uint8_t *event)
+fw_err_t EventRead(uint16_t *event)
 {
-    RingBufferRead(&EventControlBlock, event, CalTypeByteSize(uint8_t));
+    RingBufferRead(&EventControlBlock, event, CalTypeByteSize(uint16_t));
 	
     return FW_ERR_NONE;
 }

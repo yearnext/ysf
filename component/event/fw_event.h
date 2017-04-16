@@ -99,8 +99,8 @@ typedef struct
  */
 #if USE_EVENT_COMPONENT
 extern fw_err_t EventInit(void);
-extern fw_err_t EventPost(uint8_t);
-extern fw_err_t EventRead(uint8_t*);
+extern fw_err_t EventPost(uint16_t);
+extern fw_err_t EventRead(uint16_t*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

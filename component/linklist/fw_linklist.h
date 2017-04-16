@@ -133,15 +133,15 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */
-#define DEFINE_SINGLE_LINK_LIST_FIFO_BLOCK(type, name) struct                  \
-                                                       {                       \
-                                                           type *head;         \
-                                                           type *tail;         \
-                                                       } name =                \
-                                                       {                       \
-                                                           .head = NULL,       \
-                                                           .tail = NULL,       \
-                                                       }
+#define CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(type, name) struct               \
+                                                         {                     \
+                                                             type *head;       \
+                                                             type *tail;       \
+                                                         } name =              \
+                                                         {                     \
+                                                             .head = NULL,     \
+                                                             .tail = NULL,     \
+                                                         }
  
 /**
  *******************************************************************************
@@ -163,7 +163,7 @@ extern fw_err_t SingleListIsExits(void**, void**);
             return true;                                                       \
         }                                                                      \
                                                                                \
-        temp = temp->next;                                                     \
+        temp = temp->Next;                                                     \
     }                                                                          \
 }
 
@@ -178,13 +178,13 @@ extern fw_err_t SingleListIsExits(void**, void**);
  */    
 #define SingleListFifoPush(isInFunc, block, pushData)                          \
 {                                                                              \
-    if( isInFunc(node) == false )                                              \
+    if( isInFunc(pushData) == false )                                          \
     {                                                                          \
-        node->next = NULL;                                                     \
+        pushData->Next = NULL;                                                 \
                                                                                \
         if(block.tail != NULL)                                                 \
         {                                                                      \
-            block.tail->next = pushData;                                       \
+            block.tail->Next = pushData;                                       \
             block.tail       = pushData;                                       \
         }                                                                      \
         else                                                                   \
@@ -216,8 +216,8 @@ extern fw_err_t SingleListIsExits(void**, void**);
     }                                                                          \
                                                                                \
     popData       = block.head;                                                \
-    block.head    = block.head->next;                                          \
-    popData->next = NULL;                                                      \
+    block.head    = block.head->Next;                                          \
+    popData->Next = NULL;                                                      \
                                                                                \
     if( block.head == NULL )                                                   \
     {                                                                          \
