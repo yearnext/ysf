@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_signal.h                                                    *
+ * @file       fw_signal.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-15                                                      *
- * @brief      ysf signal head files                                           *
+ * @brief      framework signal component head files                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup ysf signal
+ * @defgroup framework signal component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_SIGNAL_H__
-#define __YSF_SIGNAL_H__
+#ifndef __FRAMEWORK_SIGNAL_COMPONENT_H__
+#define __FRAMEWORK_SIGNAL_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -48,8 +48,6 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
-#include _FW_TYPE_PATH
-#include _FW_CONF_PATH
 #include _FW_EVENT_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
@@ -57,23 +55,27 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_SIGNAL_SCAN_COMPONENT
-#if USE_YSF_SIGNAL_SCAN_COMPONENT
-#define USE_YSF_SIGNAL_API          (1)
+#ifdef USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT
+#if USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT
+#define USE_FRAMEWORK_SIGNAL_API                                             (1)
 #else
-#define USE_YSF_SIGNAL_API          (0)
+#define USE_FRAMEWORK_SIGNAL_API                                             (0)
 #endif
 
 /**
  *******************************************************************************
- * @brief       user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-#define USE_YSF_SIGNAL_API          (1)
+#define USE_FRAMEWORK_SIGNAL_API                                             (1)
 #endif
     
 /**

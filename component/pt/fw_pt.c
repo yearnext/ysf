@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_pt.c                                                        *
+ * @file       fw_pt.c                                                         *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-21                                                      *
- * @brief      protothreads component source files                             *
+ * @brief      framework protothreads component source files                   *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup ysf protothreaads component
+ * @defgroup framework protothreaads component
  * @{
  */
 
@@ -145,6 +145,6 @@ fw_err_t ysf_pt_disarm(struct ysf_pt_t *pt)
 }
 #endif
 
-/** @}*/     /** ysf protothreads component  */
+/** @}*/     /** framework protothreads component  */
 
 /**********************************END OF FILE*********************************/

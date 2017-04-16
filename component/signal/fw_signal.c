@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_signal.c                                                    *
+ * @file       fw_signal.c                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-15                                                      *
- * @brief      signal component source files                                   *
+ * @brief      framework signal component source files                         *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup ysf signal component
+ * @defgroup framework signal component
  * @{
  */
 
@@ -60,7 +60,7 @@
  * @brief       ysf signal control block
  *******************************************************************************
  */
-static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_signal_t, scb);
+static DEFINE_SINGLE_LINK_LIST_FIFO_BLOCK(struct ysf_signal_t, scb);
 
 /**
  *******************************************************************************

@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_task.c                                                      *
+ * @file       fw_task.c                                                       *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-28                                                      *
- * @brief      task component source files                                     *
+ * @brief      framework task component source files                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup ysf task
+ * @defgroup framework task component
  * @{
  */
 

@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_timer.h                                                     *
+ * @file       fw_timer.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-07-09                                                      *
- * @brief      ysf timer head files                                            *
+ * @brief      framework timer component head files                            *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,8 +32,8 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_TIMER_H__
-#define __YSF_TIMER_H__
+#ifndef __FRAMEWORK_TIMER_COMPONENT_H__
+#define __FRAMEWORK_TIMER_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -44,8 +44,6 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
-#include _FW_TYPE_PATH
-#include _FW_CONF_PATH
 #include _FW_TASK_COMPONENT_PATH
 #include _FW_TICK_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
@@ -53,23 +51,27 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_TIMER_COMPONENT
-#if USE_YSF_TIMER_COMPONENT
-#define USE_YSF_TIMER_API        (1)
+#ifdef USE_FRAMEWORK_TIMER_COMPONENT
+#if USE_FRAMEWORK_TIMER_COMPONENT
+#define USE_FRAMEWORK_TIMER_API                                              (1)
 #else
-#define USE_YSF_TIMER_API        (0)
+#define USE_FRAMEWORK_TIMER_API                                              (0)
 #endif
 
 /**
  *******************************************************************************
- * @brief        user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-#define USE_YSF_TIMER_API        (1)
+#define USE_FRAMEWORK_TIMER_API                                              (1)
 #endif
 
 /**
@@ -77,10 +79,10 @@ extern "C"
  * @brief       ysf timer tick config
  *******************************************************************************
  */
-#define YSF_TIMER_PERIOD         YSF_TICK_TIME
-#define YSF_TIME_2_TICK(time)    ((time)/YSF_TIMER_PERIOD)
+#define FW_TIMER_PERIOD         FW_TICK_PERIOD
+#define FW_TIME_2_TICK(time)    ((time)/FW_TIMER_PERIOD)
 
-#define YSF_TIMER_CYCLE_MODE     (-1)
+#define FW_TIMER_CYCLE_MODE     (-1)
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -121,7 +123,7 @@ struct ysf_timer_t
  * @brief      interface function defineitions 
  *******************************************************************************
  */
-#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
+#if USE_FRAMEWORK_TIMER_API
 struct YSF_TIMER_API
 {
     fw_err_t (*init)(void);
@@ -155,7 +157,7 @@ struct YSF_TIMER_API
  * @brief      defineitions interface function 
  *******************************************************************************
  */
-#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
+#if USE_FRAMEWORK_TIMER_API
 extern fw_err_t ysf_timer_init(void);
 
 extern fw_err_t ysf_timer_handler(uint16_t);
@@ -179,5 +181,6 @@ extern struct ysf_timer_t *ysf_smSimpTimer_init(fw_err_t (*)(void*, uint16_t), v
 }
 #endif
 
-#endif      /** timer */
+#endif      /** framework timer component */
+
 /**********************************END OF FILE*********************************/

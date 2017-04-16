@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2016-07-09                                                      *
- * @brief      timer component source files                                    *
+ * @brief      framework timer component source files                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
-* @defgroup ysf timer component
+* @defgroup framework timer component
 * @{
 */
 
@@ -62,7 +62,7 @@
  * @brief      timer disable function
  *******************************************************************************
  */
-#define YSF_TIMER_DISABLE(timer) ((timer)->cycle = 0)
+#define _TIMER_DISABLE(timer)    ((timer)->cycle = 0)
 
 /* Private typedef -----------------------------------------------------------*/
 /**

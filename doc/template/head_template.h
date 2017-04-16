@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_tick.h                                                       *
+ * @file       file name.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-01-10                                                      *
- * @brief      framework tick component head files                             *
+ * @date       XXXX-XX-XX                                                      *
+ * @brief      XXXXX                                                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -31,13 +31,9 @@
  *******************************************************************************
  */
 
-/**
- * @defgroup framework tick component
- * @{
- */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_TICK_COMPONENT_H__
-#define __FRAMEWORK_TICK_COMPONENT_H__
+#ifndef __FILE_NAME_H__
+#define __FILE_NAME_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,89 +42,16 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-
 /* Exported macro ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       framework component config flags
- * @note        1                        enable
- * @note        0                        disable
- *******************************************************************************
- */
-#ifdef USE_FRAMEWORK_TICK_COMPONENT
-#if USE_FRAMEWORK_TICK_COMPONENT
-#define USE_FRAMEWORK_TICK_API                                               (1)
-#else
-#define USE_FRAMEWORK_TICK_API                                               (0)
-#endif
-
-/**
- *******************************************************************************
- * @brief       user config flags
- * @note        1         enable
- * @note        0         disable
- *******************************************************************************
- */
-#else
-#define USE_FRAMEWORK_TICK_API                                               (1)
-#endif
-
-/**
- *******************************************************************************
- * @brief       ysf tick max value
- *******************************************************************************
- */
-#define FW_TICK_PERIOD          _CORE_TICK_PERIOD
-#define _TICK_VALUE_MAX         UINT32_MAX
-
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       ysf tick type
- *******************************************************************************
- */
-#if USE_FRAMEWORK_TICK_API
-typedef uint32_t fw_tick_t;
-#endif
-
-/**
- *******************************************************************************
- * @brief       ysf tick func list
- *******************************************************************************
- */
-#if USE_FRAMEWORK_TICK_API
-struct _TICK_API
-{
-    void (*Init)(void);
-    void (*Inc)(void);
-    fw_tick_t (*Read)(void);
-    fw_tick_t (*Cal)(void);
-};
-#endif
-
-/* Exported variables --------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define tick function interface
- *******************************************************************************
- */
-#if USE_FRAMEWORK_TICK_API
-extern void      fw_tick_init(void);
-extern void      fw_tick_inc(void);
-extern fw_tick_t fw_tick_get(void);
-extern fw_tick_t fw_past_tick_cal(void );
-#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
-	
-#endif       /** end include define */
 
-/** @}*/     /** framework tick component  */
+#endif      /** prevent recursive inclusion */
 
 /**********************************END OF FILE*********************************/

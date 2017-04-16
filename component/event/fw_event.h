@@ -99,8 +99,8 @@ struct _EVENT_API
  */
 #if USE_FRAMEWORK_EVENT_API
 extern fw_err_t fw_event_init(void);
-extern fw_err_t fw_event_post(uint16_t);
-extern fw_err_t fw_event_read(uint16_t*);
+extern fw_err_t fw_event_post(uint8_t);
+extern fw_err_t fw_event_read(uint8_t*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

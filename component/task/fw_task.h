@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_task.h                                                      *
+ * @file       fw_task.h                                                       *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-28                                                      *
- * @brief      ysf task head files                                             *
+ * @brief      framework task component head files                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup ysf task
+ * @defgroup framework task component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_TASK_H__
-#define __YSF_TASK_H__
+#ifndef __FRAMEWORK_TASK_COMPONENT_H__
+#define __FRAMEWORK_TASK_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,106 +46,100 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
-
+#include _FW_PATH
+    
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_TASK_COMPONENT
-#if USE_YSF_TASK_COMPONENT
-#define USE_YSF_TASK_API (1)
+#ifdef USE_FRAMEWORK_TASK_COMPONENT
+#if USE_FRAMEWORK_TASK_COMPONENT
+#define USE_FRAMEWORK_TASK_API                                               (1)
 #else
-#define USE_YSF_TASK_API (0)
+#define USE_FRAMEWORK_TASK_API                                               (0)
 #endif
 
 /**
  *******************************************************************************
- * @brief       user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-#define USE_YSF_TASK_API (1)
+#define USE_FRAMEWORK_TASK_API                                               (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/    
 /**
  *******************************************************************************
- * @brief       ysf task block
+ * @brief       task block
  *******************************************************************************
  */
-struct ysf_task_t
+struct fw_task_t
 {
-    struct
-    {
-        struct ysf_task_t    *next;
-        
-        enum ysf_task_type_t
-        {
-            YSF_CALL_BACK_TASK,
-            YSF_EVENT_HANDLER_TASK,
-            YSF_STATE_MECHINE_TASK,
-        }type;
-    };
+    struct fw_task_t *next;
     
-    struct
-    {                
-        union
-        {
-            fw_err_t (*sm)(void*, uint16_t);
-            fw_err_t (*evt)(uint16_t);
-            fw_err_t (*cb)(void*);
-        }handler;
+    union
+    {
+        fw_err_t (*sm)(void*, uint16_t);
+        fw_err_t (*evt)(uint16_t);
+        fw_err_t (*cb)(void*);
+    }handler;
 
-        void *param;
-        uint16_t evt;
-    };
+    void *param;
+    uint16_t evt;
+
+    enum fw_task_type_t
+    {
+        FW_CALL_BACK_TASK,
+        FW_EVENT_HANDLER_TASK,
+        FW_STATE_MECHINE_TASK,
+    }type;
 };
 
 /**
  *******************************************************************************
- * @brief       ysf task api
+ * @brief       framework task api
  *******************************************************************************
  */
-#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
+#if USE_FRAMEWORK_TASK_API
 struct YSF_TASK_API
 {
-    fw_err_t (*init)(void);
-    fw_err_t (*poll)(void);
+    fw_err_t (*Init)(void);
+    fw_err_t (*Poll)(void);
     
     struct
     {
-        fw_err_t (*cb)(struct ysf_task_t*, fw_err_t (*)(void*), void*);
-        fw_err_t (*evt)(struct ysf_task_t*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*sm)(struct ysf_task_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+        fw_err_t (*Cb)(struct fw_task_t*, fw_err_t (*)(void*), void*);
+        fw_err_t (*Evt)(struct fw_task_t*, fw_err_t (*)(uint16_t), uint16_t);
+        fw_err_t (*Sm)(struct fw_task_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
         
-        struct
-        {
-            struct ysf_task_t *(*cb)(fw_err_t (*)(void*), void*);
-            struct ysf_task_t *(*evt)(fw_err_t (*)(uint16_t), uint16_t);
-            struct ysf_task_t *(*sm)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-        }simple;
+        struct fw_task_t *(*CbEx)(fw_err_t (*)(void*), void*);
+        struct fw_task_t *(*EvtEx)(fw_err_t (*)(uint16_t), uint16_t);
+        struct fw_task_t *(*SmEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
     }create;
 };
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_TASK_API) && USE_YSF_TASK_API
-extern fw_err_t ysf_task_init(void);
-extern fw_err_t ysf_task_poll(void);
+#if USE_FRAMEWORK_TASK_API
+extern fw_err_t fw_task_init(void);
+extern fw_err_t fw_task_poll(void);
 
-extern fw_err_t ysf_cbTask_create(struct ysf_task_t*, fw_err_t (*)(void*), void*);
-extern fw_err_t ysf_evtTask_create(struct ysf_task_t*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t ysf_smTask_create(struct ysf_task_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern fw_err_t fw_cbTask_create(struct fw_task_t*, fw_err_t (*)(void*), void*);
+extern fw_err_t fw_evtTask_create(struct fw_task_t*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t fw_smTask_create(struct fw_task_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 
-extern struct ysf_task_t *ysf_cbSimpTask_create(fw_err_t (*)(void*), void*);
-extern struct ysf_task_t *ysf_evtSimpTask_create(fw_err_t (*)(uint16_t), uint16_t);
-extern struct ysf_task_t *ysf_smSimpTask_create(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern struct fw_task_t *fw_cbExTask_create(fw_err_t (*)(void*), void*);
+extern struct fw_task_t *fw_evtExTask_create(fw_err_t (*)(uint16_t), uint16_t);
+extern struct fw_task_t *fw_smExTask_create(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif    
     
 /* Add c++ compatibility------------------------------------------------------*/
@@ -155,6 +149,6 @@ extern struct ysf_task_t *ysf_smSimpTask_create(fw_err_t (*)(void*, uint16_t), v
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf task component  */
+/** @}*/     /** framework task component  */
 
 /**********************************END OF FILE*********************************/
