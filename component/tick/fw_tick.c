@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      framework tick component source files                           *
+ * @brief      tick component source files                                     *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup framework tick component
+ * @defgroup tick component
  * @{
  */
 
@@ -40,7 +40,6 @@
 #include "core_path.h"
 #include _FW_PATH
 #include _FW_TICK_COMPONENT_PATH
-#include _FW_EVENT_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
 #include _FW_TIMER_COMPONENT_PATH
 
@@ -49,18 +48,18 @@
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       framework tick
+ * @brief       define tick variable
  *******************************************************************************
  */
-#if USE_FRAMEWORK_TICK_API
-static fw_tick_t tick = 0;
-static struct ysf_task_t tick_task;
+#if USE_TICK_COMPONENT
+static uint32_t         tick = 0;
+static struct TaskBlock TickTask;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_TICK_API
+#if USE_TICK_COMPONENT
 /**
  *******************************************************************************
  * @brief       tick initialization
@@ -69,7 +68,7 @@ static struct ysf_task_t tick_task;
  * @note        None
  *******************************************************************************
  */
-void fw_tick_init( void )
+void TickInit( void )
 {
     tick = 0;
 }
@@ -82,14 +81,12 @@ void fw_tick_init( void )
  * @note        None
  *******************************************************************************
  */
-void fw_tick_inc( void )
+void IncTick( void )
 {
-    ENTER_CRITICAL();
     tick++;
-#if USE_FRAMEWORK_TICK_API
-    ysf_evtTask_create(&tick_task, ysf_timer_handler, FW_EVENT_NONE);
+#if defined(USE_TASK_COMPONENT) && USE_TASK_COMPONENT
+        CreateEventHandleTask(&TickTask, TimerComponentHandle, FW_EVENT_NONE);
 #endif
-    EXIT_CRITICAL();
 }
 
 /**
@@ -100,7 +97,7 @@ void fw_tick_inc( void )
  * @note        None
  *******************************************************************************
  */
-fw_tick_t fw_tick_get( void )
+uint32_t GetTick( void )
 {
     return tick;
 }
@@ -113,10 +110,10 @@ fw_tick_t fw_tick_get( void )
  * @note        None
  *******************************************************************************
  */
-fw_tick_t fw_past_tick_cal( void )
+uint32_t CalPastTick( void )
 {
-	static fw_tick_t lastTick = 0;
-	fw_tick_t calTick = 0;
+	static uint32_t lastTick = 0;
+	uint32_t calTick = 0;
 	
 	if( tick >= lastTick )
 	{
@@ -124,7 +121,7 @@ fw_tick_t fw_past_tick_cal( void )
 	}
 	else
 	{
-		calTick = _TICK_VALUE_MAX - lastTick;
+		calTick = TICK_VALUE_MAX - lastTick;
 		calTick = calTick + tick;
 	}
 	
@@ -134,6 +131,6 @@ fw_tick_t fw_past_tick_cal( void )
 }
 
 #endif
-/** @}*/     /** framework tick component */
+/** @}*/     /** tick component */
 
 /**********************************END OF FILE*********************************/

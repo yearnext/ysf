@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_timer.c                                                     *
+ * @file       fw_timer.c                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2016-07-09                                                      *
- * @brief      framework timer component source files                          *
+ * @brief      timer component source files                                    *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
-* @defgroup framework timer component
+* @defgroup timer component
 * @{
 */
 
@@ -54,15 +54,15 @@
  * @brief      detect timer status
  *******************************************************************************
  */
-#define IS_TIMER_DISABLE(timer)  ((timer)->cycle == 0)
-#define IS_TIMER_ENABLE(timer)   ((timer)->cycle != 0)
+#define IS_TIMER_DISABLE(timer)  ((timer)->Cycle == 0)
+#define IS_TIMER_ENABLE(timer)   ((timer)->Cycle != 0)
 
 /**
  *******************************************************************************
  * @brief      timer disable function
  *******************************************************************************
  */
-#define _TIMER_DISABLE(timer)    ((timer)->cycle = 0)
+#define TIMER_DISABLE(timer)    ((timer)->Cycle = 0)
 
 /* Private typedef -----------------------------------------------------------*/
 /**
@@ -70,18 +70,18 @@
  * @brief      timer head node
  *******************************************************************************
  */
-#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
+#if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
- * @brief       ysf timer control block
+ * @brief      timer control block
  *******************************************************************************
  */
-static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_timer_t, TimerControlBlock);
+static CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(struct TimerBlock, TimerControlBlock);
 #endif
 
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_TIMER_API) && USE_YSF_TIMER_API
+#if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       detect the timer is in queue
@@ -92,9 +92,9 @@ static DEFINE_SLIST_FIFO_CONTROL_BLOCK(struct ysf_timer_t, TimerControlBlock);
  *******************************************************************************
  */
 __STATIC_INLINE
-bool ysf_timer_isIn(struct ysf_timer_t *timer)
+bool timer_is_in(struct TimerBlock *timer)
 {
-    ysf_sListFIFO_isIn(struct ysf_timer_t, TimerControlBlock, timer);
+    IsInSingleLinkListFifo(struct TimerBlock, TimerControlBlock, timer);
     
     return false;
 }
@@ -108,9 +108,9 @@ bool ysf_timer_isIn(struct ysf_timer_t *timer)
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ysf_timer_push(struct ysf_timer_t *timer)
+fw_err_t timer_push(struct TimerBlock *timer)
 {
-    ysf_sListFIFO_push(ysf_timer_isIn, TimerControlBlock, timer);
+    SingleLinkListFifoPush(timer_is_in, TimerControlBlock, timer);
     
     return FW_ERR_NONE;
 }
@@ -119,16 +119,16 @@ fw_err_t ysf_timer_push(struct ysf_timer_t *timer)
  *******************************************************************************
  * @brief       push timer from queue
  * @param       [in/out]  void
- * @return      [in/out]  struct ysf_timer_t *     push timer addr in memory
+ * @return      [in/out]  struct TimerBlock *     push timer addr in memory
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-struct ysf_timer_t *ysf_timer_pop(void)
+struct TimerBlock *timer_pop(void)
 {
-    struct ysf_timer_t *timer = NULL;
+    struct TimerBlock *timer = NULL;
     
-    ysf_sListFIFO_pop(TimerControlBlock, timer);
+    SingleLinkListFifoPop(TimerControlBlock, timer);
     
     return timer;
 }
@@ -142,9 +142,9 @@ struct ysf_timer_t *ysf_timer_pop(void)
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ysf_timer_clear(void)
+fw_err_t timer_clear(void)
 {    
-    while(ysf_timer_pop() != NULL);
+    while(timer_pop() != NULL);
     
     return FW_ERR_NONE;
 }
@@ -157,9 +157,9 @@ fw_err_t ysf_timer_clear(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_timer_init( void )
+fw_err_t TimerComponentInit( void )
 {
-    ysf_timer_clear();
+    timer_clear();
     
     return FW_ERR_NONE;
 }
@@ -175,16 +175,69 @@ fw_err_t ysf_timer_init( void )
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_cbTimer_init(struct ysf_timer_t *timer, fw_err_t (*func)(void*), void *param)
+fw_err_t InitCallBackTimer(struct TimerBlock *timer, fw_err_t (*func)(void*), void *param)
 {
     if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    timer->task.handler.cb = func;
-    timer->task.param      = param;
-    timer->type            = YSF_CALL_BACK_TIMER;
+    timer->Task.Handler.CallBack = func;
+    timer->Task.Param            = param;
+    timer->Type                  = CALL_BACK_TIMER;
+    
+    return FW_ERR_NONE;
+}
+
+
+/**
+ *******************************************************************************
+ * @brief       event distribute timer init
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  event              distribute event
+ * @return      [in/out]  FW_ERR_NONE       init success
+ * @return      [in/out]  FW_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitEventHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(uint16_t), uint16_t evt)
+{
+    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
+    {
+        return FW_ERR_INVAILD_PTR;
+    }
+    
+    timer->Task.Handler.Event = func;
+    timer->Task.Event         = evt;
+    timer->Type               = EVENT_HANDLE_TIMER;
+    
+    return FW_ERR_NONE;
+}
+
+
+/**
+ *******************************************************************************
+ * @brief       event trigger timer init
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  func               event handler function
+ * @param       [in/out]  param              event function param
+ * @param       [in/out]  event              trigger event
+ * @return      [in/out]  FW_ERR_NONE       init success
+ * @return      [in/out]  FW_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitMessageHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+{
+    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
+    {
+        return FW_ERR_INVAILD_PTR;
+    }
+    
+    timer->Task.Handler.Message = func;
+    timer->Task.Param           = param;
+    timer->Task.Event           = evt;
+    timer->Type                 = MESSAGE_HANDLE_TIMER;
     
     return FW_ERR_NONE;
 }
@@ -199,54 +252,29 @@ fw_err_t ysf_cbTimer_init(struct ysf_timer_t *timer, fw_err_t (*func)(void*), vo
  * @note        None
  *******************************************************************************
  */
-struct ysf_timer_t *ysf_cbSimpTimer_init(fw_err_t (*func)(void*), void *param)
+struct TimerBlock *InitCallBackExTimer(fw_err_t (*func)(void*), void *param)
 {
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
     if(IS_PTR_NULL(func))
     {
         return NULL;
     }
     
-    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t));
+    struct TimerBlock *timer = (struct TimerBlock *)MemoryMalloc(sizeof(struct TimerBlock));
     
     if(IS_PTR_NULL(timer))
     {
         return NULL;
     }
     
-    timer->task.handler.cb = func;
-    timer->task.param      = param;
-    timer->type            = YSF_CALL_BACK_TIMER;
+    timer->Task.Handler.CallBack = func;
+    timer->Task.Param            = param;
+    timer->Type                  = CALL_BACK_EX_TIMER;
     
     return timer;
 #else
     return NULL;
 #endif
-}
-
-
-/**
- *******************************************************************************
- * @brief       event distribute timer init
- * @param       [in/out]  *timer             timer block
- * @param       [in/out]  event              distribute event
- * @return      [in/out]  FW_ERR_NONE       init success
- * @return      [in/out]  FW_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-fw_err_t ysf_evtTimer_init(struct ysf_timer_t *timer, fw_err_t (*func)(uint16_t), uint16_t evt)
-{
-    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
-    
-    timer->task.handler.evt = func;
-    timer->task.evt         = evt;
-    timer->type             = YSF_EVENT_HANDLER_TIMER;
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -258,51 +286,24 @@ fw_err_t ysf_evtTimer_init(struct ysf_timer_t *timer, fw_err_t (*func)(uint16_t)
  * @note        None
  *******************************************************************************
  */
-struct ysf_timer_t *ysf_evtSimpTimer_init(fw_err_t (*func)(uint16_t), uint16_t evt)
+struct TimerBlock *InitEventHandleExTimer(fw_err_t (*func)(uint16_t), uint16_t evt)
 {
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t));
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    struct TimerBlock *timer = (struct TimerBlock *)MemoryMalloc(sizeof(struct TimerBlock));
     
     if(IS_PTR_NULL(timer))
     {
         return NULL;
     }
     
-    timer->task.handler.evt = func;
-    timer->task.evt         = evt;
-    timer->type             = YSF_EVENT_HANDLER_TIMER;
+    timer->Task.Handler.Event = func;
+    timer->Task.Event         = evt;
+    timer->Type               = EVENT_HANDLE_EX_TIMER;
     
     return timer;
 #else
     return NULL;
 #endif
-}
-
-/**
- *******************************************************************************
- * @brief       event trigger timer init
- * @param       [in/out]  *timer             timer block
- * @param       [in/out]  func               event handler function
- * @param       [in/out]  param              event function param
- * @param       [in/out]  event              trigger event
- * @return      [in/out]  FW_ERR_NONE       init success
- * @return      [in/out]  FW_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-fw_err_t ysf_smTimer_init(struct ysf_timer_t *timer, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
-{
-    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
-    
-    timer->task.handler.sm = func;
-    timer->task.param      = param;
-    timer->task.evt        = evt;
-    timer->type            = YSF_STATE_MACHINE_TIMER;
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -316,25 +317,25 @@ fw_err_t ysf_smTimer_init(struct ysf_timer_t *timer, fw_err_t (*func)(void*, uin
  * @note        None
  *******************************************************************************
  */
-struct ysf_timer_t *ysf_smSimpTimer_init(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+struct TimerBlock *InitMessageHandleExTimer(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
     if(IS_PTR_NULL(func))
     {
         return NULL;
     }
     
-    struct ysf_timer_t *timer = (struct ysf_timer_t *)ysf_memory_malloc(sizeof(struct ysf_timer_t));
+    struct TimerBlock *timer = (struct TimerBlock *)MemoryMalloc(sizeof(struct TimerBlock));
     
     if(IS_PTR_NULL(timer))
     {
         return NULL;
     }
     
-    timer->task.handler.sm = func;
-    timer->task.param      = param;
-    timer->task.evt        = evt;
-    timer->type            = YSF_STATE_MACHINE_TIMER;
+    timer->Task.Handler.Message = func;
+    timer->Task.Param           = param;
+    timer->Task.Event           = evt;
+    timer->Type                 = MESSAGE_HANDLE_EX_TIMER;
     
     return timer;
 #else
@@ -353,18 +354,18 @@ struct ysf_timer_t *ysf_smSimpTimer_init(fw_err_t (*func)(void*, uint16_t), void
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks, int16_t counts)
+fw_err_t TimerArm(struct TimerBlock *timer, uint32_t ticks, int16_t cycles)
 {
     if(IS_PTR_NULL(timer))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    timer->ticks     = ticks;
-    timer->loadTicks = ticks;
-    timer->cycle     = counts;
+    timer->SetTicks  = ticks;
+    timer->LoadTicks = ticks;
+    timer->Cycle     = cycles;
     
-    ysf_timer_push(timer);
+    timer_push(timer);
     
     return FW_ERR_NONE;
 }
@@ -378,14 +379,14 @@ fw_err_t ysf_timer_arm(struct ysf_timer_t *timer, uint32_t ticks, int16_t counts
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_timer_disarm(struct ysf_timer_t *timer)
+fw_err_t TimerDisarm(struct TimerBlock *timer)
 {
     if(IS_PTR_NULL(timer))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    YSF_TIMER_DISABLE(timer);
+    TIMER_DISABLE(timer);
     
     return FW_ERR_NONE;
 }
@@ -401,27 +402,27 @@ fw_err_t ysf_timer_disarm(struct ysf_timer_t *timer)
  *******************************************************************************
  */
 __STATIC_INLINE
-bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
+bool is_timer_trigger(struct TimerBlock *timer, uint32_t ticks)
 {    
 //    if( IS_PTR_NULL(timer) )
 //    {
 //        return false;
 //    }
     
-    if( ticks >= timer->ticks )
+    if( ticks >= timer->SetTicks )
     {
-        if( timer->cycle > 0 )
+        if( timer->Cycle > 0 )
         {
-            timer->cycle--;
+            timer->Cycle--;
         }
         
-        timer->ticks = timer->loadTicks;
+        timer->SetTicks = timer->LoadTicks;
 
         return true;
     }
     else
     {
-        timer->ticks -= ticks;
+        timer->SetTicks -= ticks;
         return false;
     }
     
@@ -438,26 +439,29 @@ bool isTimerTrigger(struct ysf_timer_t *timer, ysf_tick_t ticks)
  *******************************************************************************
  */
 __STATIC_INLINE
-void TimerTriggerHandler(struct ysf_timer_t *timer)
+void timer_trigger_handler(struct TimerBlock *timer)
 {    
-    switch(timer->type)
+    switch(timer->Type)
     {
-        case YSF_CALL_BACK_TIMER:
-            if( timer->task.handler.cb != NULL )
+        case CALL_BACK_TIMER:
+        case CALL_BACK_EX_TIMER:
+            if( timer->Task.Handler.CallBack != NULL )
             {
-                ysf_cbTask_create(&timer->task, timer->task.handler.cb, timer->task.param);
+                CreateCallBackTask(&timer->Task, timer->Task.Handler.CallBack, timer->Task.Param);
             }
             break;
-        case YSF_EVENT_HANDLER_TIMER:
-            if( timer->task.handler.evt != NULL )
+        case EVENT_HANDLE_TIMER:
+        case EVENT_HANDLE_EX_TIMER:
+            if( timer->Task.Handler.Event != NULL )
             {
-                ysf_evtTask_create(&timer->task, timer->task.handler.evt, timer->task.evt);
+                CreateEventHandleTask(&timer->Task, timer->Task.Handler.Event, timer->Task.Event);
             }
             break;
-        case YSF_STATE_MACHINE_TIMER:
-            if( timer->task.handler.sm != NULL )
+        case MESSAGE_HANDLE_TIMER:
+        case MESSAGE_HANDLE_EX_TIMER:
+            if( timer->Task.Handler.Message != NULL )
             {
-                ysf_smTask_create(&timer->task, timer->task.handler.sm, timer->task.param, timer->task.evt);
+                CreateMessageHandleTask(&timer->Task, timer->Task.Handler.Message, timer->Task.Param, timer->Task.Event);
             }
             break;
 //        default:
@@ -477,12 +481,12 @@ void TimerTriggerHandler(struct ysf_timer_t *timer)
  *******************************************************************************
  */
 __STATIC_INLINE
-void ysf_timer_walk(ysf_tick_t tick)
+void timer_walk(uint32_t tick)
 {
-    struct ysf_timer_t *now  = TimerControlBlock.head;
-    struct ysf_timer_t *last = now;
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct ysf_timer_t *del  = NULL;
+    struct TimerBlock *now  = GetSingleLinkListHead(TimerControlBlock);
+    struct TimerBlock *last = now;
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    struct TimerBlock *del  = NULL;
 #endif
     
     while(1)
@@ -496,48 +500,55 @@ void ysf_timer_walk(ysf_tick_t tick)
         // timer handler
         if( IS_TIMER_ENABLE(now) )
         {
-            if( isTimerTrigger(now, tick) == true )
+            if( is_timer_trigger(now, tick) == true )
             {
-                TimerTriggerHandler(now);
+                timer_trigger_handler(now);
             }
         }
 
         // timer list delete
         if( IS_TIMER_DISABLE(now) )
         {   
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
             del = now;
 #endif      
-            if( now == TimerControlBlock.head )
+            if( IsSingleLinkListHead(TimerControlBlock, now) )
             {
-                TimerControlBlock.head = now->next;
-                now->next              = NULL;
-                now                    = TimerControlBlock.head;
+                SingleLinkListHeadWrite(TimerControlBlock, now->Next);
+                
+                now->Next  = NULL;
+                now        = GetSingleLinkListHead(TimerControlBlock);
             }
-            else if( now == TimerControlBlock.tail )
+            else if( IsSingleLinkListTail(TimerControlBlock, now) )
             {
-                last->next             = NULL;
-                now->next              = NULL;
-                TimerControlBlock.tail = last;
+                last->Next = NULL;
+                now->Next  = NULL;
+                
+                SingleLinkListTailWrite(TimerControlBlock, last);
             }
             else
             { 
-                last->next = now->next;
-                now->next  = NULL;
-                now        = last->next;
+                last->Next = now->Next;
+                now->Next  = NULL;
+                now        = last->Next;
             }
             
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-            if( ysf_memory_is_in(del) == true )
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+            if (del->Type == CALL_BACK_EX_TIMER 
+                || del->Type == EVENT_HANDLE_EX_TIMER  
+                || del->Type == MESSAGE_HANDLE_EX_TIMER)
             {
-                ysf_memory_free(del);
+                if( MemoryIsIn(del) == true )
+                {
+                    MemoryFree(del);
+                }
             }
 #endif
         }
         else
         {
             last = now;
-            now  = now->next;
+            now  = now->Next;
         }
     }
 }
@@ -550,14 +561,14 @@ void ysf_timer_walk(ysf_tick_t tick)
  * @note        timer processing function without errors
  *******************************************************************************
  */
-fw_err_t ysf_timer_handler(uint16_t event)
+fw_err_t TimerComponentHandle(uint16_t event)
 {
-    if( TimerControlBlock.head == NULL )
+    if( IsSingleLinkListHeadEmpty(TimerControlBlock) )
     {
         return FW_ERR_NONE;
     }
     
-    ysf_timer_walk(ysf_past_tick_cal());
+    timer_walk(CalPastTick());
     
     return FW_ERR_NONE;
 }
@@ -571,9 +582,9 @@ fw_err_t ysf_timer_handler(uint16_t event)
  * @note        timer processing function without errors
  *******************************************************************************
  */
-bool ysf_timerGetStatus(struct ysf_timer_t *timer)
+bool GetTimerStatus(struct TimerBlock *timer)
 {
-    if( ysf_timer_isIn(timer) == true && IS_TIMER_ENABLE(timer) )
+    if( timer_is_in(timer) == true && IS_TIMER_ENABLE(timer) )
     {
         return true;
     }

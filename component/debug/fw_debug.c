@@ -58,7 +58,7 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t DebugInit( void )
+fw_err_t DebugComponentInit( void )
 {
     return FW_ERR_NONE;
 }

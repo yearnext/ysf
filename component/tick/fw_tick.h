@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      framework tick component head files                             *
+ * @brief      tick component head files                                       *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup framework tick component
+ * @defgroup tick component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_TICK_COMPONENT_H__
-#define __FRAMEWORK_TICK_COMPONENT_H__
+#ifndef __TICK_COMPONENT_H__
+#define __TICK_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -59,9 +59,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_TICK_COMPONENT
 #if USE_FRAMEWORK_TICK_COMPONENT
-#define USE_FRAMEWORK_TICK_API                                               (1)
+#define USE_TICK_COMPONENT                                                   (1)
 #else
-#define USE_FRAMEWORK_TICK_API                                               (0)
+#define USE_TICK_COMPONENT                                                   (0)
 #endif
 
 /**
@@ -72,54 +72,45 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_TICK_API                                               (1)
+#define USE_TICK_COMPONENT                                                   (1)
 #endif
 
 /**
  *******************************************************************************
- * @brief       ysf tick max value
+ * @brief       define tick param
  *******************************************************************************
  */
-#define FW_TICK_PERIOD          _CORE_TICK_PERIOD
-#define _TICK_VALUE_MAX         UINT32_MAX
+#define TICK_PERIOD                                             CORE_TICK_PERIOD
+#define TICK_VALUE_MAX                                                UINT32_MAX
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf tick type
+ * @brief       define tick function interface
  *******************************************************************************
  */
-#if USE_FRAMEWORK_TICK_API
-typedef uint32_t fw_tick_t;
-#endif
-
-/**
- *******************************************************************************
- * @brief       ysf tick func list
- *******************************************************************************
- */
-#if USE_FRAMEWORK_TICK_API
-struct _TICK_API
+#if USE_TICK_COMPONENT
+typedef struct
 {
-    void (*Init)(void);
-    void (*Inc)(void);
-    fw_tick_t (*Read)(void);
-    fw_tick_t (*Cal)(void);
-};
+    void     (*Init)(void);
+    void     (*Inc)(void);
+    uint32_t (*Read)(void);
+    uint32_t (*Cal)(void);
+}TickComponentInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define tick function interface
+ * @brief       define tick function api
  *******************************************************************************
  */
-#if USE_FRAMEWORK_TICK_API
-extern void      fw_tick_init(void);
-extern void      fw_tick_inc(void);
-extern fw_tick_t fw_tick_get(void);
-extern fw_tick_t fw_past_tick_cal(void );
+#if USE_TICK_COMPONENT
+extern void     TickInit(void);
+extern void     IncTick(void);
+extern uint32_t GetTick(void);
+extern uint32_t CalPastTick(void );
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -129,6 +120,6 @@ extern fw_tick_t fw_past_tick_cal(void );
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework tick component  */
+/** @}*/     /** tick component */
 
 /**********************************END OF FILE*********************************/

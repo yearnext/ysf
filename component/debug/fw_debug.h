@@ -97,7 +97,7 @@ typedef struct
 {
     fw_err_t (*Init)(void);
     void (*AssertFailed)(uint8_t*, uint32_t);
-}DebugInterface;
+}DebugComponentInterface;
 #endif
       
 /* Exported variables --------------------------------------------------------*/
@@ -108,7 +108,7 @@ typedef struct
  *******************************************************************************
  */ 
 #if USE_DEBUG_COMPONENT
-extern fw_err_t DebugInit(void);
+extern fw_err_t DebugComponentInit(void);
 extern void     AssertFailed(uint8_t*, uint32_t);
 #endif        
 

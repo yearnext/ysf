@@ -98,12 +98,12 @@ struct TaskBlock
     enum
     {
         CALL_BACK_TASK,
-        EVENT_HANDLER_TASK,
-        MESSAGE_HANDLER_TASK,
+        EVENT_HANDLE_TASK,
+        MESSAGE_HANDLE_TASK,
         
         CALL_BACK_EX_TASK,
-        EVENT_HANDLER_EX_TASK,
-        MESSAGE_HANDLER_EX_TASK,
+        EVENT_HANDLE_EX_TASK,
+        MESSAGE_HANDLE_EX_TASK,
     }Type;
 };
 
@@ -121,14 +121,14 @@ typedef struct
     struct
     {
         fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
-        fw_err_t (*Event)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*Message)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+        fw_err_t (*EventHandle)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
+        fw_err_t (*MessageHandle)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
         
         struct TaskBlock *(*CallBackEx)(fw_err_t (*)(void*), void*);
-        struct TaskBlock *(*EventEx)(fw_err_t (*)(uint16_t), uint16_t);
-        struct TaskBlock *(*MessageEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    }create;
-}TaskInterfact;
+        struct TaskBlock *(*EventHandleEx)(fw_err_t (*)(uint16_t), uint16_t);
+        struct TaskBlock *(*MessageHandleEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+    }Create;
+}TaskComponentInterfact;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -139,16 +139,16 @@ typedef struct
  *******************************************************************************
  */
 #if USE_TASK_COMPONENT
-extern fw_err_t TaskInit(void);
-extern fw_err_t TaskPoll(void);
+extern fw_err_t TaskComponentInit(void);
+extern fw_err_t TaskComponentPoll(void);
 
 extern fw_err_t CreateCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
-extern fw_err_t CreateEventHandlerTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t CreateMessageHandlerTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern fw_err_t CreateEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t CreateMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 
-extern struct TaskBlock *CreateCallBackHandlerExTask(fw_err_t (*)(void*), void*);
-extern struct TaskBlock *CreateEventHandlerExTask(fw_err_t (*)(uint16_t), uint16_t);
-extern struct TaskBlock *CreateMessageHandlerExTask(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern struct TaskBlock *CreateCallBackExTask(fw_err_t (*)(void*), void*);
+extern struct TaskBlock *CreateEventHandleExTask(fw_err_t (*)(uint16_t), uint16_t);
+extern struct TaskBlock *CreateMessageHandleExTask(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif    
     
 /* Add c++ compatibility------------------------------------------------------*/

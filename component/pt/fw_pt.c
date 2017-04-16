@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-21                                                      *
- * @brief      framework protothreads component source files                   *
+ * @brief      protothreads component source files                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup framework protothreaads component
+ * @defgroup protothreaads component
  * @{
  */
 
@@ -49,7 +49,7 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_PT_API) && USE_YSF_PT_API
+#if USE_PT_COMPONENT
 /**
  *******************************************************************************
  * @brief       init protothreads
@@ -60,16 +60,16 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_pt_init(struct ysf_pt_t *pt, YSF_PT_THREAD_NAME)
+fw_err_t _pt_init(struct ProtoThreads *pt, _PT_THREAD_NAME)
 {
     if(IS_PTR_NULL(pt) || IS_PTR_NULL(pt_thread))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    pt->state     = 0;
-    pt->thread    = pt_thread;
-    pt->useStatus = true;
+    pt->State     = 0;
+    pt->Thread    = pt_thread;
+    pt->UseStatus = true;
 
     return FW_ERR_NONE;
 }
@@ -85,14 +85,14 @@ fw_err_t ysf_pt_init(struct ysf_pt_t *pt, YSF_PT_THREAD_NAME)
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_pt_arm(struct ysf_task_t *task, struct ysf_pt_t *pt)
+fw_err_t _pt_arm(struct TaskBlock *task, struct ProtoThreads *pt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(pt))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    ysf_smTask_create(task, pt->thread, pt, FW_EVENT_NONE);
+    CreateMessageHandleTask(task, pt->Thread, pt, FW_EVENT_NONE);
     
     return FW_ERR_NONE;
 }
@@ -108,14 +108,14 @@ fw_err_t ysf_pt_arm(struct ysf_task_t *task, struct ysf_pt_t *pt)
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_pt_simp_arm(struct ysf_pt_t *pt)
+fw_err_t _pt_ex_arm(struct ProtoThreads *pt)
 {
     if(IS_PTR_NULL(pt))
     {
         return FW_ERR_INVAILD_PTR;
     }
 
-    if(ysf_smSimpTask_create(pt->thread, pt, FW_EVENT_NONE) == NULL)
+    if(CreateMessageHandleExTask(pt->Thread, pt, FW_EVENT_NONE) == NULL)
     {
         return FW_ERR_FAIL;
     }
@@ -132,19 +132,19 @@ fw_err_t ysf_pt_simp_arm(struct ysf_pt_t *pt)
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_pt_disarm(struct ysf_pt_t *pt)
+fw_err_t _pt_disarm(struct ProtoThreads *pt)
 {
     if(IS_PTR_NULL(pt))
     {
         return FW_ERR_INVAILD_PTR;
     }
     
-    pt->useStatus = false;
+    pt->UseStatus = false;
     
     return FW_ERR_NONE;
 }
 #endif
 
-/** @}*/     /** framework protothreads component  */
+/** @}*/     /** protothreads component  */
 
 /**********************************END OF FILE*********************************/

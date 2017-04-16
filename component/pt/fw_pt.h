@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_pt.h                                                        *
+ * @file       fw_pt.h                                                         *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-21                                                      *
- * @brief      ysf protothreads head files                                     *
+ * @brief      protothreads component head files                               *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_PT_H__
-#define __YSF_PT_H__
+#ifndef __PT_COMPONENT_H__
+#define __PT_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,31 +46,34 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_PATH
 #include _FW_TIMER_COMPONENT_PATH
-    
+#include _FW_MEMORY_COMPONENT_PATH
+
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      protothreads config falgs
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
- */  
-#ifdef USE_YSF_PROTOTHREADS_COMPONENT
-#if USE_YSF_PROTOTHREADS_COMPONENT 
-#define USE_YSF_PT_API           (1)
+ */
+#ifdef USE_FRAMEWORK_PT_COMPONENT
+#if USE_FRAMEWORK_PT_COMPONENT 
+#define USE_PT_COMPONENT                                                     (1)
 #else
-#define USE_YSF_PT_API           (0)
+#define USE_PT_COMPONENT                                                     (0)
 #endif
-    
 /**
  *******************************************************************************
- * @brief      user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
- */  
+ */
 #else
-#define USE_YSF_PT_API           (1)
+#define USE_PT_COMPONENT                                                     (1)
 #endif
 
 /**
@@ -78,35 +81,35 @@ extern "C"
  * @brief      protothreads handler function
  *******************************************************************************
  */ 
-#define YSF_PT_THREAD(func_name)   fw_err_t func_name(void *ptTask, uint16_t evt)
+#define _PT_THREAD(func_name)     fw_err_t func_name(void *ptTask, uint16_t evt)
     
 /**
  *******************************************************************************
  * @brief      protothreads handler function type
  *******************************************************************************
  */ 
-#define YSF_PT_THREAD_NAME         fw_err_t (*pt_thread)(void*, uint16_t)
+#define _PT_THREAD_NAME          fw_err_t (*pt_thread)(void*, uint16_t)
        
 /**
  *******************************************************************************
  * @brief      protothreads deinit functon
  *******************************************************************************
  */    
-#define ysf_pt_deinit()          (pt->state = 0)
+#define _pt_deinit()            (pt->State = 0)
 
 /**
  *******************************************************************************
  * @brief      protothreads begin functon
  *******************************************************************************
  */                              
-#define ysf_pt_begin()           struct ysf_pt_t *pt = (struct ysf_pt_t*)ptTask;                             \
+#define _pt_begin()              struct ProtoThreads *pt = (struct ProtoThreads*)ptTask;                     \
                                                                                                              \
-                                 if(pt->useStatus == false)                                            \
+                                 if(pt->UseStatus == false)                                                  \
                                  {                                                                           \
-                                     return FW_ERR_NONE;                                                    \
+                                     return FW_ERR_NONE;                                                     \
                                  }                                                                           \
                                                                                                              \
-                                 switch(pt->state)                                                           \
+                                 switch(pt->State)                                                           \
                                  {                                                                           \
                                     case 0:
 
@@ -115,19 +118,19 @@ extern "C"
  * @brief      protothreads entry functon
  *******************************************************************************
  */                                    
-#define ysf_pt_entry()           pt->state = (uint16_t)__LINE__; case __LINE__:
+#define _pt_entry()              pt->State = (uint16_t)__LINE__; case __LINE__:
     
 /**
  *******************************************************************************
  * @brief      protothreads wait functon
  *******************************************************************************
  */
-#define ysf_pt_wait(state)       do                                                                          \
+#define _pt_wait(state)          do                                                                          \
                                  {                                                                           \
-                                     ysf_pt_entry();                                                         \
+                                     _pt_entry();                                                            \
                                      if( !(state) )                                                          \
                                      {                                                                       \
-                                        return YSF_ERR_NOT_READY;                                            \
+                                        return FW_ERR_NOT_READY;                                             \
                                      }                                                                       \
                                  }while(0)
 
@@ -136,12 +139,12 @@ extern "C"
  * @brief      protothreads wait functon
  *******************************************************************************
  */                                 
-#define ysf_pt_wfe(state)        do                                                                          \
+#define _pt_wfe(state)           do                                                                          \
                                  {                                                                           \
-                                     ysf_pt_entry();                                                         \
+                                     _pt_entry();                                                            \
                                      if( (state) )                                                           \
                                      {                                                                       \
-                                        return YSF_ERR_NOT_READY;                                            \
+                                        return FW_ERR_NOT_READY;                                             \
                                      }                                                                       \
                                  }while(0)
                                  
@@ -150,22 +153,22 @@ extern "C"
  * @brief      protothreads delay functon
  *******************************************************************************
  */
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-#define ysf_pt_delay(tick)      do                                                                           \
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+#define _pt_delay(tick)         do                                                                           \
                                 {                                                                            \
-                                    struct ysf_timer_t *timer;                                               \
-                                    timer = ysf_smSimpTimer_init(pt->thread, ptTask, YSF_PT_DELAY_EVENT);    \
-                                    ysf_timer_arm(timer, YSF_TIME_2_TICK(tick), 1);                          \
-                                    evt = FW_EVENT_NONE;                                                    \
-                                    ysf_pt_wait(evt == YSF_PT_DELAY_EVENT);                                  \
+                                    struct TimerBlock *timer;                                                \
+                                    timer = InitMessageHandleExTimer(pt->Thread, ptTask, FW_EVENT_DELAY);    \
+                                    TimerArm(timer, TIME_2_TICK(tick), 1);                                   \
+                                    evt = FW_EVENT_NONE;                                                     \
+                                    _pt_wait(evt == FW_EVENT_DELAY);                                         \
                                 }while(0)
 #else
-#define ysf_pt_delay(tick)      do                                                                           \
+#define _pt_delay(tick)         do                                                                           \
                                 {                                                                            \
-                                    ysf_smTimer_init(&pt->timer, pt->thread, ptTask, YSF_PT_DELAY_EVENT);    \
-                                    ysf_timer_arm(&pt->timer, YSF_TIME_2_TICK(tick), 1);                     \
-                                    evt = FW_EVENT_NONE;                                                    \
-                                    ysf_pt_wait(evt == YSF_PT_DELAY_EVENT);                                  \
+                                    InitMessageHandleTimer(&pt->Timer, pt->Thread, ptTask, FW_EVENT_DELAY);  \
+                                    TimerArm(&pt->timer, TIME_2_TICK(tick), 1);                              \
+                                    evt = FW_EVENT_NONE;                                                     \
+                                    _pt_wait(evt == FW_EVENT_DELAY);                                         \
                                 }while(0)                        
 #endif
 
@@ -174,14 +177,14 @@ extern "C"
  * @brief      protothreads exit functon
  *******************************************************************************
  */
-#define ysf_pt_exit()           pt->useStatus = false; ysf_pt_entry(); return FW_ERR_NONE
+#define _pt_exit()              pt->UseStatus = false; _pt_entry(); return FW_ERR_NONE
                                  
 /**
  *******************************************************************************
  * @brief      protothreads end functon
  *******************************************************************************
  */
-#define ysf_pt_end()            } return FW_ERR_NONE
+#define _pt_end()               } return FW_ERR_NONE
     
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -189,43 +192,29 @@ extern "C"
  * @brief      protothreads type
  *******************************************************************************
  */
-struct ysf_pt_t
+struct ProtoThreads
 {
-    uint16_t state;
-    bool useStatus;
-    fw_err_t (*thread)(void*, uint16_t);
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-#else
-    struct ysf_timer_t timer;
+    fw_err_t (*Thread)(void*, uint16_t);
+    
+#if !defined(USE_MEMORY_COMPONENT) && !USE_MEMORY_COMPONENT
+    struct TimerBlock Timer;
 #endif
+    
+    uint16_t State;
+    bool     UseStatus;
 };
-
-/**
- *******************************************************************************
- * @brief       ysf pt api
- *******************************************************************************
- */
-#if defined(USE_YSF_PT_API) && USE_YSF_PT_API
-struct YSF_PT_API
-{
-    fw_err_t (*init)(struct ysf_pt_t*, YSF_PT_THREAD_NAME);
-    fw_err_t (*disarm)(struct ysf_pt_t*);
-
-    fw_err_t (*arm)(struct ysf_task_t*, struct ysf_pt_t*);
-
-    struct
-    {
-        fw_err_t (*arm)(struct ysf_pt_t*);
-    }simple;
-};
-#endif
 
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_PT_API) && USE_YSF_PT_API
-extern fw_err_t ysf_pt_init(struct ysf_pt_t*, YSF_PT_THREAD_NAME);
-extern fw_err_t ysf_pt_arm(struct ysf_task_t*, struct ysf_pt_t*);
-extern fw_err_t ysf_pt_simp_arm(struct ysf_pt_t*);
-extern fw_err_t ysf_pt_disarm(struct ysf_pt_t*);
+/**
+ *******************************************************************************
+ * @brief      define pt api
+ *******************************************************************************
+ */
+#if defined(USE_PT_COMPONENT) && USE_PT_COMPONENT
+extern fw_err_t _pt_init(struct ProtoThreads*, _PT_THREAD_NAME);
+extern fw_err_t _pt_arm(struct TaskBlock*, struct ProtoThreads*);
+extern fw_err_t _pt_ex_arm(struct ProtoThreads*);
+extern fw_err_t _pt_disarm(struct ProtoThreads*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -235,6 +224,6 @@ extern fw_err_t ysf_pt_disarm(struct ysf_pt_t*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf pt component  */
+/** @}*/     /** pt component  */
 
 /**********************************END OF FILE*********************************/

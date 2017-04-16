@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-15                                                      *
- * @brief      framework signal component source files                         *
+ * @brief      signal component source files                                   *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup framework signal component
+ * @defgroup signal component
  * @{
  */
 
@@ -54,26 +54,26 @@
  * @brief       signal component head point
  *******************************************************************************
  */
-#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
+#if USE_SIGNAL_COMPONENT
 /**
  *******************************************************************************
  * @brief       ysf signal control block
  *******************************************************************************
  */
-static DEFINE_SINGLE_LINK_LIST_FIFO_BLOCK(struct ysf_signal_t, scb);
+static CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(struct SignalBlock, SignalControlBlock);
 
 /**
  *******************************************************************************
  * @brief       signal timer
  *******************************************************************************
  */
-static struct ysf_timer_t signal_timer;
+static struct TimerBlock SignalTimer;
 #endif
                        
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
+#if USE_SIGNAL_COMPONENT
 /**
  *******************************************************************************
  * @brief       detect the timer is in queue
@@ -201,7 +201,7 @@ fw_err_t ysf_signal_init( void )
  *******************************************************************************
  */
 fw_err_t ysf_evtSignal_arm(struct ysf_signal_t *signal, 
-                            enum ysf_signal_status_t (*detect)(void), 
+                            enum SignalStatus (*detect)(void), 
                             fw_err_t (*handler)(uint16_t) )
 {
     if( IS_PTR_NULL(signal) || IS_PTR_NULL(detect) )
@@ -221,7 +221,7 @@ fw_err_t ysf_evtSignal_arm(struct ysf_signal_t *signal,
     return FW_ERR_NONE;
 }
 
-struct ysf_signal_t *ysf_evtSimpSignal_arm(enum ysf_signal_status_t (*detect)(void), 
+struct ysf_signal_t *ysf_evtSimpSignal_arm(enum SignalStatus (*detect)(void), 
                                            fw_err_t (*handler)(uint16_t) )
 {
 #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
@@ -274,7 +274,7 @@ fw_err_t ysf_signal_disarm(struct ysf_signal_t *signal)
 __STATIC_INLINE
 void ysf_signal_judge( struct ysf_signal_t *signal )
 {
-    enum ysf_signal_status_t status;
+    enum SignalStatus status;
 
     if( IS_PTR_NULL(signal) || IS_PTR_NULL(signal->detect) || IS_PTR_NULL(signal->task.handler.evt) )
     {
@@ -477,6 +477,6 @@ fw_err_t ysf_signal_handler(uint16_t event)
 
 #endif
 
-/** @}*/     /** ysf signal component  */
+/** @}*/     /** signal component */
 
 /**********************************END OF FILE*********************************/

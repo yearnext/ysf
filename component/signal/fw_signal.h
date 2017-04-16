@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-15                                                      *
- * @brief      framework signal component head files                           *
+ * @brief      signal component head files                                     *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup framework signal component
+ * @defgroup signal component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_SIGNAL_COMPONENT_H__
-#define __FRAMEWORK_SIGNAL_COMPONENT_H__
+#ifndef __SIGNAL_COMPONENT_H__
+#define __SIGNAL_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -62,9 +62,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT
 #if USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT
-#define USE_FRAMEWORK_SIGNAL_API                                             (1)
+#define USE_SIGNAL_COMPONENT                                                 (1)
 #else
-#define USE_FRAMEWORK_SIGNAL_API                                             (0)
+#define USE_SIGNAL_COMPONENT                                                 (0)
 #endif
 
 /**
@@ -75,7 +75,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_SIGNAL_API                                             (1)
+#define USE_SIGNAL_COMPONENT                                                 (1)
 #endif
     
 /**
@@ -83,12 +83,8 @@ extern "C"
  * @brief       config signal time
  *******************************************************************************
  */
-#define YSF_SIGNAL_SCAN_TIME        YSF_TIME_2_TICK(10)
-#define YSF_SIGNAL_TIME2COUNT(n)    ((n)/YSF_SIGNAL_SCAN_TIME)
-
-#define YSF_SIGNAL_ACTIVE_LOW       !
-#define YSF_SIGNAL_ACTIVE_HIGH      !!
-#define YSF_SIGNAL_ACTIVE           YSF_SIGNAL_ACTIVE_LOW
+#define SIGNAL_SCAN_TIME        (10)
+#define SIGNAL_TIME2COUNT(n)    ((n)/TIME_2_TICK(SIGNAL_SCAN_TIME))
    
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -96,7 +92,7 @@ extern "C"
  * @brief       define signal status enumeration
  *******************************************************************************
  */
-enum ysf_signal_status_t
+enum SignalStatus
 {
     SIGNAL_STATUS_INIT = 0,
 
@@ -120,74 +116,58 @@ enum ysf_signal_status_t
  * @brief       define signal type
  *******************************************************************************
  */
-struct ysf_signal_t
+struct SignalBlock
 {
-    struct
-    {
-        struct ysf_signal_t *next;
-        bool useStatus;
-        
-        enum
-        {
-            YSF_EVENT_HANDLER_SIGNAL,
-        }type;
-    };
+    struct SignalBlock *Next;
     
-    struct
-    {
-        enum ysf_signal_status_t (*detect)(void);
-//        fw_err_t (*handler)(void *, uint16_t);
-        enum ysf_signal_status_t status;
-        
-        struct ysf_task_t task;
-    };
+    struct TaskBlock    Task;
+    
+    enum SignalStatus   (*detect)(void);
+    fw_err_t            (*handler)(enum SignalStatus);
+    
+    enum SignalStatus   status;
+    
+    bool                UseStatus;
 };
 
 /**
  *******************************************************************************
- * @brief       ysf signal api
+ * @brief       signal component interface
  *******************************************************************************
  */
-#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
-struct YSF_SIGNAL_API
+#if USE_SIGNAL_COMPONENT
+typedef struct
 {
-    fw_err_t (*init)(void);
-    fw_err_t (*handler)(uint16_t);
+    fw_err_t (*Init)(void);
+    fw_err_t (*Handler)(uint16_t);
+
+    fw_err_t (*Arm)(struct SignalBlock*, enum SignalStatus (*)(void), fw_err_t (*)(uint16_t));
+    struct SignalBlock *(*ExArm)(enum SignalStatus (*)(void), fw_err_t (*)(uint16_t));
     
-    struct
-    {
-        fw_err_t (*arm)(struct ysf_signal_t*, enum ysf_signal_status_t (*)(void), fw_err_t (*)(uint16_t));
-    };
-    
-    struct
-    {
-        struct ysf_signal_t *(*arm)(enum ysf_signal_status_t (*)(void), fw_err_t (*)(uint16_t));
-    }simple;
-              
-    fw_err_t (*disarm)(struct ysf_signal_t*);
-};
+    fw_err_t (*Disarm)(struct SignalBlock*);
+}SignalComponentInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf signal api
+ * @brief       signal component api
  *******************************************************************************
  */
-#if defined(USE_YSF_SIGNAL_API) && USE_YSF_SIGNAL_API
-extern fw_err_t ysf_signal_init(void);
+#if USE_SIGNAL_COMPONENT
+extern fw_err_t SignalComponentInit(void);
+                                       
+extern fw_err_t SignalComponentPool(uint16_t);
 
-extern fw_err_t ysf_evtSignal_arm(struct ysf_signal_t*, 
-                                   enum ysf_signal_status_t (*)(void), 
-                                   fw_err_t (*)(uint16_t) );
+extern fw_err_t SignalArm(struct SignalBlock*, enum SignalStatus (*)(void), 
+                          fw_err_t (*)(uint16_t) );
                                    
-extern struct ysf_signal_t *ysf_evtSimpSignal_arm(enum ysf_signal_status_t (*)(void), 
-                                                  fw_err_t (*)(uint16_t) );
+extern struct SignalBlock *SignalExArm(enum SignalStatus (*)(void),
+                                       fw_err_t (*)(uint16_t) );
                                        
-extern fw_err_t ysf_signal_disarm(struct ysf_signal_t*);
-                                       
-extern fw_err_t ysf_signal_handler(uint16_t);
+extern fw_err_t SignalDisarm(struct SignalBlock*);
+
 #endif
                                        
 /* Add c++ compatibility------------------------------------------------------*/
@@ -197,6 +177,6 @@ extern fw_err_t ysf_signal_handler(uint16_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf signal */
+/** @}*/     /** signal component */
 
 /**********************************END OF FILE*********************************/

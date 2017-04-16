@@ -87,7 +87,7 @@ typedef struct
     fw_err_t (*Init)(void);
     fw_err_t (*Post)(uint16_t);
     fw_err_t (*Read)(uint16_t*);
-}EventInterface;
+}EventComponentInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -98,7 +98,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_EVENT_COMPONENT
-extern fw_err_t EventInit(void);
+extern fw_err_t EventComponentInit(void);
 extern fw_err_t EventPost(uint16_t);
 extern fw_err_t EventRead(uint16_t*);
 #endif

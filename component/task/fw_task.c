@@ -72,7 +72,7 @@ static CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(struct TaskBlock, TaskControlBlock)
 __STATIC_INLINE
 bool task_is_in(struct TaskBlock *task)
 {
-    SingleListFifoIsIn(struct TaskBlock, TaskControlBlock, task);
+    IsInSingleLinkListFifo(struct TaskBlock, TaskControlBlock, task);
     
     return false;
 }
@@ -88,7 +88,7 @@ bool task_is_in(struct TaskBlock *task)
 __STATIC_INLINE
 fw_err_t task_push(struct TaskBlock *task)
 {
-    SingleListFifoPush(task_is_in, TaskControlBlock, task);
+    SingleLinkListFifoPush(task_is_in, TaskControlBlock, task);
     
     return FW_ERR_NONE;
 }
@@ -106,7 +106,7 @@ struct TaskBlock *task_pop(void)
 {
     struct TaskBlock *task;
     
-    SingleListFifoPop(TaskControlBlock, task);
+    SingleLinkListFifoPop(TaskControlBlock, task);
     
     return task;
 }
@@ -122,7 +122,7 @@ struct TaskBlock *task_pop(void)
 __STATIC_INLINE
 fw_err_t task_clear(void)
 {    
-    SingleListFifoClear(task_pop);
+    ClearSingleLinkListFifo(task_pop);
 
     return FW_ERR_NONE;
 }
@@ -135,7 +135,7 @@ fw_err_t task_clear(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t TaskInit(void)
+fw_err_t TaskComponentInit(void)
 {
     task_clear();
     
@@ -181,7 +181,7 @@ fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), voi
  * @note        None
  *******************************************************************************
  */
-fw_err_t CreateEventHandlerTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t), uint16_t evt)
+fw_err_t CreateEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t), uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
@@ -190,7 +190,7 @@ fw_err_t CreateEventHandlerTask(struct TaskBlock *task, fw_err_t (*func)(uint16_
     
     task->Handler.Event = func;
     task->Event         = evt;
-    task->Type          = EVENT_HANDLER_TASK;
+    task->Type          = EVENT_HANDLE_TASK;
     
 //    task->Next         = NULL;
     task_push(task);
@@ -210,7 +210,7 @@ fw_err_t CreateEventHandlerTask(struct TaskBlock *task, fw_err_t (*func)(uint16_
  * @note        None
  *******************************************************************************
  */
-fw_err_t CreateMessageHandlerTask(struct TaskBlock *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+fw_err_t CreateMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
     {
@@ -220,7 +220,7 @@ fw_err_t CreateMessageHandlerTask(struct TaskBlock *task, fw_err_t (*func)(void*
     task->Handler.Message = func;
     task->Param           = param;
     task->Event           = evt;
-    task->Type            = MESSAGE_HANDLER_TASK;
+    task->Type            = MESSAGE_HANDLE_TASK;
     
 //    task->Next   = NULL;
     task_push(task);
@@ -238,9 +238,9 @@ fw_err_t CreateMessageHandlerTask(struct TaskBlock *task, fw_err_t (*func)(void*
  * @note        None
  *******************************************************************************
  */
-struct TaskBlock *CreateCallBackHandlerExTask(fw_err_t (*func)(void*), void *param)
+struct TaskBlock *CreateCallBackExTask(fw_err_t (*func)(void*), void *param)
 {
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
     if(IS_PTR_NULL(func))
     {
         return NULL;
@@ -276,9 +276,9 @@ struct TaskBlock *CreateCallBackHandlerExTask(fw_err_t (*func)(void*), void *par
  * @note        None
  *******************************************************************************
  */
-struct TaskBlock *CreateEventHandlerExTask(fw_err_t (*func)(uint16_t), uint16_t evt)
+struct TaskBlock *CreateEventHandleExTask(fw_err_t (*func)(uint16_t), uint16_t evt)
 {
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
     if(IS_PTR_NULL(func))
     {
         return NULL;
@@ -293,7 +293,7 @@ struct TaskBlock *CreateEventHandlerExTask(fw_err_t (*func)(uint16_t), uint16_t 
     
     task->Handler.Event = func;
     task->Event         = evt;
-    task->Type          = EVENT_HANDLER_EX_TASK;
+    task->Type          = EVENT_HANDLE_EX_TASK;
     
 //    task->Next         = NULL;
     task_push(task);
@@ -315,9 +315,9 @@ struct TaskBlock *CreateEventHandlerExTask(fw_err_t (*func)(uint16_t), uint16_t 
  * @note        None
  *******************************************************************************
  */
-struct TaskBlock *CreateMessageHandlerExTask(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+struct TaskBlock *CreateMessageHandleExTask(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API 
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
     if(IS_PTR_NULL(func))
     {
         return NULL;
@@ -333,7 +333,7 @@ struct TaskBlock *CreateMessageHandlerExTask(fw_err_t (*func)(void*, uint16_t), 
     task->Handler.Message = func;
     task->Param           = param;
     task->Event           = evt;
-    task->Type            = MESSAGE_HANDLER_EX_TASK;
+    task->Type            = MESSAGE_HANDLE_EX_TASK;
     
 //    task->Next         = NULL;
     task_push(task);
@@ -369,15 +369,15 @@ fw_err_t task_handler(struct TaskBlock *task)
                 task->Handler.CallBack(task->Param);
             }
             break;
-        case EVENT_HANDLER_TASK:
-        case EVENT_HANDLER_EX_TASK:
+        case EVENT_HANDLE_TASK:
+        case EVENT_HANDLE_EX_TASK:
             if( task->Handler.Event != NULL )
             {
                 task->Handler.Event(task->Event);
             }
             break;
-        case MESSAGE_HANDLER_TASK:
-        case MESSAGE_HANDLER_EX_TASK:
+        case MESSAGE_HANDLE_TASK:
+        case MESSAGE_HANDLE_EX_TASK:
             if( task->Handler.Message != NULL )
             {
                 task->Handler.Message(task->Param, task->Event);
@@ -399,7 +399,7 @@ fw_err_t task_handler(struct TaskBlock *task)
  * @note        this function is dependent on ysf memory management
  *******************************************************************************
  */
-fw_err_t TaskPoll(void)
+fw_err_t TaskComponentPoll(void)
 {   
     // read task from the task queue    
     struct TaskBlock *task = task_pop();
@@ -414,8 +414,8 @@ fw_err_t TaskPoll(void)
     
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
     if (task->Type == CALL_BACK_EX_TASK 
-        || task->Type == EVENT_HANDLER_EX_TASK 
-        || task->Type == MESSAGE_HANDLER_EX_TASK)
+        || task->Type == EVENT_HANDLE_EX_TASK 
+        || task->Type == MESSAGE_HANDLE_EX_TASK)
     {
         if( MemoryIsIn(task) == true )
         {

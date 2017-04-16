@@ -86,10 +86,10 @@
  * @note        None
  *******************************************************************************
  */
-void MemoryInit(void)
+void MemoryComponentInit(void)
 {
 #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    HeapInit(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
+    HeapComponentInit(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
 #endif
 }
 
@@ -107,7 +107,7 @@ void *MemoryMalloc(uint32_t size)
     return malloc(size);
 #else 
     void *mem = NULL;
-    HeapAlloc(&Managemrnt, size, mem);
+    AllocHeapMemory(&Managemrnt, size, mem);
     return mem;
 #endif
 }
@@ -125,7 +125,7 @@ void MemoryFree(void *memory)
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     free(memory);
 #else
-    HeapFree(&Managemrnt, memory);
+    FreeHeapMemory(&Managemrnt, memory);
 #endif
 }
 
@@ -143,7 +143,7 @@ bool MemoryIsIn(void *memory)
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return true;
 #else
-    return HeapIsIn(&Managemrnt, memory);
+    return IsInHeapMemory(&Managemrnt, memory);
 #endif
 }
 

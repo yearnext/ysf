@@ -101,7 +101,7 @@ typedef struct
     fw_err_t (*Add)(void**, void **);
     fw_err_t (*Del)(void**, void **);
     fw_err_t (*IsExist)(void**, void **);
-}SingleListInterface;
+}SingleListComponentInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -118,7 +118,7 @@ extern bool SingleListModuleDel(void**, void**, void**);
 extern bool SingleListModuleIsExist(void**, void**, void**);
 extern bool SingleListModuleFindLastNode(void **, void**, void**);
 
-extern fw_err_t SingleListInit(void**);
+extern fw_err_t SingleListComponentInit(void**);
 extern fw_err_t SingleListAdd(void**, void**);
 extern fw_err_t SingleListDel(void**, void**);
 extern fw_err_t SingleListIsExits(void**, void**);
@@ -135,12 +135,12 @@ extern fw_err_t SingleListIsExits(void**, void**);
  */
 #define CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(type, name) struct               \
                                                          {                     \
-                                                             type *head;       \
-                                                             type *tail;       \
+                                                             type *Head;       \
+                                                             type *Tail;       \
                                                          } name =              \
                                                          {                     \
-                                                             .head = NULL,     \
-                                                             .tail = NULL,     \
+                                                             .Head = NULL,     \
+                                                             .Tail = NULL,     \
                                                          }
  
 /**
@@ -152,9 +152,9 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */                                                       
-#define SingleListFifoIsIn(type, block, node)                                  \
+#define IsInSingleLinkListFifo(type, block, node)                              \
 {                                                                              \
-    type *temp = block.head;                                                   \
+    type *temp = block.Head;                                                   \
                                                                                \
     while(temp != NULL)                                                        \
     {                                                                          \
@@ -176,21 +176,21 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */    
-#define SingleListFifoPush(isInFunc, block, pushData)                          \
+#define SingleLinkListFifoPush(isInFunc, block, pushData)                      \
 {                                                                              \
     if( isInFunc(pushData) == false )                                          \
     {                                                                          \
         pushData->Next = NULL;                                                 \
                                                                                \
-        if(block.tail != NULL)                                                 \
+        if(block.Tail != NULL)                                                 \
         {                                                                      \
-            block.tail->Next = pushData;                                       \
-            block.tail       = pushData;                                       \
+            block.Tail->Next = pushData;                                       \
+            block.Tail       = pushData;                                       \
         }                                                                      \
         else                                                                   \
         {                                                                      \
-            block.head       = pushData;                                       \
-            block.tail       = pushData;                                       \
+            block.Head       = pushData;                                       \
+            block.Tail       = pushData;                                       \
         }                                                                      \
     }                                                                          \
     else                                                                       \
@@ -202,26 +202,26 @@ extern fw_err_t SingleListIsExits(void**, void**);
 /**
  *******************************************************************************
  * @brief       fifo pop
- * @param       [in/out]  name          block name
+ * @param       [in/out]  block         block name
  * @param       [in/out]  popData       pop data
  * @note        None
  *******************************************************************************
  */   
-#define SingleListFifoPop(block, popData)                                      \
+#define SingleLinkListFifoPop(block, popData)                                  \
 {                                                                              \
-    if( block.head == NULL )                                                   \
+    if( block.Head == NULL )                                                   \
     {                                                                          \
-        block.tail = NULL;                                                     \
+        block.Tail = NULL;                                                     \
         return NULL;                                                           \
     }                                                                          \
                                                                                \
-    popData       = block.head;                                                \
-    block.head    = block.head->Next;                                          \
+    popData       = block.Head;                                                \
+    block.Head    = block.Head->Next;                                          \
     popData->Next = NULL;                                                      \
                                                                                \
-    if( block.head == NULL )                                                   \
+    if( block.Head == NULL )                                                   \
     {                                                                          \
-        block.tail = NULL;                                                     \
+        block.Tail = NULL;                                                     \
     }                                                                          \
 }
 
@@ -233,10 +233,86 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */
-#define SingleListFifoClear(sListPOPFunc)                                      \
+#define ClearSingleLinkListFifo(sListPOPFunc)                                  \
 {                                                                              \
     while(sListPOPFunc() != NULL);                                             \
 }
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @note        None
+ *******************************************************************************
+ */
+#define GetSingleLinkListHead(block)                              ((block).Head)
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @note        None
+ *******************************************************************************
+ */
+#define GetSingleLinkListTail(block)                              ((block).Tail)
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @param       [in/out]  node          node
+ * @note        None
+ *******************************************************************************
+ */
+#define SingleLinkListHeadWrite(block, node)             ((block).Head = (node))
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @param       [in/out]  node          node
+ * @note        None
+ *******************************************************************************
+ */
+#define SingleLinkListTailWrite(block, node)             ((block).Tail = (node))
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @param       [in/out]  node          node
+ * @note        None
+ *******************************************************************************
+ */
+#define IsSingleLinkListHead(block, node)               ((block).Head == (node))
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @param       [in/out]  node          node
+ * @note        None
+ *******************************************************************************
+ */
+#define IsSingleLinkListTail(block, node)               ((block).Tail == (node))
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @note        None
+ *******************************************************************************
+ */
+#define IsSingleLinkListHeadEmpty(block)                  ((block).Head == NULL)
+
+/**
+ *******************************************************************************
+ * @brief       fifo clear
+ * @param       [in/out]  block         block name
+ * @note        None
+ *******************************************************************************
+ */
+#define IsSingleLinkListTailEmpty(block, node)            ((block).Tail == NULL)
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

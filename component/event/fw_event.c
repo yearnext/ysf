@@ -69,9 +69,9 @@ static struct fw_buffer_t EventControlBlock;
  * @note        None
  *******************************************************************************
  */
-fw_err_t EventInit(void)
+fw_err_t EventComponentInit(void)
 {
-    RingBufferInit(&EventControlBlock, EventQueue, CalTypeByteSize(EventQueue));
+    RingBufferComponentInit(&EventControlBlock, EventQueue, CalTypeByteSize(EventQueue));
     
 	return FW_ERR_NONE;
 }

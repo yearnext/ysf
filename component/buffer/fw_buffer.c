@@ -59,7 +59,7 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t RingBufferInit(struct RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize )
+fw_err_t RingBufferComponentInit(struct RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize )
 {
     _Assert(IS_PTR_NULL(rb));
     _Assert(IS_PTR_NULL(rbBuffer));
@@ -261,7 +261,7 @@ fw_err_t RingBufferRead( struct RingBuffer *rb, uint8_t *readBuffer, uint16_t re
  * @note        None
  *******************************************************************************
  */
-fw_err_t HeapInit(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uint32_t heapSize)
+fw_err_t HeapComponentInit(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uint32_t heapSize)
 {
 	if (mem == NULL 
         || heapHeadAddr == NULL 
@@ -337,7 +337,7 @@ uint32_t heap_cal_need_block(uint32_t useSize, uint32_t memoryAlignment)
  * @note        None
  *******************************************************************************
  */
-fw_err_t HeapAlloc(struct HeapControlBlock *mem, uint32_t needSize, void *allocAddr)
+fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *allocAddr)
 {
     struct HeapBlock *now  = mem->Head;
     struct HeapBlock *next = mem->Head;
@@ -396,7 +396,7 @@ fw_err_t HeapAlloc(struct HeapControlBlock *mem, uint32_t needSize, void *allocA
  * @note        None
  *******************************************************************************
  */
-fw_err_t HeapFree(struct HeapControlBlock *mem, void *freeBuffer)
+fw_err_t FreeHeapMemory(struct HeapControlBlock *mem, void *freeBuffer)
 {
     struct HeapBlock *now       = mem->Head;
     struct HeapBlock *last      = NULL;
@@ -481,7 +481,7 @@ fw_err_t HeapFree(struct HeapControlBlock *mem, void *freeBuffer)
  * @note        None
  *******************************************************************************
  */
-bool HeapIsIn(struct HeapControlBlock *mem, void *buffer)
+bool IsInHeapMemory(struct HeapControlBlock *mem, void *buffer)
 {
     if(mem == NULL || buffer == NULL)
     {

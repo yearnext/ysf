@@ -89,7 +89,7 @@ typedef struct
     void* (*Malloc)(uint16_t);
     void  (*Free)(void*);
     bool  (*IsIn)(void *);
-}MemoryInterface;
+}MemoryComponentInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -100,7 +100,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MEMORY_COMPONENT
-extern void  MemoryInit(void);
+extern void  MemoryComponentInit(void);
 extern void* MemoryMalloc(uint32_t);
 extern void  MemoryFree(void*);
 extern bool  MemoryIsIn(void*);

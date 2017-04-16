@@ -105,7 +105,7 @@ typedef struct
     fw_err_t (*GetLen)(struct RingBuffer*, uint16_t*);
     fw_err_t (*Write)(struct RingBuffer*, uint8_t*, uint16_t);
     fw_err_t (*Read)(struct RingBuffer*, uint8_t*, uint16_t);
-}RingBufferInterface;
+}RingBufferComponentInterface;
 #endif
 
 /**
@@ -114,7 +114,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_BUFFER_COMPONENT
-extern fw_err_t RingBufferInit(struct RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t RingBufferComponentInit(struct RingBuffer*, uint8_t*, uint16_t);
 extern fw_err_t RingBufferGetLen(struct RingBuffer*, uint16_t*);
 extern fw_err_t RingBufferWrite(struct RingBuffer*, uint8_t*, uint16_t);
 extern fw_err_t RingBufferRead(struct RingBuffer*, uint8_t*, uint16_t);
@@ -155,14 +155,14 @@ struct HeapControlBlock
  * @brief       define memory management interface
  *******************************************************************************
  */
-#if USE_MANAGEMENT_COMPONENT
+#if USE_MEMORY_MANAGEMENT_COMPONENT
 typedef struct
 {
     fw_err_t (*Init)(struct HeapControlBlock*,  uint8_t*, uint32_t);
     fw_err_t (*Alloc)(struct HeapControlBlock*, uint16_t, void*);
     fw_err_t (*Free)(struct HeapControlBlock*,  void*);
     fw_err_t (*IsIn)(struct HeapControlBlock*,  void*);
-}MemoryManagementInterface;
+}MemoryManagementComponentInterface;
 #endif
 
 /**
@@ -171,10 +171,10 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MEMORY_MANAGEMENT_COMPONENT
-extern fw_err_t HeapInit(struct HeapControlBlock*,  uint8_t*, uint32_t);
-extern fw_err_t HeapAlloc(struct HeapControlBlock*, uint32_t, void*);
-extern fw_err_t HeapFree(struct HeapControlBlock*,  void*);
-extern bool     HeapIsIn(struct HeapControlBlock*,  void*);
+extern fw_err_t HeapComponentInit(struct HeapControlBlock*,  uint8_t*, uint32_t);
+extern fw_err_t AllocHeapMemory(struct HeapControlBlock*, uint32_t, void*);
+extern fw_err_t FreeHeapMemory(struct HeapControlBlock*,  void*);
+extern bool     IsInHeapMemory(struct HeapControlBlock*,  void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

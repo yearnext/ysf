@@ -239,7 +239,7 @@ bool SingleListModuleFindLastNode(void **node, void **ctx, void **expand)
  * @note        None
  *******************************************************************************
  */
-fw_err_t SingleListInit( void **listHead )
+fw_err_t SingleListComponentInit( void **listHead )
 {
     _Assert(IS_PTR_NULL(listHead));
 

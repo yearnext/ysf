@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-07-09                                                      *
- * @brief      framework timer component head files                            *
+ * @brief      timer component head files                                      *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,8 +32,8 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_TIMER_COMPONENT_H__
-#define __FRAMEWORK_TIMER_COMPONENT_H__
+#ifndef __TIMER_COMPONENT_H__
+#define __TIMER_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -45,9 +45,7 @@ extern "C"
 #include "core_path.h"
 #include _FW_PATH
 #include _FW_TASK_COMPONENT_PATH
-#include _FW_TICK_COMPONENT_PATH
-#include _FW_LINK_LIST_COMPONENT_PATH
-
+    
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -58,9 +56,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_TIMER_COMPONENT
 #if USE_FRAMEWORK_TIMER_COMPONENT
-#define USE_FRAMEWORK_TIMER_API                                              (1)
+#define USE_TIMER_COMPONENT                                                  (1)
 #else
-#define USE_FRAMEWORK_TIMER_API                                              (0)
+#define USE_TIMER_COMPONENT                                                  (0)
 #endif
 
 /**
@@ -71,51 +69,44 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_TIMER_API                                              (1)
+#define USE_TIMER_COMPONENT                                                  (1)
 #endif
 
 /**
  *******************************************************************************
- * @brief       ysf timer tick config
+ * @brief       timer tick config
  *******************************************************************************
  */
-#define FW_TIMER_PERIOD         FW_TICK_PERIOD
-#define FW_TIME_2_TICK(time)    ((time)/FW_TIMER_PERIOD)
+#define TIME_2_TICK(time)    ((time)/CORE_TICK_PERIOD)
 
-#define FW_TIMER_CYCLE_MODE     (-1)
+#define TIMER_CYCLE_MODE     (-1)
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        ysf timer type
+ * @brief        timer block
  *******************************************************************************
  */
-struct ysf_timer_t
+struct TimerBlock
 {
-    struct
-    {
-        struct ysf_timer_t *next;
+    struct TimerBlock *Next;
 
-        enum
-        {
-            YSF_CALL_BACK_TIMER,
-            YSF_EVENT_HANDLER_TIMER,
-            YSF_STATE_MACHINE_TIMER,
-        }type;
-    };
+    uint32_t          SetTicks;
+    uint32_t          LoadTicks;
+    int16_t           Cycle;
 
-    struct
+    struct TaskBlock  Task;
+
+    enum
     {
-        struct ysf_task_t task;
-    };
-    
-    struct
-    {
-        fw_tick_t ticks;
-        fw_tick_t loadTicks;
+        CALL_BACK_TIMER,
+        EVENT_HANDLE_TIMER,
+        MESSAGE_HANDLE_TIMER,
         
-        int16_t    cycle;
-    };
+        CALL_BACK_EX_TIMER,
+        EVENT_HANDLE_EX_TIMER,
+        MESSAGE_HANDLE_EX_TIMER,
+    }Type;
 };
 
 /**
@@ -123,31 +114,25 @@ struct ysf_timer_t
  * @brief      interface function defineitions 
  *******************************************************************************
  */
-#if USE_FRAMEWORK_TIMER_API
-struct YSF_TIMER_API
+#if USE_TIMER_COMPONENT
+typedef struct
 {
-    fw_err_t (*init)(void);
-    fw_err_t (*handler)(uint16_t);
+    fw_err_t (*Init)(void);
+    fw_err_t (*Handler)(uint16_t);
 
-    fw_err_t (*arm)(struct ysf_timer_t*, uint32_t, int16_t);
-    fw_err_t (*disarm)(struct ysf_timer_t*);
+    fw_err_t (*Arm)(struct TimerBlock*, uint32_t, int16_t);
+    fw_err_t (*Disarm)(struct TimerBlock*);
     
-    bool (*getStatus)(struct ysf_timer_t*);
+    bool (*GetStatus)(struct TimerBlock*);
     
-    struct
-    {
-        fw_err_t (*cb_init)(struct ysf_timer_t*, fw_err_t (*)(void*), void*);
-        fw_err_t (*evt_init)(struct ysf_timer_t*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*sm_init)(struct ysf_timer_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    };
-    
-    struct
-    {
-        struct ysf_timer_t *(*cb_init)(fw_err_t (*)(void*), void*);
-        struct ysf_timer_t *(*evt_init)(fw_err_t (*)(uint16_t), uint16_t);
-        struct ysf_timer_t *(*sm_init)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    }simple;
-};
+    fw_err_t (*CallBackInit)(struct TimerBlock*, fw_err_t (*)(void*), void*);
+    fw_err_t (*EventHandleInit)(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
+    fw_err_t (*MessageInit)(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+
+    struct TimerBlock *(*CallBackExInit)(fw_err_t (*)(void*), void*);
+    struct TimerBlock *(*EventHandleExInit)(fw_err_t (*)(uint16_t), uint16_t);
+    struct TimerBlock *(*MessageHandleExInit)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+}TimerComponentInterface;
 #endif
 
 /* Exported constants --------------------------------------------------------*/
@@ -157,23 +142,22 @@ struct YSF_TIMER_API
  * @brief      defineitions interface function 
  *******************************************************************************
  */
-#if USE_FRAMEWORK_TIMER_API
-extern fw_err_t ysf_timer_init(void);
+#if USE_TIMER_COMPONENT
+extern fw_err_t TimerComponentInit(void);
+extern fw_err_t TimerComponentHandle(uint16_t);
 
-extern fw_err_t ysf_timer_handler(uint16_t);
+extern bool GetTimerStatus(struct TimerBlock*);
 
-extern bool ysf_timerGetStatus(struct ysf_timer_t*);
+extern fw_err_t TimerArm(struct TimerBlock*, uint32_t, int16_t);                                          
+extern fw_err_t TimerDisarm(struct TimerBlock*); 
 
-extern fw_err_t ysf_timer_arm(struct ysf_timer_t*, uint32_t, int16_t);                                          
-extern fw_err_t ysf_timer_disarm(struct ysf_timer_t*); 
+extern fw_err_t InitCallBackTimer(struct TimerBlock*, fw_err_t (*)(void*), void*); 
+extern fw_err_t InitEventHandleTimer(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t InitMessageHandleTimer(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 
-extern fw_err_t ysf_cbTimer_init(struct ysf_timer_t*, fw_err_t (*)(void*), void*); 
-extern fw_err_t ysf_evtTimer_init(struct ysf_timer_t*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t ysf_smTimer_init(struct ysf_timer_t*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-
-extern struct ysf_timer_t *ysf_cbSimpTimer_init(fw_err_t (*)(void*), void*);
-extern struct ysf_timer_t *ysf_evtSimpTimer_init(fw_err_t (*)(uint16_t), uint16_t);
-extern struct ysf_timer_t *ysf_smSimpTimer_init(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern struct TimerBlock *InitCallBackExTimer(fw_err_t (*)(void*), void*);
+extern struct TimerBlock *InitEventHandleExTimer(fw_err_t (*)(uint16_t), uint16_t);
+extern struct TimerBlock *InitMessageHandleExTimer(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -181,6 +165,6 @@ extern struct ysf_timer_t *ysf_smSimpTimer_init(fw_err_t (*)(void*, uint16_t), v
 }
 #endif
 
-#endif      /** framework timer component */
+#endif      /** timer component */
 
 /**********************************END OF FILE*********************************/
