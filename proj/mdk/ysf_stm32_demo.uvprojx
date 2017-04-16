@@ -396,6 +396,11 @@
               <FilePath>..\..\component\event\fw_event.c</FilePath>
             </File>
             <File>
+              <FileName>fw_linklist.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\component\linklist\fw_linklist.c</FilePath>
+            </File>
+            <File>
               <FileName>fw_memory.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\component\memory\fw_memory.c</FilePath>
@@ -424,11 +429,6 @@
               <FileName>fw_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\component\timer\fw_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_linklist.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\component\linklist\fw_linklist.c</FilePath>
             </File>
           </Files>
         </Group>

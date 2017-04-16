@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      framework debug component source files                          *
+ * @brief      debug component source files                                    *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
 
 /**
- * @defgroup framework debug component
+ * @defgroup debug component
  * @{
  */
 
@@ -49,7 +49,7 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_DEBUG_API
+#if USE_DEBUG_COMPONENT
 /**
  *******************************************************************************
  * @brief       framework debug component initialization
@@ -58,7 +58,7 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_debug_init( void )
+fw_err_t DebugInit( void )
 {
     return FW_ERR_NONE;
 }
@@ -72,7 +72,7 @@ fw_err_t fw_debug_init( void )
  * @note        None
  *******************************************************************************
  */
-void fw_assert_failed(uint8_t* file, uint32_t line)
+void AssertFailed(uint8_t* file, uint32_t line)
 {
 __ATOM_ACTIVE_BEGIN();
     while(1);
@@ -80,6 +80,6 @@ __ATOM_ACTIVE_BEGIN();
 }
 #endif
 
-/** @}*/     /** framework debug component */
+/** @}*/     /** debug component */
 
 /**********************************END OF FILE*********************************/

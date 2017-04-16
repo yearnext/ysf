@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-20                                                      *
- * @brief      framework memory component source files                         *
+ * @brief      memory component source files                                   *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -54,15 +54,15 @@
  * @brief        define ysf memory management vailables
  *******************************************************************************
  */
-#if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    #if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#if USE_MEMORY_COMPONENT
+    #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
         #ifndef USE_COMPILER_HEAP_ADDR            
             __ALIGN_HEAD(8)
-                static uint8_t MCU_HEAP[FRAMEWORK_MEMORY_POOL_SIZE];
+                static uint8_t McuHeap[FRAMEWORK_MEMORY_POOL_SIZE];
             __ALIGN_TAIL(8)
             
-            #define _HEAP_HEAD_ADDR    (&MCU_HEAP)
-            #define _HEAP_TAIL_ADDR    (&MCU_HEAP[YSF_HEAP_SIZE-1])
+            #define _HEAP_HEAD_ADDR    (&McuHeap)
+            #define _HEAP_TAIL_ADDR    (&McuHeap[FRAMEWORK_MEMORY_POOL_SIZE-1])
             #define _HEAP_SIZE         FRAMEWORK_MEMORY_POOL_SIZE
         #else
             #define _HEAP_HEAD_ADDR    __HEAP_HEAD_ADDR
@@ -70,14 +70,14 @@
             #define _HEAP_SIZE         (_HEAP_TAIL_ADDR - _HEAP_HEAD_ADDR)
         #endif
     
-        static struct fw_memcontrol_t managemrnt;
+        static struct HeapControlBlock Managemrnt;
     #endif
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#if USE_MEMORY_COMPONENT
 /**
  *******************************************************************************
  * @brief       init ysf memory 
@@ -86,10 +86,10 @@
  * @note        None
  *******************************************************************************
  */
-void fw_memory_init(void)
+void MemoryInit(void)
 {
 #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    fw_heap_init(&managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
+    HeapInit(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
 #endif
 }
 
@@ -101,13 +101,13 @@ void fw_memory_init(void)
  * @note        None
  *******************************************************************************
  */
-void *fw_memory_malloc(uint32_t size)
+void *MemoryMalloc(uint32_t size)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return malloc(size);
 #else 
     void *mem = NULL;
-    fw_heap_alloc(&managemrnt, mem);
+    HeapAlloc(&Managemrnt, size, mem);
     return mem;
 #endif
 }
@@ -120,12 +120,12 @@ void *fw_memory_malloc(uint32_t size)
  * @note        None
  *******************************************************************************
  */
-void fw_memory_free(void *memory)
+void MemoryFree(void *memory)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     free(memory);
 #else
-    fw_heap_free(&managemrnt, memory);
+    HeapFree(&Managemrnt, memory);
 #endif
 }
 
@@ -138,17 +138,17 @@ void fw_memory_free(void *memory)
  * @note        None
  *******************************************************************************
  */
-bool fw_memory_isIn(void *memory)
+bool MemoryIsIn(void *memory)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return true;
 #else
-    return fw_heap_isIn(&managemrnt, memory);
+    return HeapIsIn(&Managemrnt, memory);
 #endif
 }
 
 #endif
 
-/** @}*/     /** framework memory component */
+/** @}*/     /** memory component */
 
 /**********************************END OF FILE*********************************/

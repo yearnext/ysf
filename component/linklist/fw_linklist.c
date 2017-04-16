@@ -59,7 +59,7 @@
  */
 fw_err_t fw_slinklist_init( void **listHead )
 {
-    fw_assert(IS_PTR_NULL(listHead));
+    _Assert(IS_PTR_NULL(listHead));
 
     *listHead = NULL;
 
@@ -112,7 +112,7 @@ bool fw_slinklist_walk(void **listHead, bool (*func)(void**, void**, void**),
  */
 bool fw_slinklist_module_add( void **node, void **ctx, void **expand )
 {
-    fw_assert(IS_PTR_NULL(*ctx));
+    _Assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
     struct fw_slinklist_t *temp = (struct fw_slinklist_t *)(*ctx);
@@ -154,7 +154,7 @@ bool fw_slinklist_module_add( void **node, void **ctx, void **expand )
  */
 bool fw_slinklist_module_del( void **node, void **ctx, void **expand )
 {
-    fw_assert(IS_PTR_NULL(*ctx));
+    _Assert(IS_PTR_NULL(*ctx));
 
     struct fw_slinklist_t *now = (struct fw_slinklist_t *)(*node);
     struct fw_slinklist_t *next = (struct fw_slinklist_t *)(*ctx);
@@ -200,7 +200,7 @@ bool fw_slinklist_module_del( void **node, void **ctx, void **expand )
  */
 bool fw_slinklist_module_isExist( void **node, void **ctx, void **expand )
 {
-    fw_assert(IS_PTR_NULL(*ctx));
+    _Assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
 
@@ -260,8 +260,8 @@ bool fw_slinklist_module_findLastNode( void **node, void **ctx, void **expand )
  */
 fw_err_t fw_slinklist_add( void **listHead, void **ctx )
 {
-    fw_assert(IS_PTR_NULL(listHead));
-    fw_assert(IS_PTR_NULL(*ctx));
+    _Assert(IS_PTR_NULL(listHead));
+    _Assert(IS_PTR_NULL(*ctx));
 
     if( fw_slinklist_walk(listHead, fw_slinklist_module_add, ctx, NULL) == false )
     {
@@ -283,8 +283,8 @@ fw_err_t fw_slinklist_add( void **listHead, void **ctx )
  */
 fw_err_t fw_slinklist_del( void **listHead, void **ctx )
 {
-    fw_assert(IS_PTR_NULL(listHead));
-    fw_assert(IS_PTR_NULL(*ctx));
+    _Assert(IS_PTR_NULL(listHead));
+    _Assert(IS_PTR_NULL(*ctx));
 
     if( fw_slinklist_walk(listHead, fw_slinklist_module_del, ctx, NULL) == false )
     {
@@ -306,8 +306,8 @@ fw_err_t fw_slinklist_del( void **listHead, void **ctx )
  */
 fw_err_t fw_slinklist_isExist( void **listHead, void **ctx )
 {
-    fw_assert(IS_PTR_NULL(listHead));
-    fw_assert(IS_PTR_NULL(*ctx));
+    _Assert(IS_PTR_NULL(listHead));
+    _Assert(IS_PTR_NULL(*ctx));
 
     if( fw_slinklist_walk(listHead, fw_slinklist_module_isExist, ctx, NULL) == false )
     {

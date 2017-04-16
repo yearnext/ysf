@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_debug.h                                                      *
+ * @file       debug.h                                                         *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      framework debug component header files                          *
+ * @brief      debug component header files                                    *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup framework debug component
+ * @defgroup debug component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_DEBUG_COMPONENT_H__
-#define __FRAMEWORK_DEBUG_COMPONENT_H__
+#ifndef __DEBUG_COMPONENT_H__
+#define __DEBUG_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -59,9 +59,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
 #if USE_FRAMEWORK_DEBUG_COMPONENT
-#define USE_FRAMEWORK_DEBUG_API                                              (1)
+#define USE_DEBUG_COMPONENT                                                  (1)
 #else
-#define USE_FRAMEWORK_DEBUG_API                                              (0)
+#define USE_DEBUG_COMPONENT                                                  (0)
 #endif
     
 /**
@@ -72,7 +72,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_DEBUG_API                                              (1)
+#define USE_DEBUG_COMPONENT                                                  (1)
 #endif
  
 /**
@@ -81,35 +81,35 @@ extern "C"
  *******************************************************************************
  */ 
 #if defined(USE_FRAMEWORK_DEBUG) && USE_FRAMEWORK_DEBUG
-#define fw_assert(expr) ((expr) ? fw_assert_failed((uint8_t *)__FILE__, __LINE__) :(void)0 )
+#define _Assert(expr) ((expr) ? AssertFailed((uint8_t *)__FILE__, __LINE__) :(void)0 )
 #else
-#define fw_assert(expr)
+#define _Assert(expr)
 #endif 
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define framework debug api
+ * @brief       define debug interface
  *******************************************************************************
  */ 
-#if USE_FRAMEWORK_DEBUG_API
-struct _DEBUG_API
+#if USE_DEBUG_COMPONENT
+typedef struct
 {
     fw_err_t (*Init)(void);
     void (*AssertFailed)(uint8_t*, uint32_t);
-};
+}DebugInterface;
 #endif
       
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define framework debug function interface
+ * @brief       define debug function api
  *******************************************************************************
  */ 
-#if USE_FRAMEWORK_DEBUG_API
-extern fw_err_t fw_debug_init(void);
-extern void fw_assert_failed(uint8_t*, uint32_t);
+#if USE_DEBUG_COMPONENT
+extern fw_err_t DebugInit(void);
+extern void     AssertFailed(uint8_t*, uint32_t);
 #endif        
 
 /**@} */
@@ -121,6 +121,6 @@ extern void fw_assert_failed(uint8_t*, uint32_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework debug component  */
+/** @}*/     /** debug component  */
 
 /**********************************END OF FILE*********************************/

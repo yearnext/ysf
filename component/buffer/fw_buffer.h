@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-16                                                      *
- * @brief      framework buffer head files                                     *
+ * @brief      buffer component head files                                     *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup framework buffer component
+ * @defgroup buffer component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_BUFFER_COMPONENT_H__
-#define __FRAMEWORK_BUFFER_COMPONENT_H__
+#ifndef __BUFFER_COMPONENT_H__
+#define __BUFFER_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -60,11 +60,11 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_BUFFER_COMPONENT
 #if USE_FRAMEWORK_BUFFER_COMPONENT
-    #define USE_FRAMEWORK_BUFFER_API                                         (1)
-    #define USE_FRAMEWORK_MEMORY_MANAGEMENT_API                              (1)
+    #define USE_BUFFER_COMPONENT                                             (1)
+    #define USE_MEMORY_MANAGEMENT_COMPONENT                                  (1)
 #else
-    #define USE_FRAMEWORK_BUFFER_API                                         (0)
-    #define USE_FRAMEWORK_MEMORY_MANAGEMENT_API                              (0)
+    #define USE_BUFFER_COMPONENT                                             (0)
+    #define USE_MEMORY_MANAGEMENT_COMPONENT                                  (0)
 #endif
 
 /**
@@ -75,8 +75,8 @@ extern "C"
  *******************************************************************************
  */
 #else
-    #define USE_FRAMEWORK_BUFFER_API                                         (1)
-    #define USE_FRAMEWORK_MEMORY_MANAGEMENT_API                              (1)
+    #define USE_BUFFER_COMPONENT                                             (1)
+    #define USE_MEMORY_MANAGEMENT_COMPONENT                                  (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/
@@ -85,27 +85,39 @@ extern "C"
  * @brief       define buffer type
  *******************************************************************************
  */
-struct fw_buffer_t
+struct RingBuffer
 {
-    uint8_t  *buffer;
-    uint16_t size;
-    uint16_t head;
-    uint16_t tail;
+    uint8_t  *Buffer;
+    uint16_t Size;
+    uint16_t Head;
+    uint16_t Tail;
 };
 
 /**
  *******************************************************************************
- * @brief       define ring buffer api
+ * @brief       define ring buffer interface
  *******************************************************************************
  */
-#if USE_FRAMEWORK_BUFFER_API
-struct _RING_BUFFER_API
+#if USE_BUFFER_COMPONENT
+typedef struct
 {
-    fw_err_t (*Init)(struct fw_buffer_t*, uint8_t*, uint16_t);
-    fw_err_t (*GetLen)(struct fw_buffer_t*, uint16_t*);
-    fw_err_t (*Write)(struct fw_buffer_t*, uint8_t*, uint16_t);
-    fw_err_t (*Read)(struct fw_buffer_t*, uint8_t*, uint16_t);
-};
+    fw_err_t (*Init)(struct RingBuffer*, uint8_t*, uint16_t);
+    fw_err_t (*GetLen)(struct RingBuffer*, uint16_t*);
+    fw_err_t (*Write)(struct RingBuffer*, uint8_t*, uint16_t);
+    fw_err_t (*Read)(struct RingBuffer*, uint8_t*, uint16_t);
+}RingBufferInterface;
+#endif
+
+/**
+ *******************************************************************************
+ * @brief       ring buffer function api
+ *******************************************************************************
+ */
+#if USE_BUFFER_COMPONENT
+extern fw_err_t RingBufferInit(struct RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t RingBufferGetLen(struct RingBuffer*, uint16_t*);
+extern fw_err_t RingBufferWrite(struct RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t RingBufferRead(struct RingBuffer*, uint8_t*, uint16_t);
 #endif
 
 /**
@@ -114,11 +126,11 @@ struct _RING_BUFFER_API
  *******************************************************************************
  */
 __ALIGN_HEAD(8)
-struct fw_memblock_t
+struct HeapBlock
 {
-	struct fw_memblock_t *next;
-	uint32_t             size   : 31;
-    uint32_t             status :  1;
+	struct HeapBlock   *Next;
+	uint32_t           Size   : 31;
+    uint32_t           Status :  1;
 };
 __ALIGN_TAIL(8)
 
@@ -127,57 +139,42 @@ __ALIGN_TAIL(8)
  * @brief       define memory control block
  *******************************************************************************
  */
-struct fw_memcontrol_t
+struct HeapControlBlock
 {
     union
     {
-        void                 *buffer;
-        struct fw_memblock_t *head; 
+        void             *Buffer;
+        struct HeapBlock *Head; 
     };
     
-    uint16_t size;
+    uint16_t Size;
 };
 
 /**
  *******************************************************************************
- * @brief       define memory management api
+ * @brief       define memory management interface
  *******************************************************************************
  */
-#if USE_FRAMEWORK_MEMORY_MANAGEMENT_API
-struct _MEMORY_MANAGEMENT_API
+#if USE_MANAGEMENT_COMPONENT
+typedef struct
 {
-    fw_err_t (*Init)(struct fw_memcontrol_t*, uint8_t*, uint32_t);
-    fw_err_t (*Alloc)(struct fw_memcontrol_t*, uint16_t, void*);
-    fw_err_t (*Free)(struct fw_memcontrol_t*, void*);
-    fw_err_t (*IsIn)(struct fw_memcontrol_t*, void*);
-};
-#endif
-
-
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       ring buffer function interface
- *******************************************************************************
- */
-#if USE_FRAMEWORK_BUFFER_API
-extern fw_err_t fw_rb_init(struct fw_buffer_t*, uint8_t*, uint16_t);
-extern fw_err_t fw_rb_getlen(struct fw_buffer_t*, uint16_t*);
-extern fw_err_t fw_rb_write(struct fw_buffer_t*, uint8_t*, uint16_t);
-extern fw_err_t fw_rb_read(struct fw_buffer_t*, uint8_t*, uint16_t);
+    fw_err_t (*Init)(struct HeapControlBlock*,  uint8_t*, uint32_t);
+    fw_err_t (*Alloc)(struct HeapControlBlock*, uint16_t, void*);
+    fw_err_t (*Free)(struct HeapControlBlock*,  void*);
+    fw_err_t (*IsIn)(struct HeapControlBlock*,  void*);
+}MemoryManagementInterface;
 #endif
 
 /**
  *******************************************************************************
- * @brief       memory management function interface
+ * @brief       memory management function api
  *******************************************************************************
  */
-#if USE_FRAMEWORK_MEMORY_MANAGEMENT_API
-extern fw_err_t fw_heap_init(struct fw_memcontrol_t*, uint8_t*, uint32_t);
-extern fw_err_t fw_heap_alloc(struct fw_memcontrol_t*, uint32_t, void*);
-extern fw_err_t fw_heap_free(struct fw_memcontrol_t*, void*);
-extern bool     fw_heap_isIn(struct fw_memcontrol_t*, void*);
+#if USE_MEMORY_MANAGEMENT_COMPONENT
+extern fw_err_t HeapInit(struct HeapControlBlock*,  uint8_t*, uint32_t);
+extern fw_err_t HeapAlloc(struct HeapControlBlock*, uint32_t, void*);
+extern fw_err_t HeapFree(struct HeapControlBlock*,  void*);
+extern bool     HeapIsIn(struct HeapControlBlock*,  void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -187,6 +184,6 @@ extern bool     fw_heap_isIn(struct fw_memcontrol_t*, void*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework buffer component  */
+/** @}*/     /** buffer component */
 
 /**********************************END OF FILE*********************************/

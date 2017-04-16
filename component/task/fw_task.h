@@ -130,8 +130,8 @@ struct YSF_TASK_API
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_TASK_API
-extern fw_err_t fw_task_init(void);
-extern fw_err_t fw_task_poll(void);
+extern fw_err_t fwTaskInit(void);
+extern fw_err_t fwTaskPoll(void);
 
 extern fw_err_t fw_cbTask_create(struct fw_task_t*, fw_err_t (*)(void*), void*);
 extern fw_err_t fw_evtTask_create(struct fw_task_t*, fw_err_t (*)(uint16_t), uint16_t);

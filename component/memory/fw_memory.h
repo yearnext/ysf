@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-20                                                      *
- * @brief      framework memory component head files                           *
+ * @brief      memory component head files                                     *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup framework memory component
+ * @defgroup memory component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_MEMORY_COMPONENT_H__
-#define __FRAMEWORK_MEMORY_COMPONENT_H__
+#ifndef __MEMORY_COMPONENT_H__
+#define __MEMORY_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -60,9 +60,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT
 #if USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT   
-#define USE_FRAMEWORK_MEMORY_API                                             (1)
+#define USE_MEMORY_COMPONENT                                                 (1)
 #else
-#define USE_FRAMEWORK_MEMORY_API                                             (0)
+#define USE_MEMORY_COMPONENT                                                 (0)
 #endif
 
 /**
@@ -73,37 +73,37 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_MEMORY_API                                             (1)
+#define USE_MEMORY_COMPONENT                                                 (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        ysf memory management api
+ * @brief        memory management interface
  *******************************************************************************
  */
-#if USE_FRAMEWORK_MEMORY_API
-struct FRAMEWORK_MEMORY_API
+#if USE_MEMORY_COMPONENT
+typedef struct 
 {
     void  (*Init)(void);
     void* (*Malloc)(uint16_t);
     void  (*Free)(void*);
     bool  (*IsIn)(void *);
-};
+}MemoryInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        memory management function interface
+ * @brief        memory management function api
  *******************************************************************************
  */
-#if USE_FRAMEWORK_MEMORY_API
-extern void  fw_memory_init(void);
-extern void* fw_memory_malloc(uint32_t);
-extern void  fw_memory_free(void*);
-extern bool  fw_memory_isIn(void*);
+#if USE_MEMORY_COMPONENT
+extern void  MemoryInit(void);
+extern void* MemoryMalloc(uint32_t);
+extern void  MemoryFree(void*);
+extern bool  MemoryIsIn(void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -113,6 +113,6 @@ extern bool  fw_memory_isIn(void*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework memory component */
+/** @}*/     /** memory component */
 
 /**********************************END OF FILE*********************************/
