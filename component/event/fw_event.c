@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      framework event component source files                          *
+ * @brief      event component source files                                    *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup framework event component
+ * @defgroup event component
  * @{
  */
 
@@ -52,14 +52,14 @@
  *******************************************************************************
  */
 #if USE_FRAMEWORK_EVENT_API
-static uint8_t evt_queue[FW_EVENT_MAX];
-static struct fw_buffer_t evt_queue_control;
+static uint8_t            EventQueue[FW_EVENT_MAX];
+static struct fw_buffer_t EventControlBlock;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_EVENT_API
+#if USE_EVENT_COMPONENT
 /**
  *******************************************************************************
  * @brief       event component init
@@ -69,9 +69,9 @@ static struct fw_buffer_t evt_queue_control;
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_event_init(void)
+fw_err_t EventInit(void)
 {
-    fw_rb_init(&evt_queue_control, evt_queue, CalTypeByteSize(buffer));
+    RingBufferInit(&EventControlBlock, EventQueue, CalTypeByteSize(EventQueue));
     
 	return FW_ERR_NONE;
 }
@@ -85,9 +85,9 @@ fw_err_t fw_event_init(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_event_post(uint8_t event)
+fw_err_t EventPost(uint8_t event)
 {
-    fw_rb_write(&evt_queue_control, &event, CalTypeByteSize(event));
+    RingBufferWrite(&EventControlBlock, &event, CalTypeByteSize(event));
     
 	return FW_ERR_NONE;
 }
@@ -101,15 +101,15 @@ fw_err_t fw_event_post(uint8_t event)
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_event_read(uint8_t *event)
+fw_err_t EventRead(uint8_t *event)
 {
-    fw_rb_read(&evt_queue_control, event, CalTypeByteSize(uint8_t));
+    RingBufferRead(&EventControlBlock, event, CalTypeByteSize(uint8_t));
 	
     return FW_ERR_NONE;
 }
 
 #endif
 
-/** @}*/     /** framework event component  */
+/** @}*/     /** event component  */
 
 /**********************************END OF FILE*********************************/

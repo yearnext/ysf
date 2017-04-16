@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-12                                                      *
- * @brief      framework event component head files                            *
+ * @brief      event component head files                                      *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup framework event component
+ * @defgroup event component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_EVENT_COMPONENT_H__
-#define __FRAMEWORK_EVENT_COMPONENT_H__
+#ifndef __EVENT_COMPONENT_H__
+#define __EVENT_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -59,9 +59,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_EVENT_COMPONENT
 #if USE_FRAMEWORK_EVENT_COMPONENT
-    #define USE_FRAMEWORK_EVENT_API                                          (1)
+    #define USE_EVENT_COMPONENT                                              (1)
 #else
-    #define USE_FRAMEWORK_EVENT_API                                          (0)
+    #define USE_EVENT_COMPONENT                                              (0)
 #endif
 
 /**
@@ -72,22 +72,22 @@ extern "C"
  *******************************************************************************
  */
 #else
-    #define USE_FRAMEWORK_EVENT_API                                          (1)
+    #define USE_EVENT_COMPONENT                                              (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define event api
+ * @brief       define event interface
  *******************************************************************************
  */
-#if USE_FRAMEWORK_EVENT_API
-struct _EVENT_API
+#if USE_EVENT_COMPONENT
+typedef struct
 {
     fw_err_t (*Init)(void);
     fw_err_t (*Post)(uint16_t);
     fw_err_t (*Read)(uint16_t*);
-};
+}EventInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -97,10 +97,10 @@ struct _EVENT_API
  * @brief       event function interface
  *******************************************************************************
  */
-#if USE_FRAMEWORK_EVENT_API
-extern fw_err_t fw_event_init(void);
-extern fw_err_t fw_event_post(uint8_t);
-extern fw_err_t fw_event_read(uint8_t*);
+#if USE_EVENT_COMPONENT
+extern fw_err_t EventInit(void);
+extern fw_err_t EventPost(uint8_t);
+extern fw_err_t EventRead(uint8_t*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -110,6 +110,6 @@ extern fw_err_t fw_event_read(uint8_t*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework event component  */
+/** @}*/     /** event component  */
 
 /**********************************END OF FILE*********************************/
