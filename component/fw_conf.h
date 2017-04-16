@@ -64,6 +64,7 @@ extern "C"
  */
 #define FW_EVENT_NONE                                   (_EVENT_NONE)
 #define FW_EVENT_DELAY                                  (_EVENT_DELAY)
+#define FW_EVENT_MAX                                    (_EVENT_MAX)
 
 typedef _evt_t                                          fw_evt_t;
 

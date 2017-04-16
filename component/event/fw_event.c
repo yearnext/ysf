@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-01-10                                                      *
- * @brief      event component source files                                    *
+ * @brief      framework event component source files                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,7 +32,7 @@
  */
  
 /**
- * @defgroup event component
+ * @defgroup framework event component
  * @{
  */
 
@@ -41,18 +41,9 @@
 #include _FW_PATH
 #include _FW_EVENT_COMPONENT_PATH
 #include _FW_BUFFER_COMPONENT_PATH
-#include _FW_LINK_LIST_COMPONENT_PATH
-#include _FW_MEMORY_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       calculate events use memory size
- *******************************************************************************
- */
-#define YSF_EVENT_SIZE_CAL(event) CalTypeByteSize(event)
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /**
@@ -60,43 +51,43 @@
  * @brief       event component auto config
  *******************************************************************************
  */
-#if USE_YSF_EVENT_API
-static int16_t buffer[YSF_EVENT_MAX];
-static struct  ysf_rb_t evt_queue;
+#if USE_FRAMEWORK_EVENT_API
+static uint8_t evt_queue[FW_EVENT_MAX];
+static struct fw_buffer_t evt_queue_control;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_YSF_EVENT_API
+#if USE_FRAMEWORK_EVENT_API
 /**
  *******************************************************************************
- * @brief       ysf event component init
+ * @brief       event component init
  * @param       [in/out]  void
  * @return      [in/out]  FW_ERR_NONE       init finish
  * @return      [in/out]  FW_ERR_FAIL       init failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_event_init( void )
+fw_err_t fw_event_init(void)
 {
-    ysf_rbInit(&evt_queue, (uint8_t *)buffer, YSF_EVENT_SIZE_CAL(buffer));
+    fw_rb_init(&evt_queue_control, evt_queue, CalTypeByteSize(buffer));
     
 	return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       ysf write event to event queue
+ * @brief       write event to event queue
  * @param       [in/out]  event             write events
  * @return      [in/out]  FW_ERR_NONE      write success
  * @return      [in/out]  FW_ERR_FAIL      write failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_event_post( uint16_t event )
+fw_err_t fw_event_post(uint8_t event)
 {
-    ysf_rbWrite( &evt_queue, (uint8_t *)&event, YSF_EVENT_SIZE_CAL(int16_t) );
+    fw_rb_write(&evt_queue_control, &event, CalTypeByteSize(event));
     
 	return FW_ERR_NONE;
 }
@@ -110,15 +101,15 @@ fw_err_t ysf_event_post( uint16_t event )
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_event_read( uint16_t *event )
+fw_err_t fw_event_read(uint8_t *event)
 {
-    ysf_rbRead( &evt_queue, (uint8_t *)event, YSF_EVENT_SIZE_CAL(int16_t) );
+    fw_rb_read(&evt_queue_control, event, CalTypeByteSize(uint8_t));
 	
     return FW_ERR_NONE;
 }
 
 #endif
 
-/** @}*/     /** ysf event component  */
+/** @}*/     /** framework event component  */
 
 /**********************************END OF FILE*********************************/

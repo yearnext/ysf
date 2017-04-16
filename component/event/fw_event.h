@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_event.h                                                     *
+ * @file       fw_event.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-12                                                      *
- * @brief      ysf event head files                                            *
+ * @brief      framework event component head files                            *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup ysf event component
+ * @defgroup framework event component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __YSF_EVENT_H__
-#define __YSF_EVENT_H__
+#ifndef __FRAMEWORK_EVENT_COMPONENT_H__
+#define __FRAMEWORK_EVENT_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,30 +46,33 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_conf.h"
 #include "core_path.h"
-#include _COMM_TYPE_PATH
+#include _FW_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       ysf config
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_YSF_EVENT_COMPONENT
-#if USE_YSF_EVENT_COMPONENT
-    #define USE_YSF_EVENT_API (1)
+#ifdef USE_FRAMEWORK_EVENT_COMPONENT
+#if USE_FRAMEWORK_EVENT_COMPONENT
+    #define USE_FRAMEWORK_EVENT_API                                          (1)
 #else
-    #define USE_YSF_EVENT_API (0)
+    #define USE_FRAMEWORK_EVENT_API                                          (0)
 #endif
-    
+
 /**
  *******************************************************************************
- * @brief       user config
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
  *******************************************************************************
  */
 #else
-    #define USE_YSF_EVENT_API (0)
+    #define USE_FRAMEWORK_EVENT_API                                          (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/
@@ -78,12 +81,12 @@ extern "C"
  * @brief       define event api
  *******************************************************************************
  */
-#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
-struct YSF_EVENT_API
+#if USE_FRAMEWORK_EVENT_API
+struct _EVENT_API
 {
-    fw_err_t (*init)(void);
-    fw_err_t (*post)(uint16_t);
-    fw_err_t (*read)(uint16_t*);
+    fw_err_t (*Init)(void);
+    fw_err_t (*Post)(uint16_t);
+    fw_err_t (*Read)(uint16_t*);
 };
 #endif
 
@@ -94,10 +97,10 @@ struct YSF_EVENT_API
  * @brief       event function interface
  *******************************************************************************
  */
-#if defined(USE_YSF_EVENT_API) && USE_YSF_EVENT_API
-extern fw_err_t ysf_event_init( void );
-extern fw_err_t ysf_event_post( uint16_t );
-extern fw_err_t ysf_event_read( uint16_t* );
+#if USE_FRAMEWORK_EVENT_API
+extern fw_err_t fw_event_init(void);
+extern fw_err_t fw_event_post(uint16_t);
+extern fw_err_t fw_event_read(uint16_t*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -107,6 +110,6 @@ extern fw_err_t ysf_event_read( uint16_t* );
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf event component  */
+/** @}*/     /** framework event component  */
 
 /**********************************END OF FILE*********************************/
