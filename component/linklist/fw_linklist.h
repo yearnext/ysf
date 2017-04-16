@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-18                                                      *
- * @brief      framework link list component head files                        *
+ * @brief      link list component head files                                  *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,13 +32,13 @@
  */
  
 /**
- * @defgroup framework link list component
+ * @defgroup link list component
  * @{
  */
  
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_LINK_LIST_COMPONENT_H__
-#define __FRAMEWORK_LINK_LIST_COMPONENT_H__
+#ifndef __LINK_LIST_COMPONENT_H__
+#define __LINK_LIST_COMPONENT_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -60,9 +60,9 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_LINK_LIST_COMPONENT
 #if USE_FRAMEWORK_LINK_LIST_COMPONENT
-#define USE_FRAMEWORK_SINGLE_LIST_API                                        (1)
+#define USE_SINGLE_LIST_COMPONENT                                            (1)
 #else
-#define USE_FRAMEWORK_SINGLE_LIST_API                                        (0)
+#define USE_SINGLE_LIST_COMPONENT                                            (0)
 #endif
     
 /**
@@ -73,73 +73,57 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_FRAMEWORK_SINGLE_LIST_API                                        (1)
+#define USE_SINGLE_LIST_COMPONENT                                            (1)
 #endif
     
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       framework single link list type
+ * @brief       single link list structure
  *******************************************************************************
  */
-struct fw_slinklist_t
+struct SingleList
 {
-    struct fw_slinklist_t *next;
-    uint8_t               user_data[];
+    struct SingleList *Next;
+    uint8_t           UserData[];
 };
 
 /**
  *******************************************************************************
- * @brief       framework single link list fifo type
+ * @brief       single list interface
  *******************************************************************************
  */
-struct fw_slinklist_fifo_t
-{
-    struct fw_slinklist_t *head;
-    struct fw_slinklist_t *tail;
-};
-
-///**
-// *******************************************************************************
-// * @brief       define visit list function type
-// *******************************************************************************
-// */
-//typedef bool (*SLinkListFunc)(void **, void **, void **);
-
-/**
- *******************************************************************************
- * @brief       ysf single list api
- *******************************************************************************
- */
-#if USE_FRAMEWORK_SINGLE_LIST_API
-struct _SINGLE_LINK_LIST_API
+#if USE_SINGLE_LIST_COMPONENT
+typedef struct
 {
     fw_err_t (*Init)(void**);
     bool     (*Walk)(void**, bool (*)(void**, void**, void**), void**, void**);
     fw_err_t (*Add)(void**, void **);
     fw_err_t (*Del)(void**, void **);
     fw_err_t (*IsExist)(void**, void **);
-};
+}SingleListInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define single list function interface
+ * @brief       define single list function api
  *******************************************************************************
  */
-#if USE_FRAMEWORK_SINGLE_LIST_API
-extern bool fw_slinklist_walk(void**, bool (*)(void**, void**, void**), void**, void**);
-extern bool fw_slinklist_module_add(void**, void**, void**);
-extern bool fw_slinklist_module_del(void**, void**, void**);
-extern bool fw_slinklist_module_isExist(void**, void**, void**);
-extern bool fw_slinklist_module_findLastNode(void **, void**, void**);
+#if USE_SINGLE_LIST_COMPONENT
+extern bool SingleListWalk(void**, bool (*)(void**, void**, void**), void**, void**);
+extern bool SingleListModuleAdd(void**, void**, void**);
+extern bool SingleListModuleDel(void**, void**, void**);
+extern bool SingleListModuleIsExist(void**, void**, void**);
+extern bool SingleListModuleFindLastNode(void **, void**, void**);
 
-extern fw_err_t fw_slinklist_init(void**);
-extern fw_err_t fw_slinklist_add(void**, void**);
-extern fw_err_t fw_slinklist_del(void**, void**);
-extern fw_err_t fw_slinklist_isExist(void**, void**);
+extern fw_err_t SingleListInit(void**);
+extern fw_err_t SingleListAdd(void**, void**);
+extern fw_err_t SingleListDel(void**, void**);
+extern fw_err_t SingleListIsExits(void**, void**);
+
+#endif
 
 /**
  *******************************************************************************
@@ -168,7 +152,7 @@ extern fw_err_t fw_slinklist_isExist(void**, void**);
  * @note        None
  *******************************************************************************
  */                                                       
-#define fw_slinklistfifo_isIn(type, block, node)                               \
+#define SingleListFifoIsIn(type, block, node)                                  \
 {                                                                              \
     type *temp = block.head;                                                   \
                                                                                \
@@ -192,7 +176,7 @@ extern fw_err_t fw_slinklist_isExist(void**, void**);
  * @note        None
  *******************************************************************************
  */    
-#define fw_slinklistfifo_push(isInFunc, block, node)                           \
+#define SingleListFifoPush(isInFunc, block, pushData)                          \
 {                                                                              \
     if( isInFunc(node) == false )                                              \
     {                                                                          \
@@ -200,13 +184,13 @@ extern fw_err_t fw_slinklist_isExist(void**, void**);
                                                                                \
         if(block.tail != NULL)                                                 \
         {                                                                      \
-            block.tail->next = node;                                           \
-            block.tail       = node;                                           \
+            block.tail->next = pushData;                                       \
+            block.tail       = pushData;                                       \
         }                                                                      \
         else                                                                   \
         {                                                                      \
-            block.head       = node;                                           \
-            block.tail       = node;                                           \
+            block.head       = pushData;                                       \
+            block.tail       = pushData;                                       \
         }                                                                      \
     }                                                                          \
     else                                                                       \
@@ -223,7 +207,7 @@ extern fw_err_t fw_slinklist_isExist(void**, void**);
  * @note        None
  *******************************************************************************
  */   
-#define fw_slinklistfifo_pop(block, popData)                                   \
+#define SingleListFifoPop(block, popData)                                      \
 {                                                                              \
     if( block.head == NULL )                                                   \
     {                                                                          \
@@ -249,12 +233,10 @@ extern fw_err_t fw_slinklist_isExist(void**, void**);
  * @note        None
  *******************************************************************************
  */
-#define fw_slinklistfifo_clear(sListPOPFunc)                                   \
+#define SingleListFifoClear(sListPOPFunc)                                      \
 {                                                                              \
     while(sListPOPFunc() != NULL);                                             \
 }
-
-#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -263,6 +245,6 @@ extern fw_err_t fw_slinklist_isExist(void**, void**);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework link list component */
+/** @}*/     /** link list component */
 
 /**********************************END OF FILE*********************************/

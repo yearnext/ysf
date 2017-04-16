@@ -48,24 +48,7 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_SINGLE_LIST_API
-/**
- *******************************************************************************
- * @brief       single link list init
- * @param       [in/out]  **listHead    single link list node head
- * @return      [in/out]  FW_ERR_NONE  init success
- * @note        None
- *******************************************************************************
- */
-fw_err_t fw_slinklist_init( void **listHead )
-{
-    _Assert(IS_PTR_NULL(listHead));
-
-    *listHead = NULL;
-
-    return FW_ERR_NONE;
-}
-
+#if USE_SINGLE_LIST_COMPONENT
 /**
  *******************************************************************************
  * @brief       single link list traversal function
@@ -78,11 +61,11 @@ fw_err_t fw_slinklist_init( void **listHead )
  * @note        None
  *******************************************************************************
  */
-bool fw_slinklist_walk(void **listHead, bool (*func)(void**, void**, void**),
-                       void **ctx,      void **expand)
+bool SingleListWalk(void **listHead, bool (*func)(void**, void**, void**),
+                    void **ctx,      void **expand)
 {
     bool status = false;
-    struct fw_slinklist_t **sList = (struct fw_slinklist_t **)listHead;
+    struct SingleList **sList = (struct SingleList **)listHead;
 
     while(1)
     {
@@ -93,7 +76,7 @@ bool fw_slinklist_walk(void **listHead, bool (*func)(void**, void**, void**),
             break;
         }
 
-        sList = (struct fw_slinklist_t **)(&((struct fw_slinklist_t *)(*sList))->next);
+        sList = (struct SingleList **)(&((struct SingleList *)(*sList))->Next);
     }
 
     return status;
@@ -110,26 +93,26 @@ bool fw_slinklist_walk(void **listHead, bool (*func)(void**, void**, void**),
  * @note        None
  *******************************************************************************
  */
-bool fw_slinklist_module_add( void **node, void **ctx, void **expand )
+bool SingleListModuleAdd(void **node, void **ctx, void **expand)
 {
     _Assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
-    struct fw_slinklist_t *temp = (struct fw_slinklist_t *)(*ctx);
+    struct SingleList *temp = (struct SingleList *)(*ctx);
     
-    if( *node == NULL )
+    if (*node == NULL)
     {
-        temp->next = NULL;
+        temp->Next = NULL;
         *node = *ctx;
 
         status = true;
     }
-    else  if( *node == *ctx )
+    else if (*node == *ctx)
     {
-        temp = ((struct fw_slinklist_t *)(*node))->next;
+        temp = ((struct SingleList *)(*node))->Next;
 
         *node = *ctx;
-        ((struct fw_slinklist_t *)(*node))->next = temp;
+        ((struct SingleList *)(*node))->Next = temp;
 
         status = true;
     }
@@ -152,12 +135,12 @@ bool fw_slinklist_module_add( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-bool fw_slinklist_module_del( void **node, void **ctx, void **expand )
+bool SingleListModuleDel( void **node, void **ctx, void **expand )
 {
     _Assert(IS_PTR_NULL(*ctx));
 
-    struct fw_slinklist_t *now = (struct fw_slinklist_t *)(*node);
-    struct fw_slinklist_t *next = (struct fw_slinklist_t *)(*ctx);
+    struct SingleList *now = (struct SingleList *)(*node);
+    struct SingleList *next = (struct SingleList *)(*ctx);
 
     bool status = false;
     
@@ -168,14 +151,14 @@ bool fw_slinklist_module_del( void **node, void **ctx, void **expand )
 
     if( *node == *ctx )
     {
-        *node = now->next;
+        *node = now->Next;
 
         status = true;
     }
-    else if( now->next == *ctx )
+    else if( now->Next == *ctx )
     {
-        now->next  = next->next;
-        next->next = NULL;
+        now->Next  = next->Next;
+        next->Next = NULL;
 
         status = true;
     }
@@ -198,7 +181,7 @@ bool fw_slinklist_module_del( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-bool fw_slinklist_module_isExist( void **node, void **ctx, void **expand )
+bool SingleListModuleIsExist( void **node, void **ctx, void **expand )
 {
     _Assert(IS_PTR_NULL(*ctx));
 
@@ -228,24 +211,41 @@ bool fw_slinklist_module_isExist( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-bool fw_slinklist_module_findLastNode( void **node, void **ctx, void **expand )
+bool SingleListModuleFindLastNode(void **node, void **ctx, void **expand)
 {
     bool status = false;
 
-    struct fw_slinklist_t *now = (struct fw_slinklist_t *)(*node);
+    struct SingleList *now = (struct SingleList *)(*node);
 
-    if( *node == NULL )
+    if (*node == NULL)
     {
         return false;
     }
 
-    if( ((void *)now->next) == ctx )
+    if (((void *)now->Next) == ctx)
     {
         *expand = now;
         return true;
     }
 
     return status;
+}
+
+/**
+ *******************************************************************************
+ * @brief       single link list init
+ * @param       [in/out]  **listHead    single link list node head
+ * @return      [in/out]  FW_ERR_NONE  init success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t SingleListInit( void **listHead )
+{
+    _Assert(IS_PTR_NULL(listHead));
+
+    *listHead = NULL;
+
+    return FW_ERR_NONE;
 }
 
 /**
@@ -258,12 +258,12 @@ bool fw_slinklist_module_findLastNode( void **node, void **ctx, void **expand )
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_slinklist_add( void **listHead, void **ctx )
+fw_err_t SingleListAdd( void **listHead, void **ctx )
 {
     _Assert(IS_PTR_NULL(listHead));
     _Assert(IS_PTR_NULL(*ctx));
 
-    if( fw_slinklist_walk(listHead, fw_slinklist_module_add, ctx, NULL) == false )
+    if( SingleListWalk(listHead, SingleListModuleAdd, ctx, NULL) == false )
     {
         return FW_ERR_FAIL;
     }
@@ -281,12 +281,12 @@ fw_err_t fw_slinklist_add( void **listHead, void **ctx )
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_slinklist_del( void **listHead, void **ctx )
+fw_err_t SingleListDel( void **listHead, void **ctx )
 {
     _Assert(IS_PTR_NULL(listHead));
     _Assert(IS_PTR_NULL(*ctx));
 
-    if( fw_slinklist_walk(listHead, fw_slinklist_module_del, ctx, NULL) == false )
+    if( SingleListWalk(listHead, SingleListModuleDel, ctx, NULL) == false )
     {
         return FW_ERR_FAIL;
     }
@@ -304,12 +304,12 @@ fw_err_t fw_slinklist_del( void **listHead, void **ctx )
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_slinklist_isExist( void **listHead, void **ctx )
+fw_err_t SingleListIsExits( void **listHead, void **ctx )
 {
     _Assert(IS_PTR_NULL(listHead));
     _Assert(IS_PTR_NULL(*ctx));
 
-    if( fw_slinklist_walk(listHead, fw_slinklist_module_isExist, ctx, NULL) == false )
+    if( SingleListWalk(listHead, SingleListModuleIsExist, ctx, NULL) == false )
     {
         return FW_ERR_FAIL;
     }
