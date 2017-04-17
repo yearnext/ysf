@@ -74,7 +74,7 @@ extern "C"
  * @brief       REGISTER EVENTS FUNCTION
  *******************************************************************************
  */
-#define __REG_EVENTS(event)             event,
+#define __REG_EVENTS(event)                                               event,
                                     
 /* Framework config ----------------------------------------------------------*/
 /**
@@ -82,7 +82,7 @@ extern "C"
  * @brief       core tick time(unit: ms)
  *******************************************************************************
  */
-#define _CORE_TICK_PERIOD               (10)
+#define CORE_TICK_PERIOD                                                    (10)
     
 /**
  *******************************************************************************
@@ -102,7 +102,7 @@ extern "C"
 #define USE_FRAMEWORK_TICK_COMPONENT                                         (1)
 #define USE_FRAMEWORK_TIMER_COMPONENT                                        (1)
 #define USE_FRAMEWORK_TASK_COMPONENT                                         (1)
-#define USE_FRAMEWORK_PROTOTHREADS_COMPONENT                                 (1)
+#define USE_FRAMEWORK_PT_COMPONENT                                           (1)
 
 /**
  *******************************************************************************

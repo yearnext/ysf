@@ -406,7 +406,7 @@ fw_err_t TaskComponentPoll(void)
 
     if( task == NULL )
     {
-        return FW_ERR_NONE;
+        return FW_ERR_FAIL;
     }
     
     // task trigger handler
@@ -423,6 +423,27 @@ fw_err_t TaskComponentPoll(void)
         }
     }
 #endif
+        
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task to task queue
+ * @param       [in/out]  *task                    task block
+ * @return      [in/out]  FW_ERR_FAIL              add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
+ * @note        this function is dependent on ysf memory management
+ *******************************************************************************
+ */
+fw_err_t AddTaskToQueue(struct TaskBlock *task)
+{   
+    if( task == NULL )
+    {
+        return FW_ERR_FAIL;
+    }
+    
+    task_push(task);
         
     return FW_ERR_NONE;
 }

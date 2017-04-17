@@ -117,6 +117,7 @@ typedef struct
 {
     fw_err_t (*Init)(void);
     fw_err_t (*Poll)(void);
+    fw_err_t (*Add)(struct TaskBlock*);
     
     struct
     {
@@ -141,6 +142,7 @@ typedef struct
 #if USE_TASK_COMPONENT
 extern fw_err_t TaskComponentInit(void);
 extern fw_err_t TaskComponentPoll(void);
+extern fw_err_t AddTaskToQueue(struct TaskBlock*);
 
 extern fw_err_t CreateCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
 extern fw_err_t CreateEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);

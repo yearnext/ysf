@@ -337,7 +337,7 @@ uint32_t heap_cal_need_block(uint32_t useSize, uint32_t memoryAlignment)
  * @note        None
  *******************************************************************************
  */
-fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *allocAddr)
+fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void **allocAddr)
 {
     struct HeapBlock *now  = mem->Head;
     struct HeapBlock *next = mem->Head;
@@ -346,12 +346,9 @@ fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *
 
     if(mem == NULL || needSize == 0)
     {
-        allocAddr = NULL;
         return FW_ERR_FAIL;
     }
 
-    allocAddr = NULL;
-    
     while(1)
     {
         if(now == NULL)
@@ -374,7 +371,7 @@ fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *
                 next->Status = false;
                 now->Status  = true;
                 
-                allocAddr = (void *)(now + 1);
+                *allocAddr = (void *)(now + 1);
                 
                 return FW_ERR_NONE;
             }

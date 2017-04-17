@@ -153,6 +153,7 @@ extern "C"
  * @brief      protothreads delay functon
  *******************************************************************************
  */
+#if defined(USE_TIMER_COMPONENT) && USE_TIMER_COMPONENT
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
 #define _pt_delay(tick)         do                                                                           \
                                 {                                                                            \
@@ -171,7 +172,10 @@ extern "C"
                                     _pt_wait(evt == FW_EVENT_DELAY);                                         \
                                 }while(0)                        
 #endif
-
+#else
+ #define _pt_delay(tick)                            
+#endif
+                                
 /**
  *******************************************************************************
  * @brief      protothreads exit functon

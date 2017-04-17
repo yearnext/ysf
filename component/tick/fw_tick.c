@@ -53,7 +53,16 @@
  */
 #if USE_TICK_COMPONENT
 static uint32_t         tick = 0;
-static struct TaskBlock TickTask;
+
+static struct TaskBlock TickTask =
+{
+    .Next          = NULL,
+    .Handler.Event = TimerComponentHandle,
+    .Param         = NULL,
+    .Event         = FW_EVENT_NONE,
+    .Type          = EVENT_HANDLE_TASK,
+};
+
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -84,8 +93,9 @@ void TickInit( void )
 void IncTick( void )
 {
     tick++;
+    
 #if defined(USE_TASK_COMPONENT) && USE_TASK_COMPONENT
-        CreateEventHandleTask(&TickTask, TimerComponentHandle, FW_EVENT_NONE);
+    AddTaskToQueue(&TickTask);
 #endif
 }
 

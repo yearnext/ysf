@@ -107,7 +107,7 @@ void *MemoryMalloc(uint32_t size)
     return malloc(size);
 #else 
     void *mem = NULL;
-    AllocHeapMemory(&Managemrnt, size, mem);
+    AllocHeapMemory(&Managemrnt, size, (void **)&mem);
     return mem;
 #endif
 }

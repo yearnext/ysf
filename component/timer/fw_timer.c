@@ -491,12 +491,6 @@ void timer_walk(uint32_t tick)
     
     while(1)
     {
-        // break
-        if( now == NULL )
-        {
-            return;
-        }
-        
         // timer handler
         if( IS_TIMER_ENABLE(now) )
         {
@@ -549,6 +543,12 @@ void timer_walk(uint32_t tick)
         {
             last = now;
             now  = now->Next;
+        }
+        
+        // break
+        if( now == NULL )
+        {
+            return;
         }
     }
 }

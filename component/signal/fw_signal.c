@@ -42,11 +42,37 @@
 #include _FW_SIGNAL_COMPONENT_PATH
 #include _FW_TIMER_COMPONENT_PATH
 #include _FW_MEMORY_COMPONENT_PATH
-#include _FW_DEBUG_COMPONENT_PATH
 #include _FW_EVENT_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
+#include _FW_TASK_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      detect signal status
+ *******************************************************************************
+ */
+#define IS_SIGNAL_ENABLE(signal)             ((signal)->UseStatus == true)
+#define IS_SIGNAL_DISABLE(signal)            ((signal)->UseStatus == false)
+  
+#define IS_SIGNAL_NEED_SCAN(signal)          ((signal)->HandleProgress == SIGNAL_STATUS_INIT)
+
+/**
+ *******************************************************************************
+ * @brief      update signal status
+ *******************************************************************************
+ */
+#define UPDATE_SIGNAL_STATUS(signal, status) ((signal)->Task.Event = (status))
+
+/**
+ *******************************************************************************
+ * @brief      signal handle progress change function
+ *******************************************************************************
+ */
+#define SIGNAL_HANDLE_INIT(signal)           ((signal)->HandleProgress = SIGNAL_STATUS_INIT)
+#define SIGNAL_SCAN_PROGRESS_INIT(signal)    ((signal)->HandleProgress = SIGNAL_STATUS_DETECT)
+#define SIGNAL_HANDLE_PROGRESS_INIT(signal)  ((signal)->HandleProgress = SIGNAL_STATUS_HANDLER)
+    
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /**
@@ -76,115 +102,420 @@ static struct TimerBlock SignalTimer;
 #if USE_SIGNAL_COMPONENT
 /**
  *******************************************************************************
- * @brief       detect the timer is in queue
- * @param       [in/out]  timer                will detect timer
- * @return      [in/out]  true                 the timer in the queue
- * @return      [in/out]  true                 the timer not in the queue
+ * @brief       detect the signal is in queue
+ * @param       [in/out]  signal               will detect signal
+ * @return      [in/out]  true                 the signal in the queue
+ * @return      [in/out]  true                 the signal not in the queue
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-bool ysf_signal_isIn(struct ysf_signal_t *signal)
+bool signal_is_in(struct SignalBlock *signal)
 {
-    ysf_sListFIFO_isIn(struct ysf_signal_t, scb, signal);
+    IsInSingleLinkListFifo(struct SignalBlock, SignalControlBlock, signal);
     
     return false;
 }
 
 /**
  *******************************************************************************
- * @brief       pop timer to queue
- * @param       [in/out]  timer                will timer task
+ * @brief       pop signal to queue
+ * @param       [in/out]  signal              will signal task
  * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ysf_signal_push(struct ysf_signal_t *signal)
+fw_err_t signal_push(struct SignalBlock *signal)
 {
-    ysf_sListFIFO_push(ysf_signal_isIn, scb, signal);
+    SingleLinkListFifoPush(signal_is_in, SignalControlBlock, signal);
     
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       push timer from queue
+ * @brief       push signal from queue
  * @param       [in/out]  void
- * @return      [in/out]  struct ysf_timer_t *     push timer addr in memory
+ * @return      [in/out]  struct SignalBlock *     push timer addr in memory
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-struct ysf_signal_t *ysf_signal_pop(void)
+struct SignalBlock *signal_pop(void)
 {
-    struct ysf_signal_t *signal = NULL;
+    struct SignalBlock *signal = NULL;
     
-    ysf_sListFIFO_pop(scb, signal);
+    SingleLinkListFifoPop(SignalControlBlock, signal);
     
     return signal;
 }
 
 /**
  *******************************************************************************
- * @brief       timer queue clear
+ * @brief       signal queue clear
  * @param       [in/out]  void
  * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ysf_signal_clear(void)
+fw_err_t signal_clear(void)
 {    
-    while(ysf_signal_pop() != NULL);
+    while(signal_pop() != NULL);
     
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       timer queue clear
- * @param       [in/out]  void
+ * @brief       signal handler function
+ * @param       [in/out]  *param              signal block
+ * @param       [in/out]  event               signal event
+ * @return      [in/out]  FW_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+static fw_err_t signal_handler(void *param, uint16_t event)
+{
+    struct SignalBlock *signal = (struct SignalBlock *)param;
+    
+    if( signal == NULL )
+    {
+        return FW_ERR_FAIL;
+    }
+
+    signal->Handler(event);
+    
+    SIGNAL_HANDLE_INIT(signal);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal trigger handler
+ * @param       [in/out]  *signal             signal block
  * @return      [in/out]  FW_ERR_NONE         no error
  * @note        this function is static inline type
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t signalTriggerHandler(struct ysf_signal_t *signal, uint16_t evt)
+fw_err_t signal_trigger_handler(struct SignalBlock *signal)
 {
-//    if( IS_PTR_NULL(signal) )
-//    {
-//        return FW_ERR_FAIL;
-//    }
-
-//    switch(signal->type)
-//    {
-//        case YSF_EVENT_HANDLER_SIGNAL:
-//            ysf_evtTask_create(&signal->task, signal->task.handler.evt, signal->task.evt);
-//            break;
-//        default:
-//            break;
-//    }
+    if( signal == NULL )
+    {
+        return FW_ERR_FAIL;
+    }
     
-    ysf_evtTask_create(&signal->task, signal->task.handler.evt, evt);
+    SIGNAL_HANDLE_PROGRESS_INIT(signal);
+    
+    CreateMessageHandleTask(&signal->Task, signal_handler, (void *)signal, signal->Task.Event);
     
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       ysf timer component init
+ * @brief       signal status judge
+ * @param       [in/out]  *param              signal block
+ * @param       [in/out]  event               signal status event
+ * @return      [in/out]  FW_ERR_FAIL         judge failed
+ * @return      [in/out]  FW_ERR_NONE         judge success
+ * @note        None
+ *******************************************************************************
+ */
+static fw_err_t signal_judge(void *param, uint16_t event)
+{
+    struct SignalBlock *signal = (struct SignalBlock *)param;
+    
+    if( IS_PTR_NULL(signal) )
+    {
+        return FW_ERR_FAIL;
+    }
+    
+    switch( signal->Task.Event )
+    {
+        case SIGNAL_STATUS_INIT:
+            if( event == SIGNAL_STATUS_RELEASE )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_PRESS_FILTER_STEP1:
+            if( event == SIGNAL_STATUS_PRESS )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP2);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_PRESS_FILTER_STEP2:
+            if( event == SIGNAL_STATUS_PRESS )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP3);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_PRESS_FILTER_STEP3:
+            if( event == SIGNAL_STATUS_PRESS )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_EDGE);
+                return signal_trigger_handler(signal);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_RELEASE_FILTER_STEP1:
+            if( event == SIGNAL_STATUS_RELEASE )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP2);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_RELEASE_FILTER_STEP2:
+            if( event == SIGNAL_STATUS_RELEASE )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP3);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_RELEASE_FILTER_STEP3:
+            if( event == SIGNAL_STATUS_RELEASE )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_EDGE);
+                return signal_trigger_handler(signal);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_RELEASE_EDGE:
+            if( event == SIGNAL_STATUS_RELEASE )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
+                return signal_trigger_handler(signal);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_RELEASE:
+            if( event == SIGNAL_STATUS_RELEASE )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
+                return signal_trigger_handler(signal);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_PRESS_EDGE:
+            if( event == SIGNAL_STATUS_PRESS )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
+                return signal_trigger_handler(signal);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
+            }
+            break;
+        case SIGNAL_STATUS_PRESS:
+            if( event == SIGNAL_STATUS_PRESS )
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
+                return signal_trigger_handler(signal);
+            }
+            else
+            {
+                UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
+            }
+            break;
+        default:
+            break;
+    }
+    
+    SIGNAL_HANDLE_INIT(signal);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal scan
+ * @param       [in/out]  *param              signal block
+ * @return      [in/out]  FW_ERR_FAIL         scan failed
+ * @return      [in/out]  FW_ERR_NONE         scan success
+ * @note        None
+ *******************************************************************************
+ */
+static fw_err_t signal_scan(void *param)
+{
+    struct SignalBlock *signal = (struct SignalBlock *)param;
+    uint16_t event = SIGNAL_STATUS_INIT;
+    
+    if( signal == NULL )
+    {
+        return FW_ERR_FAIL;
+    }
+    
+    if(signal->Detect() == true)
+    {
+        event = SIGNAL_STATUS_PRESS;
+    }
+    else
+    {
+        event = SIGNAL_STATUS_RELEASE;
+    }
+    
+    CreateMessageHandleTask(&signal->Task, signal_judge, signal, event);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal walk
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE 
+void signal_walk(void)
+{
+    struct SignalBlock *now  = GetSingleLinkListHead(SignalControlBlock);
+    struct SignalBlock *last = now;
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    struct SignalBlock *del  = NULL;
+#endif
+    
+    while(1)
+    {
+        if( IS_SIGNAL_ENABLE(now) )
+        {
+            if( IS_SIGNAL_NEED_SCAN(now) )
+            {
+                SIGNAL_SCAN_PROGRESS_INIT(now);
+                CreateCallBackTask(&now->Task, signal_scan, &now);
+            }
+            
+            last = now;
+            now  = now->Next;
+        }
+        else
+        {   
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+            del = now;
+#endif      
+            if( IsSingleLinkListHead(SignalControlBlock, now) )
+            {
+                SingleLinkListHeadWrite(SignalControlBlock, now->Next);
+                
+                now->Next  = NULL;
+                now        = GetSingleLinkListHead(SignalControlBlock);
+            }
+            else if( IsSingleLinkListTail(SignalControlBlock, now) )
+            {
+                last->Next = NULL;
+                now->Next  = NULL;
+                
+                SingleLinkListTailWrite(SignalControlBlock, last);
+            }
+            else
+            { 
+                last->Next = now->Next;
+                now->Next  = NULL;
+                now        = last->Next;
+            }
+            
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+            if (del->Type == EVENT_HANDLER_EX_SIGNAL)
+            {
+                if( MemoryIsIn(del) == true )
+                {
+                    MemoryFree(del);
+                }
+            }
+#endif
+        }
+        
+        // break
+        if( now == NULL )
+        {
+            return;
+        }
+    }
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal component init
  * @param       [in/out]  void
  * @return      [in/out]  FW_ERR_NONE       init finish
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_signal_init( void )
+fw_err_t SignalComponentInit( void )
 {
-    ysf_signal_clear();
+    signal_clear();
     
-    ysf_evtTimer_init(&signal_timer, ysf_signal_handler, FW_EVENT_NONE);
-    ysf_timer_arm(&signal_timer, YSF_SIGNAL_SCAN_TIME, YSF_TIMER_CYCLE_MODE);
+    InitEventHandleTimer(&SignalTimer, SignalComponentPool, FW_EVENT_NONE);
+    TimerArm(&SignalTimer, SIGNAL_SCAN_TIME, TIMER_CYCLE_MODE);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal component arm
+ * @param       [in/out]  *signal           signal block
+ * @param       [in/out]  *detect           signal detect function
+ * @param       [in/out]  *handler          signal handler function
+ * @return      [in/out]  FW_ERR_NONE       arm success
+ * @return      [in/out]  FW_ERR_FAIL       arm failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t EventSignalArm(struct SignalBlock *signal, 
+                        bool (*detect)(void), 
+                        fw_err_t (*handler)(uint16_t) )
+{
+    if( IS_PTR_NULL(signal) || IS_PTR_NULL(detect) )
+    {
+        return FW_ERR_FAIL;
+    }
+
+    SIGNAL_HANDLE_INIT(signal);
+    
+    signal->Detect            = detect;
+    signal->Handler           = handler;
+    signal->Type              = EVENT_HANDLER_SIGNAL;
+    signal->UseStatus         = true;
+//    signal->Next            = NULL;
+    
+    signal_push(signal);
     
     return FW_ERR_NONE;
 }
@@ -192,54 +523,33 @@ fw_err_t ysf_signal_init( void )
 /**
  *******************************************************************************
  * @brief       signal ex component arm
- * @param       [in/out]  *signal            signal ex component
- * @param       [in/out]  *detect            signal detect function
- * @param       [in/out]  *handler           handler detect function
- * @return      [in/out]  FW_ERR_NONE       arm success
- * @return      [in/out]  FW_ERR_FAIL       arm failed
+ * @param       [in/out]  *detect           signal detect function
+ * @param       [in/out]  *handler          signal handler function
+ * @return      [in/out]  NOT NULL          arm success
+ * @return      [in/out]  NULL              arm failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_evtSignal_arm(struct ysf_signal_t *signal, 
-                            enum SignalStatus (*detect)(void), 
-                            fw_err_t (*handler)(uint16_t) )
+struct SignalBlock *EventSignalExArm(bool (*detect)(void), 
+                                     fw_err_t (*handler)(uint16_t) )
 {
-    if( IS_PTR_NULL(signal) || IS_PTR_NULL(detect) )
-    {
-        return FW_ERR_FAIL;
-    }
-
-    signal->status             = SIGNAL_STATUS_RELEASE;
-    signal->detect             = detect;
-    signal->task.handler.evt   = handler;
-    signal->type               = YSF_EVENT_HANDLER_SIGNAL;
-    signal->useStatus          = true;
-//    signal->next          = NULL;
-    
-    ysf_signal_push(signal);
-    
-    return FW_ERR_NONE;
-}
-
-struct ysf_signal_t *ysf_evtSimpSignal_arm(enum SignalStatus (*detect)(void), 
-                                           fw_err_t (*handler)(uint16_t) )
-{
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
     if( IS_PTR_NULL(detect) || IS_PTR_NULL(handler) )
     {
         return NULL;
     }
     
-    struct ysf_signal_t *signal = (struct ysf_signal_t *)ysf_memory_malloc(sizeof(struct ysf_signal_t));
+    struct SignalBlock *signal = (struct SignalBlock *)MemoryMalloc(sizeof(struct SignalBlock));
     
-    signal->status             = SIGNAL_STATUS_RELEASE;
-    signal->detect             = detect;
-    signal->task.handler.evt   = handler;
-    signal->type               = YSF_EVENT_HANDLER_SIGNAL;
-    signal->useStatus          = true;
-//    signal->next          = NULL;
+    SIGNAL_HANDLE_INIT(signal);
     
-    ysf_signal_push(signal);
+    signal->Detect            = detect;
+    signal->Handler           = handler;
+    signal->Type              = EVENT_HANDLER_EX_SIGNAL;
+    signal->UseStatus         = true;
+//    signal->Next            = NULL;
+    
+    signal_push(signal);
     
     return signal;
 #else
@@ -249,228 +559,35 @@ struct ysf_signal_t *ysf_evtSimpSignal_arm(enum SignalStatus (*detect)(void),
 
 /**
  *******************************************************************************
- * @brief       signal component disarm
- * @param       [in/out]  *signal            signal component
+ * @brief       signal disarm
+ * @param       [in/out]  *signal           signal block
  * @return      [in/out]  FW_ERR_NONE       disarm success
- * @return      [in/out]  FW_ERR_FAIL       disarm failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ysf_signal_disarm(struct ysf_signal_t *signal)
+fw_err_t SignalDisarm(struct SignalBlock *signal)
 {
-    signal->useStatus = false;
+    signal->UseStatus = false;
 
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       signal status judge
- * @param       [in/out]  *signal            signal component
- * @return      [in/out]  void
+ * @brief       signal component pool
+ * @param       [in/out]  event                event
+ * @return      [in/out]  FW_ERR_NONE          pool not error
  * @note        None
  *******************************************************************************
  */
-__STATIC_INLINE
-void ysf_signal_judge( struct ysf_signal_t *signal )
+fw_err_t SignalComponentPool(uint16_t event)
 {
-    enum SignalStatus status;
-
-    if( IS_PTR_NULL(signal) || IS_PTR_NULL(signal->detect) || IS_PTR_NULL(signal->task.handler.evt) )
+    if( IsSingleLinkListHeadEmpty(SignalControlBlock) )
     {
-        return;
+        return FW_ERR_NONE;
     }
     
-    status = signal->detect();
-    
-    switch( signal->status )
-    {
-        case SIGNAL_STATUS_INIT:
-            if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_PRESS_FILTER_STEP1:
-            if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP2;
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_PRESS_FILTER_STEP2:
-            if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP3;
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_PRESS_FILTER_STEP3:
-            if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS_EDGE;
-                signalTriggerHandler(signal, signal->status);
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_RELEASE_FILTER_STEP1:
-            if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP2;
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_RELEASE_FILTER_STEP2:
-            if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP3;
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_RELEASE_FILTER_STEP3:
-            if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_EDGE;
-                signalTriggerHandler(signal, signal->status);
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_RELEASE_EDGE:
-            if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE;
-                signalTriggerHandler(signal, signal->status);
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_RELEASE:
-            if( status == SIGNAL_STATUS_RELEASE )
-            {
-                signal->status = SIGNAL_STATUS_RELEASE;
-                signalTriggerHandler(signal, signal->status);
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_PRESS_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_PRESS_EDGE:
-            if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS;
-                signalTriggerHandler(signal, signal->status);
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
-            break;
-        case SIGNAL_STATUS_PRESS:
-            if( status == SIGNAL_STATUS_PRESS )
-            {
-                signal->status = SIGNAL_STATUS_PRESS;
-                signalTriggerHandler(signal, signal->status);
-            }
-            else
-            {
-                signal->status = SIGNAL_STATUS_RELEASE_FILTER_STEP1;
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-/**
- *******************************************************************************
- * @brief       signal list walk
- * @param       [in/out]  **node         now node
- * @param       [in/out]  **ctx          none
- * @param       [in/out]  **expand       last node
- * @return      [in/out]  false          walk is not end
- * @return      [in/out]  true           walk is end
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-static bool ysf_signal_pool( void **node, void **ctx, void **expand )
-{
-    struct ysf_signal_t *signal = (struct ysf_signal_t *)(*node);
-    struct ysf_signal_t *last   = (struct ysf_signal_t *)(*expand); 
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-    struct ysf_signal_t *del    = (struct ysf_signal_t *)(*node); 
-#endif
-    
-    if( *node == NULL )
-    {
-        return true;
-    }
-    
-    ysf_signal_judge(signal);
-    
-    if( signal->useStatus == false )
-    {
-        if( (void *)last == (void *)scb.head )
-        {
-            *node = last->next;
-            last->next = NULL;
-        }
-        else
-        { 
-            last->next = signal->next;
-            signal->next = NULL;
-            
-            *node = *expand;
-        }
-#if defined(USE_YSF_MEMORY_API) && USE_YSF_MEMORY_API
-        if( ysf_memory_is_in(del) == true )
-        {
-            ysf_memory_free(del);
-        }
-#endif
-    }
-    
-    return false;
-}
-
-/**
- *******************************************************************************
- * @brief       signal handler
- * @param       [in/out]  *param         none
- * @return      [in/out]  FW_ERR_NONE   handler end
- * @note        None
- *******************************************************************************
- */
-fw_err_t ysf_signal_handler(uint16_t event)
-{
-    void *last = (void *)scb.head;
-    
-    ysf_slist_walk((void **)&scb.head, ysf_signal_pool, NULL, (void **)&last);
+    signal_walk();
     
     return FW_ERR_NONE;
 }

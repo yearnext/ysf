@@ -159,7 +159,7 @@ struct HeapControlBlock
 typedef struct
 {
     fw_err_t (*Init)(struct HeapControlBlock*,  uint8_t*, uint32_t);
-    fw_err_t (*Alloc)(struct HeapControlBlock*, uint16_t, void*);
+    fw_err_t (*Alloc)(struct HeapControlBlock*, uint16_t, void**);
     fw_err_t (*Free)(struct HeapControlBlock*,  void*);
     fw_err_t (*IsIn)(struct HeapControlBlock*,  void*);
 }MemoryManagementComponentInterface;
@@ -172,7 +172,7 @@ typedef struct
  */
 #if USE_MEMORY_MANAGEMENT_COMPONENT
 extern fw_err_t HeapComponentInit(struct HeapControlBlock*,  uint8_t*, uint32_t);
-extern fw_err_t AllocHeapMemory(struct HeapControlBlock*, uint32_t, void*);
+extern fw_err_t AllocHeapMemory(struct HeapControlBlock*, uint32_t, void**);
 extern fw_err_t FreeHeapMemory(struct HeapControlBlock*,  void*);
 extern bool     IsInHeapMemory(struct HeapControlBlock*,  void*);
 #endif
