@@ -290,83 +290,83 @@ bool msp_gpio_get_output(uint8_t port, uint8_t pin)
     return gpio_get_output(port, pin);
 }
 
-hal_err_t map_gpio_enable(struct map_gpio_t *gpio)
+hal_err_t map_gpio_enable(struct MapGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     
-    gpio_disable(gpio->port);
-    gpio_enable(gpio->port);
+    gpio_disable(gpio->Port);
+    gpio_enable(gpio->Port);
     
     return HAL_ERR_NONE;
 }
 
-hal_err_t map_gpio_disable(struct map_gpio_t *gpio)
+hal_err_t map_gpio_disable(struct MapGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     
-    gpio_disable(gpio->port);
+    gpio_disable(gpio->Port);
     
     return HAL_ERR_NONE;
 }
 
-hal_err_t map_gpio_init(struct map_gpio_t *gpio, uint8_t mode)
+hal_err_t map_gpio_init(struct MapGPIOBlock *gpio, uint8_t mode)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    hal_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
+    hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    gpio_config(gpio->port, gpio->pin, mode);
+    gpio_config(gpio->Port, gpio->Pin, mode);
     
     return HAL_ERR_NONE;
 }
 
-hal_err_t map_gpio_fini(struct map_gpio_t *gpio)
+hal_err_t map_gpio_fini(struct MapGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    hal_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
+    hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    gpio_config(gpio->port, gpio->pin, GPIO_PIN_INIT_MODE);
+    gpio_config(gpio->Port, gpio->Pin, GPIO_PIN_INIT_MODE);
     
     return HAL_ERR_NONE;
 }
 
-void map_gpio_set(struct map_gpio_t *gpio)
+void map_gpio_set(struct MapGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    hal_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
+    hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    gpio_set(gpio->port, gpio->pin);
+    gpio_set(gpio->Port, gpio->Pin);
 }
 
-void map_gpio_clr(struct map_gpio_t *gpio)
+void map_gpio_clr(struct MapGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    hal_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
+    hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    gpio_clr(gpio->port, gpio->pin);
+    gpio_clr(gpio->Port, gpio->Pin);
 }
 
-bool map_gpio_get_input(struct map_gpio_t *gpio)
+bool map_gpio_get_input(struct MapGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    hal_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
+    hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    return gpio_get_input(gpio->port, gpio->pin);
+    return gpio_get_input(gpio->Port, gpio->Pin);
 }
 
-bool map_gpio_get_output(struct map_gpio_t *gpio)
+bool map_gpio_get_output(struct MapGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
-    hal_assert(IS_PORT_NUM_INVAILD(gpio->port));
-    hal_assert(IS_PIN_NUM_INVAILD(gpio->pin));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
+    hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    return gpio_get_output(gpio->port, gpio->pin);
+    return gpio_get_output(gpio->Port, gpio->Pin);
 }
 
 /** @}*/     /* gpio component  */

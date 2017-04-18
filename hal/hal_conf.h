@@ -58,14 +58,11 @@ extern "C"
  
 /**
  *******************************************************************************
- * @brief        debug configuration
+ * @brief        debug hal assert configuration
  *******************************************************************************
  */
 #if USE_HAL_DEBUG
-    #include _FW_PATH
-    #include _FW_DEBUG_COMPONENT_PATH
-    
-    #define hal_assert(expr)                                      _Assert(expr)
+    #define hal_assert(expr)                            INLINE_PARAM_CHECK(expr)
 #else
     #define hal_assert(expr)
 #endif

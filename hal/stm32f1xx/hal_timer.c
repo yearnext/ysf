@@ -561,12 +561,7 @@ hal_err_t timer_stop(uint8_t id)
  */
 hal_err_t MspTimerEnable(uint8_t id)
 {
-#if USE_HAL_TIMER_DEBUG
-    if( IS_TIMER_ID_INVAILD(id) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_enable(id);
     
@@ -584,12 +579,7 @@ hal_err_t MspTimerEnable(uint8_t id)
  */
 hal_err_t MspTimerDisable(uint8_t id)
 {
-#if USE_HAL_TIMER_DEBUG
-    if( IS_TIMER_ID_INVAILD(id) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_disable(id);
     
@@ -607,12 +597,7 @@ hal_err_t MspTimerDisable(uint8_t id)
  */
 hal_err_t MspTimerStart(uint8_t id)
 {
-#if USE_HAL_TIMER_DEBUG
-    if( IS_TIMER_ID_INVAILD(id) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_start(id); 
     
@@ -630,12 +615,7 @@ hal_err_t MspTimerStart(uint8_t id)
  */
 hal_err_t MspTimerStop(uint8_t id)
 {
-#if USE_HAL_TIMER_DEBUG
-    if( IS_TIMER_ID_INVAILD(id) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_stop(id); 
     
@@ -655,17 +635,8 @@ hal_err_t MspTimerStop(uint8_t id)
  */
 hal_err_t MspTimerBaseInit(uint8_t id, uint32_t tick, void (*func)(void))
 {
-#if USE_HAL_TIMER_DEBUG
-    if( IS_TIMER_ID_INVAILD(id) )
-    {
-        return HAL_ERR_FAIL;
-    }
-    
-    if( func == NULL )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif
+    hal_assert(IS_TIMER_ID_INVAILD(id));
+    hal_assert(IS_PTR_NULL(func));
     
     timer_base_init(id, tick, func); 
     
@@ -683,17 +654,8 @@ hal_err_t MspTimerBaseInit(uint8_t id, uint32_t tick, void (*func)(void))
  */
 hal_err_t MapTimerEnable(struct MapTimerBlock *timer)
 {   
-#if USE_HAL_TIMER_DEBUG
-    if( timer == NULL )
-    {
-        return HAL_ERR_FAIL;
-    }
-    
-    if( IS_TIMER_ID_INVAILD(timer->ID) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif  
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
 
     timer_enable(timer->ID);
 
@@ -711,17 +673,8 @@ hal_err_t MapTimerEnable(struct MapTimerBlock *timer)
  */
 hal_err_t MapTimerDisable(struct MapTimerBlock *timer)
 {
-#if USE_HAL_TIMER_DEBUG
-    if( timer == NULL )
-    {
-        return HAL_ERR_FAIL;
-    }
-    
-    if( IS_TIMER_ID_INVAILD(timer->ID) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif  
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
     
     timer_disable(timer->ID);
     
@@ -739,17 +692,8 @@ hal_err_t MapTimerDisable(struct MapTimerBlock *timer)
  */
 hal_err_t MapTimerStart(struct MapTimerBlock *timer)
 {
-#if USE_HAL_TIMER_DEBUG
-    if( timer == NULL )
-    {
-        return HAL_ERR_FAIL;
-    }
-    
-    if( IS_TIMER_ID_INVAILD(timer->ID) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif  
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
     
     timer_start(timer->ID); 
     
@@ -767,17 +711,8 @@ hal_err_t MapTimerStart(struct MapTimerBlock *timer)
  */
 hal_err_t MapTimerStop(struct MapTimerBlock *timer)
 {
-#if USE_HAL_TIMER_DEBUG
-    if( timer == NULL )
-    {
-        return HAL_ERR_FAIL;
-    }
-    
-    if( IS_TIMER_ID_INVAILD(timer->ID) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif  
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
     
     timer_stop(timer->ID); 
     
@@ -797,22 +732,9 @@ hal_err_t MapTimerStop(struct MapTimerBlock *timer)
  */
 hal_err_t MapTimerBaseInit(struct MapTimerBlock *timer, uint32_t tick, void (*func)(void))
 {
-#if USE_HAL_TIMER_DEBUG
-    if( func == NULL )
-    {
-        return HAL_ERR_FAIL;
-    }
-    
-    if( timer == NULL )
-    {
-        return HAL_ERR_FAIL;
-    }
-    
-    if( IS_TIMER_ID_INVAILD(timer->ID) )
-    {
-        return HAL_ERR_FAIL;
-    }
-#endif
+    hal_assert(IS_PTR_NULL(func));
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
     
     timer_base_init(timer->ID, tick, func); 
     
