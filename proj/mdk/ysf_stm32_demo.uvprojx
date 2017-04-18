@@ -464,13 +464,6 @@
         </Group>
         <Group>
           <GroupName>app</GroupName>
-          <Files>
-            <File>
-              <FileName>demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\demo\demo.c</FilePath>
-            </File>
-          </Files>
         </Group>
       </Groups>
     </Target>

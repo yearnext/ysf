@@ -65,7 +65,7 @@ static CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(struct TaskBlock, TaskControlBlock)
  * @brief       detect the task is in queue
  * @param       [in/out]  task                 will detect task
  * @return      [in/out]  true                 the task in the queue
- * @return      [in/out]  true                 the task not in the queue
+ * @return      [in/out]  false                the task not in the queue
  * @note        this function is static inline type
  *******************************************************************************
  */
@@ -443,7 +443,7 @@ fw_err_t AddTaskToQueue(struct TaskBlock *task)
         return FW_ERR_FAIL;
     }
     
-    task_push(task);
+    SingleLinkListFifoPush(task_is_in, TaskControlBlock, task);
         
     return FW_ERR_NONE;
 }
