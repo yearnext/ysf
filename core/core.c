@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
- * @brief      core source files                                               *
+ * @brief      ysf core source files                                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,15 +32,17 @@
  */
 
 /**
- * @defgroup core
+ * @defgroup ysf core
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include "core.h"
+
 /* Private define ------------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-/** @}*/     /** core */
+/** @}*/     /** ysf core */
 
 /**********************************END OF FILE*********************************/

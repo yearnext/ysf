@@ -433,8 +433,18 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>ysf/hal/startup</GroupName>
+          <GroupName>ysf/hal/stm32f1xx</GroupName>
           <Files>
+            <File>
+              <FileName>hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\hal_timer.c</FilePath>
+            </File>
             <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
@@ -448,17 +458,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>ysf/hal/hal</GroupName>
+          <GroupName>ysf/core</GroupName>
           <Files>
             <File>
-              <FileName>hal_gpio.c</FileName>
+              <FileName>core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\hal_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\hal_timer.c</FilePath>
+              <FilePath>..\..\core\core.c</FilePath>
             </File>
           </Files>
         </Group>

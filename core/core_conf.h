@@ -52,9 +52,7 @@ extern "C"
  * @brief       define version
  *******************************************************************************
  */
-#define _CORE_VERSION                   "CORE_ALPHA_0.0.1_2017040132135"
-#define _HAL_VERSION                    "HAL_ALPHA_0.0.1_201704132135"
-#define _STACK_VERSION                  "STACK_ALPHA_0.0.1_201704132135"
+#define _CORE_VERSION                           "CORE_ALPHA_0.0.1_2017040132135"
 
 /**
  *******************************************************************************

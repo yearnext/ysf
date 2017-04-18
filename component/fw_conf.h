@@ -47,14 +47,23 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_conf.h"
-      
+#include _HAL_PATH
+#include _HAL_TIMER_PATH     
+
 /* Define and config ---------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define framework version
  *******************************************************************************
  */
-#define _FRAMEWORK_VERSION              "FRAMEWORK_ALPHA_0.0.3_2017040132135"
+#define _FRAMEWORK_VERSION                 "FRAMEWORK_ALPHA_0.0.3_2017040132135"
+
+/**
+ *******************************************************************************
+ * @brief      define tick timer init
+ *******************************************************************************
+ */
+#define FwTickHardwareInit(tick, func)     msp_timer_base_init(MCU_TICK_TIMER, (tick), func)
 
 /* Exported types ------------------------------------------------------------*/
 /**
