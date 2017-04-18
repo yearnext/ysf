@@ -156,6 +156,7 @@ extern "C"
  *******************************************************************************
  */
 #if __TARGET_CHIP__ == USE_MCU_STM32F1xx
+    #define _HAL_MAL_PATH                          _HAL_STM32F1XX_MAL_PATH
     #define _HAL_GPIO_PATH                         _HAL_STM32F1XX_GPIO_PATH
     #define _HAL_TIMER_PATH                        _HAL_STM32F1XX_TIMER_PATH
 #endif

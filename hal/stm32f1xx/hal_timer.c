@@ -23,8 +23,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _HAL_PATH
-#include _HAL_STM32F1XX_MAL_PATH
-#include _HAL_STM32F1XX_TIMER_PATH
+#include _HAL_MAL_PATH
+#include _HAL_TIMER_PATH
 
 /* Private define ------------------------------------------------------------*/
 /**
