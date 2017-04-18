@@ -438,23 +438,18 @@
             <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\device\system_stm32f1xx.c</FilePath>
+              <FilePath>..\..\hal\stm32f1xx\mal\system_stm32f1xx.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f103xe.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\hal\stm32f1xx\device\arm\startup_stm32f103xe.s</FilePath>
+              <FilePath>..\..\hal\stm32f1xx\mal\arm\startup_stm32f103xe.s</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>ysf/hal/hal</GroupName>
           <Files>
-            <File>
-              <FileName>hal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\hal.c</FilePath>
-            </File>
             <File>
               <FileName>hal_gpio.c</FileName>
               <FileType>1</FileType>

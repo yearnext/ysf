@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_timer.h                                                     *
+ * @file       hal_type.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-03-04                                                      *
- * @brief      timer head files                                                *
+ * @date       2017-04-18                                                      *
+ * @brief      hal type head files                                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -30,14 +30,14 @@
  * 1.XXXXX                                                                     *
  *******************************************************************************
  */
- 
+
 /**
- * @defgroup timer component
+ * @defgroup hal type
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F10X_TIMER_H__
-#define __STM32F10X_TIMER_H__
+#ifndef __HAL_TYPE_H__
+#define __HAL_TYPE_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,73 +46,34 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
-
+#include "core_path.h"
+    
 /* Exported macro ------------------------------------------------------------*/
-#define USE_MSP_TIMER_API  (1)
-#define USE_MAP_TIMER_API  (1)  
- 
-#define MCU_TICK_TIMER     MCU_TIMER_0
-    
 /* Exported types ------------------------------------------------------------*/
-enum
-{
-    MCU_TIMER_0 = 0,
-    MCU_TIMER_1,
-    MCU_TIMER_2,
-    MCU_TIMER_3,
-    MCU_TIMER_4,
-    MCU_TIMER_5,
-    MCU_TIMER_6,
-    MCU_TIMER_7,
-    MCU_TIMER_8,
-    
-    MCU_TIMER_MAX,
-};
-    
-struct map_timer_t
-{
-    uint8_t id;
-};
+/**
+ *******************************************************************************
+ * @brief      define hal error type
+ *******************************************************************************
+ */
+#define HAL_ERR_NONE                                    (_ERR_NONE)
+#define HAL_ERR_FAIL                                    (_ERR_FAIL)
+#define HAL_ERR_NOT_READY                               (_ERR_NOT_READY)
+#define HAL_ERR_NOT_SUPPORT                             (_ERR_NOT_SUPPORT)
+#define HAL_ERR_INVAILD_PTR                             (_ERR_INVAILD_PTR)
+#define HAL_ERR_INVAILD_PARAM                           (_ERR_INVAILD_PARAM)
+#define HAL_ERR_IO                                      (_ERR_IO)
+#define HAL_ERR_BUG                                     (_ERR_BUG)
+#define HAL_ERR_UNKNOW                                  (_ERR_UNKNOW)
 
-struct MSP_TIMER_API
-{    
-    void (*enable)(uint8_t);
-    void (*disable)(uint8_t);
+typedef _err_t                                           hal_err_t;
     
-    void (*start)(uint8_t);
-    void (*stop)(uint8_t);
-    
-    struct
-    {
-        void (*base)(uint8_t, uint32_t, void(*)(void));
-    }init;
-};
-    
-struct MAP_TIMER_API
-{
-    void (*enable)(struct map_timer_t *timer);
-    void (*disable)(struct map_timer_t *timer);
-};
-    
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-extern void msp_timer_init(uint8_t);
-extern void msp_timer_fini(uint8_t);
-extern void msp_timer_base_init(uint8_t, uint32_t, void (*)(void));
-
-//extern void map_timer_init(struct ysf_msp_timer_t*);
-//extern void map_timer_fini(struct ysf_msp_timer_t*);
-
-//extern void SysTick_Handler(void);
-
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /* gpio component  */
+/** @}*/     /** hal type */
 
 /**********************************END OF FILE*********************************/

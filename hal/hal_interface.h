@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal.h                                                           *
+ * @file       hal_interface.h                                                 *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-03-04                                                      *
- * @brief      hal head files                                                  *
+ * @date       2017-04-18                                                      *
+ * @brief      hal interface head files                                        *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup hal component
+ * @defgroup hal interface
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HAL_H__
-#define __HAL_H__
+#ifndef __HAL_INTERFACE_H__
+#define __HAL_INTERFACE_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,66 +46,12 @@ extern "C"
 #endif
 
 /* Hal path macro ------------------------------------------------------------*/
-#define YSF_MAL_PATH          "../framework/hal/stm32f1xx/mal/stm32f1xx.h"
-#define YSF_MSP_GPIO_PATH     "../framework/hal/stm32f1xx/hal_gpio.h"
-#define YSF_MSP_TIMER_PATH    "../framework/hal/stm32f1xx/hal_timer.h"
-#define YSF_MAL_CORE_CM3_PATH "../framework/hal/stm32f1xx/mal/cmsis/core_cm3.h"
-#define YSF_MAL_START_UP_PATH "../framework/hal/stm32f1xx/startup/system_stm32f1xx.h"
+
    
 /* Includes ------------------------------------------------------------------*/  
-#include YSF_MAL_PATH
-#include YSF_MSP_GPIO_PATH
-#include YSF_MSP_TIMER_PATH
-
 /* Exported macro ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      DEFINE HAL API CONFIG
- *******************************************************************************
- */
-#define USE_HAL_API (1)
-    
 /* Exported types ------------------------------------------------------------*/
-#if USE_HAL_API
-/**
- *******************************************************************************
- * @brief      MCU SUPPORT PACKET API
- *******************************************************************************
- */
-struct YSF_MSP_API
-{
-#if defined(USE_MSP_GPIO_API) && USE_MSP_GPIO_API
-    struct MSP_GPIO_API gpio;
-#endif
-        
-#if defined(USE_MSP_TIMER_API) && USE_MSP_TIMER_API
-    struct MSP_TIMER_API timer;
-#endif
-};
-
-/**
- *******************************************************************************
- * @brief      MCU APPLATION PACKET API
- *******************************************************************************
- */
-struct YSF_MAP_API
-{
-#if defined(USE_MAP_GPIO_API) && USE_MAP_GPIO_API
-    struct MAP_GPIO_API gpio;
-#endif
-        
-#if defined(USE_MAP_TIMER_API) && USE_MAP_TIMER_API
-    struct MAP_TIMER_API timer;
-#endif
-};
-#endif
-
 /* Exported variables --------------------------------------------------------*/
-#if USE_HAL_API
-extern const struct YSF_MSP_API msp;
-extern const struct YSF_MAP_API map;
-#endif
-
 /* Exported functions --------------------------------------------------------*/
 
 #ifdef __cplusplus
@@ -114,6 +60,6 @@ extern const struct YSF_MAP_API map;
 	
 #endif       /** end include define */
 
-/** @}*/     /* hal component  */
+/** @}*/     /** hal interface  */
 
 /**********************************END OF FILE*********************************/
