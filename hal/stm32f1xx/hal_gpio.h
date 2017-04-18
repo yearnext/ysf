@@ -46,10 +46,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include "hal_conf.h"
-#include YSF_TYPE_PATH
-#include HAL_PATH
+#include "core_path.h"
+#include _HAL_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -276,6 +274,6 @@ extern bool map_gpio_get_output(struct map_gpio_t*);
 	
 #endif       /** end include define */
 
-/** @}*/     /* gpio component  */
+/** @}*/     /** gpio component */
 
 /**********************************END OF FILE*********************************/

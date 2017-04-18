@@ -67,6 +67,7 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include _COMM_TOOLS_PATH
 #include _COMM_TYPE_PATH
+#include _COMPILER_PATH
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

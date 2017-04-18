@@ -144,10 +144,21 @@ extern "C"
  */
 #define _HAL_STM32F1XX_GPIO_PATH                   "../hal/stm32f1xx/hal_gpio.h"
 #define _HAL_STM32F1XX_TIMER_PATH                  "../hal/stm32f1xx/hal_timer.h"
-    
+
 /* Includes ------------------------------------------------------------------*/
 #include _HAL_CONF_PATH
 #include _HAL_TYPE_PATH
+
+/* Define hal component path-------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        hal device head files path
+ *******************************************************************************
+ */
+#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
+    #define _HAL_GPIO_PATH                         _HAL_STM32F1XX_GPIO_PATH
+    #define _HAL_TIMER_PATH                        _HAL_STM32F1XX_TIMER_PATH
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

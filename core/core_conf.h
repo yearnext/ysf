@@ -147,6 +147,7 @@ __DEFINE_EVENT_END
  * @note        0                         disable
  *******************************************************************************
  */
+#define USE_HAL_DEBUG                                                        (1)
 #define USE_MCU_GPIO_COMPONENT                                               (1)
 #define USE_MCU_TIMER_COMPONENT                                              (1)
 #define USE_MCU_USART_COMPONENT                                              (1)

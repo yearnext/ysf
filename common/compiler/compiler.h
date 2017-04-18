@@ -72,6 +72,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** compiler config  */
+/** @}*/     /** compiler config */
 
 /**********************************END OF FILE*********************************/

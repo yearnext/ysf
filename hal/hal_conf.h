@@ -47,9 +47,22 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/    
 #include "core_conf.h"
-
+    
 /* Exported types ------------------------------------------------------------*/    
-
+/**
+ *******************************************************************************
+ * @brief        debug configuration
+ *******************************************************************************
+ */
+#if USE_HAL_DEBUG
+    #include _FW_PATH
+    #include _FW_DEBUG_COMPONENT_PATH
+    
+    #define hal_assert(expr)                                      _Assert(expr)
+#else
+    #define hal_assert(expr)
+#endif
+    
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
@@ -57,6 +70,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** hal config  */
+/** @}*/     /** hal config */
 
 /**********************************END OF FILE*********************************/

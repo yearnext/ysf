@@ -46,8 +46,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ysf_path.h"
-#include YSF_TYPE_PATH
+#include "core_path.h"
 
 /* Exported macro ------------------------------------------------------------*/
 #define USE_MSP_TIMER_API  (1)

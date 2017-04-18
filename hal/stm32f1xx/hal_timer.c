@@ -21,10 +21,10 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "hal_conf.h"
-#include "hal_path.h"
-#include HAL_PATH
-#include _COMPILER_PATH
+#include "core_path.h"
+#include _HAL_PATH
+#include _HAL_STM32F1XX_MAL_PATH
+#include _HAL_STM32F1XX_TIMER_PATH
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -346,75 +346,75 @@ hal_err_t timer_stop(uint8_t id)
 /* Exported functions --------------------------------------------------------*/
 void msp_timer_enable(uint8_t id)
 {
-    _Assert(IS_TIMER_ID_INVAILD(id));
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_enable(id);
 }
 
 void msp_timer_disable(uint8_t id)
 {
-    _Assert(IS_TIMER_ID_INVAILD(id));
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_disable(id);
 }
 
 void msp_timer_base_init(uint8_t id, uint32_t tick, void (*func)(void))
 {
-    _Assert(IS_TIMER_ID_INVAILD(id));
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_base_init(id, tick, func); 
 }
 
 void msp_timer_start(uint8_t id)
 {
-    _Assert(IS_TIMER_ID_INVAILD(id));
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_start(id); 
 }
 
 void msp_timer_stop(uint8_t id)
 {
-    _Assert(IS_TIMER_ID_INVAILD(id));
+    hal_assert(IS_TIMER_ID_INVAILD(id));
     
     timer_stop(id); 
 }
 
 void map_timer_enable(struct map_timer_t *timer)
 {
-    _Assert(IS_PTR_NULL(timer));
-    _Assert(IS_TIMER_ID_INVAILD(timer->id));
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_enable(timer->id);
 }
 
 void map_timer_disable(struct map_timer_t *timer)
 {
-    _Assert(IS_PTR_NULL(timer));
-    _Assert(IS_TIMER_ID_INVAILD(timer->id));
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_disable(timer->id);
 }
 
 void map_timer_base_init(struct map_timer_t *timer, uint32_t tick, void (*func)(void))
 {
-    _Assert(IS_PTR_NULL(timer));
-    _Assert(IS_TIMER_ID_INVAILD(timer->id));
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_base_init(timer->id, tick, func); 
 }
 
 void map_timer_start(struct map_timer_t *timer)
 {
-    _Assert(IS_PTR_NULL(timer));
-    _Assert(IS_TIMER_ID_INVAILD(timer->id));
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_start(timer->id); 
 }
 
 void map_timer_stop(struct map_timer_t *timer)
 {
-    _Assert(IS_PTR_NULL(timer));
-    _Assert(IS_TIMER_ID_INVAILD(timer->id));
+    hal_assert(IS_PTR_NULL(timer));
+    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
     
     timer_stop(timer->id); 
 }

@@ -73,7 +73,9 @@
 /** @addtogroup STM32F1xx_System_Private_Includes
   * @{
   */
-#include "../framework/hal/stm32f1xx/mal/stm32f1xx.h"
+#include "core_path.h"
+#include _HAL_PATH
+#include _HAL_STM32F1XX_MAL_PATH
 
 /**
   * @}

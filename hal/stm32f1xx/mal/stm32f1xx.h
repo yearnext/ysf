@@ -59,8 +59,9 @@
 #ifdef __cplusplus
  extern "C" {
 #endif /* __cplusplus */
-  
-#include "ysf_conf.h"
+    
+#include "core_path.h"
+#include _HAL_PATH   
      
 /** @addtogroup Library_configuration_section
   * @{
@@ -130,33 +131,33 @@
   */
 
 #if defined(STM32F100xB)
-  #include "stm32f100xb.h"
+    #include _HAL_STM32F100XB_MAL_PATH
 #elif defined(STM32F100xE)
-  #include "stm32f100xe.h"
+    #include _HAL_STM32F100XE_MAL_PATH
 #elif defined(STM32F101x6)
-  #include "stm32f101x6.h"
+    #include _HAL_STM32F101X6_MAL_PATH
 #elif defined(STM32F101xB)
-  #include "stm32f101xb.h"
+    #include _HAL_STM32F101XB_MAL_PATH
 #elif defined(STM32F101xE)
-  #include "stm32f101xe.h"
+    #include _HAL_STM32F101XE_MAL_PATH
 #elif defined(STM32F101xG)
-  #include "stm32f101xg.h"
+    #include _HAL_STM32F101X6_MAL_PATH
 #elif defined(STM32F102x6)
-  #include "stm32f102x6.h"
+    #include _HAL_STM32F102X6_MAL_PATH
 #elif defined(STM32F102xB)
-  #include "stm32f102xb.h"
+    #include _HAL_STM32F102XB_MAL_PATH
 #elif defined(STM32F103x6)
-  #include "stm32f103x6.h"
+    #include _HAL_STM32F103X6_MAL_PATH
 #elif defined(STM32F103xB)
-  #include "stm32f103xb.h"
+    #include _HAL_STM32F103XB_MAL_PATH
 #elif defined(STM32F103xE)
-  #include "stm32f103xe.h"
+    #include _HAL_STM32F103XE_MAL_PATH
 #elif defined(STM32F103xG)
-  #include "stm32f103xg.h"
+    #include _HAL_STM32F103XG_MAL_PATH
 #elif defined(STM32F105xC)
-  #include "stm32f105xc.h"
+    #include _HAL_STM32F105XC_MAL_PATH
 #elif defined(STM32F107xC)
-  #include "stm32f107xc.h"
+    #include _HAL_STM32F107XC_MAL_PATH
 #else
  #error "Please select first the target STM32F1xx device used in your application (in stm32f1xx.h file)"
 #endif
