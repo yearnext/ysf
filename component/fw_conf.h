@@ -47,8 +47,8 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_conf.h"
-#include _HAL_PATH
-#include _HAL_TIMER_PATH     
+//#include _HAL_PATH
+//#include _HAL_TIMER_PATH     
 
 /* Define and config ---------------------------------------------------------*/
 /**
@@ -63,7 +63,7 @@ extern "C"
  * @brief      define tick timer init
  *******************************************************************************
  */
-#define FwTickHardwareInit(tick, func)     msp_timer_base_init(MCU_TICK_TIMER, (tick), func)
+//#define FwTickHardwareInit(tick, func)     msp_timer_base_init(MCU_TICK_TIMER, (tick), func)
 
 /* Exported types ------------------------------------------------------------*/
 /**

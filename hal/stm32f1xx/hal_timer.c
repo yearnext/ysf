@@ -36,10 +36,23 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static void (*MCU_TICK_FUNTION)(void);
+/**
+ *******************************************************************************
+ * @brief      define tick timer handle function
+ *******************************************************************************
+ */
+static void (*TickHandleFunction)(void);
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       enable timer1
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer1_enable(void)
 {
@@ -47,6 +60,14 @@ void timer1_enable(void)
     RCC->APB2ENR  |= (uint32_t)(1 << 11);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer1
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer1_disable(void)
 {
@@ -54,6 +75,14 @@ void timer1_disable(void)
     RCC->APB2ENR  &= (uint32_t)(~(1 << 11));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer2
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer2_enable(void)
 {
@@ -61,6 +90,14 @@ void timer2_enable(void)
     RCC->APB1ENR  |= (uint32_t)(1 << 0);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer2
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer2_disable(void)
 {
@@ -68,6 +105,14 @@ void timer2_disable(void)
     RCC->APB1RSTR &= (uint32_t)(~(1 << 0));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer3
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer3_enable(void)
 {
@@ -75,6 +120,14 @@ void timer3_enable(void)
     RCC->APB1ENR  |= (uint32_t)(1 << 1);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer3
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer3_disable(void)
 {
@@ -82,6 +135,14 @@ void timer3_disable(void)
     RCC->APB1RSTR &= (uint32_t)(~(1 << 1));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer4
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer4_enable(void)
 {
@@ -89,6 +150,14 @@ void timer4_enable(void)
     RCC->APB1ENR  |= (uint32_t)(1 << 2);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer4
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer4_disable(void)
 {
@@ -96,6 +165,14 @@ void timer4_disable(void)
     RCC->APB1RSTR &= (uint32_t)(~(1 << 2));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer5
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer5_enable(void)
 {
@@ -103,6 +180,14 @@ void timer5_enable(void)
     RCC->APB1ENR  |= (uint32_t)(1 << 3);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer5
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer5_disable(void)
 {
@@ -110,6 +195,14 @@ void timer5_disable(void)
     RCC->APB1RSTR &= (uint32_t)(~(1 << 3));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer6
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer6_enable(void)
 {
@@ -117,6 +210,14 @@ void timer6_enable(void)
     RCC->APB1ENR  |= (uint32_t)(1 << 4);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer6
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer6_disable(void)
 {
@@ -124,6 +225,14 @@ void timer6_disable(void)
     RCC->APB1RSTR &= (uint32_t)(~(1 << 4));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer7
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer7_enable(void)
 {
@@ -131,6 +240,14 @@ void timer7_enable(void)
     RCC->APB1ENR  |= (uint32_t)(1 << 5);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer7
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer7_disable(void)
 {
@@ -138,6 +255,14 @@ void timer7_disable(void)
     RCC->APB1RSTR &= (uint32_t)(~(1 << 5));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer8
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer8_enable(void)
 {
@@ -145,6 +270,14 @@ void timer8_enable(void)
     RCC->APB2ENR  |= (uint32_t)(1 << 13);
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer8
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer8_disable(void)
 {
@@ -152,6 +285,14 @@ void timer8_disable(void)
     RCC->APB2RSTR &= (uint32_t)(~(1 << 13));
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable timer
+ * @param       [in/out]  id           timer id
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer_enable(uint8_t id)
 {
@@ -188,6 +329,14 @@ void timer_enable(uint8_t id)
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable timer
+ * @param       [in/out]  id           timer id
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer_disable(uint8_t id)
 {
@@ -224,8 +373,17 @@ void timer_disable(uint8_t id)
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer0 init
+ * @param       [in/out]  tick           timing
+ * @param       [in/out]  *func          timer handle function
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
-void timer0_init(uint32_t tick, void (*func)(void))
+void timer0_base_init(uint32_t tick, void (*func)(void))
 {
     SysTick->LOAD  = (uint32_t)(MCU_CLOCK_FREQ/8000*tick-1);                        
     SysTick->VAL   = 0;                                             
@@ -234,29 +392,56 @@ void timer0_init(uint32_t tick, void (*func)(void))
     
     if(func != NULL)
     {
-        MCU_TICK_FUNTION = func;
+        TickHandleFunction = func;
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer0 start
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer0_start(void)
 {
     SysTick->CTRL |= (uint32_t)0x01;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer0 stop
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void timer0_stop(void)
 {
     SysTick->CTRL &= ~((uint32_t)0x01);
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer base init
+ * @param       [in/out]  id              timer id
+ * @param       [in/out]  tick            timing
+ * @param       [in/out]  *func           timer handle function
+ * @return      [in/out]  HAL_ERR_NONE    init success
+ * @return      [in/out]  HAL_ERR_FAIL    init failed
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 hal_err_t timer_base_init(uint8_t id, uint32_t tick, void (*func)(void))
 {
     switch(id)
     {
         case MCU_TIMER_0:
-            timer0_init(tick, func);
+            timer0_base_init(tick, func);
             break;
         case MCU_TIMER_1:
             break; 
@@ -275,12 +460,22 @@ hal_err_t timer_base_init(uint8_t id, uint32_t tick, void (*func)(void))
         case MCU_TIMER_8:
             break;    
         default:
-            break;
+            return HAL_ERR_FAIL;
+//            break;
     }
     
     return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer start
+ * @param       [in/out]  id              timer id
+ * @return      [in/out]  HAL_ERR_NONE    start success
+ * @return      [in/out]  HAL_ERR_FAIL    start failed
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 hal_err_t timer_start(uint8_t id)
 {
@@ -306,12 +501,22 @@ hal_err_t timer_start(uint8_t id)
         case MCU_TIMER_8:
             break;    
         default:
-            break;
+            return HAL_ERR_FAIL;
+//            break;
     }
 
     return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer stop
+ * @param       [in/out]  id              timer id
+ * @return      [in/out]  HAL_ERR_NONE    stop success
+ * @return      [in/out]  HAL_ERR_FAIL    stop failed
+ * @note        None
+ *******************************************************************************
+ */
 __STATIC_INLINE
 hal_err_t timer_stop(uint8_t id)
 {
@@ -337,91 +542,301 @@ hal_err_t timer_stop(uint8_t id)
         case MCU_TIMER_8:
             break;    
         default:
-            break;
+            return HAL_ERR_FAIL;
+//            break;
     }
     
     return HAL_ERR_NONE;
 }
 
 /* Exported functions --------------------------------------------------------*/
-void msp_timer_enable(uint8_t id)
+/**
+ *******************************************************************************
+ * @brief       timer enable
+ * @param       [in/out]  id              timer id
+ * @return      [in/out]  HAL_ERR_NONE    enable success
+ * @return      [in/out]  HAL_ERR_FAIL    enable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspTimerEnable(uint8_t id)
 {
-    hal_assert(IS_TIMER_ID_INVAILD(id));
+#if USE_HAL_TIMER_DEBUG
+    if( IS_TIMER_ID_INVAILD(id) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif
     
     timer_enable(id);
+    
+    return HAL_ERR_NONE;
 }
 
-void msp_timer_disable(uint8_t id)
+/**
+ *******************************************************************************
+ * @brief       timer disable
+ * @param       [in/out]  id              timer id
+ * @return      [in/out]  HAL_ERR_NONE    disable success
+ * @return      [in/out]  HAL_ERR_FAIL    disable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspTimerDisable(uint8_t id)
 {
-    hal_assert(IS_TIMER_ID_INVAILD(id));
+#if USE_HAL_TIMER_DEBUG
+    if( IS_TIMER_ID_INVAILD(id) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif
     
     timer_disable(id);
-}
-
-void msp_timer_base_init(uint8_t id, uint32_t tick, void (*func)(void))
-{
-    hal_assert(IS_TIMER_ID_INVAILD(id));
     
-    timer_base_init(id, tick, func); 
+    return HAL_ERR_NONE;
 }
 
-void msp_timer_start(uint8_t id)
+/**
+ *******************************************************************************
+ * @brief       timer start
+ * @param       [in/out]  id              timer id
+ * @return      [in/out]  HAL_ERR_NONE    start success
+ * @return      [in/out]  HAL_ERR_FAIL    start failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspTimerStart(uint8_t id)
 {
-    hal_assert(IS_TIMER_ID_INVAILD(id));
+#if USE_HAL_TIMER_DEBUG
+    if( IS_TIMER_ID_INVAILD(id) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif
     
     timer_start(id); 
+    
+    return HAL_ERR_NONE;
 }
 
-void msp_timer_stop(uint8_t id)
+/**
+ *******************************************************************************
+ * @brief       timer stop
+ * @param       [in/out]  id              timer id
+ * @return      [in/out]  HAL_ERR_NONE    stop success
+ * @return      [in/out]  HAL_ERR_FAIL    stop failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspTimerStop(uint8_t id)
 {
-    hal_assert(IS_TIMER_ID_INVAILD(id));
+#if USE_HAL_TIMER_DEBUG
+    if( IS_TIMER_ID_INVAILD(id) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif
     
     timer_stop(id); 
-}
-
-void map_timer_enable(struct map_timer_t *timer)
-{
-    hal_assert(IS_PTR_NULL(timer));
-    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
     
-    timer_enable(timer->id);
+    return HAL_ERR_NONE;
 }
 
-void map_timer_disable(struct map_timer_t *timer)
+/**
+ *******************************************************************************
+ * @brief       timer base init
+ * @param       [in/out]  id              timer id
+ * @param       [in/out]  tick            timing
+ * @param       [in/out]  *func           timer handle function
+ * @return      [in/out]  HAL_ERR_NONE    init success
+ * @return      [in/out]  HAL_ERR_FAIL    init failed
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
+hal_err_t MspTimerBaseInit(uint8_t id, uint32_t tick, void (*func)(void))
 {
-    hal_assert(IS_PTR_NULL(timer));
-    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
+#if USE_HAL_TIMER_DEBUG
+    if( IS_TIMER_ID_INVAILD(id) )
+    {
+        return HAL_ERR_FAIL;
+    }
     
-    timer_disable(timer->id);
+    if( func == NULL )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif
+    
+    timer_base_init(id, tick, func); 
+    
+    return HAL_ERR_NONE;
 }
 
-void map_timer_base_init(struct map_timer_t *timer, uint32_t tick, void (*func)(void))
+/**
+ *******************************************************************************
+ * @brief       timer enable
+ * @param       [in/out]  *timer          timer block
+ * @return      [in/out]  HAL_ERR_NONE    enable success
+ * @return      [in/out]  HAL_ERR_FAIL    enable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MapTimerEnable(struct MapTimerBlock *timer)
+{   
+#if USE_HAL_TIMER_DEBUG
+    if( timer == NULL )
+    {
+        return HAL_ERR_FAIL;
+    }
+    
+    if( IS_TIMER_ID_INVAILD(timer->ID) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif  
+
+    timer_enable(timer->ID);
+
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       timer disable
+ * @param       [in/out]  *timer          timer block
+ * @return      [in/out]  HAL_ERR_NONE    disable success
+ * @return      [in/out]  HAL_ERR_FAIL    disable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MapTimerDisable(struct MapTimerBlock *timer)
 {
-    hal_assert(IS_PTR_NULL(timer));
-    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
+#if USE_HAL_TIMER_DEBUG
+    if( timer == NULL )
+    {
+        return HAL_ERR_FAIL;
+    }
     
-    timer_base_init(timer->id, tick, func); 
+    if( IS_TIMER_ID_INVAILD(timer->ID) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif  
+    
+    timer_disable(timer->ID);
+    
+    return HAL_ERR_NONE;
 }
 
-void map_timer_start(struct map_timer_t *timer)
+/**
+ *******************************************************************************
+ * @brief       timer start
+ * @param       [in/out]  *timer          timer block
+ * @return      [in/out]  HAL_ERR_NONE    start success
+ * @return      [in/out]  HAL_ERR_FAIL    start failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MapTimerStart(struct MapTimerBlock *timer)
 {
-    hal_assert(IS_PTR_NULL(timer));
-    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
+#if USE_HAL_TIMER_DEBUG
+    if( timer == NULL )
+    {
+        return HAL_ERR_FAIL;
+    }
     
-    timer_start(timer->id); 
+    if( IS_TIMER_ID_INVAILD(timer->ID) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif  
+    
+    timer_start(timer->ID); 
+    
+    return HAL_ERR_NONE;
 }
 
-void map_timer_stop(struct map_timer_t *timer)
+/**
+ *******************************************************************************
+ * @brief       timer stop
+ * @param       [in/out]  *timer          timer block
+ * @return      [in/out]  HAL_ERR_NONE    stop success
+ * @return      [in/out]  HAL_ERR_FAIL    stop failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MapTimerStop(struct MapTimerBlock *timer)
 {
-    hal_assert(IS_PTR_NULL(timer));
-    hal_assert(IS_TIMER_ID_INVAILD(timer->id));
+#if USE_HAL_TIMER_DEBUG
+    if( timer == NULL )
+    {
+        return HAL_ERR_FAIL;
+    }
     
-    timer_stop(timer->id); 
+    if( IS_TIMER_ID_INVAILD(timer->ID) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif  
+    
+    timer_stop(timer->ID); 
+    
+    return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       timer base init
+ * @param       [in/out]  *timer          timer block
+ * @param       [in/out]  tick            timing
+ * @param       [in/out]  *func           timer handle function
+ * @return      [in/out]  HAL_ERR_NONE    init success
+ * @return      [in/out]  HAL_ERR_FAIL    init failed
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
+hal_err_t MapTimerBaseInit(struct MapTimerBlock *timer, uint32_t tick, void (*func)(void))
+{
+#if USE_HAL_TIMER_DEBUG
+    if( func == NULL )
+    {
+        return HAL_ERR_FAIL;
+    }
+    
+    if( timer == NULL )
+    {
+        return HAL_ERR_FAIL;
+    }
+    
+    if( IS_TIMER_ID_INVAILD(timer->ID) )
+    {
+        return HAL_ERR_FAIL;
+    }
+#endif
+    
+    timer_base_init(timer->ID, tick, func); 
+    
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       SysTick Timer Handle Function
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        this function is interrupt handle function
+ *******************************************************************************
+ */
 void SysTick_Handler(void)
 {
-    MCU_TICK_FUNTION();
+#if USE_HAL_TIMER_DEBUG
+    if(TickHandleFunction == NULL)
+    {
+        return;
+    }
+#endif
+    
+    TickHandleFunction();
 }
 
 /** @}*/     /* gpio component  */

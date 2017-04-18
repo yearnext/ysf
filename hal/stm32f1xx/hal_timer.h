@@ -47,14 +47,57 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-
+#include _HAL_PATH
+    
 /* Exported macro ------------------------------------------------------------*/
-#define USE_MSP_TIMER_API  (1)
-#define USE_MAP_TIMER_API  (1)  
+/**
+ *******************************************************************************
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
+ *******************************************************************************
+ */
+#ifdef USE_MCU_TIMER_COMPONENT
+#if USE_MCU_TIMER_COMPONENT
+    #define USE_MSP_TIMER_COMPONENT                                          (1)
+    #define USE_MAP_TIMER_COMPONENT                                          (1)  
+#else
+    #define USE_MSP_TIMER_COMPONENT                                          (0)
+    #define USE_MAP_TIMER_COMPONENT                                          (0)  
+#endif
+
+#if USE_HAL_DEBUG
+    #define USE_HAL_TIMER_DEBUG                                              (1)
+#else
+    #define USE_HAL_TIMER_DEBUG                                              (0)
+#endif
+    
+/**
+ *******************************************************************************
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
+ *******************************************************************************
+ */
+#else
+    #define USE_MSP_TIMER_COMPONENT                                          (1)
+    #define USE_MAP_TIMER_COMPONENT                                          (1)  
+    #define USE_HAL_TIMER_DEBUG                                              (1)
+#endif
  
-#define MCU_TICK_TIMER     MCU_TIMER_0
+/**
+ *******************************************************************************
+ * @brief       define tick timer symbol
+ *******************************************************************************
+ */
+#define MCU_TICK_TIMER                                               MCU_TIMER_0
     
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define timer id
+ *******************************************************************************
+ */
 enum
 {
     MCU_TIMER_0 = 0,
@@ -69,48 +112,82 @@ enum
     
     MCU_TIMER_MAX,
 };
-    
-struct map_timer_t
-{
-    uint8_t id;
-};
-
-struct MSP_TIMER_API
+  
+/**
+ *******************************************************************************
+ * @brief       define msp timer interface
+ *******************************************************************************
+ */
+typedef struct
 {    
-    void (*enable)(uint8_t);
-    void (*disable)(uint8_t);
+    hal_err_t (*Enable)(uint8_t);
+    hal_err_t (*Disable)(uint8_t);
     
-    void (*start)(uint8_t);
-    void (*stop)(uint8_t);
+    hal_err_t (*Start)(uint8_t);
+    hal_err_t (*Stop)(uint8_t);
     
     struct
     {
-        void (*base)(uint8_t, uint32_t, void(*)(void));
+        hal_err_t (*Base)(uint8_t, uint32_t, void(*)(void));
     }init;
-};
-    
-struct MAP_TIMER_API
+}MspTimerInterface;
+ 
+/**
+ *******************************************************************************
+ * @brief       define map timer type
+ *******************************************************************************
+ */
+struct MapTimerBlock
 {
-    void (*enable)(struct map_timer_t *timer);
-    void (*disable)(struct map_timer_t *timer);
+    uint8_t ID;
 };
+
+/**
+ *******************************************************************************
+ * @brief       define map timer interface
+ *******************************************************************************
+ */
+typedef struct
+{
+    hal_err_t (*Enable)(struct MapTimerBlock *timer);
+    hal_err_t (*Disable)(struct MapTimerBlock *timer);
+}MapTimerBlockInterface;
     
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-extern void msp_timer_init(uint8_t);
-extern void msp_timer_fini(uint8_t);
-extern void msp_timer_base_init(uint8_t, uint32_t, void (*)(void));
+/**
+ *******************************************************************************
+ * @brief       define msp timer api
+ *******************************************************************************
+ */
+#if USE_MSP_TIMER_COMPONENT
+extern hal_err_t MspTimerEnable(uint8_t);
+extern hal_err_t MspTimerDisable(uint8_t);
+extern hal_err_t MspTimerStart(uint8_t);
+extern hal_err_t MspTimerStop(uint8_t);
+extern hal_err_t MspTimerBaseInit(uint8_t, uint32_t, void (*)(void));
+#endif
 
-//extern void map_timer_init(struct ysf_msp_timer_t*);
-//extern void map_timer_fini(struct ysf_msp_timer_t*);
+/**
+ *******************************************************************************
+ * @brief       define map timer api
+ *******************************************************************************
+ */
+#if USE_MAP_TIMER_COMPONENT
+extern hal_err_t MapTimerEnable(struct MapTimerBlock*);
+extern hal_err_t MapTimerDisable(struct MapTimerBlock*);
+extern hal_err_t MapTimerStart(struct MapTimerBlock*);
+extern hal_err_t MapTimerStop(struct MapTimerBlock*);
+extern hal_err_t MapTimerBaseInit(struct MapTimerBlock*, uint32_t, void (*)(void));
+#endif
 
-//extern void SysTick_Handler(void);
-
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
-#endif       /** end include define */
+/* End include define---------------------------------------------------------*/
+#endif
 
 /** @}*/     /* gpio component  */
 

@@ -52,11 +52,38 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define gpio use status
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
  *******************************************************************************
- */ 
-#define USE_MSP_GPIO_API (1)
-#define USE_MAP_GPIO_API (1)
+ */
+#ifdef USE_MCU_GPIO_COMPONENT
+#if USE_MCU_GPIO_COMPONENT
+    #define USE_MSP_GPIO_COMPONENT                                           (1)
+    #define USE_MAP_GPIO_COMPONENT                                           (1)  
+#else
+    #define USE_MSP_GPIO_COMPONENT                                           (0)
+    #define USE_MAP_GPIO_COMPONENT                                           (0)  
+#endif
+
+#if USE_HAL_DEBUG
+    #define USE_HAL_GPIO_DEBUG                                               (1)
+#else
+    #define USE_HAL_GPIO_DEBUG                                               (0)
+#endif
+    
+/**
+ *******************************************************************************
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
+ *******************************************************************************
+ */
+#else
+    #define USE_MSP_GPIO_COMPONENT                                           (1)
+    #define USE_MAP_GPIO_COMPONENT                                           (1)  
+    #define USE_HAL_GPIO_DEBUG                                               (1)
+#endif
  
 /**
  *******************************************************************************
@@ -154,118 +181,118 @@ enum
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define gpio type
+ * @brief      define msp gpio interface
+ *******************************************************************************
+ */   
+typedef struct
+{
+    hal_err_t          (*Enable)(uint8_t);
+    hal_err_t          (*Disable)(uint8_t);
+    
+	struct
+	{
+        hal_err_t      (*Init)(uint8_t, uint8_t, uint8_t);
+        hal_err_t      (*Fini)(uint8_t, uint8_t);
+        
+        bool           (*Get)(uint8_t, uint8_t);
+	}input;
+	
+	struct
+	{
+        hal_err_t      (*Init)(uint8_t, uint8_t, uint8_t);
+        hal_err_t      (*Fini)(uint8_t, uint8_t);
+        
+        bool           (*Get)(uint8_t, uint8_t);
+        void           (*Set)(uint8_t, uint8_t);
+        void           (*Clr)(uint8_t, uint8_t);
+	}output;
+    
+    struct
+    {
+        hal_err_t      (*Init)(uint8_t, uint8_t, uint8_t);
+        hal_err_t      (*Fini)(uint8_t, uint8_t);
+    }multi;
+}MspGPIOInterface;
+  
+/**
+ *******************************************************************************
+ * @brief      define map gpio
  *******************************************************************************
  */    
-struct map_gpio_t
+struct MapGPIO
 {
-    uint8_t port;
-    uint8_t pin;
+    uint8_t Port;
+    uint8_t Pin;
 };
   
+/**
+ *******************************************************************************
+ * @brief      define map gpio interface
+ *******************************************************************************
+ */   
+typedef struct
+{
+    hal_err_t          (*Enable)(struct MapGPIO*);
+    hal_err_t          (*Disable)(struct MapGPIO*);
+    
+	struct
+	{
+        hal_err_t      (*Init)(struct MapGPIO*, uint8_t);
+        hal_err_t      (*Fini)(struct MapGPIO*);
+        
+        bool           (*Get)(struct MapGPIO*);
+	}input;
+	
+	struct
+	{
+        hal_err_t      (*Init)(struct MapGPIO*, uint8_t);
+        hal_err_t      (*Fini)(struct MapGPIO*);
+        
+        bool           (*Get)(struct MapGPIO*);
+        void           (*Set)(struct MapGPIO*);
+        void           (*Clr)(struct MapGPIO*);
+	}output;
+    
+    struct
+    {
+        hal_err_t      (*Init)(struct MapGPIO*, uint8_t);
+        hal_err_t      (*Fini)(struct MapGPIO*);
+    }multi;
+}MapGPIOInterface;
+    
+/* Exported variables --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define msp gpio api
  *******************************************************************************
  */   
-struct MSP_GPIO_API
-{
-    hal_err_t          (*open)(uint8_t);
-    hal_err_t          (*close)(uint8_t);
-    
-	struct
-	{
-        hal_err_t      (*init)(uint8_t, uint8_t, uint8_t);
-        hal_err_t      (*fini)(uint8_t, uint8_t);
-        
-        bool           (*get)(uint8_t, uint8_t);
-	}input;
-	
-	struct
-	{
-        hal_err_t      (*init)(uint8_t, uint8_t, uint8_t);
-        hal_err_t      (*fini)(uint8_t, uint8_t);
-        
-        bool           (*get)(uint8_t, uint8_t);
-        void           (*set)(uint8_t, uint8_t);
-        void           (*clr)(uint8_t, uint8_t);
-	}output;
-    
-    struct
-    {
-        hal_err_t      (*init)(uint8_t, uint8_t, uint8_t);
-        hal_err_t      (*fini)(uint8_t, uint8_t);
-    }multi;
-};
+#if USE_MSP_GPIO_API
+extern hal_err_t MspGPIOEnable(uint8_t);
+extern hal_err_t MspGPIODisable(uint8_t);
+extern hal_err_t MspGPIOFini(uint8_t, uint8_t, uint8_t);
+extern hal_err_t MspGPIOFini(uint8_t, uint8_t);
+extern void MspGPIOSet(uint8_t, uint8_t);
+extern void MspGPIOClr(uint8_t, uint8_t);
+extern bool MspGPIOGetInputStatus(uint8_t, uint8_t);
+extern bool MspGPIOGetOutputStatus(uint8_t, uint8_t);
+#endif
+
   
 /**
  *******************************************************************************
  * @brief      define map gpio api
  *******************************************************************************
  */   
-struct MAP_GPIO_API
-{
-    hal_err_t          (*open)(struct map_gpio_t*);
-    hal_err_t          (*close)(struct map_gpio_t*);
-    
-	struct
-	{
-        hal_err_t      (*init)(struct map_gpio_t*, uint8_t);
-        hal_err_t      (*fini)(struct map_gpio_t*);
-        
-        bool           (*get)(struct map_gpio_t*);
-	}input;
-	
-	struct
-	{
-        hal_err_t      (*init)(struct map_gpio_t*, uint8_t);
-        hal_err_t      (*fini)(struct map_gpio_t*);
-        
-        bool           (*get)(struct map_gpio_t*);
-        void           (*set)(struct map_gpio_t*);
-        void           (*clr)(struct map_gpio_t*);
-	}output;
-    
-    struct
-    {
-        hal_err_t      (*init)(struct map_gpio_t*, uint8_t);
-        hal_err_t      (*fini)(struct map_gpio_t*);
-    }multi;
-};
-    
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      msp gpio interface
- *******************************************************************************
- */   
-#if USE_MSP_GPIO_API
-extern hal_err_t msp_gpio_enable(uint8_t);
-extern hal_err_t msp_gpio_disable(uint8_t);
-extern hal_err_t msp_gpio_init(uint8_t, uint8_t, uint8_t);
-extern hal_err_t msp_gpio_fini(uint8_t, uint8_t);
-extern void msp_gpio_set(uint8_t, uint8_t);
-extern void msp_gpio_clr(uint8_t, uint8_t);
-extern bool msp_gpio_get_input(uint8_t, uint8_t);
-extern bool msp_gpio_get_output(uint8_t, uint8_t);
-#endif
-
-  
-/**
- *******************************************************************************
- * @brief      map gpio interface
- *******************************************************************************
- */   
 #if USE_MAP_GPIO_API
-extern hal_err_t map_gpio_enable(struct map_gpio_t*);
-extern hal_err_t map_gpio_disable(struct map_gpio_t*);
-extern hal_err_t map_gpio_init(struct map_gpio_t*, uint8_t);
-extern hal_err_t map_gpio_fini(struct map_gpio_t*);
-extern void map_gpio_set(struct map_gpio_t*);
-extern void map_gpio_clr(struct map_gpio_t*);
-extern bool map_gpio_get_input(struct map_gpio_t*);
-extern bool map_gpio_get_output(struct map_gpio_t*);
+extern hal_err_t MapGPIOEnable(struct MapGPIO*);
+extern hal_err_t MapGPIODisable(struct MapGPIO*);
+extern hal_err_t MapGPIOFini(struct MapGPIO*, uint8_t);
+extern hal_err_t MapGPIOFini(struct MapGPIO*);
+extern void MapGPIOSet(struct MapGPIO*);
+extern void MapGPIOClr(struct MapGPIO*);
+extern bool MapGPIOGetInputStatus(struct MapGPIO*);
+extern bool MapGPIOGetOutputStatus(struct MapGPIO*);
 #endif
 
 #ifdef __cplusplus
