@@ -65,7 +65,7 @@
 /**
   * @brief Configuration of the Cortex-M3 Processor and Core Peripherals 
  */
- #define __MPU_PRESENT             0      /*!< Other STM32 devices does not provide an MPU  */
+#define __MPU_PRESENT             0      /*!< Other STM32 devices does not provide an MPU  */
 #define __CM3_REV                 0x0200  /*!< Core Revision r2p0                           */
 #define __NVIC_PRIO_BITS          4       /*!< STM32 uses 4 Bits for the Priority Levels    */
 #define __Vendor_SysTickConfig    0       /*!< Set to 1 if different SysTick Config is used */
@@ -167,7 +167,7 @@ typedef enum
 #include "core_path.h"
 #include _HAL_PATH
 #include _HAL_STM32F1XX_CMSIS_CM3_PATH
-#include _HAL_STM32F103XE_MAL_PATH    
+#include _HAL_STM32F103XE_MAL_PATH
 
 /** @addtogroup Peripheral_registers_structures
   * @{
