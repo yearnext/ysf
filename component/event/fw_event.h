@@ -98,9 +98,9 @@ typedef struct
  *******************************************************************************
  */
 #if USE_EVENT_COMPONENT
-extern fw_err_t EventComponentInit(void);
-extern fw_err_t EventPost(uint16_t);
-extern fw_err_t EventRead(uint16_t*);
+extern fw_err_t InitEventComponent(void);
+extern fw_err_t PostEvent(uint16_t);
+extern fw_err_t GetEvent(uint16_t*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -110,6 +110,6 @@ extern fw_err_t EventRead(uint16_t*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** event component  */
+/** @}*/     /** event component */
 
 /**********************************END OF FILE*********************************/

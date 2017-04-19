@@ -110,7 +110,7 @@ bool timer_is_in(struct TimerBlock *timer)
 __STATIC_INLINE
 fw_err_t timer_push(struct TimerBlock *timer)
 {
-    SingleLinkListFifoPush(timer_is_in, TimerControlBlock, timer);
+    PushSingleLinkListFifoNode(timer_is_in, TimerControlBlock, timer);
     
     return FW_ERR_NONE;
 }
@@ -128,7 +128,7 @@ struct TimerBlock *timer_pop(void)
 {
     struct TimerBlock *timer = NULL;
     
-    SingleLinkListFifoPop(TimerControlBlock, timer);
+    PopSingleLinkListFifoNode(TimerControlBlock, timer);
     
     return timer;
 }
@@ -157,7 +157,7 @@ fw_err_t timer_clear(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t TimerComponentInit( void )
+fw_err_t InitTimerComponent( void )
 {
     timer_clear();
     
@@ -177,10 +177,8 @@ fw_err_t TimerComponentInit( void )
  */
 fw_err_t InitCallBackTimer(struct TimerBlock *timer, fw_err_t (*func)(void*), void *param)
 {
-    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_PTR_NULL(func));
     
     timer->Task.Handler.CallBack = func;
     timer->Task.Param            = param;
@@ -202,10 +200,8 @@ fw_err_t InitCallBackTimer(struct TimerBlock *timer, fw_err_t (*func)(void*), vo
  */
 fw_err_t InitEventHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(uint16_t), uint16_t evt)
 {
-    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_PTR_NULL(func));
     
     timer->Task.Handler.Event = func;
     timer->Task.Event         = evt;
@@ -229,10 +225,8 @@ fw_err_t InitEventHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(uint16_
  */
 fw_err_t InitMessageHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
-    if(IS_PTR_NULL(timer) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_PTR_NULL(func));
     
     timer->Task.Handler.Message = func;
     timer->Task.Param           = param;
@@ -255,18 +249,12 @@ fw_err_t InitMessageHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(void*
 struct TimerBlock *InitCallBackExTimer(fw_err_t (*func)(void*), void *param)
 {
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    if(IS_PTR_NULL(func))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(func));
     
-    struct TimerBlock *timer = (struct TimerBlock *)MemoryMalloc(sizeof(struct TimerBlock));
+    struct TimerBlock *timer = (struct TimerBlock *)MallocMemory(sizeof(struct TimerBlock));
     
-    if(IS_PTR_NULL(timer))
-    {
-        return NULL;
-    }
-    
+    fw_assert(IS_PTR_NULL(timer));
+
     timer->Task.Handler.CallBack = func;
     timer->Task.Param            = param;
     timer->Type                  = CALL_BACK_EX_TIMER;
@@ -289,12 +277,11 @@ struct TimerBlock *InitCallBackExTimer(fw_err_t (*func)(void*), void *param)
 struct TimerBlock *InitEventHandleExTimer(fw_err_t (*func)(uint16_t), uint16_t evt)
 {
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    struct TimerBlock *timer = (struct TimerBlock *)MemoryMalloc(sizeof(struct TimerBlock));
+    fw_assert(IS_PTR_NULL(func));
     
-    if(IS_PTR_NULL(timer))
-    {
-        return NULL;
-    }
+    struct TimerBlock *timer = (struct TimerBlock *)MallocMemory(sizeof(struct TimerBlock));
+    
+    fw_assert(IS_PTR_NULL(timer));
     
     timer->Task.Handler.Event = func;
     timer->Task.Event         = evt;
@@ -320,17 +307,11 @@ struct TimerBlock *InitEventHandleExTimer(fw_err_t (*func)(uint16_t), uint16_t e
 struct TimerBlock *InitMessageHandleExTimer(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    if(IS_PTR_NULL(func))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(func));
     
-    struct TimerBlock *timer = (struct TimerBlock *)MemoryMalloc(sizeof(struct TimerBlock));
+    struct TimerBlock *timer = (struct TimerBlock *)MallocMemory(sizeof(struct TimerBlock));
     
-    if(IS_PTR_NULL(timer))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(timer));
     
     timer->Task.Handler.Message = func;
     timer->Task.Param           = param;
@@ -354,12 +335,9 @@ struct TimerBlock *InitMessageHandleExTimer(fw_err_t (*func)(void*, uint16_t), v
  * @note        None
  *******************************************************************************
  */
-fw_err_t TimerArm(struct TimerBlock *timer, uint32_t ticks, int16_t cycles)
+fw_err_t ArmTimerModule(struct TimerBlock *timer, uint32_t ticks, int16_t cycles)
 {
-    if(IS_PTR_NULL(timer))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(timer));
     
     timer->SetTicks  = ticks;
     timer->LoadTicks = ticks;
@@ -379,12 +357,9 @@ fw_err_t TimerArm(struct TimerBlock *timer, uint32_t ticks, int16_t cycles)
  * @note        None
  *******************************************************************************
  */
-fw_err_t TimerDisarm(struct TimerBlock *timer)
+fw_err_t DisarmTimerModule(struct TimerBlock *timer)
 {
-    if(IS_PTR_NULL(timer))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(timer));
     
     TIMER_DISABLE(timer);
     
@@ -404,10 +379,7 @@ fw_err_t TimerDisarm(struct TimerBlock *timer)
 __STATIC_INLINE
 bool is_timer_trigger(struct TimerBlock *timer, uint32_t ticks)
 {    
-//    if( IS_PTR_NULL(timer) )
-//    {
-//        return false;
-//    }
+//    fw_assert(IS_PTR_NULL(timer));
     
     if( ticks >= timer->SetTicks )
     {
@@ -508,7 +480,7 @@ void timer_walk(uint32_t tick)
 #endif      
             if( IsSingleLinkListHead(TimerControlBlock, now) )
             {
-                SingleLinkListHeadWrite(TimerControlBlock, now->Next);
+                UpdateSingleLinkListHead(TimerControlBlock, now->Next);
                 
                 now->Next  = NULL;
                 now        = GetSingleLinkListHead(TimerControlBlock);
@@ -518,7 +490,7 @@ void timer_walk(uint32_t tick)
                 last->Next = NULL;
                 now->Next  = NULL;
                 
-                SingleLinkListTailWrite(TimerControlBlock, last);
+                UpdateSingleLinkListTail(TimerControlBlock, last);
             }
             else
             { 
@@ -532,9 +504,9 @@ void timer_walk(uint32_t tick)
                 || del->Type == EVENT_HANDLE_EX_TIMER  
                 || del->Type == MESSAGE_HANDLE_EX_TIMER)
             {
-                if( MemoryIsIn(del) == true )
+                if( IsInMemory(del) == true )
                 {
-                    MemoryFree(del);
+                    FreeMemory(del);
                 }
             }
 #endif
@@ -590,6 +562,24 @@ bool GetTimerStatus(struct TimerBlock *timer)
     }
     
     return false;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add timer to timer queue
+ * @param       [in/out]  *timer               timer block
+ * @return      [in/out]  FW_ERR_NONE          add success
+ * @return      [in/out]  FW_ERR_FAIL          add failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t AddTimerToQueue(struct TimerBlock *timer)
+{
+    fw_assert(IS_PTR_NULL(timer));
+       
+    PushSingleLinkListFifoNode(timer_is_in, TimerControlBlock, timer);
+    
+    return FW_ERR_NONE;
 }
 
 #endif

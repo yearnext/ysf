@@ -80,7 +80,7 @@ extern "C"
  * @brief       core tick time(unit: ms)
  *******************************************************************************
  */
-#define CORE_TICK_PERIOD                                                    (10)
+#define CORE_TICK_PERIOD                                                  (10UL)
     
 /**
  *******************************************************************************
@@ -89,8 +89,17 @@ extern "C"
  * @note        0                       disable
  *******************************************************************************
  */
+#define USE_FRAMEWORK_COMPONENT_LIBRARY                                      (1)
+
+/**
+ *******************************************************************************
+ * @brief      frameowrk component config <user config in>
+ *******************************************************************************
+ */
+#if USE_FRAMEWORK_COMPONENT_LIBRARY
 #define USE_FRAMEWORK_DEBUG                                                  (1)
-#define USE_STD_LIBRARY                                                      (0)
+#define USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT                               (0)
+
 #define USE_FRAMEWORK_BUFFER_COMPONENT                                       (1)
 #define USE_FRAMEWORK_DEBUG_COMPONENT                                        (1)
 #define USE_FRAMEWORK_EVENT_COMPONENT                                        (0)
@@ -101,6 +110,7 @@ extern "C"
 #define USE_FRAMEWORK_TIMER_COMPONENT                                        (1)
 #define USE_FRAMEWORK_TASK_COMPONENT                                         (1)
 #define USE_FRAMEWORK_PT_COMPONENT                                           (1)
+#endif
 
 /**
  *******************************************************************************
@@ -138,18 +148,6 @@ __DEFINE_EVENT_END
 
 #define __TARGET_CHIP__                                        USE_MCU_STM32F1xx
        
-/**
- *******************************************************************************
- * @brief       define hal component config flags 
- * @note        1                         enable
- * @note        0                         disable
- *******************************************************************************
- */
-#define USE_HAL_DEBUG                                                        (1)
-#define USE_MCU_GPIO_COMPONENT                                               (1)
-#define USE_MCU_TIMER_COMPONENT                                              (1)
-#define USE_MCU_USART_COMPONENT                                              (1)
-
 /**
  *******************************************************************************
  * @brief      define constants must be defined
@@ -204,6 +202,28 @@ __DEFINE_EVENT_END
  */
 #else
 	#error "The __TARGET_CHIP__ is not support type!"
+#endif
+
+/**
+ *******************************************************************************
+ * @brief       define hal component config flags 
+ * @note        1                         enable
+ * @note        0                         disable
+ *******************************************************************************
+ */
+#define USE_FRAMEWORK_HAL_LIBRARY                                            (1)
+
+/**
+ *******************************************************************************
+ * @brief      hal component config <user config in>
+ *******************************************************************************
+ */
+#if USE_FRAMEWORK_HAL_LIBRARY
+#define USE_HAL_DEBUG                                                        (1)
+
+#define USE_MCU_GPIO_COMPONENT                                               (1)
+#define USE_MCU_TIMER_COMPONENT                                              (1)
+#define USE_MCU_USART_COMPONENT                                              (1)
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

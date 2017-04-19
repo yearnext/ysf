@@ -42,7 +42,7 @@
 #include _FW_MEMORY_COMPONENT_PATH
 #include _FW_BUFFER_COMPONENT_PATH
 
-#if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
+#if defined(USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT) && USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
 #include <stdlib.h>
 #endif
 
@@ -86,10 +86,10 @@
  * @note        None
  *******************************************************************************
  */
-void MemoryComponentInit(void)
+void InitMemoryComponent(void)
 {
 #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    HeapComponentInit(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
+    InitHeapComponent(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
 #endif
 }
 
@@ -101,7 +101,7 @@ void MemoryComponentInit(void)
  * @note        None
  *******************************************************************************
  */
-void *MemoryMalloc(uint32_t size)
+void *MallocMemory(uint32_t size)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return malloc(size);
@@ -120,7 +120,7 @@ void *MemoryMalloc(uint32_t size)
  * @note        None
  *******************************************************************************
  */
-void MemoryFree(void *memory)
+void FreeMemory(void *memory)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     free(memory);
@@ -138,7 +138,7 @@ void MemoryFree(void *memory)
  * @note        None
  *******************************************************************************
  */
-bool MemoryIsIn(void *memory)
+bool IsInMemory(void *memory)
 {
 #if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return true;

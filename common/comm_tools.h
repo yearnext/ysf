@@ -95,7 +95,7 @@ extern "C"
  * @brief      MACRO
  *******************************************************************************
  */  
-#define INLINE_STATEMENT(n)              do                                    \
+#define _INLINE_STATEMENT(n)             do                                    \
                                          {                                     \
                                              n                                 \
                                          }while(0)
@@ -104,8 +104,15 @@ extern "C"
  *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
+ */ 
+#define _INLINE_MACRO_FUNCTION(code)     {code}
+                                         
+/**
+ *******************************************************************************
+ * @brief      MACRO
+ *******************************************************************************
  */                                           
-#define INLINE_PARAM_CHECK(n)            INLINE_STATEMENT( if(n) {return _ERR_INVAILD_PARAM;} )
+#define _INLINE_PARAM_CHECK(n)           _INLINE_MACRO_FUNCTION( if((n)) {return _ERR_FAIL;} )
 
 /**@} */
 /* Exported types ------------------------------------------------------------*/

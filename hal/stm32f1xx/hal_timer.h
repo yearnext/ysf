@@ -113,6 +113,7 @@ enum
     MCU_TIMER_MAX,
 };
   
+#if USE_MSP_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       define msp timer interface
@@ -129,19 +130,23 @@ typedef struct
     struct
     {
         hal_err_t (*Base)(uint8_t, uint32_t, void(*)(void));
-    }init;
+    }Init;
 }MspTimerInterface;
- 
+#endif
+
 /**
  *******************************************************************************
  * @brief       define map timer type
  *******************************************************************************
  */
-struct MapTimerBlock
+struct HalTimerBlock
 {
     uint8_t ID;
+    uint32_t Period;
+    void (*Handler)(void);
 };
 
+#if USE_MAP_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       define map timer interface
@@ -149,10 +154,19 @@ struct MapTimerBlock
  */
 typedef struct
 {
-    hal_err_t (*Enable)(struct MapTimerBlock *timer);
-    hal_err_t (*Disable)(struct MapTimerBlock *timer);
-}MapTimerBlockInterface;
+    hal_err_t (*Enable)(struct HalTimerBlock*);
+    hal_err_t (*Disable)(struct HalTimerBlock*);
     
+    hal_err_t (*Start)(struct HalTimerBlock*);
+    hal_err_t (*Stop)(struct HalTimerBlock*);
+    
+    struct
+    {
+        hal_err_t (*Base)(struct HalTimerBlock*);
+    }Init;
+}HalTimerInterface;
+#endif
+
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -161,11 +175,11 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MSP_TIMER_COMPONENT
-extern hal_err_t MspTimerEnable(uint8_t);
-extern hal_err_t MspTimerDisable(uint8_t);
-extern hal_err_t MspTimerStart(uint8_t);
-extern hal_err_t MspTimerStop(uint8_t);
-extern hal_err_t MspTimerBaseInit(uint8_t, uint32_t, void (*)(void));
+extern hal_err_t MspEnableTimer(uint8_t);
+extern hal_err_t MspDisableTimer(uint8_t);
+extern hal_err_t MspStartTimer(uint8_t);
+extern hal_err_t MspStopTimer(uint8_t);
+extern hal_err_t MspInitTimerBaseMode(uint8_t, uint32_t, void (*)(void));
 #endif
 
 /**
@@ -174,12 +188,19 @@ extern hal_err_t MspTimerBaseInit(uint8_t, uint32_t, void (*)(void));
  *******************************************************************************
  */
 #if USE_MAP_TIMER_COMPONENT
-extern hal_err_t MapTimerEnable(struct MapTimerBlock*);
-extern hal_err_t MapTimerDisable(struct MapTimerBlock*);
-extern hal_err_t MapTimerStart(struct MapTimerBlock*);
-extern hal_err_t MapTimerStop(struct MapTimerBlock*);
-extern hal_err_t MapTimerBaseInit(struct MapTimerBlock*, uint32_t, void (*)(void));
+extern hal_err_t HalEnableTimer(struct HalTimerBlock*);
+extern hal_err_t HalDisableTimer(struct HalTimerBlock*);
+extern hal_err_t HalStartTimer(struct HalTimerBlock*);
+extern hal_err_t HalStopTimer(struct HalTimerBlock*);
+extern hal_err_t HalInitTimerBaseMode(struct HalTimerBlock*);
 #endif
+
+/**
+ *******************************************************************************
+ * @brief      define hal timer interrupt server function
+ *******************************************************************************
+ */   
+extern void SysTick_Handler(void);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -189,6 +210,6 @@ extern hal_err_t MapTimerBaseInit(struct MapTimerBlock*, uint32_t, void (*)(void
 /* End include define---------------------------------------------------------*/
 #endif
 
-/** @}*/     /* gpio component  */
+/** @}*/     /** gpio component */
 
 /**********************************END OF FILE*********************************/

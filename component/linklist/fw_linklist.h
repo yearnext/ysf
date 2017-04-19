@@ -118,10 +118,10 @@ extern bool SingleListModuleDel(void**, void**, void**);
 extern bool SingleListModuleIsExist(void**, void**, void**);
 extern bool SingleListModuleFindLastNode(void **, void**, void**);
 
-extern fw_err_t SingleListComponentInit(void**);
-extern fw_err_t SingleListAdd(void**, void**);
-extern fw_err_t SingleListDel(void**, void**);
-extern fw_err_t SingleListIsExits(void**, void**);
+extern fw_err_t InitSingleListComponent(void**);
+extern fw_err_t AddNodeToSingleList(void**, void**);
+extern fw_err_t DelNodeFromSingleList(void**, void**);
+extern fw_err_t IsInSingleList(void**, void**);
 
 #endif
 
@@ -176,7 +176,7 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */    
-#define SingleLinkListFifoPush(isInFunc, block, pushData)                      \
+#define PushSingleLinkListFifoNode(isInFunc, block, pushData)                  \
 {                                                                              \
     if( isInFunc(pushData) == false )                                          \
     {                                                                          \
@@ -207,7 +207,7 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */   
-#define SingleLinkListFifoPop(block, popData)                                  \
+#define PopSingleLinkListFifoNode(block, popData)                              \
 {                                                                              \
     if( block.Head == NULL )                                                   \
     {                                                                          \
@@ -264,7 +264,7 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */
-#define SingleLinkListHeadWrite(block, node)             ((block).Head = (node))
+#define UpdateSingleLinkListHead(block, node)            ((block).Head = (node))
 
 /**
  *******************************************************************************
@@ -274,7 +274,7 @@ extern fw_err_t SingleListIsExits(void**, void**);
  * @note        None
  *******************************************************************************
  */
-#define SingleLinkListTailWrite(block, node)             ((block).Tail = (node))
+#define UpdateSingleLinkListTail(block, node)            ((block).Tail = (node))
 
 /**
  *******************************************************************************

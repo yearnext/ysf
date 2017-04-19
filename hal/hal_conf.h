@@ -62,10 +62,12 @@ extern "C"
  *******************************************************************************
  */
 #if USE_HAL_DEBUG
-    #define hal_assert(expr)                            INLINE_PARAM_CHECK(expr)
+    #define hal_param_check(expr)                      _INLINE_PARAM_CHECK(expr)
 #else
-    #define hal_assert(expr)
+    #define hal_param_check(expr)
 #endif
+    
+#define hal_assert(expr)                               hal_param_check(expr)
     
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

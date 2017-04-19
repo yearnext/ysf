@@ -143,13 +143,15 @@ typedef struct
  *******************************************************************************
  */
 #if USE_TIMER_COMPONENT
-extern fw_err_t TimerComponentInit(void);
+extern fw_err_t InitTimerComponent(void);
 extern fw_err_t TimerComponentHandle(uint16_t);
+
+extern fw_err_t AddTimerToQueue(struct TimerBlock*);
 
 extern bool GetTimerStatus(struct TimerBlock*);
 
-extern fw_err_t TimerArm(struct TimerBlock*, uint32_t, int16_t);                                          
-extern fw_err_t TimerDisarm(struct TimerBlock*); 
+extern fw_err_t ArmTimerModule(struct TimerBlock*, uint32_t, int16_t);                                          
+extern fw_err_t DisarmTimerModule(struct TimerBlock*); 
 
 extern fw_err_t InitCallBackTimer(struct TimerBlock*, fw_err_t (*)(void*), void*); 
 extern fw_err_t InitEventHandleTimer(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);

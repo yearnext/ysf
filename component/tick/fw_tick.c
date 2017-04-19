@@ -77,7 +77,7 @@ static struct TaskBlock TickTask =
  * @note        None
  *******************************************************************************
  */
-void TickInit( void )
+void InitTickComponent( void )
 {
     tick = 0;
 }

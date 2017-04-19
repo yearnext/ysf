@@ -64,6 +64,10 @@
 bool SingleListWalk(void **listHead, bool (*func)(void**, void**, void**),
                     void **ctx,      void **expand)
 {
+    fw_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(*listHead));
+    fw_assert(IS_PTR_NULL(func));
+    
     bool status = false;
     struct SingleList **sList = (struct SingleList **)listHead;
 
@@ -95,7 +99,7 @@ bool SingleListWalk(void **listHead, bool (*func)(void**, void**, void**),
  */
 bool SingleListModuleAdd(void **node, void **ctx, void **expand)
 {
-    _Assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
     struct SingleList *temp = (struct SingleList *)(*ctx);
@@ -137,7 +141,7 @@ bool SingleListModuleAdd(void **node, void **ctx, void **expand)
  */
 bool SingleListModuleDel( void **node, void **ctx, void **expand )
 {
-    _Assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     struct SingleList *now = (struct SingleList *)(*node);
     struct SingleList *next = (struct SingleList *)(*ctx);
@@ -183,7 +187,7 @@ bool SingleListModuleDel( void **node, void **ctx, void **expand )
  */
 bool SingleListModuleIsExist( void **node, void **ctx, void **expand )
 {
-    _Assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
 
@@ -239,9 +243,9 @@ bool SingleListModuleFindLastNode(void **node, void **ctx, void **expand)
  * @note        None
  *******************************************************************************
  */
-fw_err_t SingleListComponentInit( void **listHead )
+fw_err_t InitSingleListComponent( void **listHead )
 {
-    _Assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(listHead));
 
     *listHead = NULL;
 
@@ -258,10 +262,10 @@ fw_err_t SingleListComponentInit( void **listHead )
  * @note        None
  *******************************************************************************
  */
-fw_err_t SingleListAdd( void **listHead, void **ctx )
+fw_err_t AddNodeToSingleList( void **listHead, void **ctx )
 {
-    _Assert(IS_PTR_NULL(listHead));
-    _Assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleAdd, ctx, NULL) == false )
     {
@@ -281,10 +285,10 @@ fw_err_t SingleListAdd( void **listHead, void **ctx )
  * @note        None
  *******************************************************************************
  */
-fw_err_t SingleListDel( void **listHead, void **ctx )
+fw_err_t DelNodeFromSingleList( void **listHead, void **ctx )
 {
-    _Assert(IS_PTR_NULL(listHead));
-    _Assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleDel, ctx, NULL) == false )
     {
@@ -297,17 +301,17 @@ fw_err_t SingleListDel( void **listHead, void **ctx )
 /**
  *******************************************************************************
  * @brief       detection node is in signle list
- * @param       [in/out]  **listHead    now single link list node
- * @param       [in/out]  **ctx         wait detection node
+ * @param       [in/out]  **listHead   now single link list node
+ * @param       [in/out]  **ctx        wait detection node
  * @return      [in/out]  FW_ERR_FAIL  node not in list
  * @return      [in/out]  FW_ERR_NONE  node is in list
  * @note        None
  *******************************************************************************
  */
-fw_err_t SingleListIsExits( void **listHead, void **ctx )
+fw_err_t IsInSingleList( void **listHead, void **ctx )
 {
-    _Assert(IS_PTR_NULL(listHead));
-    _Assert(IS_PTR_NULL(*ctx));
+    fw_assert(IS_PTR_NULL(listHead));
+    fw_assert(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleIsExist, ctx, NULL) == false )
     {

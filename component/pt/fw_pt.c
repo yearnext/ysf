@@ -62,11 +62,9 @@
  */
 fw_err_t _pt_init(struct ProtoThreads *pt, _PT_THREAD_NAME)
 {
-    if(IS_PTR_NULL(pt) || IS_PTR_NULL(pt_thread))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
-    
+    fw_assert(IS_PTR_NULL(pt));
+    fw_assert(IS_PTR_NULL(pt_thread));
+
     pt->State     = 0;
     pt->Thread    = pt_thread;
     pt->UseStatus = true;
@@ -87,10 +85,8 @@ fw_err_t _pt_init(struct ProtoThreads *pt, _PT_THREAD_NAME)
  */
 fw_err_t _pt_arm(struct TaskBlock *task, struct ProtoThreads *pt)
 {
-    if(IS_PTR_NULL(task) || IS_PTR_NULL(pt))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(pt));
+    fw_assert(IS_PTR_NULL(task));
     
     CreateMessageHandleTask(task, pt->Thread, pt, FW_EVENT_NONE);
     
@@ -110,10 +106,7 @@ fw_err_t _pt_arm(struct TaskBlock *task, struct ProtoThreads *pt)
  */
 fw_err_t _pt_ex_arm(struct ProtoThreads *pt)
 {
-    if(IS_PTR_NULL(pt))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(pt));
 
     if(CreateMessageHandleExTask(pt->Thread, pt, FW_EVENT_NONE) == NULL)
     {
@@ -134,11 +127,8 @@ fw_err_t _pt_ex_arm(struct ProtoThreads *pt)
  */
 fw_err_t _pt_disarm(struct ProtoThreads *pt)
 {
-    if(IS_PTR_NULL(pt))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
-    
+    fw_assert(IS_PTR_NULL(pt));
+
     pt->UseStatus = false;
     
     return FW_ERR_NONE;

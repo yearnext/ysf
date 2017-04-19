@@ -54,22 +54,24 @@ extern "C"
  */
 #define _FW_TYPE_PATH                        "../component/fw_type.h"
 #define _FW_CONF_PATH                        "../component/fw_conf.h"
+#define _FW_INTERFACE_PATH                   "../component/fw_interface.h"
     
 /**
  *******************************************************************************
  * @brief      framework component path
  *******************************************************************************
  */
-#define _FW_TICK_COMPONENT_PATH               "../component/tick/fw_tick.h"
 #define _FW_BUFFER_COMPONENT_PATH             "../component/buffer/fw_buffer.h"
-#define _FW_MEMORY_COMPONENT_PATH             "../component/memory/fw_memory.h"
-#define _FW_TIMER_COMPONENT_PATH              "../component/timer/fw_timer.h"
-#define _FW_EVENT_COMPONENT_PATH              "../component/event/fw_event.h"
-#define _FW_SIGNAL_COMPONENT_PATH             "../component/signal/fw_signal.h"
 #define _FW_DEBUG_COMPONENT_PATH              "../component/debug/fw_debug.h"
+#define _FW_EVENT_COMPONENT_PATH              "../component/event/fw_event.h"
 #define _FW_LINK_LIST_COMPONENT_PATH          "../component/linklist/fw_linklist.h"
-#define _FW_PT_COMPONENT_PATH                 "../component/pt/fw_pt.h"
+#define _FW_MEMORY_COMPONENT_PATH             "../component/memory/fw_memory.h"
+#define _FW_SIGNAL_COMPONENT_PATH             "../component/signal/fw_signal.h"
+#define _FW_TICK_COMPONENT_PATH               "../component/tick/fw_tick.h"
+#define _FW_TIMER_COMPONENT_PATH              "../component/timer/fw_timer.h"
 #define _FW_TASK_COMPONENT_PATH               "../component/task/fw_task.h"
+#define _FW_PT_COMPONENT_PATH                 "../component/pt/fw_pt.h"
+
 
 /* Includes ------------------------------------------------------------------*/
 #include _FW_TYPE_PATH

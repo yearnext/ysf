@@ -147,7 +147,7 @@ typedef struct
     fw_err_t (*Handler)(uint16_t);
 
     fw_err_t (*Arm)(struct SignalBlock*, bool (*)(void), fw_err_t (*)(uint16_t));
-    struct SignalBlock *(*ExArm)(bool (*)(void), fw_err_t (*)(uint16_t));
+    struct SignalBlock *(*ArmEx)(bool (*)(void), fw_err_t (*)(uint16_t));
     
     fw_err_t (*Disarm)(struct SignalBlock*);
 }SignalComponentInterface;
@@ -161,18 +161,20 @@ typedef struct
  *******************************************************************************
  */
 #if USE_SIGNAL_COMPONENT
-extern fw_err_t SignalComponentInit(void);
-                                       
+extern fw_err_t InitSignalComponent(void);
+     
+extern fw_err_t AddSignalToQueue(struct SignalBlock*);
+
 extern fw_err_t SignalComponentPool(uint16_t);
 
-extern fw_err_t SignalArm(struct SignalBlock*, 
-                          bool (*)(void), 
-                          fw_err_t (*)(uint16_t) );
+extern fw_err_t ArmSignalModule(struct SignalBlock*, 
+                                bool (*)(void), 
+                                fw_err_t (*)(uint16_t) );
                                    
-extern struct SignalBlock *SignalExArm(bool (*)(void),
-                                       fw_err_t (*)(uint16_t) );
+extern struct SignalBlock *ArmSignalExModule(bool (*)(void),
+                                             fw_err_t (*)(uint16_t) );
                                        
-extern fw_err_t SignalDisarm(struct SignalBlock*);
+extern fw_err_t DisarmSignalModule(struct SignalBlock*);
 
 #endif
                                        

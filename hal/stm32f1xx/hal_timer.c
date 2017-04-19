@@ -1,20 +1,36 @@
 /**
- ******************************************************************************
- * @file       hal_timer.c
- * @author     yearnext
- * @version    1.0.0
- * @date       2017Äê3ÔÂ4ÈÕ
- * @brief      timer source file
- * @par        work paltform                                  
- *                 Windows
- * @par        compiler paltform									                         
- *                 GCC
- ******************************************************************************
- * @note
- * 1.XXXXX                  						                     
- ******************************************************************************
+ *******************************************************************************
+ *                       Copyright (C) 2017  yearnext                          *
+ *                                                                             *
+ *    This program is free software; you can redistribute it and/or modify     *
+ *    it under the terms of the GNU General Public License as published by     *
+ *    the Free Software Foundation; either version 2 of the License, or        *
+ *    (at your option) any later version.                                      *
+ *                                                                             *
+ *    This program is distributed in the hope that it will be useful,          *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *    GNU General Public License for more details.                             *
+ *                                                                             *
+ *    You should have received a copy of the GNU General Public License along  *
+ *    with this program; if not, write to the Free Software Foundation, Inc.,  *
+ *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
+ *******************************************************************************
+ * @file       hal_timer.c                                                     *
+ * @author     yearnext                                                        *
+ * @version    1.0.0                                                           *
+ * @date       2017-03-04                                                      *
+ * @brief      timer source files                                              *
+ * @par        work platform                                                   *
+ *                 Windows                                                     *
+ * @par        compiler                                                        *
+ *                 GCC                                                         * 
+ *******************************************************************************
+ * @note                                                                       *
+ * 1.XXXXX                                                                     *
+ *******************************************************************************
  */
-
+ 
 /**
  * @defgroup timer component
  * @{
@@ -550,6 +566,7 @@ hal_err_t timer_stop(uint8_t id)
 }
 
 /* Exported functions --------------------------------------------------------*/
+#if USE_MSP_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       timer enable
@@ -559,7 +576,7 @@ hal_err_t timer_stop(uint8_t id)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MspTimerEnable(uint8_t id)
+hal_err_t MspEnableTimer(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -577,7 +594,7 @@ hal_err_t MspTimerEnable(uint8_t id)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MspTimerDisable(uint8_t id)
+hal_err_t MspDisableTimer(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -595,7 +612,7 @@ hal_err_t MspTimerDisable(uint8_t id)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MspTimerStart(uint8_t id)
+hal_err_t MspStartTimer(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -613,7 +630,7 @@ hal_err_t MspTimerStart(uint8_t id)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MspTimerStop(uint8_t id)
+hal_err_t MspStopTimer(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -633,7 +650,7 @@ hal_err_t MspTimerStop(uint8_t id)
  * @note        the function is static inline type
  *******************************************************************************
  */
-hal_err_t MspTimerBaseInit(uint8_t id, uint32_t tick, void (*func)(void))
+hal_err_t MspInitTimerBaseMode(uint8_t id, uint32_t tick, void (*func)(void))
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     hal_assert(IS_PTR_NULL(func));
@@ -642,7 +659,9 @@ hal_err_t MspTimerBaseInit(uint8_t id, uint32_t tick, void (*func)(void))
     
     return HAL_ERR_NONE;
 }
+#endif
 
+#if USE_MAP_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       timer enable
@@ -652,7 +671,7 @@ hal_err_t MspTimerBaseInit(uint8_t id, uint32_t tick, void (*func)(void))
  * @note        None
  *******************************************************************************
  */
-hal_err_t MapTimerEnable(struct MapTimerBlock *timer)
+hal_err_t HalEnableTimer(struct HalTimerBlock *timer)
 {   
     hal_assert(IS_PTR_NULL(timer));
     hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
@@ -671,7 +690,7 @@ hal_err_t MapTimerEnable(struct MapTimerBlock *timer)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MapTimerDisable(struct MapTimerBlock *timer)
+hal_err_t HalDisableTimer(struct HalTimerBlock *timer)
 {
     hal_assert(IS_PTR_NULL(timer));
     hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
@@ -690,7 +709,7 @@ hal_err_t MapTimerDisable(struct MapTimerBlock *timer)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MapTimerStart(struct MapTimerBlock *timer)
+hal_err_t HalStartTimer(struct HalTimerBlock *timer)
 {
     hal_assert(IS_PTR_NULL(timer));
     hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
@@ -709,7 +728,7 @@ hal_err_t MapTimerStart(struct MapTimerBlock *timer)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MapTimerStop(struct MapTimerBlock *timer)
+hal_err_t HalStopTimer(struct HalTimerBlock *timer)
 {
     hal_assert(IS_PTR_NULL(timer));
     hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
@@ -730,16 +749,18 @@ hal_err_t MapTimerStop(struct MapTimerBlock *timer)
  * @note        the function is static inline type
  *******************************************************************************
  */
-hal_err_t MapTimerBaseInit(struct MapTimerBlock *timer, uint32_t tick, void (*func)(void))
+hal_err_t HalInitTimerBaseMode(struct HalTimerBlock *timer)
 {
-    hal_assert(IS_PTR_NULL(func));
     hal_assert(IS_PTR_NULL(timer));
     hal_assert(IS_TIMER_ID_INVAILD(timer->ID));
+    hal_assert(IS_PTR_NULL(timer->Handler));
     
-    timer_base_init(timer->ID, tick, func); 
+    timer_base_init(timer->ID, timer->Period, timer->Handler); 
     
     return HAL_ERR_NONE;
 }
+
+#endif
 
 /**
  *******************************************************************************
@@ -751,8 +772,8 @@ hal_err_t MapTimerBaseInit(struct MapTimerBlock *timer, uint32_t tick, void (*fu
  */
 void SysTick_Handler(void)
 {
-#if USE_HAL_TIMER_DEBUG
-    if(TickHandleFunction == NULL)
+#if USE_HAL_DEBUG
+    if(IS_PTR_NULL(TickHandleFunction))
     {
         return;
     }

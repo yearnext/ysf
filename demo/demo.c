@@ -1,26 +1,44 @@
 /**
- ******************************************************************************
- * @file       key_control.c
- * @author     yearnext
- * @version    1.0.0
- * @date       2017Äê3ÔÂ4ÈÕ
- * @brief      gpio source file
- * @par        work paltform                                  
- *                 Windows
- * @par        compiler paltform									                         
- *                 GCC
- ******************************************************************************
- * @note
- * 1.XXXXX                  						                     
- ******************************************************************************
+ *******************************************************************************
+ *                       Copyright (C) 2017  yearnext                          *
+ *                                                                             *
+ *    This program is free software; you can redistribute it and/or modify     *
+ *    it under the terms of the GNU General Public License as published by     *
+ *    the Free Software Foundation; either version 2 of the License, or        *
+ *    (at your option) any later version.                                      *
+ *                                                                             *
+ *    This program is distributed in the hope that it will be useful,          *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *    GNU General Public License for more details.                             *
+ *                                                                             *
+ *    You should have received a copy of the GNU General Public License along  *
+ *    with this program; if not, write to the Free Software Foundation, Inc.,  *
+ *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
+ *******************************************************************************
+ * @file       demo.c                                                          *
+ * @author     yearnext                                                        *
+ * @version    1.0.0                                                           *
+ * @date       2017-04-19                                                      *
+ * @brief      demo source files                                               *
+ * @par        work platform                                                   *
+ *                 Windows                                                     *
+ * @par        compiler                                                        *
+ *                 GCC                                                         * 
+ *******************************************************************************
+ * @note                                                                       *
+ * 1.XXXXX                                                                     *
+ *******************************************************************************
  */
-
+ 
 /**
  * @defgroup key control demo
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include "core.h"
+
 /* Private define ------------------------------------------------------------*/                                                        
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -29,28 +47,32 @@
  * @brief       device port define
  *******************************************************************************
  */  
-//static struct map_gpio_t led1 = 
-//{
-//    .port = MCU_PORT_D,
-//    .pin  = MCU_PIN_13,
-//};
-
-static struct map_gpio_t led2 = 
+static struct HalGPIOBlock Led1 = 
 {
-    .port = MCU_PORT_G,
-    .pin  = MCU_PIN_14,
+    .Port = MCU_PORT_D,
+    .Pin  = MCU_PIN_13,
+    .Mode = GPIO_PIN_O_PP_LS_MODE,
 };
 
-//static struct map_gpio_t key1 = 
-//{
-//    .port = MCU_PORT_E,
-//    .pin  = MCU_PIN_0,
-//};
-
-static struct map_gpio_t key2 = 
+static struct HalGPIOBlock Led2 = 
 {
-    .port = MCU_PORT_C,
-    .pin  = MCU_PIN_13,
+    .Port = MCU_PORT_G,
+    .Pin  = MCU_PIN_14,
+    .Mode = GPIO_PIN_O_PP_LS_MODE,
+};
+
+static struct HalGPIOBlock Key1 = 
+{
+    .Port = MCU_PORT_E,
+    .Pin  = MCU_PIN_0,
+    .Mode = GPIO_PIN_I_UD_MODE,
+};
+
+static struct HalGPIOBlock Key2 = 
+{
+    .Port = MCU_PORT_C,
+    .Pin  = MCU_PIN_13,
+    .Mode = GPIO_PIN_I_UD_MODE,
 };
 
 /**
@@ -58,22 +80,20 @@ static struct map_gpio_t key2 =
  * @brief       timer variable define
  *******************************************************************************
  */ 
-static struct ysf_timer_t *led1Timer;
-//static struct ysf_task_t  led2Task;
-static struct ysf_pt_t    led2PT;
+static struct TimerBlock   *led1Timer;
+static struct ProtoThreads Led2Threads;
 
 /**
  *******************************************************************************
  * @brief       signal variable define
  *******************************************************************************
  */
-static struct ysf_signal_t key1Signal;
-static struct ysf_signal_t key2Signal;
+static struct SignalBlock  KeySignal1;
+static struct SignalBlock *KeySignal2;
 
-/* Exported variables --------------------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-
+///* Exported variables --------------------------------------------------------*/
+///* Private functions ---------------------------------------------------------*/
+///* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       led1 blink function
@@ -81,14 +101,7 @@ static struct ysf_signal_t key2Signal;
  */
 static fw_err_t led1_blink_handler( void *param )
 {   
-    if( msp.gpio.output.get(MCU_PORT_D, MCU_PIN_13) == true )
-    {
-        msp.gpio.output.clr(MCU_PORT_D, MCU_PIN_13);
-    }
-    else
-    {
-        msp.gpio.output.set(MCU_PORT_D, MCU_PIN_13);
-    }
+    Core.Hal.GPIO.Output.Toggle(&Led1);
     
     return FW_ERR_NONE;
 }
@@ -98,58 +111,45 @@ static fw_err_t led1_blink_handler( void *param )
  * @brief       led2 blink function
  *******************************************************************************
  */
-static YSF_PT_THREAD(bsp_led2_blink)
+static _PT_THREAD(bsp_led2_blink)
 {
-    ysf_pt_begin();
+    _pt_begin();
     
     while(1)
     {
-        msp.gpio.output.set(led2.port, led2.pin);
+        Core.Hal.GPIO.Output.Toggle(&Led2);
         
-        ysf_pt_delay(250);            
-
-        msp.gpio.output.clr(led2.port, led2.pin);
-        
-        ysf_pt_delay(250); 
+        _pt_delay(250); 
     }
     
-    ysf_pt_end();
+    _pt_end();
 }
 
 /**
  *******************************************************************************
- * @brief       device led init function
+ * @brief       led application function
  *******************************************************************************
  */
-static void bsp_led_init( void )
-{
-    msp.gpio.open(MCU_PORT_D);
-    msp.gpio.output.init(MCU_PORT_D, MCU_PIN_13, GPIO_PIN_O_PP_LS_MODE);    
-
-    map.gpio.open(&led2);
-    map.gpio.output.init(&led2, GPIO_PIN_O_PP_LS_MODE);  
-}
-
 static void app_led1_init(void)
 {
-    led1Timer = ysf.timer.simple.cb_init(led1_blink_handler, NULL);
-    ysf.timer.arm(led1Timer, YSF_TIME_2_TICK(1000), YSF_TIMER_CYCLE_MODE);
+    led1Timer = Core.Component.Timer.CallBackExInit(led1_blink_handler, NULL);
+    Core.Component.Timer.Arm(led1Timer, TIME_2_TICK(1000), TIMER_CYCLE_MODE);
 }
 
 static void app_led1_deinit(void)
 {
-    ysf.timer.disarm(led1Timer);
+    Core.Component.Timer.Disarm(led1Timer);
 }
 
 static void app_led2_init(void)
 {
-    ysf.pt.init(&led2PT, bsp_led2_blink);
-    ysf.pt.simple.arm(&led2PT);
+    _pt_init(&Led2Threads, bsp_led2_blink);
+    _pt_ex_arm(&Led2Threads);
 }
 
 static void app_led2_deinit(void)
 {
-    ysf.pt.disarm(&led2PT);
+    _pt_disarm(&Led2Threads);
 }
 
 /**
@@ -157,9 +157,13 @@ static void app_led2_deinit(void)
  * @brief       key1 scan function
  *******************************************************************************
  */
-static enum ysf_signal_status_t key1_scan( void )
+static bool key1_scan(void)
 {
-    return ( msp.gpio.input.get(MCU_PORT_E, MCU_PIN_0) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
+    bool status = false;
+    
+    Core.Hal.GPIO.Input.Get(&Key1, &status);
+    
+    return status;
 }
 
 /**
@@ -167,9 +171,13 @@ static enum ysf_signal_status_t key1_scan( void )
  * @brief       key2 scan function
  *******************************************************************************
  */
-static enum ysf_signal_status_t key2_scan( void )
+static bool key2_scan(void)
 {
-    return ( map.gpio.input.get(&key2) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
+    bool status = false;
+    
+    Core.Hal.GPIO.Input.Get(&Key2, &status);
+    
+    return status;
 }
 
 /**
@@ -186,8 +194,8 @@ static fw_err_t key1_handler(uint16_t status)
             app_led2_deinit();
             break;
         case SIGNAL_STATUS_PRESS:
-            msp.gpio.output.clr(MCU_PORT_D, MCU_PIN_13);
-            map.gpio.output.clr(&led2);
+            Core.Hal.GPIO.Output.Clr(&Led1);
+            Core.Hal.GPIO.Output.Clr(&Led1);
             break;
         case SIGNAL_STATUS_RELEASE_EDGE:
             app_led1_init();
@@ -214,8 +222,8 @@ static fw_err_t key2_handler(uint16_t status)
             app_led2_deinit();
             break;
         case SIGNAL_STATUS_PRESS:
-            msp.gpio.output.set(MCU_PORT_D, MCU_PIN_13);
-            map.gpio.output.set(&led2);
+            Core.Hal.GPIO.Output.Set(&Led1);
+            Core.Hal.GPIO.Output.Set(&Led2);
             break;
         case SIGNAL_STATUS_RELEASE_EDGE:
             app_led1_init();
@@ -230,18 +238,37 @@ static fw_err_t key2_handler(uint16_t status)
 
 /**
  *******************************************************************************
+ * @brief       device led init function
+ *******************************************************************************
+ */
+static void bsp_led_init( void )
+{
+    Core.Hal.GPIO.Enable(&Led1);
+    Core.Hal.GPIO.Output.Init(&Led1);
+
+    Core.Hal.GPIO.Enable(&Led2);
+    Core.Hal.GPIO.Output.Init(&Led2);
+}
+
+/**
+ *******************************************************************************
  * @brief       device key init function
  *******************************************************************************
  */
 static void bsp_key_init(void)
 {
-    msp.gpio.open(MCU_PORT_E);
-    msp.gpio.input.init(MCU_PORT_E, MCU_PIN_0, GPIO_PIN_I_UD_MODE);
-    ysf.signal.arm(&key1Signal, key1_scan, key1_handler);
+    Core.Hal.GPIO.Enable(&Key1);
+    Core.Hal.GPIO.Input.Init(&Key1);
+    Core.Component.Signal.Arm(&KeySignal1, key1_scan, key1_handler);
     
-    map.gpio.open(&key2);
-    map.gpio.input.init(&key2, GPIO_PIN_I_UD_MODE);
-    ysf.signal.arm(&key2Signal, key2_scan, key2_handler);
+    Core.Hal.GPIO.Enable(&Key2);
+    Core.Hal.GPIO.Input.Init(&Key2);
+    KeySignal2 = Core.Component.Signal.ArmEx(key2_scan, key2_handler);
+    
+    if( KeySignal2 == NULL )
+    {
+        while(1);
+    }
 }
 
 /**
@@ -252,10 +279,10 @@ static void bsp_key_init(void)
 static fw_err_t user_init( void )
 {
     bsp_led_init();
+    bsp_key_init();
+    
     app_led1_init();
     app_led2_init();
-    
-    bsp_key_init();
 
     return FW_ERR_NONE;
 }
@@ -267,8 +294,13 @@ static fw_err_t user_init( void )
  */
 int main( void )
 {   
-    ysf.init(user_init);
-    ysf.start();
+    Core.Init();
+    
+    user_init();
+    
+    Core.Start();
+    
+    return 0;
 }
 
 /** @}*/     /* key control demo  */

@@ -32,12 +32,12 @@
  */
  
 /**
- * @defgroup core
+ * @defgroup frameowrk core
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __CORE_H__
-#define __CORE_H__
+#ifndef _FRAMEWORK_CORE_H__
+#define _FRAMEWORK_CORE_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -47,9 +47,45 @@ extern "C"
     
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
+#include _FW_PATH
+#include _FW_INTERFACE_PATH
+#include _HAL_PATH
+#include _HAL_INTERFACE_PATH
+
+/* Exported macro ------------------------------------------------------------*/ 
+/**
+ *******************************************************************************
+ * @brief        define core interface
+ *******************************************************************************
+ */
+typedef struct 
+{
+    uint8_t *Version;
     
-/* Define and Config ---------------------------------------------------------*/    
+    void (*Init)(void);
+    void (*Start)(void);
     
+    FrameworkComponentInterface Component;
+
+    FrameworkHalInterface       Hal;
+}CoreInterface;
+/* Exported variables --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        core interface
+ *******************************************************************************
+ */
+extern const CoreInterface Core;
+
+/* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        core api
+ *******************************************************************************
+ */
+void InitCoreScheduling(void);
+void StartCoreScheduling(void);
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
@@ -57,6 +93,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** ysf core */
+/** @}*/     /** framework core interface */
 
 /**********************************END OF FILE*********************************/

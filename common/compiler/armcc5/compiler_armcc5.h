@@ -116,16 +116,16 @@ extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
  * @brief      define compiler critical cmd
  *******************************************************************************
  */
-#define ENTER_CRITICAL()        __disable_irq()
-#define EXIT_CRITICAL()         __enable_irq()
+#define __ENTER_CRITICAL()      __disable_irq()
+#define __EXIT_CRITICAL()       __enable_irq()
 
 /**
  *******************************************************************************
  * @brief      define atom opera
  *******************************************************************************
  */    
-#define __ATOM_ACTIVE_BEGIN()   ENTER_CRITICAL()
-#define __ATOM_ACTIVE_END()     EXIT_CRITICAL()
+#define __ATOM_ACTIVE_BEGIN()   __ENTER_CRITICAL()
+#define __ATOM_ACTIVE_END()     __EXIT_CRITICAL()
 
 /**
  *******************************************************************************

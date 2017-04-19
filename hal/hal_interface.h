@@ -45,15 +45,32 @@ extern "C"
 {
 #endif
 
-/* Hal path macro ------------------------------------------------------------*/
-
-   
 /* Includes ------------------------------------------------------------------*/  
-/* Exported macro ------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
+#include "core_path.h"
+#include _HAL_PATH
+#include _HAL_GPIO_PATH   
+#include _HAL_TIMER_PATH    
 
+/* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        define hal interface
+ *******************************************************************************
+ */
+typedef struct
+{
+    uint8_t *Version;
+    
+#if USE_MAP_GPIO_COMPONENT
+    HalGPIOInterface GPIO;
+#endif  
+
+#if USE_MAP_TIMER_COMPONENT
+    HalTimerInterface Timer;
+#endif
+}FrameworkHalInterface;    
+    
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif

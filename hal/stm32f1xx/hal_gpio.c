@@ -1,18 +1,34 @@
 /**
- ******************************************************************************
- * @file       hal_gpio.c
- * @author     yearnext
- * @version    1.0.0
- * @date       2017Äê3ÔÂ4ÈÕ
- * @brief      gpio source file
- * @par        work paltform                                  
- *                 Windows
- * @par        compiler paltform									                         
- *                 GCC
- ******************************************************************************
- * @note
- * 1.XXXXX                  						                     
- ******************************************************************************
+ *******************************************************************************
+ *                       Copyright (C) 2017  yearnext                          *
+ *                                                                             *
+ *    This program is free software; you can redistribute it and/or modify     *
+ *    it under the terms of the GNU General Public License as published by     *
+ *    the Free Software Foundation; either version 2 of the License, or        *
+ *    (at your option) any later version.                                      *
+ *                                                                             *
+ *    This program is distributed in the hope that it will be useful,          *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *    GNU General Public License for more details.                             *
+ *                                                                             *
+ *    You should have received a copy of the GNU General Public License along  *
+ *    with this program; if not, write to the Free Software Foundation, Inc.,  *
+ *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
+ *******************************************************************************
+ * @file       hal_gpio.c                                                      *
+ * @author     yearnext                                                        *
+ * @version    1.0.0                                                           *
+ * @date       2017-03-04                                                      *
+ * @brief      gpio source files                                               *
+ * @par        work platform                                                   *
+ *                 Windows                                                     *
+ * @par        compiler                                                        *
+ *                 GCC                                                         * 
+ *******************************************************************************
+ * @note                                                                       *
+ * 1.XXXXX                                                                     *
+ *******************************************************************************
  */
 
 /**
@@ -84,16 +100,16 @@
  * @brief      define gpio assert function
  *******************************************************************************
  */
-#define IS_PORT_NUM_INVAILD(num) ( (num) >= MCU_USE_PORT_NUM )
-#define IS_PIN_NUM_INVAILD(num)  ( (num) >= PORT_USE_PIN_NUM )
+#define IS_PORT_NUM_INVAILD(num)                   ( (num) >= MCU_USE_PORT_NUM )
+#define IS_PIN_NUM_INVAILD(num)                    ( (num) >= PORT_USE_PIN_NUM )
 
 /**
  *******************************************************************************
  * @brief      define mcu address
  *******************************************************************************
  */
-#define RCC_GPIO_CONFIG_HEAD ((uint32_t)0x00000004)
-#define GPIO_PIN_CONFIG_HEAD ((uint16_t)0x0001)
+#define RCC_GPIO_CONFIG_HEAD                              ((uint32_t)0x00000004)
+#define GPIO_PIN_CONFIG_HEAD                                  ((uint16_t)0x0001)
 
 //#define DEFINE_GPIO_PORT(name) GPIO_TypeDef *name[] = \
 //                               {                      \
@@ -136,13 +152,28 @@
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       enable gpio
+ * @param       [in/out]  port           gpio port
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void gpio_enable(uint8_t port)
 {
     RCC->APB2ENR  |= RCC_GPIO_CONFIG_HEAD << port;
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable gpio
+ * @param       [in/out]  port           gpio port
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void gpio_disable(uint8_t port)
 {
@@ -150,6 +181,15 @@ void gpio_disable(uint8_t port)
     RCC->APB2RSTR &= ~(RCC_GPIO_CONFIG_HEAD << port);
 }
 
+/**
+ *******************************************************************************
+ * @brief       gpio mode clear
+ * @param       [in/out]  *reg             gpio mode config register address
+ * @param       [in/out]  offset           gpio mode offset
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void gpio_mode_clr( uint32_t *reg, uint8_t offset )
 {
@@ -164,6 +204,15 @@ void gpio_mode_clr( uint32_t *reg, uint8_t offset )
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       gpio mode set
+ * @param       [in/out]  *reg             gpio mode config register address
+ * @param       [in/out]  offset           gpio mode offset
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void gpio_mode_set( uint32_t *reg, uint8_t offset, uint8_t mode )
 {
@@ -180,6 +229,16 @@ void gpio_mode_set( uint32_t *reg, uint8_t offset, uint8_t mode )
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       gpio mode config
+ * @param       [in/out]  port             gpio port
+ * @param       [in/out]  pin              gpio pin
+ * @param       [in/out]  mode             gpio mode
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void gpio_config(uint8_t port, uint8_t pin, uint8_t mode)
 {
@@ -203,6 +262,15 @@ void gpio_config(uint8_t port, uint8_t pin, uint8_t mode)
     GPIO->CRH = gpio_crh;
 }
 
+/**
+ *******************************************************************************
+ * @brief       set gpio status
+ * @param       [in/out]  port             gpio port
+ * @param       [in/out]  pin              gpio pin
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void gpio_set( uint8_t port, uint8_t pin )
 {
@@ -210,6 +278,15 @@ void gpio_set( uint8_t port, uint8_t pin )
     GPIO->BSRR |= GPIO_PIN_CONFIG_HEAD << pin;
 }
 
+/**
+ *******************************************************************************
+ * @brief       clear gpio status
+ * @param       [in/out]  port             gpio port
+ * @param       [in/out]  pin              gpio pin
+ * @return      [in/out]  void
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 void gpio_clr( uint8_t port, uint8_t pin )
 {
@@ -217,6 +294,16 @@ void gpio_clr( uint8_t port, uint8_t pin )
     GPIO->BRR |= GPIO_PIN_CONFIG_HEAD << pin;
 }
 
+/**
+ *******************************************************************************
+ * @brief       get gpio input status
+ * @param       [in/out]  port             gpio port
+ * @param       [in/out]  pin              gpio pin
+ * @return      [in/out]  true             pin is high
+ * @return      [in/out]  false            pin is low
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 bool gpio_get_input(uint8_t port, uint8_t pin)
 {
@@ -224,6 +311,16 @@ bool gpio_get_input(uint8_t port, uint8_t pin)
     return ((GPIO->IDR & (GPIO_PIN_CONFIG_HEAD << pin)) ? (true) : (false));
 }
 
+/**
+ *******************************************************************************
+ * @brief       get gpio output status
+ * @param       [in/out]  port             gpio port
+ * @param       [in/out]  pin              gpio pin
+ * @return      [in/out]  true             pin is high
+ * @return      [in/out]  false            pin is low
+ * @note        the function is static inline type
+ *******************************************************************************
+ */
 __STATIC_INLINE
 bool gpio_get_output(uint8_t port, uint8_t pin)
 {
@@ -231,7 +328,18 @@ bool gpio_get_output(uint8_t port, uint8_t pin)
     return ((GPIO->ODR & (GPIO_PIN_CONFIG_HEAD << pin)) ? (true) : (false));
 }
 
-hal_err_t msp_gpio_enable(uint8_t port)
+/* Exported functions --------------------------------------------------------*/
+#if USE_MSP_GPIO_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       enable gpio
+ * @param       [in/out]  port                    gpio port
+ * @return      [in/out]  HAL_ERR_NONE            enable success
+ * @return      [in/out]  HAL_ERR_FAIL            enable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspEnableGPIO(uint8_t port)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
 
@@ -241,7 +349,16 @@ hal_err_t msp_gpio_enable(uint8_t port)
     return HAL_ERR_NONE;
 }
 
-hal_err_t msp_gpio_disable(uint8_t port)
+/**
+ *******************************************************************************
+ * @brief       disable gpio
+ * @param       [in/out]  port                    gpio port
+ * @return      [in/out]  HAL_ERR_NONE            disable success
+ * @return      [in/out]  HAL_ERR_FAIL            disable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspDisableGPIO(uint8_t port)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     
@@ -250,7 +367,18 @@ hal_err_t msp_gpio_disable(uint8_t port)
     return HAL_ERR_NONE;
 }
 
-hal_err_t msp_gpio_init(uint8_t port, uint8_t pin, uint8_t mode)
+/**
+ *******************************************************************************
+ * @brief       gpio init
+ * @param       [in/out]  port                    gpio port
+ * @param       [in/out]  pin                     gpio pin
+ * @param       [in/out]  mode                    config mode
+ * @return      [in/out]  HAL_ERR_NONE            init success
+ * @return      [in/out]  HAL_ERR_FAIL            init failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspInitGPIO(uint8_t port, uint8_t pin, uint8_t mode)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     
@@ -259,38 +387,120 @@ hal_err_t msp_gpio_init(uint8_t port, uint8_t pin, uint8_t mode)
     return HAL_ERR_NONE;
 }
 
-hal_err_t msp_gpio_fini(uint8_t port, uint8_t pin)
+/**
+ *******************************************************************************
+ * @brief       gpio deinit
+ * @param       [in/out]  port                    gpio port
+ * @param       [in/out]  pin                     gpio pin
+ * @return      [in/out]  HAL_ERR_NONE            deinit success
+ * @return      [in/out]  HAL_ERR_FAIL            deinit failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspDeinitGPIO(uint8_t port, uint8_t pin)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
+    hal_assert(IS_PIN_NUM_INVAILD(pin));
     
     gpio_config(port, pin, GPIO_PIN_INIT_MODE);
     
     return HAL_ERR_NONE;
 }
 
-void msp_gpio_set(uint8_t port, uint8_t pin)
+/**
+ *******************************************************************************
+ * @brief       set gpio
+ * @param       [in/out]  port                    gpio port
+ * @param       [in/out]  pin                     gpio pin
+ * @return      [in/out]  HAL_ERR_NONE            set success
+ * @return      [in/out]  HAL_ERR_FAIL            set failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspSetGPIO(uint8_t port, uint8_t pin)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
+    hal_assert(IS_PIN_NUM_INVAILD(pin));
     
     gpio_set(port, pin);
+    
+    return HAL_ERR_NONE;
 }
 
-void msp_gpio_clr(uint8_t port, uint8_t pin)
+/**
+ *******************************************************************************
+ * @brief       clear gpio
+ * @param       [in/out]  port                    gpio port
+ * @param       [in/out]  pin                     gpio pin
+ * @return      [in/out]  HAL_ERR_NONE            clear success
+ * @return      [in/out]  HAL_ERR_FAIL            clear failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspClrGPIO(uint8_t port, uint8_t pin)
 {
+    hal_assert(IS_PORT_NUM_INVAILD(port));
+    hal_assert(IS_PIN_NUM_INVAILD(pin));
+    
     gpio_clr(port, pin);
+    
+    return HAL_ERR_NONE;
 }
 
-bool msp_gpio_get_input(uint8_t port, uint8_t pin)
+/**
+ *******************************************************************************
+ * @brief       get gpio input status
+ * @param       [in/out]  port                    gpio port
+ * @param       [in/out]  pin                     gpio pin
+ * @param       [in/out]  *status                 gpio input status
+ * @return      [in/out]  true                    gpio is high
+ * @return      [in/out]  false                   gpio is low
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspGetGPIOInputStatus(uint8_t port, uint8_t pin, bool *status)
 {
-    return gpio_get_input(port, pin);
+    hal_assert(IS_PORT_NUM_INVAILD(port));
+    hal_assert(IS_PIN_NUM_INVAILD(pin));
+    
+    *status = gpio_get_input(port, pin);
+    
+    return HAL_ERR_NONE;
 }
 
-bool msp_gpio_get_output(uint8_t port, uint8_t pin)
+/**
+ *******************************************************************************
+ * @brief       get gpio output status
+ * @param       [in/out]  port                    gpio port
+ * @param       [in/out]  pin                     gpio pin
+ * @param       [in/out]  *status                 gpio output status
+ * @return      [in/out]  true                    gpio is high
+ * @return      [in/out]  false                   gpio is low
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t MspGetGPIOOutputStatus(uint8_t port, uint8_t pin, bool *status)
 {
-    return gpio_get_output(port, pin);
+    hal_assert(IS_PORT_NUM_INVAILD(port));
+    hal_assert(IS_PIN_NUM_INVAILD(pin));
+    
+    *status = gpio_get_output(port, pin);
+    
+    return HAL_ERR_NONE;
 }
+#endif 
 
-hal_err_t map_gpio_enable(struct MapGPIOBlock *gpio)
+#if USE_MAP_GPIO_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       enable gpio
+ * @param       [in/out]  *gpio                   gpio block
+ * @return      [in/out]  HAL_ERR_NONE            enable success
+ * @return      [in/out]  HAL_ERR_FAIL            enable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalEnableGPIO(struct HalGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
@@ -301,7 +511,16 @@ hal_err_t map_gpio_enable(struct MapGPIOBlock *gpio)
     return HAL_ERR_NONE;
 }
 
-hal_err_t map_gpio_disable(struct MapGPIOBlock *gpio)
+/**
+ *******************************************************************************
+ * @brief       disable gpio
+ * @param       [in/out]  *gpio                   gpio block
+ * @return      [in/out]  HAL_ERR_NONE            disable success
+ * @return      [in/out]  HAL_ERR_FAIL            disable failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalDisableGPIO(struct HalGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
@@ -311,18 +530,36 @@ hal_err_t map_gpio_disable(struct MapGPIOBlock *gpio)
     return HAL_ERR_NONE;
 }
 
-hal_err_t map_gpio_init(struct MapGPIOBlock *gpio, uint8_t mode)
+/**
+ *******************************************************************************
+ * @brief       gpio init
+ * @param       [in/out]  *gpio                   gpio block
+ * @return      [in/out]  HAL_ERR_NONE            init success
+ * @return      [in/out]  HAL_ERR_FAIL            init failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalInitGPIO(struct HalGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    gpio_config(gpio->Port, gpio->Pin, mode);
+    gpio_config(gpio->Port, gpio->Pin, gpio->Mode);
     
     return HAL_ERR_NONE;
 }
 
-hal_err_t map_gpio_fini(struct MapGPIOBlock *gpio)
+/**
+ *******************************************************************************
+ * @brief       gpio deinit
+ * @param       [in/out]  *gpio                   gpio block
+ * @return      [in/out]  HAL_ERR_NONE            deinit success
+ * @return      [in/out]  HAL_ERR_FAIL            deinit failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalDeinitGPIO(struct HalGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
@@ -333,42 +570,116 @@ hal_err_t map_gpio_fini(struct MapGPIOBlock *gpio)
     return HAL_ERR_NONE;
 }
 
-void map_gpio_set(struct MapGPIOBlock *gpio)
+/**
+ *******************************************************************************
+ * @brief       set gpio pin
+ * @param       [in/out]  *gpio                   gpio block
+ * @return      [in/out]  HAL_ERR_NONE            set success
+ * @return      [in/out]  HAL_ERR_FAIL            set failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalSetGPIO(struct HalGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
     gpio_set(gpio->Port, gpio->Pin);
+    
+    return HAL_ERR_NONE;
 }
 
-void map_gpio_clr(struct MapGPIOBlock *gpio)
+/**
+ *******************************************************************************
+ * @brief       clear gpio pin
+ * @param       [in/out]  *gpio                   gpio block
+ * @return      [in/out]  HAL_ERR_NONE            clear success
+ * @return      [in/out]  HAL_ERR_FAIL            clear failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalClrGPIO(struct HalGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
     gpio_clr(gpio->Port, gpio->Pin);
+    
+    return HAL_ERR_NONE;
 }
 
-bool map_gpio_get_input(struct MapGPIOBlock *gpio)
+/**
+ *******************************************************************************
+ * @brief       gpio pin toggle
+ * @param       [in/out]  *gpio                   gpio block
+ * @return      [in/out]  HAL_ERR_NONE            clear success
+ * @return      [in/out]  HAL_ERR_FAIL            clear failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalToggleGPIO(struct HalGPIOBlock *gpio)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    return gpio_get_input(gpio->Port, gpio->Pin);
+    if (gpio_get_output(gpio->Port, gpio->Pin) == true)
+    {
+        gpio_set(gpio->Port, gpio->Pin);
+    }
+    else
+    {
+        gpio_clr(gpio->Port, gpio->Pin);
+    }
+
+    return HAL_ERR_NONE;
 }
 
-bool map_gpio_get_output(struct MapGPIOBlock *gpio)
+/**
+ *******************************************************************************
+ * @brief       get gpio input status
+ * @param       [in/out]  *gpio            gpio block
+ * @param       [in/out]  *status          gpio input status
+ * @return      [in/out]  HAL_ERR_NONE     get success
+ * @return      [in/out]  HAL_ERR_FAIL     get failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalGetGPIOInputStatus(struct HalGPIOBlock *gpio, bool *status)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    return gpio_get_output(gpio->Port, gpio->Pin);
+    *status = gpio_get_input(gpio->Port, gpio->Pin);
+    
+    return HAL_ERR_NONE;
 }
 
-/** @}*/     /* gpio component  */
+/**
+ *******************************************************************************
+ * @brief       get gpio output status
+ * @param       [in/out]  *gpio            gpio block
+ * @param       [in/out]  *status          gpio output status
+ * @return      [in/out]  HAL_ERR_NONE     get success
+ * @return      [in/out]  HAL_ERR_FAIL     get failed
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t HalGetGPIOOutputStatus(struct HalGPIOBlock *gpio, bool *status)
+{
+    hal_assert(IS_PTR_NULL(gpio));
+    hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
+    hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
+    
+    *status = gpio_get_output(gpio->Port, gpio->Pin);
+    
+    return HAL_ERR_NONE;
+}
+#endif
+
+/** @}*/     /** gpio component */
 
 /**********************************END OF FILE*********************************/

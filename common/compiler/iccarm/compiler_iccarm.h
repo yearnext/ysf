@@ -96,26 +96,26 @@ extern "C"
  * @brief      define compiler alignment cmd 
  *******************************************************************************
  */
-#define ALIGN_HEAD(n)           PRAGMA(pack(push, n))
-#define ALIGN_TAIL(n)           PRAGMA(pack(pop))
-#define PACKED_HEAD             PRAGMA(pack(push, 1))
-#define PACKED_TAIL             PRAGMA(pack(pop))
+#define __ALIGN_HEAD(n)         PRAGMA(pack(push, n))
+#define __ALIGN_TAIL(n)         PRAGMA(pack(pop))
+#define __PACKED_HEAD           PRAGMA(pack(push, 1))
+#define __PACKED_TAIL           PRAGMA(pack(pop))
     
 /**
  *******************************************************************************
  * @brief      define compiler critical cmd
  *******************************************************************************
  */
-#define ENTER_CRITICAL()        __disable_interrupt()
-#define EXIT_CRITICAL()         __enable_interrupt()
+#define __ENTER_CRITICAL()      __disable_interrupt()
+#define __EXIT_CRITICAL()       __enable_interrupt()
 
 /**
  *******************************************************************************
  * @brief      define atom opera
  *******************************************************************************
  */    
-#define __ATOM_ACTIVE_BEGIN()   ENTER_CRITICAL()
-#define __ATOM_ACTIVE_END()     EXIT_CRITICAL()
+#define __ATOM_ACTIVE_BEGIN()   __ENTER_CRITICAL()
+#define __ATOM_ACTIVE_END()     __EXIT_CRITICAL()
 
 /**
  *******************************************************************************

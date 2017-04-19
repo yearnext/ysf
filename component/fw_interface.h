@@ -39,14 +39,76 @@
 #ifndef __FRAMEWORK_INTERFACE_H__
 #define __FRAMEWORK_INTERFACE_H__
 
-/* Add c++ compatibility------------------------------------------------------*/
+/* Add c++ compatibility -----------------------------------------------------*/
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 /* Includes ------------------------------------------------------------------*/ 
-/* Exported macro ------------------------------------------------------------*/
+#include "core_path.h"
+#include _FW_PATH    
+#include _FW_BUFFER_COMPONENT_PATH
+#include _FW_DEBUG_COMPONENT_PATH
+#include _FW_EVENT_COMPONENT_PATH
+#include _FW_LINK_LIST_COMPONENT_PATH 
+#include _FW_MEMORY_COMPONENT_PATH
+#include _FW_SIGNAL_COMPONENT_PATH
+#include _FW_TICK_COMPONENT_PATH
+#include _FW_TIMER_COMPONENT_PATH
+#include _FW_TASK_COMPONENT_PATH
+#include _FW_PT_COMPONENT_PATH
+    
+/* Exported type -------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        define framework interface
+ *******************************************************************************
+ */
+typedef struct
+{
+    uint8_t *Version;
+    
+#if USE_BUFFER_COMPONENT
+    RingBufferComponentInterface RingBuffer;
+#endif
+
+//#if USE_MEMORY_MANAGEMENT_COMPONENT
+//    MemoryManagementComponentInterface MemoryManagement;
+//#endif
+
+#if USE_DEBUG_COMPONENT
+    DebugComponentInterface Debug;
+#endif
+    
+#if USE_EVENT_COMPONENT
+    EventComponentInterface Event;
+#endif
+
+//#if USE_SINGLE_LIST_COMPONENT
+//    SingleListComponentInterface SingleLinkList;
+//#endif
+
+#if USE_MEMORY_COMPONENT
+    MemoryComponentInterface Memory;
+#endif
+    
+#if USE_SIGNAL_COMPONENT
+    SignalComponentInterface Signal;
+#endif   
+
+#if USE_TICK_COMPONENT
+    TickComponentInterface Tick;
+#endif
+
+#if USE_TIMER_COMPONENT
+    TimerComponentInterface Timer;
+#endif
+
+#if USE_TASK_COMPONENT
+    TaskComponentInterfact Task;
+#endif
+}FrameworkComponentInterface;
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

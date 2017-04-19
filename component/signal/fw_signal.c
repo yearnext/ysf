@@ -45,6 +45,7 @@
 #include _FW_EVENT_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
+#include _FW_DEBUG_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -128,7 +129,7 @@ bool signal_is_in(struct SignalBlock *signal)
 __STATIC_INLINE
 fw_err_t signal_push(struct SignalBlock *signal)
 {
-    SingleLinkListFifoPush(signal_is_in, SignalControlBlock, signal);
+    PushSingleLinkListFifoNode(signal_is_in, SignalControlBlock, signal);
     
     return FW_ERR_NONE;
 }
@@ -146,7 +147,7 @@ struct SignalBlock *signal_pop(void)
 {
     struct SignalBlock *signal = NULL;
     
-    SingleLinkListFifoPop(SignalControlBlock, signal);
+    PopSingleLinkListFifoNode(SignalControlBlock, signal);
     
     return signal;
 }
@@ -180,10 +181,7 @@ static fw_err_t signal_handler(void *param, uint16_t event)
 {
     struct SignalBlock *signal = (struct SignalBlock *)param;
     
-    if( signal == NULL )
-    {
-        return FW_ERR_FAIL;
-    }
+//    fw_assert(IS_PTR_NULL(signal));
 
     signal->Handler(event);
     
@@ -203,10 +201,7 @@ static fw_err_t signal_handler(void *param, uint16_t event)
 __STATIC_INLINE
 fw_err_t signal_trigger_handler(struct SignalBlock *signal)
 {
-    if( signal == NULL )
-    {
-        return FW_ERR_FAIL;
-    }
+//    fw_assert(IS_PTR_NULL(signal));
     
     SIGNAL_HANDLE_PROGRESS_INIT(signal);
     
@@ -229,10 +224,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
 {
     struct SignalBlock *signal = (struct SignalBlock *)param;
     
-    if( IS_PTR_NULL(signal) )
-    {
-        return FW_ERR_FAIL;
-    }
+//    fw_assert(IS_PTR_NULL(signal));
     
     switch( signal->Task.Event )
     {
@@ -375,10 +367,7 @@ static fw_err_t signal_scan(void *param)
     struct SignalBlock *signal = (struct SignalBlock *)param;
     uint16_t event = SIGNAL_STATUS_INIT;
     
-    if( signal == NULL )
-    {
-        return FW_ERR_FAIL;
-    }
+//    fw_assert(IS_PTR_NULL(signal));
     
     if(signal->Detect() == true)
     {
@@ -431,7 +420,7 @@ void signal_walk(void)
 #endif      
             if( IsSingleLinkListHead(SignalControlBlock, now) )
             {
-                SingleLinkListHeadWrite(SignalControlBlock, now->Next);
+                UpdateSingleLinkListHead(SignalControlBlock, now->Next);
                 
                 now->Next  = NULL;
                 now        = GetSingleLinkListHead(SignalControlBlock);
@@ -441,7 +430,7 @@ void signal_walk(void)
                 last->Next = NULL;
                 now->Next  = NULL;
                 
-                SingleLinkListTailWrite(SignalControlBlock, last);
+                UpdateSingleLinkListTail(SignalControlBlock, last);
             }
             else
             { 
@@ -453,9 +442,9 @@ void signal_walk(void)
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
             if (del->Type == EVENT_HANDLER_EX_SIGNAL)
             {
-                if( MemoryIsIn(del) == true )
+                if( IsInMemory(del) == true )
                 {
-                    MemoryFree(del);
+                    FreeMemory(del);
                 }
             }
 #endif
@@ -477,12 +466,12 @@ void signal_walk(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t SignalComponentInit( void )
+fw_err_t InitSignalComponent( void )
 {
     signal_clear();
     
     InitEventHandleTimer(&SignalTimer, SignalComponentPool, FW_EVENT_NONE);
-    TimerArm(&SignalTimer, SIGNAL_SCAN_TIME, TIMER_CYCLE_MODE);
+    ArmTimerModule(&SignalTimer, SIGNAL_SCAN_TIME, TIMER_CYCLE_MODE);
     
     return FW_ERR_NONE;
 }
@@ -498,14 +487,13 @@ fw_err_t SignalComponentInit( void )
  * @note        None
  *******************************************************************************
  */
-fw_err_t EventSignalArm(struct SignalBlock *signal, 
-                        bool (*detect)(void), 
-                        fw_err_t (*handler)(uint16_t) )
+fw_err_t ArmSignalModule(struct SignalBlock *signal, 
+                         bool (*detect)(void), 
+                         fw_err_t (*handler)(uint16_t) )
 {
-    if( IS_PTR_NULL(signal) || IS_PTR_NULL(detect) )
-    {
-        return FW_ERR_FAIL;
-    }
+    fw_assert(IS_PTR_NULL(signal));
+    fw_assert(IS_PTR_NULL(detect));
+    fw_assert(IS_PTR_NULL(handler));
 
     SIGNAL_HANDLE_INIT(signal);
     
@@ -530,16 +518,16 @@ fw_err_t EventSignalArm(struct SignalBlock *signal,
  * @note        None
  *******************************************************************************
  */
-struct SignalBlock *EventSignalExArm(bool (*detect)(void), 
-                                     fw_err_t (*handler)(uint16_t) )
+struct SignalBlock *ArmSignalExModule(bool (*detect)(void), 
+                                      fw_err_t (*handler)(uint16_t) )
 {
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    if( IS_PTR_NULL(detect) || IS_PTR_NULL(handler) )
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(detect));
+    fw_assert(IS_PTR_NULL(handler));
     
-    struct SignalBlock *signal = (struct SignalBlock *)MemoryMalloc(sizeof(struct SignalBlock));
+    struct SignalBlock *signal = (struct SignalBlock *)MallocMemory(sizeof(struct SignalBlock));
+    
+    fw_assert(IS_PTR_NULL(signal));
     
     SIGNAL_HANDLE_INIT(signal);
     
@@ -565,7 +553,7 @@ struct SignalBlock *EventSignalExArm(bool (*detect)(void),
  * @note        None
  *******************************************************************************
  */
-fw_err_t SignalDisarm(struct SignalBlock *signal)
+fw_err_t DisarmSignalModule(struct SignalBlock *signal)
 {
     signal->UseStatus = false;
 
@@ -588,6 +576,24 @@ fw_err_t SignalComponentPool(uint16_t event)
     }
     
     signal_walk();
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add signal to signal queue
+ * @param       [in/out]  *signal              signal block
+ * @return      [in/out]  FW_ERR_NONE          add success
+ * @return      [in/out]  FW_ERR_FAIL          add failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t AddSignalToQueue(struct SignalBlock *signal)
+{
+    fw_assert(IS_PTR_NULL(signal));
+    
+    PushSingleLinkListFifoNode(signal_is_in, SignalControlBlock, signal);
     
     return FW_ERR_NONE;
 }

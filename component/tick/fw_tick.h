@@ -107,7 +107,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_TICK_COMPONENT
-extern void     TickInit(void);
+extern void     InitTickComponent(void);
 extern void     IncTick(void);
 extern uint32_t GetTick(void);
 extern uint32_t CalPastTick(void );

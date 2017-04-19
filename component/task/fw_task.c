@@ -88,7 +88,7 @@ bool task_is_in(struct TaskBlock *task)
 __STATIC_INLINE
 fw_err_t task_push(struct TaskBlock *task)
 {
-    SingleLinkListFifoPush(task_is_in, TaskControlBlock, task);
+    PushSingleLinkListFifoNode(task_is_in, TaskControlBlock, task);
     
     return FW_ERR_NONE;
 }
@@ -106,7 +106,7 @@ struct TaskBlock *task_pop(void)
 {
     struct TaskBlock *task;
     
-    SingleLinkListFifoPop(TaskControlBlock, task);
+    PopSingleLinkListFifoNode(TaskControlBlock, task);
     
     return task;
 }
@@ -135,7 +135,7 @@ fw_err_t task_clear(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t TaskComponentInit(void)
+fw_err_t InitTaskComponent(void)
 {
     task_clear();
     
@@ -155,10 +155,8 @@ fw_err_t TaskComponentInit(void)
  */
 fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), void *param)
 {
-    if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(task));
+    fw_assert(IS_PTR_NULL(func));
     
     task->Handler.CallBack = func;
     task->Param      = param;
@@ -183,10 +181,8 @@ fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), voi
  */
 fw_err_t CreateEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t), uint16_t evt)
 {
-    if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(task));
+    fw_assert(IS_PTR_NULL(func));
     
     task->Handler.Event = func;
     task->Event         = evt;
@@ -212,10 +208,8 @@ fw_err_t CreateEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t
  */
 fw_err_t CreateMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
-    if(IS_PTR_NULL(task) || IS_PTR_NULL(func))
-    {
-        return FW_ERR_INVAILD_PTR;
-    }
+    fw_assert(IS_PTR_NULL(task));
+    fw_assert(IS_PTR_NULL(func));
     
     task->Handler.Message = func;
     task->Param           = param;
@@ -241,17 +235,11 @@ fw_err_t CreateMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*,
 struct TaskBlock *CreateCallBackExTask(fw_err_t (*func)(void*), void *param)
 {
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    if(IS_PTR_NULL(func))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(func));
     
-    struct TaskBlock *task = (struct TaskBlock *)MemoryMalloc(sizeof(struct TaskBlock));
+    struct TaskBlock *task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
      
-    if(IS_PTR_NULL(task))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(task));
     
     task->Handler.CallBack = func;
     task->Param            = param;
@@ -279,17 +267,11 @@ struct TaskBlock *CreateCallBackExTask(fw_err_t (*func)(void*), void *param)
 struct TaskBlock *CreateEventHandleExTask(fw_err_t (*func)(uint16_t), uint16_t evt)
 {
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    if(IS_PTR_NULL(func))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(func));
     
-    struct TaskBlock *task = (struct TaskBlock *)MemoryMalloc(sizeof(struct TaskBlock));
+    struct TaskBlock *task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
      
-    if(IS_PTR_NULL(task))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(task));
     
     task->Handler.Event = func;
     task->Event         = evt;
@@ -318,17 +300,11 @@ struct TaskBlock *CreateEventHandleExTask(fw_err_t (*func)(uint16_t), uint16_t e
 struct TaskBlock *CreateMessageHandleExTask(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    if(IS_PTR_NULL(func))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(func));
     
-    struct TaskBlock *task = (struct TaskBlock *)MemoryMalloc(sizeof(struct TaskBlock));
+    struct TaskBlock *task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
      
-    if(IS_PTR_NULL(task))
-    {
-        return NULL;
-    }
+    fw_assert(IS_PTR_NULL(task));
     
     task->Handler.Message = func;
     task->Param           = param;
@@ -355,11 +331,6 @@ struct TaskBlock *CreateMessageHandleExTask(fw_err_t (*func)(void*, uint16_t), v
 __STATIC_INLINE
 fw_err_t task_handler(struct TaskBlock *task)
 {
-//    if( IS_PTR_NULL(task) )
-//    {
-//        return FW_ERR_NONE;
-//    }
-    
     switch(task->Type)
     {
         case CALL_BACK_TASK:
@@ -406,7 +377,7 @@ fw_err_t TaskComponentPoll(void)
 
     if( task == NULL )
     {
-        return FW_ERR_FAIL;
+        return FW_ERR_NONE;
     }
     
     // task trigger handler
@@ -417,9 +388,9 @@ fw_err_t TaskComponentPoll(void)
         || task->Type == EVENT_HANDLE_EX_TASK 
         || task->Type == MESSAGE_HANDLE_EX_TASK)
     {
-        if( MemoryIsIn(task) == true )
+        if( IsInMemory(task) == true )
         {
-            MemoryFree(task);
+            FreeMemory(task);
         }
     }
 #endif
@@ -438,17 +409,14 @@ fw_err_t TaskComponentPoll(void)
  */
 fw_err_t AddTaskToQueue(struct TaskBlock *task)
 {   
-    if( task == NULL )
-    {
-        return FW_ERR_FAIL;
-    }
+    fw_assert(IS_PTR_NULL(task));
     
-    SingleLinkListFifoPush(task_is_in, TaskControlBlock, task);
+    PushSingleLinkListFifoNode(task_is_in, TaskControlBlock, task);
         
     return FW_ERR_NONE;
 }
-
 #endif
+
 /** @}*/     /** task component */
 
 /**********************************END OF FILE*********************************/

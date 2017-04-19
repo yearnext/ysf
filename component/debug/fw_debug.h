@@ -81,9 +81,9 @@ extern "C"
  *******************************************************************************
  */ 
 #if defined(USE_FRAMEWORK_DEBUG) && USE_FRAMEWORK_DEBUG
-#define _Assert(expr) ((expr) ? AssertFailed((uint8_t *)__FILE__, __LINE__) :(void)0 )
+#define fw_assert(expr) _INLINE_MACRO_FUNCTION( ((expr) ? AssertFailed((uint8_t *)__FILE__, __LINE__) : (void)0 ); )
 #else
-#define _Assert(expr)
+#define fw_assert(expr) fw_param_check(from)
 #endif 
 
 /* Exported types ------------------------------------------------------------*/
@@ -108,7 +108,7 @@ typedef struct
  *******************************************************************************
  */ 
 #if USE_DEBUG_COMPONENT
-extern fw_err_t DebugComponentInit(void);
+extern fw_err_t InitDebugComponent(void);
 extern void     AssertFailed(uint8_t*, uint32_t);
 #endif        
 
@@ -121,6 +121,6 @@ extern void     AssertFailed(uint8_t*, uint32_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** debug component  */
+/** @}*/     /** debug component */
 
 /**********************************END OF FILE*********************************/

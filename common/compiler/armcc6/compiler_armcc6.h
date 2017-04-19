@@ -110,26 +110,26 @@ extern "C"
  * @brief      define compiler alignment cmd 
  *******************************************************************************
  */
-#define ALIGN_HEAD(n)           PRAGMA(pack(push, n))
-#define ALIGN_TAIL(n)           PRAGMA(pack(pop))
-#define PACKED_HEAD             PRAGMA(pack(push, 1))
-#define PACKED_TAIL             PRAGMA(pack(pop))
+#define __ALIGN_HEAD(n)         PRAGMA(pack(push, n))
+#define __ALIGN_TAIL(n)         PRAGMA(pack(pop))
+#define __PACKED_HEAD           PRAGMA(pack(push, 1))
+#define __PACKED_TAIL           PRAGMA(pack(pop))
 
 /**
  *******************************************************************************
  * @brief      define compiler critical cmd
  *******************************************************************************
  */
-#define ENTER_CRITICAL()        __ASM volatile ("cpsid i" : : : "memory")
-#define EXIT_CRITICAL()         __ASM volatile ("cpsie i" : : : "memory")
+#define __ENTER_CRITICAL()      __ASM volatile ("cpsid i" : : : "memory")
+#define __EXIT_CRITICAL()       __ASM volatile ("cpsie i" : : : "memory")
 
 /**
  *******************************************************************************
  * @brief      define atom opera
  *******************************************************************************
  */    
-#define __ATOM_ACTIVE_BEGIN()   ENTER_CRITICAL()
-#define __ATOM_ACTIVE_END()     EXIT_CRITICAL()
+#define __ATOM_ACTIVE_BEGIN()   __ENTER_CRITICAL()
+#define __ATOM_ACTIVE_END()     __EXIT_CRITICAL()
 
 /**
  *******************************************************************************
@@ -168,7 +168,7 @@ typedef long long               int64_t;
  */
 #define INT8_MAX                (127)
 #define INT16_MAX               (32767)
-#define INT32_MAX               (2147483647U)
+#define INT32_MAX               (2147483647L)
 #define INT64_MAX               (9223372036854775807LL)
 
 #define INT8_MIN                (-128)
@@ -176,13 +176,13 @@ typedef long long               int64_t;
 #define INT32_MIN               (-2147483647 - 1)
 #define INT64_MIN               (-9223372036854775807LL - 1)
 
-#define UINT8_MAX               (0xFF)
-#define UINT16_MAX              (0xFFFF)
-#define UINT32_MAX              (0xFFFFFFFFU)
+#define UINT8_MAX               (0xFFU)
+#define UINT16_MAX              (0xFFFFU)
+#define UINT32_MAX              (0xFFFFFFFFUL)
 #define UINT64_MAX              (0xFFFFFFFFFFFFFFFFULL)
 
-#define UINT8_MIN               (0)
-#define UINT16_MIN              (0)
+#define UINT8_MIN               (0U)
+#define UINT16_MIN              (0U)
 #define UINT32_MIN              (0U)
 #define UINT64_MIN              (0ULL)
 #endif

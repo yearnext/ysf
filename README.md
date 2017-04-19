@@ -21,255 +21,269 @@
 ## 例程
 本例程主要演示单片机GPIO的配置、ysf定时器的使用方式以及ysf事件结构的使用。
 	
-	/* Includes ------------------------------------------------------------------*/
-	#include "ysf.h"
-	
-	/* Private define ------------------------------------------------------------*/                                                        
-	/* Private typedef -----------------------------------------------------------*/
-	/* Private variables ---------------------------------------------------------*/
-	/**
-	 *******************************************************************************
-	 * @brief       device port define
-	 *******************************************************************************
-	 */  
-	//static struct map_gpio_t led1 = 
-	//{
-	//    .port = MCU_PORT_D,
-	//    .pin  = MCU_PIN_13,
-	//};
-	
-	static struct map_gpio_t led2 = 
-	{
-	    .port = MCU_PORT_G,
-	    .pin  = MCU_PIN_14,
-	};
-	
-	//static struct map_gpio_t key1 = 
-	//{
-	//    .port = MCU_PORT_E,
-	//    .pin  = MCU_PIN_0,
-	//};
-	
-	static struct map_gpio_t key2 = 
-	{
-	    .port = MCU_PORT_C,
-	    .pin  = MCU_PIN_13,
-	};
-	
-	/**
-	 *******************************************************************************
-	 * @brief       timer variable define
-	 *******************************************************************************
-	 */ 
-	static struct ysf_timer_t *led1Timer;
-	//static struct ysf_task_t  led2Task;
-	static struct ysf_pt_t    led2PT;
-	
-	/**
-	 *******************************************************************************
-	 * @brief       signal variable define
-	 *******************************************************************************
-	 */
-	static struct ysf_signal_t key1Signal;
-	static struct ysf_signal_t key2Signal;
-	
-	/* Exported variables --------------------------------------------------------*/
-	/* Private functions ---------------------------------------------------------*/
-	/* Exported functions --------------------------------------------------------*/
-	
-	/**
-	 *******************************************************************************
-	 * @brief       led1 blink function
-	 *******************************************************************************
-	 */
-	static ysf_err_t led1_blink_handler( void *param )
-	{   
-	    if( msp.gpio.output.get(MCU_PORT_D, MCU_PIN_13) == true )
-	    {
-	        msp.gpio.output.clr(MCU_PORT_D, MCU_PIN_13);
-	    }
-	    else
-	    {
-	        msp.gpio.output.set(MCU_PORT_D, MCU_PIN_13);
-	    }
-	    
-	    return YSF_ERR_NONE;
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       led2 blink function
-	 *******************************************************************************
-	 */
-	static YSF_PT_THREAD(bsp_led2_blink)
-	{
-	    ysf_pt_begin();
+    /* Includes ------------------------------------------------------------------*/
+    #include "core.h"
+    
+    /* Private define ------------------------------------------------------------*/
+    /* Private typedef -----------------------------------------------------------*/
+    /* Private variables ---------------------------------------------------------*/
+    /**
+     *******************************************************************************
+     * @brief   device port define
+     *******************************************************************************
+     */  
+    static struct HalGPIOBlock Led1 = 
+    {
+	    .Port = MCU_PORT_D,
+	    .Pin  = MCU_PIN_13,
+	    .Mode = GPIO_PIN_O_PP_LS_MODE,
+    };
+    
+    static struct HalGPIOBlock Led2 = 
+    {
+	    .Port = MCU_PORT_G,
+	    .Pin  = MCU_PIN_14,
+	    .Mode = GPIO_PIN_O_PP_LS_MODE,
+    };
+    
+    static struct HalGPIOBlock Key1 = 
+    {
+	    .Port = MCU_PORT_E,
+	    .Pin  = MCU_PIN_0,
+	    .Mode = GPIO_PIN_I_UD_MODE,
+    };
+    
+    static struct HalGPIOBlock Key2 = 
+    {
+	    .Port = MCU_PORT_C,
+	    .Pin  = MCU_PIN_13,
+	    .Mode = GPIO_PIN_I_UD_MODE,
+    };
+    
+    /**
+     *******************************************************************************
+     * @brief   timer variable define
+     *******************************************************************************
+     */ 
+    static struct TimerBlock   *led1Timer;
+    static struct ProtoThreads Led2Threads;
+    
+    /**
+     *******************************************************************************
+     * @brief   signal variable define
+     *******************************************************************************
+     */
+    static struct SignalBlock  KeySignal1;
+    static struct SignalBlock *KeySignal2;
+    
+    ///* Exported variables --------------------------------------------------------*/
+    ///* Private functions ---------------------------------------------------------*/
+    ///* Exported functions --------------------------------------------------------*/
+    /**
+     *******************************************************************************
+     * @brief   led1 blink function
+     *******************************************************************************
+     */
+    static fw_err_t led1_blink_handler( void *param )
+    {   
+		Core.Hal.GPIO.Output.Toggle(&Led1);
+
+	    return FW_ERR_NONE;
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   led2 blink function
+     *******************************************************************************
+     */
+    static _PT_THREAD(bsp_led2_blink)
+    {
+	    _pt_begin();
 	    
 	    while(1)
 	    {
-	        msp.gpio.output.set(led2.port, led2.pin);
-	        
-	        ysf_pt_delay(250);            
-	
-	        msp.gpio.output.clr(led2.port, led2.pin);
-	        
-	        ysf_pt_delay(250); 
+		    Core.Hal.GPIO.Output.Toggle(&Led2);
+		    
+		    _pt_delay(250); 
 	    }
 	    
-	    ysf_pt_end();
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       device led init function
-	 *******************************************************************************
-	 */
-	static void bsp_led_init( void )
-	{
-	    msp.gpio.enable(MCU_PORT_D);
-	    msp.gpio.output.init(MCU_PORT_D, MCU_PIN_13, GPIO_PIN_O_PP_LS_MODE);    
-	
-	    map.gpio.enable(&led2);
-	    map.gpio.output.init(&led2, GPIO_PIN_O_PP_LS_MODE);  
-	}
-	
-	static void app_led1_init(void)
-	{
-	    led1Timer = ysf.timer.simple.cb_init(led1_blink_handler, NULL);
-	    ysf.timer.arm(led1Timer, YSF_TIME_2_TICK(1000), YSF_TIMER_CYCLE_MODE);
-	}
-	
-	static void app_led1_deinit(void)
-	{
-	    ysf.timer.disarm(led1Timer);
-	}
-	
-	static void app_led2_init(void)
-	{
-	    ysf.pt.init(&led2PT, bsp_led2_blink);
-	    ysf.pt.simple.arm(&led2PT);
-	}
-	
-	static void app_led2_deinit(void)
-	{
-	    ysf.pt.disarm(&led2PT);
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       key1 scan function
-	 *******************************************************************************
-	 */
-	static enum ysf_signal_status_t key1_scan( void )
-	{
-	    return ( msp.gpio.input.get(MCU_PORT_E, MCU_PIN_0) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       key2 scan function
-	 *******************************************************************************
-	 */
-	static enum ysf_signal_status_t key2_scan( void )
-	{
-	    return ( map.gpio.input.get(&key2) == true ) ? (SIGNAL_STATUS_RELEASE) : (SIGNAL_STATUS_PRESS);
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       key1 handler function
-	 *******************************************************************************
-	 */
-	static ysf_err_t key1_handler(uint16_t status)
-	{
+	    _pt_end();
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   led application function
+     *******************************************************************************
+     */
+    static void app_led1_init(void)
+    {
+	    led1Timer = Core.Component.Timer.CallBackExInit(led1_blink_handler, NULL);
+	    Core.Component.Timer.Arm(led1Timer, TIME_2_TICK(1000), TIMER_CYCLE_MODE);
+    }
+    
+    static void app_led1_deinit(void)
+    {
+   		Core.Component.Timer.Disarm(led1Timer);
+    }
+    
+    static void app_led2_init(void)
+    {
+	    _pt_init(&Led2Threads, bsp_led2_blink);
+	    _pt_ex_arm(&Led2Threads);
+    }
+    
+    static void app_led2_deinit(void)
+    {
+    	_pt_disarm(&Led2Threads);
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   key1 scan function
+     *******************************************************************************
+     */
+    static bool key1_scan(void)
+    {
+	    bool status = false;
+	    
+	    Core.Hal.GPIO.Input.Get(&Key1, &status);
+	    
+	    return status;
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   key2 scan function
+     *******************************************************************************
+     */
+    static bool key2_scan(void)
+    {
+	    bool status = false;
+	    
+	    Core.Hal.GPIO.Input.Get(&Key2, &status);
+	    
+	    return status;
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   key1 handler function
+     *******************************************************************************
+     */
+    static fw_err_t key1_handler(uint16_t status)
+    {
 	    switch(status)
 	    {
-	        case SIGNAL_STATUS_PRESS_EDGE:
-	            app_led1_deinit();
-	            app_led2_deinit();
-	            break;
-	        case SIGNAL_STATUS_PRESS:
-	            msp.gpio.output.clr(MCU_PORT_D, MCU_PIN_13);
-	            map.gpio.output.clr(&led2);
-	            break;
-	        case SIGNAL_STATUS_RELEASE_EDGE:
-	            app_led1_init();
-	            app_led2_init();
-	            break;
-	        default:
-	            break;
+		    case SIGNAL_STATUS_PRESS_EDGE:
+			    app_led1_deinit();
+			    app_led2_deinit();
+		    	break;
+		    case SIGNAL_STATUS_PRESS:
+			    Core.Hal.GPIO.Output.Clr(&Led1);
+			    Core.Hal.GPIO.Output.Clr(&Led1);
+		    	break;
+		    case SIGNAL_STATUS_RELEASE_EDGE:
+			    app_led1_init();
+			    app_led2_init();
+		   		break;
+		    default:
+		    	break;
 	    }
 	    
-	    return YSF_ERR_NONE;
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       key2 handler function
-	 *******************************************************************************
-	 */
-	static ysf_err_t key2_handler(uint16_t status)
-	{
+	    return FW_ERR_NONE;
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   key2 handler function
+     *******************************************************************************
+     */
+    static fw_err_t key2_handler(uint16_t status)
+    {
 	    switch(status)
 	    {
-	        case SIGNAL_STATUS_PRESS_EDGE:
-	            app_led1_deinit();
-	            app_led2_deinit();
-	            break;
-	        case SIGNAL_STATUS_PRESS:
-	            msp.gpio.output.set(MCU_PORT_D, MCU_PIN_13);
-	            map.gpio.output.set(&led2);
-	            break;
-	        case SIGNAL_STATUS_RELEASE_EDGE:
-	            app_led1_init();
-	            app_led2_init();
-	            break;
-	        default:
-	            break;
+		    case SIGNAL_STATUS_PRESS_EDGE:
+			    app_led1_deinit();
+			    app_led2_deinit();
+			    break;
+		    case SIGNAL_STATUS_PRESS:
+			    Core.Hal.GPIO.Output.Set(&Led1);
+			    Core.Hal.GPIO.Output.Set(&Led2);
+			    break;
+		    case SIGNAL_STATUS_RELEASE_EDGE:
+			    app_led1_init();
+			    app_led2_init();
+			    break;
+		    default:
+		    	break;
 	    }
 	    
-	    return YSF_ERR_NONE;
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       device key init function
-	 *******************************************************************************
-	 */
-	static void bsp_key_init(void)
-	{
-	    msp.gpio.enable(MCU_PORT_E);
-	    msp.gpio.input.init(MCU_PORT_E, MCU_PIN_0, GPIO_PIN_I_UD_MODE);
-	    ysf.signal.arm(&key1Signal, key1_scan, key1_handler);
+	    return FW_ERR_NONE;
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   device led init function
+     *******************************************************************************
+     */
+    static void bsp_led_init( void )
+    {
+	    Core.Hal.GPIO.Enable(&Led1);
+	    Core.Hal.GPIO.Output.Init(&Led1);
 	    
-	    map.gpio.enable(&key2);
-	    map.gpio.input.init(&key2, GPIO_PIN_I_UD_MODE);
-	    ysf.signal.arm(&key2Signal, key2_scan, key2_handler);
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       user init function
-	 *******************************************************************************
-	 */
-	static ysf_err_t user_init( void )
-	{
+	    Core.Hal.GPIO.Enable(&Led2);
+	    Core.Hal.GPIO.Output.Init(&Led2);
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   device key init function
+     *******************************************************************************
+     */
+    static void bsp_key_init(void)
+    {
+	    Core.Hal.GPIO.Enable(&Key1);
+	    Core.Hal.GPIO.Input.Init(&Key1);
+	    Core.Component.Signal.Arm(&KeySignal1, key1_scan, key1_handler);
+	    
+	    Core.Hal.GPIO.Enable(&Key2);
+	    Core.Hal.GPIO.Input.Init(&Key2);
+	    KeySignal2 = Core.Component.Signal.ArmEx(key2_scan, key2_handler);
+	    
+	    if( KeySignal2 == NULL )
+	    {
+	    	while(1);
+	    }
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   user init function
+     *******************************************************************************
+     */
+    static fw_err_t user_init( void )
+    {
 	    bsp_led_init();
+	    bsp_key_init();
+	    
 	    app_led1_init();
 	    app_led2_init();
 	    
-	    bsp_key_init();
-	
-	    return YSF_ERR_NONE;
-	}
-	
-	/**
-	 *******************************************************************************
-	 * @brief       main function
-	 *******************************************************************************
-	 */
-	int main( void )
-	{   
-	    ysf.init(user_init);
-	    ysf.start();
-	}
+	    return FW_ERR_NONE;
+    }
+    
+    /**
+     *******************************************************************************
+     * @brief   main function
+     *******************************************************************************
+     */
+    int main( void )
+    {   
+	    Core.Init();
+	    
+	    user_init();
+	    
+	    Core.Start();
+	    
+	    return 0;
+    }

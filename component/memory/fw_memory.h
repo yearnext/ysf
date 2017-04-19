@@ -86,7 +86,7 @@ extern "C"
 typedef struct 
 {
     void  (*Init)(void);
-    void* (*Malloc)(uint16_t);
+    void* (*Malloc)(uint32_t);
     void  (*Free)(void*);
     bool  (*IsIn)(void *);
 }MemoryComponentInterface;
@@ -100,10 +100,10 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MEMORY_COMPONENT
-extern void  MemoryComponentInit(void);
-extern void* MemoryMalloc(uint32_t);
-extern void  MemoryFree(void*);
-extern bool  MemoryIsIn(void*);
+extern void  InitMemoryComponent(void);
+extern void* MallocMemory(uint32_t);
+extern void  FreeMemory(void*);
+extern bool  IsInMemory(void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

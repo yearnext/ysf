@@ -159,7 +159,7 @@ extern "C"
                                 {                                                                            \
                                     struct TimerBlock *timer;                                                \
                                     timer = InitMessageHandleExTimer(pt->Thread, ptTask, FW_EVENT_DELAY);    \
-                                    TimerArm(timer, TIME_2_TICK(tick), 1);                                   \
+                                    ArmTimerModule(timer, TIME_2_TICK(tick), 1);                             \
                                     evt = FW_EVENT_NONE;                                                     \
                                     _pt_wait(evt == FW_EVENT_DELAY);                                         \
                                 }while(0)
@@ -167,7 +167,7 @@ extern "C"
 #define _pt_delay(tick)         do                                                                           \
                                 {                                                                            \
                                     InitMessageHandleTimer(&pt->Timer, pt->Thread, ptTask, FW_EVENT_DELAY);  \
-                                    TimerArm(&pt->timer, TIME_2_TICK(tick), 1);                              \
+                                    ArmTimerModule(&pt->timer, TIME_2_TICK(tick), 1);                        \
                                     evt = FW_EVENT_NONE;                                                     \
                                     _pt_wait(evt == FW_EVENT_DELAY);                                         \
                                 }while(0)                        
@@ -228,6 +228,6 @@ extern fw_err_t _pt_disarm(struct ProtoThreads*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** pt component  */
+/** @}*/     /** pt component */
 
 /**********************************END OF FILE*********************************/

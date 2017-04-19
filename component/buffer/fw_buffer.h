@@ -114,10 +114,10 @@ typedef struct
  *******************************************************************************
  */
 #if USE_BUFFER_COMPONENT
-extern fw_err_t RingBufferComponentInit(struct RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t RingBufferGetLen(struct RingBuffer*, uint16_t*);
-extern fw_err_t RingBufferWrite(struct RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t RingBufferRead(struct RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t InitRingBufferComponent(struct RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t GetRingBufferLen(struct RingBuffer*, uint16_t*);
+extern fw_err_t WriteRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t ReadRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
 #endif
 
 /**
@@ -147,7 +147,7 @@ struct HeapControlBlock
         struct HeapBlock *Head; 
     };
     
-    uint16_t Size;
+    uint32_t Size;
 };
 
 /**
@@ -171,7 +171,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MEMORY_MANAGEMENT_COMPONENT
-extern fw_err_t HeapComponentInit(struct HeapControlBlock*,  uint8_t*, uint32_t);
+extern fw_err_t InitHeapComponent(struct HeapControlBlock*,  uint8_t*, uint32_t);
 extern fw_err_t AllocHeapMemory(struct HeapControlBlock*, uint32_t, void**);
 extern fw_err_t FreeHeapMemory(struct HeapControlBlock*,  void*);
 extern bool     IsInHeapMemory(struct HeapControlBlock*,  void*);

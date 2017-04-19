@@ -51,7 +51,7 @@
  * @brief       event component auto config
  *******************************************************************************
  */
-#if USE_FRAMEWORK_EVENT_API
+#if USE_EVENT_COMPONENT
 static uint16_t            EventQueue[FW_EVENT_MAX];
 static struct fw_buffer_t EventControlBlock;
 #endif
@@ -69,9 +69,9 @@ static struct fw_buffer_t EventControlBlock;
  * @note        None
  *******************************************************************************
  */
-fw_err_t EventComponentInit(void)
+fw_err_t InitEventComponent(void)
 {
-    RingBufferComponentInit(&EventControlBlock, EventQueue, CalTypeByteSize(EventQueue));
+    InitRingBufferComponent(&EventControlBlock, EventQueue, CalTypeByteSize(EventQueue));
     
 	return FW_ERR_NONE;
 }
@@ -85,9 +85,9 @@ fw_err_t EventComponentInit(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t EventPost(uint16_t event)
+fw_err_t PostEvent(uint16_t event)
 {
-    RingBufferWrite(&EventControlBlock, &event, CalTypeByteSize(event));
+    WriteRingBuffer(&EventControlBlock, &event, CalTypeByteSize(event));
     
 	return FW_ERR_NONE;
 }
@@ -101,9 +101,9 @@ fw_err_t EventPost(uint16_t event)
  * @note        None
  *******************************************************************************
  */
-fw_err_t EventRead(uint16_t *event)
+fw_err_t GetEvent(uint16_t *event)
 {
-    RingBufferRead(&EventControlBlock, event, CalTypeByteSize(uint16_t));
+    ReadRingBuffer(&EventControlBlock, event, CalTypeByteSize(uint16_t));
 	
     return FW_ERR_NONE;
 }

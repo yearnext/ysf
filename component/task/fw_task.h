@@ -140,7 +140,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_TASK_COMPONENT
-extern fw_err_t TaskComponentInit(void);
+extern fw_err_t InitTaskComponent(void);
 extern fw_err_t TaskComponentPoll(void);
 extern fw_err_t AddTaskToQueue(struct TaskBlock*);
 
