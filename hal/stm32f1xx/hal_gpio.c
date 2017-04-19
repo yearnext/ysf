@@ -627,11 +627,11 @@ hal_err_t HalToggleGPIO(struct HalGPIOBlock *gpio)
     
     if (gpio_get_output(gpio->Port, gpio->Pin) == true)
     {
-        gpio_set(gpio->Port, gpio->Pin);
+        gpio_clr(gpio->Port, gpio->Pin);
     }
     else
     {
-        gpio_clr(gpio->Port, gpio->Pin);
+        gpio_set(gpio->Port, gpio->Pin);
     }
 
     return HAL_ERR_NONE;

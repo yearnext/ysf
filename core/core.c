@@ -199,6 +199,7 @@ void InitCoreScheduling(void)
     };
     
     Core.Hal.Timer.Init.Base(&TickTimer);
+    Core.Hal.Timer.Start(&TickTimer);
 #endif
     
 #endif
