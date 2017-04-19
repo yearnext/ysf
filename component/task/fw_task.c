@@ -159,8 +159,8 @@ fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), voi
     fw_assert(IS_PTR_NULL(func));
     
     task->Handler.CallBack = func;
-    task->Param      = param;
-    task->Type       = CALL_BACK_TASK;
+    task->Param            = param;
+    task->Type             = CALL_BACK_TASK;
     
 //    task->Next       = NULL;
     task_push(task);

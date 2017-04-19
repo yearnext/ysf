@@ -122,9 +122,11 @@ struct SignalBlock
     bool                (*Detect)(void);
     fw_err_t            (*Handler)(uint16_t);
     
+#if !defined(USE_MEMORY_COMPONENT) && !USE_MEMORY_COMPONENT
     struct TaskBlock    Task;
-
-    uint8_t             HandleProgress;
+#endif
+    
+    uint8_t             SignalStatus;
     
     bool                UseStatus;
     

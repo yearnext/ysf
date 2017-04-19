@@ -163,7 +163,12 @@ static bool key1_scan(void)
     
     Core.Hal.GPIO.Input.Get(&Key1, &status);
     
-    return status;
+    if( status == true )
+    {
+        return false;
+    }
+    
+    return true;
 }
 
 /**
@@ -177,7 +182,12 @@ static bool key2_scan(void)
     
     Core.Hal.GPIO.Input.Get(&Key2, &status);
     
-    return status;
+    if( status == true )
+    {
+        return false;
+    }
+    
+    return true;
 }
 
 /**

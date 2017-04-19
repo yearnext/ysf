@@ -166,7 +166,10 @@ void InitCoreScheduling(void)
 #if USE_DEBUG_COMPONENT
     Core.Component.Debug.Init();
 #endif
-        
+#if USE_TASK_COMPONENT
+    Core.Component.Task.Init();
+#endif  
+    
 #if USE_EVENT_COMPONENT
     Core.Component.Event.Init();
 #endif
@@ -174,18 +177,14 @@ void InitCoreScheduling(void)
 #if USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT
     Core.Component.Memory.Init();
 #endif
-
-#if USE_SIGNAL_COMPONENT
-    Core.Component.Signal.Init();
-#endif
     
 #if USE_TIMER_COMPONENT
     Core.Component.Timer.Init();
 #endif
-
-#if USE_TASK_COMPONENT
-    Core.Component.Task.Init();
-#endif  
+    
+#if USE_SIGNAL_COMPONENT
+    Core.Component.Signal.Init();
+#endif
 
 #if USE_TICK_COMPONENT
     Core.Component.Tick.Init();

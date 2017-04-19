@@ -63,16 +63,7 @@
  * @brief      update signal status
  *******************************************************************************
  */
-#define UPDATE_SIGNAL_STATUS(signal, status) ((signal)->Task.Event = (status))
-
-/**
- *******************************************************************************
- * @brief      signal handle progress change function
- *******************************************************************************
- */
-#define SIGNAL_HANDLE_INIT(signal)           ((signal)->HandleProgress = SIGNAL_STATUS_INIT)
-#define SIGNAL_SCAN_PROGRESS_INIT(signal)    ((signal)->HandleProgress = SIGNAL_STATUS_DETECT)
-#define SIGNAL_HANDLE_PROGRESS_INIT(signal)  ((signal)->HandleProgress = SIGNAL_STATUS_HANDLER)
+#define UPDATE_SIGNAL_STATUS(signal, status) ((signal)->SignalStatus = (status))
     
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -170,28 +161,6 @@ fw_err_t signal_clear(void)
 
 /**
  *******************************************************************************
- * @brief       signal handler function
- * @param       [in/out]  *param              signal block
- * @param       [in/out]  event               signal event
- * @return      [in/out]  FW_ERR_NONE         no error
- * @note        this function is static inline type
- *******************************************************************************
- */
-static fw_err_t signal_handler(void *param, uint16_t event)
-{
-    struct SignalBlock *signal = (struct SignalBlock *)param;
-    
-//    fw_assert(IS_PTR_NULL(signal));
-
-    signal->Handler(event);
-    
-    SIGNAL_HANDLE_INIT(signal);
-    
-    return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
  * @brief       signal trigger handler
  * @param       [in/out]  *signal             signal block
  * @return      [in/out]  FW_ERR_NONE         no error
@@ -202,11 +171,11 @@ __STATIC_INLINE
 fw_err_t signal_trigger_handler(struct SignalBlock *signal)
 {
 //    fw_assert(IS_PTR_NULL(signal));
-    
-    SIGNAL_HANDLE_PROGRESS_INIT(signal);
-    
-    CreateMessageHandleTask(&signal->Task, signal_handler, (void *)signal, signal->Task.Event);
-    
+#if !defined(USE_MEMORY_COMPONENT) && !USE_MEMORY_COMPONENT
+    CreateEventHandleTask(&signal->Task, signal->Handler, signal->SignalStatus);
+#else
+    CreateEventHandleExTask(signal->Handler, signal->SignalStatus);
+#endif    
     return FW_ERR_NONE;
 }
 
@@ -220,16 +189,17 @@ fw_err_t signal_trigger_handler(struct SignalBlock *signal)
  * @note        None
  *******************************************************************************
  */
-static fw_err_t signal_judge(void *param, uint16_t event)
+__STATIC_INLINE
+fw_err_t signal_judge(struct SignalBlock *signal)
 {
-    struct SignalBlock *signal = (struct SignalBlock *)param;
-    
 //    fw_assert(IS_PTR_NULL(signal));
     
-    switch( signal->Task.Event )
+    bool nowStatus = signal->Detect();
+    
+    switch( signal->SignalStatus )
     {
         case SIGNAL_STATUS_INIT:
-            if( event == SIGNAL_STATUS_RELEASE )
+            if( nowStatus == false )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
             }
@@ -239,7 +209,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP1:
-            if( event == SIGNAL_STATUS_PRESS )
+            if( nowStatus == true )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP2);
             }
@@ -249,7 +219,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP2:
-            if( event == SIGNAL_STATUS_PRESS )
+            if( nowStatus == true )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP3);
             }
@@ -259,7 +229,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP3:
-            if( event == SIGNAL_STATUS_PRESS )
+            if( nowStatus == true )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_EDGE);
                 return signal_trigger_handler(signal);
@@ -270,7 +240,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP1:
-            if( event == SIGNAL_STATUS_RELEASE )
+            if( nowStatus == false )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP2);
             }
@@ -280,7 +250,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP2:
-            if( event == SIGNAL_STATUS_RELEASE )
+            if( nowStatus == false )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP3);
             }
@@ -290,7 +260,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP3:
-            if( event == SIGNAL_STATUS_RELEASE )
+            if( nowStatus == false )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_EDGE);
                 return signal_trigger_handler(signal);
@@ -301,7 +271,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_RELEASE_EDGE:
-            if( event == SIGNAL_STATUS_RELEASE )
+            if( nowStatus == false )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
                 return signal_trigger_handler(signal);
@@ -312,7 +282,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_RELEASE:
-            if( event == SIGNAL_STATUS_RELEASE )
+            if( nowStatus == false )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
                 return signal_trigger_handler(signal);
@@ -323,7 +293,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_PRESS_EDGE:
-            if( event == SIGNAL_STATUS_PRESS )
+            if( nowStatus == true )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
                 return signal_trigger_handler(signal);
@@ -334,7 +304,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
             }
             break;
         case SIGNAL_STATUS_PRESS:
-            if( event == SIGNAL_STATUS_PRESS )
+            if( nowStatus == true )
             {
                 UPDATE_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
                 return signal_trigger_handler(signal);
@@ -347,39 +317,7 @@ static fw_err_t signal_judge(void *param, uint16_t event)
         default:
             break;
     }
-    
-    SIGNAL_HANDLE_INIT(signal);
-    
-    return FW_ERR_NONE;
-}
 
-/**
- *******************************************************************************
- * @brief       signal scan
- * @param       [in/out]  *param              signal block
- * @return      [in/out]  FW_ERR_FAIL         scan failed
- * @return      [in/out]  FW_ERR_NONE         scan success
- * @note        None
- *******************************************************************************
- */
-static fw_err_t signal_scan(void *param)
-{
-    struct SignalBlock *signal = (struct SignalBlock *)param;
-    uint16_t event = SIGNAL_STATUS_INIT;
-    
-//    fw_assert(IS_PTR_NULL(signal));
-    
-    if(signal->Detect() == true)
-    {
-        event = SIGNAL_STATUS_PRESS;
-    }
-    else
-    {
-        event = SIGNAL_STATUS_RELEASE;
-    }
-    
-    CreateMessageHandleTask(&signal->Task, signal_judge, signal, event);
-    
     return FW_ERR_NONE;
 }
 
@@ -404,11 +342,7 @@ void signal_walk(void)
     {
         if( IS_SIGNAL_ENABLE(now) )
         {
-            if( IS_SIGNAL_NEED_SCAN(now) )
-            {
-                SIGNAL_SCAN_PROGRESS_INIT(now);
-                CreateCallBackTask(&now->Task, signal_scan, &now);
-            }
+            signal_judge(now);
             
             last = now;
             now  = now->Next;
@@ -494,8 +428,6 @@ fw_err_t ArmSignalModule(struct SignalBlock *signal,
     fw_assert(IS_PTR_NULL(signal));
     fw_assert(IS_PTR_NULL(detect));
     fw_assert(IS_PTR_NULL(handler));
-
-    SIGNAL_HANDLE_INIT(signal);
     
     signal->Detect            = detect;
     signal->Handler           = handler;
@@ -528,9 +460,7 @@ struct SignalBlock *ArmSignalExModule(bool (*detect)(void),
     struct SignalBlock *signal = (struct SignalBlock *)MallocMemory(sizeof(struct SignalBlock));
     
     fw_assert(IS_PTR_NULL(signal));
-    
-    SIGNAL_HANDLE_INIT(signal);
-    
+
     signal->Detect            = detect;
     signal->Handler           = handler;
     signal->Type              = EVENT_HANDLER_EX_SIGNAL;
