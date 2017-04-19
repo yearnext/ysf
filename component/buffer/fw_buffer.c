@@ -365,11 +365,14 @@ fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *
 				now->Size    = useSize;
                 next         = (struct HeapBlock *)((void *)((uint8_t *)now + useSize));
 				next->Size   = freeSize - useSize;
-
-                next->Next   = now->Next;
-                now->Next    = next;
                 
-                next->Status = false;
+                if(now->Next != next)
+                {
+                    next->Next   = now->Next;
+                    now->Next    = next;
+                    next->Status = false;
+                }
+
                 now->Status  = true;
                 
                 *allocAddr = (void *)(now + 1);
