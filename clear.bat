@@ -16,4 +16,5 @@ del *.lst /s
 del *.sim /s
 del *.iex /s
 del *.pbd /s
+del *.__i /s
 del *.browse /s
