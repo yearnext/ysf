@@ -67,7 +67,7 @@ extern "C"
  */
 typedef struct
 {
-    uint8_t *Version;
+    char *Version;
     
 #if USE_BUFFER_COMPONENT
     RingBufferComponentInterface RingBuffer;

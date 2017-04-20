@@ -59,7 +59,7 @@ extern "C"
  */
 typedef struct
 {
-    uint8_t *Version;
+    char *Version;
     
 #if USE_MAP_GPIO_COMPONENT
     HalGPIOInterface GPIO;

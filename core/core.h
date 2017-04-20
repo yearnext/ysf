@@ -60,7 +60,7 @@ extern "C"
  */
 typedef struct 
 {
-    uint8_t *Version;
+    char *Version;
     
     void (*Init)(void);
     void (*Start)(void);

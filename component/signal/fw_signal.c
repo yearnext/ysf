@@ -91,8 +91,8 @@ fw_err_t signal_trigger_handler(struct SignalBlock *signal)
         case COMPLEX_EX_SIGNAL:
             CreateMessageHandleExTask(signal->Handle.Complex, (void*)signal, (uint16_t)signal->SignalStatus);
             break;
-        default:
-            break;
+//        default:
+//            break;
     }
 #else
     switch(signal->Type)

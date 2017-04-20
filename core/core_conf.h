@@ -117,7 +117,7 @@ extern "C"
  * @brief      define use memory pool size
  *******************************************************************************
  */
-#if !USE_STD_LIBRARY
+#if !defined(USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT) || !USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
 #define FRAMEWORK_MEMORY_POOL_SIZE                                        (4096)
 
 #if (FRAMEWORK_MEMORY_POOL_SIZE % 8)

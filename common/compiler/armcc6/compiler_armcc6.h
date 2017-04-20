@@ -78,11 +78,11 @@ extern "C"
 // * @brief      DEFINE MCU HEAP ADDRESS
 // *******************************************************************************
 // */
-////extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
+//extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
 
-////#define MCU_HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
-////#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
-////#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - MCU_HEAP_HEAD_ADDR) 
+//#define __HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
+//    
+//#define USE_COMPILER_HEAP_ADDR  
 
 
 /**
