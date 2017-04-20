@@ -308,7 +308,7 @@ __STATIC_INLINE
 bool gpio_get_input(uint8_t port, uint8_t pin)
 {
     GPIO_TypeDef *GPIO = STM32F1_PORT_ADDR(port);
-    return ((GPIO->IDR & (GPIO_PIN_CONFIG_HEAD << pin)) ? (true) : (false));
+    return ((GPIO->IDR & (GPIO_PIN_CONFIG_HEAD << pin)) ? (1) : (0));
 }
 
 /**
@@ -325,7 +325,7 @@ __STATIC_INLINE
 bool gpio_get_output(uint8_t port, uint8_t pin)
 {
     GPIO_TypeDef *GPIO = STM32F1_PORT_ADDR(port);
-    return ((GPIO->ODR & (GPIO_PIN_CONFIG_HEAD << pin)) ? (true) : (false));
+    return ((GPIO->ODR & (GPIO_PIN_CONFIG_HEAD << pin)) ? (1) : (0));
 }
 
 /* Exported functions --------------------------------------------------------*/
@@ -458,7 +458,7 @@ hal_err_t MspClrGPIO(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MspGetGPIOInputStatus(uint8_t port, uint8_t pin, bool *status)
+hal_err_t MspGetGPIOInputStatus(uint8_t port, uint8_t pin, uint8_t *status)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -479,7 +479,7 @@ hal_err_t MspGetGPIOInputStatus(uint8_t port, uint8_t pin, bool *status)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MspGetGPIOOutputStatus(uint8_t port, uint8_t pin, bool *status)
+hal_err_t MspGetGPIOOutputStatus(uint8_t port, uint8_t pin, uint8_t *status)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -625,7 +625,7 @@ hal_err_t HalToggleGPIO(struct HalGPIOBlock *gpio)
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
     hal_assert(IS_PIN_NUM_INVAILD(gpio->Pin));
     
-    if (gpio_get_output(gpio->Port, gpio->Pin) == true)
+    if (gpio_get_output(gpio->Port, gpio->Pin) == 1)
     {
         gpio_clr(gpio->Port, gpio->Pin);
     }
@@ -647,7 +647,7 @@ hal_err_t HalToggleGPIO(struct HalGPIOBlock *gpio)
  * @note        None
  *******************************************************************************
  */
-hal_err_t HalGetGPIOInputStatus(struct HalGPIOBlock *gpio, bool *status)
+hal_err_t HalGetGPIOInputStatus(struct HalGPIOBlock *gpio, uint8_t *status)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));
@@ -668,7 +668,7 @@ hal_err_t HalGetGPIOInputStatus(struct HalGPIOBlock *gpio, bool *status)
  * @note        None
  *******************************************************************************
  */
-hal_err_t HalGetGPIOOutputStatus(struct HalGPIOBlock *gpio, bool *status)
+hal_err_t HalGetGPIOOutputStatus(struct HalGPIOBlock *gpio, uint8_t *status)
 {
     hal_assert(IS_PTR_NULL(gpio));
     hal_assert(IS_PORT_NUM_INVAILD(gpio->Port));

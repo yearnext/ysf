@@ -79,11 +79,12 @@ const CoreInterface Core =
 #endif
     
 #if USE_SIGNAL_COMPONENT
-    .Component.Signal.Init                             = InitSignalComponent,
-    .Component.Signal.Handler                          = SignalComponentPool,
     .Component.Signal.Arm                              = ArmSignalModule,
-    .Component.Signal.ArmEx                            = ArmSignalExModule,
     .Component.Signal.Disarm                           = DisarmSignalModule,
+    .Component.Signal.Create.Simple                    = InitSimpleSignalModule,
+    .Component.Signal.Create.Complex                   = InitComplexSignalModule,
+    .Component.Signal.Create.SimpleEx                  = InitSimpleExSignalModule,
+    .Component.Signal.Create.ComplexEx                 = InitComplexExSignalModule,
 #endif   
 
 #if USE_TICK_COMPONENT
@@ -99,12 +100,12 @@ const CoreInterface Core =
     .Component.Timer.Arm                               = ArmTimerModule,
     .Component.Timer.Disarm                            = DisarmTimerModule,
     .Component.Timer.GetStatus                         = GetTimerStatus,
-    .Component.Timer.CallBackInit                      = InitCallBackTimer,
-    .Component.Timer.EventHandleInit                   = InitEventHandleTimer,
-    .Component.Timer.MessageInit                       = InitMessageHandleTimer,
-    .Component.Timer.CallBackExInit                    = InitCallBackExTimer,
-    .Component.Timer.EventHandleExInit                 = InitEventHandleExTimer,
-    .Component.Timer.MessageHandleExInit               = InitMessageHandleExTimer,
+    .Component.Timer.Create.CallBack                   = InitCallBackTimer,
+    .Component.Timer.Create.EventHandle                = InitEventHandleTimer,
+    .Component.Timer.Create.Message                    = InitMessageHandleTimer,
+    .Component.Timer.Create.CallBackEx                 = InitCallBackExTimer,
+    .Component.Timer.Create.EventHandleEx              = InitEventHandleExTimer,
+    .Component.Timer.Create.MessageHandleEx            = InitMessageHandleExTimer,
 #endif
 
 #if USE_TASK_COMPONENT
@@ -182,10 +183,6 @@ void InitCoreScheduling(void)
     Core.Component.Timer.Init();
 #endif
     
-#if USE_SIGNAL_COMPONENT
-    Core.Component.Signal.Init();
-#endif
-
 #if USE_TICK_COMPONENT
     Core.Component.Tick.Init();
     

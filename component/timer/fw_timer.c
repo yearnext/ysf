@@ -180,10 +180,16 @@ fw_err_t InitCallBackTimer(struct TimerBlock *timer, fw_err_t (*func)(void*), vo
     fw_assert(IS_PTR_NULL(timer));
     fw_assert(IS_PTR_NULL(func));
     
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    timer->Handler.CallBack      = func;
+    timer->Param                 = param;
+#else
     timer->Task.Handler.CallBack = func;
     timer->Task.Param            = param;
-    timer->Type                  = CALL_BACK_TIMER;
+#endif
     
+    timer->Type                  = CALL_BACK_TIMER;
+
     return FW_ERR_NONE;
 }
 
@@ -203,8 +209,14 @@ fw_err_t InitEventHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(uint16_
     fw_assert(IS_PTR_NULL(timer));
     fw_assert(IS_PTR_NULL(func));
     
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    timer->Handler.Event      = func;
+    timer->Event              = evt;
+#else
     timer->Task.Handler.Event = func;
     timer->Task.Event         = evt;
+#endif
+
     timer->Type               = EVENT_HANDLE_TIMER;
     
     return FW_ERR_NONE;
@@ -228,9 +240,16 @@ fw_err_t InitMessageHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(void*
     fw_assert(IS_PTR_NULL(timer));
     fw_assert(IS_PTR_NULL(func));
     
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    timer->Handler.Message      = func;
+    timer->Param                = param;
+    timer->Event                = evt;
+#else
     timer->Task.Handler.Message = func;
     timer->Task.Param           = param;
     timer->Task.Event           = evt;
+#endif
+
     timer->Type                 = MESSAGE_HANDLE_TIMER;
     
     return FW_ERR_NONE;
@@ -255,9 +274,9 @@ struct TimerBlock *InitCallBackExTimer(fw_err_t (*func)(void*), void *param)
     
     fw_assert(IS_PTR_NULL(timer));
 
-    timer->Task.Handler.CallBack = func;
-    timer->Task.Param            = param;
-    timer->Type                  = CALL_BACK_EX_TIMER;
+    timer->Handler.CallBack = func;
+    timer->Param            = param;
+    timer->Type             = CALL_BACK_EX_TIMER;
     
     return timer;
 #else
@@ -283,8 +302,8 @@ struct TimerBlock *InitEventHandleExTimer(fw_err_t (*func)(uint16_t), uint16_t e
     
     fw_assert(IS_PTR_NULL(timer));
     
-    timer->Task.Handler.Event = func;
-    timer->Task.Event         = evt;
+    timer->Handler.Event      = func;
+    timer->Event              = evt;
     timer->Type               = EVENT_HANDLE_EX_TIMER;
     
     return timer;
@@ -313,9 +332,9 @@ struct TimerBlock *InitMessageHandleExTimer(fw_err_t (*func)(void*, uint16_t), v
     
     fw_assert(IS_PTR_NULL(timer));
     
-    timer->Task.Handler.Message = func;
-    timer->Task.Param           = param;
-    timer->Task.Event           = evt;
+    timer->Handler.Message      = func;
+    timer->Param                = param;
+    timer->Event                = evt;
     timer->Type                 = MESSAGE_HANDLE_EX_TIMER;
     
     return timer;
@@ -417,24 +436,46 @@ void timer_trigger_handler(struct TimerBlock *timer)
     {
         case CALL_BACK_TIMER:
         case CALL_BACK_EX_TIMER:
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+            if( timer->Handler.CallBack != NULL )
+            {
+                CreateCallBackExTask(timer->Handler.CallBack, timer->Param);
+            }
+#else
             if( timer->Task.Handler.CallBack != NULL )
             {
                 CreateCallBackTask(&timer->Task, timer->Task.Handler.CallBack, timer->Task.Param);
             }
+#endif
             break;
         case EVENT_HANDLE_TIMER:
         case EVENT_HANDLE_EX_TIMER:
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT    
+            if( timer->Handler.Event != NULL )
+            {
+                CreateEventHandleExTask(timer->Handler.Event, timer->Event);
+            }
+            
+#else
             if( timer->Task.Handler.Event != NULL )
             {
                 CreateEventHandleTask(&timer->Task, timer->Task.Handler.Event, timer->Task.Event);
             }
+#endif
             break;
         case MESSAGE_HANDLE_TIMER:
         case MESSAGE_HANDLE_EX_TIMER:
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+            if( timer->Handler.Message != NULL )
+            {
+                CreateMessageHandleExTask(timer->Handler.Message, timer->Param, timer->Event);
+            }
+#else
             if( timer->Task.Handler.Message != NULL )
             {
                 CreateMessageHandleTask(&timer->Task, timer->Task.Handler.Message, timer->Task.Param, timer->Task.Event);
             }
+#endif
             break;
 //        default:
 //            break;

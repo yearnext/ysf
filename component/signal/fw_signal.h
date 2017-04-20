@@ -51,6 +51,7 @@ extern "C"
 #include _FW_EVENT_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
+#include _FW_TIMER_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -92,23 +93,49 @@ extern "C"
  * @brief       define signal status enumeration
  *******************************************************************************
  */
-#define SIGNAL_STATUS_INIT                                                   (0)  
-#define SIGNAL_STATUS_DETECT                                                 (1)
-#define SIGNAL_STATUS_HANDLER                                                (2)
-    
-#define SIGNAL_STATUS_PRESS_FILTER_STEP1                                     (3)
-#define SIGNAL_STATUS_PRESS_FILTER_STEP2                                     (4)
-#define SIGNAL_STATUS_PRESS_FILTER_STEP3                                     (5)
-#define SIGNAL_STATUS_RELEASE_FILTER_STEP1                                   (6)
-#define SIGNAL_STATUS_RELEASE_FILTER_STEP2                                   (7)
-#define SIGNAL_STATUS_RELEASE_FILTER_STEP3                                   (8)
+//#define SIGNAL_STATUS_INIT                                                   (0)  
+//#define SIGNAL_STATUS_DETECT                                                 (1)
+//#define SIGNAL_STATUS_HANDLER                                                (2)
+//    
+//#define SIGNAL_STATUS_PRESS_FILTER_STEP1                                     (3)
+//#define SIGNAL_STATUS_PRESS_FILTER_STEP2                                     (4)
+//#define SIGNAL_STATUS_PRESS_FILTER_STEP3                                     (5)
+//#define SIGNAL_STATUS_RELEASE_FILTER_STEP1                                   (6)
+//#define SIGNAL_STATUS_RELEASE_FILTER_STEP2                                   (7)
+//#define SIGNAL_STATUS_RELEASE_FILTER_STEP3                                   (8)
 
-#define SIGNAL_STATUS_RELEASE                                                (9)
-#define SIGNAL_STATUS_PRESS_EDGE                                            (10)
-#define SIGNAL_STATUS_PRESS                                                 (11)
-#define SIGNAL_STATUS_LONG_PRESS                                            (12)
-#define SIGNAL_STATUS_MULTI_PRESS                                           (13)
-#define SIGNAL_STATUS_RELEASE_EDGE                                          (14)
+//#define SIGNAL_STATUS_RELEASE                                                (9)
+//#define SIGNAL_STATUS_PRESS_EDGE                                            (10)
+//#define SIGNAL_STATUS_PRESS                                                 (11)
+//#define SIGNAL_STATUS_LONG_PRESS                                            (12)
+//#define SIGNAL_STATUS_MULTI_PRESS                                           (13)
+//#define SIGNAL_STATUS_RELEASE_EDGE                                          (14)
+enum SignalStatus
+{
+    SIGNAL_STATUS_INIT,
+    SIGNAL_STATUS_PRESS_FILTER_STEP1,
+    SIGNAL_STATUS_PRESS_FILTER_STEP2,
+    SIGNAL_STATUS_PRESS_FILTER_STEP3,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP1,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP2,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP3,
+    SIGNAL_STATUS_RELEASE,
+    SIGNAL_STATUS_PRESS_EDGE,
+    SIGNAL_STATUS_PRESS,
+    SIGNAL_STATUS_LONG_PRESS,
+    SIGNAL_STATUS_MULTI_PRESS,
+    SIGNAL_STATUS_RELEASE_EDGE,
+};
+
+/**
+ *******************************************************************************
+ * @brief       define signal info param
+ *******************************************************************************
+ */
+#define NO_SIGNAL_INFO                                                       (0)
+#define IS_NO_SIGNAL(signal)                        ((signal) == NO_SIGNAL_INFO)
+
+#define SIGNAL_CYCLE_MODE                                       TIMER_CYCLE_MODE
 
 /**
  *******************************************************************************
@@ -119,21 +146,31 @@ struct SignalBlock
 {
     struct SignalBlock *Next;
     
-    bool                (*Detect)(void);
-    fw_err_t            (*Handler)(uint16_t);
+    uint8_t             (*Detect)(void);
     
-#if !defined(USE_MEMORY_COMPONENT) && !USE_MEMORY_COMPONENT
+    union
+    {
+        fw_err_t        (*Simple)(uint16_t);
+        fw_err_t        (*Complex)(void*, uint16_t);
+    }Handle;
+
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    struct TimerBlock   *Timer;
+#else
+    struct TimerBlock   Timer;
     struct TaskBlock    Task;
 #endif
     
-    uint8_t             SignalStatus;
+    uint8_t             SignalInfo;
     
-    bool                UseStatus;
-    
+    enum SignalStatus   SignalStatus;
+
     enum
     {
-        EVENT_HANDLER_SIGNAL,
-        EVENT_HANDLER_EX_SIGNAL,
+        SIMPLE_SIGNAL,
+        SIMPLE_EX_SIGNAL,
+        COMPLEX_SIGNAL,
+        COMPLEX_EX_SIGNAL,
     }Type;
 };
 
@@ -145,13 +182,17 @@ struct SignalBlock
 #if USE_SIGNAL_COMPONENT
 typedef struct
 {
-    fw_err_t (*Init)(void);
-    fw_err_t (*Handler)(uint16_t);
-
-    fw_err_t (*Arm)(struct SignalBlock*, bool (*)(void), fw_err_t (*)(uint16_t));
-    struct SignalBlock *(*ArmEx)(bool (*)(void), fw_err_t (*)(uint16_t));
+    fw_err_t                (*Arm)(struct SignalBlock*, uint32_t, int16_t);
+    fw_err_t                (*Disarm)(struct SignalBlock*);
     
-    fw_err_t (*Disarm)(struct SignalBlock*);
+    struct
+    {
+        fw_err_t            (*Simple)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));
+        fw_err_t            (*Complex)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(void*, uint16_t));
+        
+        struct SignalBlock* (*SimpleEx)(uint8_t (*)(void), fw_err_t (*)(uint16_t));
+        struct SignalBlock* (*ComplexEx)(uint8_t (*)(void), fw_err_t (*)(void*, uint16_t));
+    }Create;
 }SignalComponentInterface;
 #endif
 
@@ -163,21 +204,15 @@ typedef struct
  *******************************************************************************
  */
 #if USE_SIGNAL_COMPONENT
-extern fw_err_t InitSignalComponent(void);
-     
-extern fw_err_t AddSignalToQueue(struct SignalBlock*);
-
-extern fw_err_t SignalComponentPool(uint16_t);
-
-extern fw_err_t ArmSignalModule(struct SignalBlock*, 
-                                bool (*)(void), 
-                                fw_err_t (*)(uint16_t) );
-                                   
-extern struct SignalBlock *ArmSignalExModule(bool (*)(void),
-                                             fw_err_t (*)(uint16_t) );
-                                       
+extern fw_err_t ArmSignalModule(struct SignalBlock*, uint32_t, int16_t);
 extern fw_err_t DisarmSignalModule(struct SignalBlock*);
 
+extern fw_err_t InitSimpleSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));   
+extern fw_err_t InitComplexSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(void*, uint16_t)); 
+
+extern struct SignalBlock *InitSimpleExSignalModule(uint8_t (*)(void), fw_err_t (*)(uint16_t));                                  
+extern struct SignalBlock *InitComplexExSignalModule(uint8_t (*)(void), fw_err_t (*)(void*, uint16_t));       
+                                                                 
 #endif
                                        
 /* Add c++ compatibility------------------------------------------------------*/

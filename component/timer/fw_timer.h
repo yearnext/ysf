@@ -45,6 +45,7 @@ extern "C"
 #include "core_path.h"
 #include _FW_PATH
 #include _FW_TASK_COMPONENT_PATH
+#include _FW_MEMORY_COMPONENT_PATH
     
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -95,8 +96,20 @@ struct TimerBlock
     uint32_t          LoadTicks;
     int16_t           Cycle;
 
-    struct TaskBlock  Task;
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    union
+    {
+        fw_err_t (*Message)(void*, uint16_t);
+        fw_err_t (*Event)(uint16_t);
+        fw_err_t (*CallBack)(void*);
+    }Handler;
 
+    void *Param;
+    uint16_t Event;
+#else
+    struct TaskBlock  Task;
+#endif
+    
     enum
     {
         CALL_BACK_TIMER,
@@ -125,13 +138,16 @@ typedef struct
     
     bool (*GetStatus)(struct TimerBlock*);
     
-    fw_err_t (*CallBackInit)(struct TimerBlock*, fw_err_t (*)(void*), void*);
-    fw_err_t (*EventHandleInit)(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
-    fw_err_t (*MessageInit)(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+    struct
+    {
+        fw_err_t (*CallBack)(struct TimerBlock*, fw_err_t (*)(void*), void*);
+        fw_err_t (*EventHandle)(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
+        fw_err_t (*Message)(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 
-    struct TimerBlock *(*CallBackExInit)(fw_err_t (*)(void*), void*);
-    struct TimerBlock *(*EventHandleExInit)(fw_err_t (*)(uint16_t), uint16_t);
-    struct TimerBlock *(*MessageHandleExInit)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+        struct TimerBlock *(*CallBackEx)(fw_err_t (*)(void*), void*);
+        struct TimerBlock *(*EventHandleEx)(fw_err_t (*)(uint16_t), uint16_t);
+        struct TimerBlock *(*MessageHandleEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+    }Create;
 }TimerComponentInterface;
 #endif
 

@@ -132,7 +132,7 @@ static _PT_THREAD(bsp_led2_blink)
  */
 static void app_led1_init(void)
 {
-    led1Timer = Core.Component.Timer.CallBackExInit(led1_blink_handler, NULL);
+    led1Timer = Core.Component.Timer.Create.CallBackEx(led1_blink_handler, NULL);
     Core.Component.Timer.Arm(led1Timer, TIME_2_TICK(1000), TIMER_CYCLE_MODE);
 }
 
@@ -157,18 +157,13 @@ static void app_led2_deinit(void)
  * @brief       key1 scan function
  *******************************************************************************
  */
-static bool key1_scan(void)
+static uint8_t key1_scan(void)
 {
-    bool status = false;
+    uint8_t status;
     
     Core.Hal.GPIO.Input.Get(&Key1, &status);
     
-    if( status == true )
-    {
-        return false;
-    }
-    
-    return true;
+    return !status;
 }
 
 /**
@@ -176,18 +171,13 @@ static bool key1_scan(void)
  * @brief       key2 scan function
  *******************************************************************************
  */
-static bool key2_scan(void)
+static uint8_t key2_scan(void)
 {
-    bool status = false;
+    uint8_t status;
     
     Core.Hal.GPIO.Input.Get(&Key2, &status);
     
-    if( status == true )
-    {
-        return false;
-    }
-    
-    return true;
+    return !status;
 }
 
 /**
@@ -269,16 +259,13 @@ static void bsp_key_init(void)
 {
     Core.Hal.GPIO.Enable(&Key1);
     Core.Hal.GPIO.Input.Init(&Key1);
-    Core.Component.Signal.Arm(&KeySignal1, key1_scan, key1_handler);
+    Core.Component.Signal.Create.Simple(&KeySignal1, key1_scan, key1_handler);
+    Core.Component.Signal.Arm(&KeySignal1, TIME_2_TICK(20),SIGNAL_CYCLE_MODE);
     
     Core.Hal.GPIO.Enable(&Key2);
     Core.Hal.GPIO.Input.Init(&Key2);
-    KeySignal2 = Core.Component.Signal.ArmEx(key2_scan, key2_handler);
-    
-    if( KeySignal2 == NULL )
-    {
-        while(1);
-    }
+    KeySignal2 = Core.Component.Signal.Create.SimpleEx(key2_scan, key2_handler);
+    Core.Component.Signal.Arm(KeySignal2, TIME_2_TICK(20),SIGNAL_CYCLE_MODE);
 }
 
 /**

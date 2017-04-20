@@ -195,7 +195,7 @@ typedef struct
         hal_err_t      (*Init)(uint8_t, uint8_t, uint8_t);
         hal_err_t      (*Fini)(uint8_t, uint8_t);
         
-        hal_err_t      (*Get)(uint8_t, uint8_t, bool*);
+        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
 	}Input;
 	
 	struct
@@ -203,7 +203,7 @@ typedef struct
         hal_err_t      (*Init)(uint8_t, uint8_t, uint8_t);
         hal_err_t      (*Fini)(uint8_t, uint8_t);
         
-        hal_err_t      (*Get)(uint8_t, uint8_t, bool*);
+        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
         hal_err_t      (*Set)(uint8_t, uint8_t);
         hal_err_t      (*Clr)(uint8_t, uint8_t);
 	}Output;
@@ -244,7 +244,7 @@ typedef struct
         hal_err_t      (*Init)(struct HalGPIOBlock*);
         hal_err_t      (*Fini)(struct HalGPIOBlock*);
         
-        hal_err_t      (*Get)(struct HalGPIOBlock*, bool*);
+        hal_err_t      (*Get)(struct HalGPIOBlock*, uint8_t*);
 	}Input;
 	
 	struct
@@ -252,7 +252,7 @@ typedef struct
         hal_err_t      (*Init)(struct HalGPIOBlock*);
         hal_err_t      (*Fini)(struct HalGPIOBlock*);
         
-        hal_err_t      (*Get)(struct HalGPIOBlock*, bool*);
+        hal_err_t      (*Get)(struct HalGPIOBlock*, uint8_t*);
         hal_err_t      (*Set)(struct HalGPIOBlock*);
         hal_err_t      (*Clr)(struct HalGPIOBlock*);
         hal_err_t      (*Toggle)(struct HalGPIOBlock*);
@@ -280,8 +280,8 @@ extern hal_err_t MspInitGPIO(uint8_t, uint8_t, uint8_t);
 extern hal_err_t MspDeinitGPIO(uint8_t, uint8_t);
 extern hal_err_t MspSetGPIO(uint8_t, uint8_t);
 extern hal_err_t MspClrGPIO(uint8_t, uint8_t);
-extern hal_err_t MspGetGPIOInputStatus(uint8_t, uint8_t, bool*);
-extern hal_err_t MspGetGPIOOutputStatus(uint8_t, uint8_t, bool*);
+extern hal_err_t MspGetGPIOInputStatus(uint8_t, uint8_t, uint8_t*);
+extern hal_err_t MspGetGPIOOutputStatus(uint8_t, uint8_t, uint8_t*);
 #endif
 
   
@@ -298,8 +298,8 @@ extern hal_err_t HalDeinitGPIO(struct HalGPIOBlock*);
 extern hal_err_t HalSetGPIO(struct HalGPIOBlock*);
 extern hal_err_t HalClrGPIO(struct HalGPIOBlock*);
 extern hal_err_t HalToggleGPIO(struct HalGPIOBlock*);
-extern hal_err_t HalGetGPIOInputStatus(struct HalGPIOBlock*, bool*);
-extern hal_err_t HalGetGPIOOutputStatus(struct HalGPIOBlock*, bool*);
+extern hal_err_t HalGetGPIOInputStatus(struct HalGPIOBlock*, uint8_t*);
+extern hal_err_t HalGetGPIOOutputStatus(struct HalGPIOBlock*, uint8_t*);
 #endif
 
 #ifdef __cplusplus
