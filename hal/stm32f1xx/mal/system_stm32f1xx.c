@@ -436,6 +436,21 @@ void SystemInit_ExtMemCtl(void)
 #endif /* DATA_IN_ExtSRAM */
 #endif /* STM32F100xE || STM32F101xE || STM32F101xG || STM32F103xE || STM32F103xG */
 
+__ASM
+void wait(void)
+{
+    BX LR
+}
+
+uint32_t r_sp = 0;
+
+void HardFault_Handler(void)
+{
+    r_sp = __get_PSP();
+    while(1);
+//    wait();
+}
+
 /**
   * @}
   */
