@@ -116,7 +116,6 @@ fw_err_t signal_trigger_handler(struct SignalBlock *signal)
  *******************************************************************************
  * @brief       signal status judge
  * @param       [in/out]  *param              signal block
- * @param       [in/out]  event               signal status event
  * @return      [in/out]  FW_ERR_FAIL         judge failed
  * @return      [in/out]  FW_ERR_NONE         judge success
  * @note        None
@@ -436,7 +435,7 @@ fw_err_t signal_judge(void *param)
 
 /**
  *******************************************************************************
- * @brief       signal component arm
+ * @brief       signal component init
  * @param       [in/out]  *signal           signal block
  * @param       [in/out]  *detect           signal detect function
  * @param       [in/out]  *handler          signal handler function
@@ -461,7 +460,8 @@ fw_err_t InitSimpleSignalModule(struct SignalBlock *signal, uint8_t (*detect)(vo
 
 /**
  *******************************************************************************
- * @brief       signal ex component arm
+ * @brief       signal component init
+ * @param       [in/out]  *signal           signal block
  * @param       [in/out]  *detect           signal detect function
  * @param       [in/out]  *handler          signal handler function
  * @return      [in/out]  NOT NULL          arm success
@@ -484,8 +484,7 @@ fw_err_t InitComplexSignalModule(struct SignalBlock* signal, uint8_t (*detect)(v
 
 /**
  *******************************************************************************
- * @brief       signal component arm
- * @param       [in/out]  *signal           signal block
+ * @brief       signal ex component init
  * @param       [in/out]  *detect           signal detect function
  * @param       [in/out]  *handler          signal handler function
  * @return      [in/out]  FW_ERR_NONE       arm success
@@ -514,7 +513,7 @@ struct SignalBlock *InitSimpleExSignalModule(uint8_t (*detect)(void), fw_err_t (
 
 /**
  *******************************************************************************
- * @brief       signal ex component arm
+ * @brief       signal ex component init
  * @param       [in/out]  *detect           signal detect function
  * @param       [in/out]  *handler          signal handler function
  * @return      [in/out]  NOT NULL          arm success
@@ -546,8 +545,8 @@ struct SignalBlock *InitComplexExSignalModule(uint8_t (*detect)(void), fw_err_t 
  *******************************************************************************
  * @brief       signal component arm
  * @param       [in/out]  *signal           signal block
- * @param       [in/out]  *detect           signal detect function
- * @param       [in/out]  *handler          signal handler function
+ * @param       [in/out]  scanTime          signal scan time
+ * @param       [in/out]  scanCount         signal scan count
  * @return      [in/out]  FW_ERR_NONE       arm success
  * @return      [in/out]  FW_ERR_FAIL       arm failed
  * @note        None
@@ -585,6 +584,23 @@ fw_err_t DisarmSignalModule(struct SignalBlock *signal)
 #else
     DisarmTimerModule(&signal->Timer);
 #endif    
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       get signal info
+ * @param       [in/out]  *signal           signal block
+ * @return      [in/out]  FW_ERR_NONE       get success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t GetSignalInfo(struct SignalBlock *signal, uint8_t *info)
+{
+    fw_assert(IS_PTR_NULL(signal));
+    
+    *info = signal->SignalInfo;
 
     return FW_ERR_NONE;
 }

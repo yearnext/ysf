@@ -182,6 +182,8 @@ struct SignalBlock
 #if USE_SIGNAL_COMPONENT
 typedef struct
 {
+    fw_err_t                (*GetInfo)(struct SignalBlock*, uint8_t*);
+    
     fw_err_t                (*Arm)(struct SignalBlock*, uint32_t, int16_t);
     fw_err_t                (*Disarm)(struct SignalBlock*);
     
@@ -204,6 +206,8 @@ typedef struct
  *******************************************************************************
  */
 #if USE_SIGNAL_COMPONENT
+extern fw_err_t GetSignalInfo(struct SignalBlock*, uint8_t*);
+
 extern fw_err_t ArmSignalModule(struct SignalBlock*, uint32_t, int16_t);
 extern fw_err_t DisarmSignalModule(struct SignalBlock*);
 

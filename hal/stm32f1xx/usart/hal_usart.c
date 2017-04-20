@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       core.h                                                          *
+ * @file       hal_usart.c                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-04-13                                                      *
- * @brief      core head files                                                 *
+ * @date       2017-04-20                                                      *
+ * @brief      hal usart source files                                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,73 +32,23 @@
  */
  
 /**
- * @defgroup frameowrk core
+ * @defgroup usart component
  * @{
  */
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef _FRAMEWORK_CORE_H__
-#define _FRAMEWORK_CORE_H__
 
-/* Add c++ compatibility------------------------------------------------------*/
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-    
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_PATH
-#include _FW_INTERFACE_PATH
 #include _HAL_PATH
-#include _HAL_INTERFACE_PATH
+#include _HAL_MAL_PATH
+#include _HAL_USART_PATH
 
-/* Exported macro ------------------------------------------------------------*/ 
-#define fw_core_init                                               Core.Init
-#define fw_core_start                                              Core.Start
-
-#define fw_debug_init
-
+/* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        define core interface
- *******************************************************************************
- */
-typedef struct 
-{
-    char *Version;
-    
-    void (*Init)(void);
-    void (*Start)(void);
-    
-    FrameworkComponentInterface Component;
-
-    FrameworkHalInterface       Hal;
-}CoreInterface;
+/* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        core interface
- *******************************************************************************
- */
-extern const CoreInterface Core;
-
+/* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        core api
- *******************************************************************************
- */
-void InitCoreScheduling(void);
-void StartCoreScheduling(void);
 
-/* Add c++ compatibility------------------------------------------------------*/
-#ifdef __cplusplus
-}
-#endif
-	
-#endif       /** end include define */
-
-/** @}*/     /** framework core interface */
+/** @}*/     /** usart component */
 
 /**********************************END OF FILE*********************************/

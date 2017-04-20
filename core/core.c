@@ -79,6 +79,7 @@ const CoreInterface Core =
 #endif
     
 #if USE_SIGNAL_COMPONENT
+    .Component.Signal.GetInfo                          = GetSignalInfo,
     .Component.Signal.Arm                              = ArmSignalModule,
     .Component.Signal.Disarm                           = DisarmSignalModule,
     .Component.Signal.Create.Simple                    = InitSimpleSignalModule,
