@@ -152,7 +152,6 @@ typedef enum
 #include "core_path.h"
 #include _HAL_PATH
 #include _HAL_STM32F1XX_CMSIS_CM3_PATH
-#include _HAL_STM32F103XE_MAL_PATH
 
 /** @addtogroup Peripheral_registers_structures
   * @{
