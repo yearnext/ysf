@@ -15,7 +15,7 @@
 
 示例：
     
-    void at_opera(uint8_t atCmd);
+    void AtOpera(uint8_t atCmd);
 
 ### 1.3 结构体成员
 结构体成员命名时，使用**Pascal**命名规则。
@@ -34,8 +34,8 @@
     
     enum
 	{
-		SystemInitEvent,
-		SystemEndEvent,
+		SYSTEM_START_EVENT,
+		SYSTEM_END_EVENT,
 	};
 
 ### 1.5 常量命名
@@ -68,10 +68,10 @@
 	enum
 	{
 		/** event max enum */
-		EventMin,
+		EVENT_MIN,
 
 		/** event max enum */
-		EventMax,
+		EVENT_MAX,
 	};
 
 ### 2.3 结构体、联合注释规范
@@ -84,10 +84,10 @@
 	struct _TempStruct
 	{
 		/** max number */
-		uint8_t numberMax,
+		uint8_t NumberMax,
 
 		/** min number */
-		uint8_t numberMin,
+		uint8_t NumberMin,
 	};
 
 	/**
@@ -98,10 +98,10 @@
 	union _TempUnion
 	{
 		/** max number */
-		uint8_t numberMax;
+		uint8_t NumberMax;
 
 		/** min number */
-		uint8_t numberMin,
+		uint8_t NumberMin,
 	};
 
 ### 2.4 模块、模组注释规范
@@ -120,12 +120,12 @@
     /**
      *******************************************************************************
      * @brief     push data to fifo
-     * @param     [in/out]  dataPush        push data
+     * @param     [in/out]  pushData        push data
      * @return    [in/out]  ERR_NONE        no error
      * @note      None
      *******************************************************************************
      */
-    err_t fifo_push(uint8_t dataPush)
+    err_t PushInFifo(uint8_t pushData)
     {
 	    return ERR_NONE;
     }
