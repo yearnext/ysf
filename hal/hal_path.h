@@ -142,8 +142,21 @@ extern "C"
  * @brief        stm32f1xx device head files path
  *******************************************************************************
  */
-#define _HAL_STM32F1XX_GPIO_PATH                   "../hal/stm32f1xx/hal_gpio.h"
-#define _HAL_STM32F1XX_TIMER_PATH                  "../hal/stm32f1xx/hal_timer.h"
+#define _HAL_STM32F1XX_PATH                        "../hal/stm32f1xx/stm32f1xx_hal.h"
+#define _HAL_STM32F1XX_CONF_PATH                   "../hal/stm32f1xx/stm32f1xx_hal_conf.h"
+#define _HAL_STM32F1XX_DEF_PATH                    "../hal/stm32f1xx/stm32f1xx_hal_def.h"
+#define _HAL_STM32F1XX_LEGACY_PATH                 "../hal/stm32f1xx/legacy/stm32f1xx_hal_legacy.h"
+ 
+#define _HAL_STM32F1XX_RCC_LIBRARY_PATH            "../hal/stm32f1xx/rcc/stm32f1xx_hal_rcc.h"
+#define _HAL_STM32F1XX_RCC_EX_LIBRARY_PATH         "../hal/stm32f1xx/rcc/stm32f1xx_hal_rcc_ex.h"
+
+#define _HAL_STM32F1XX_GPIO_LIBRARY_PATH           "../hal/stm32f1xx/gpio/stm32f1xx_hal_gpio.h"
+#define _HAL_STM32F1XX_GPIO_EX_LIBRARY_PATH        "../hal/stm32f1xx/gpio/stm32f1xx_hal_gpio_ex.h"
+#define _HAL_STM32F1XX_GPIO_PATH                   "../hal/stm32f1xx/gpio/hal_gpio.h"
+
+#define _HAL_STM32F1XX_TIMER_LIBRARY_PATH          "../hal/stm32f1xx/timer/stm32f1xx_hal_timer.h"
+#define _HAL_STM32F1XX_TIMER_EX_LIBRARY_PATH       "../hal/stm32f1xx/timer/stm32f1xx_hal_timer_ex.h"
+#define _HAL_STM32F1XX_TIMER_PATH                  "../hal/stm32f1xx/timer/hal_timer.h"
 
 /* Includes ------------------------------------------------------------------*/
 #include _HAL_CONF_PATH
