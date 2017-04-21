@@ -436,16 +436,6 @@
           <GroupName>ysf/hal/stm32f1xx</GroupName>
           <Files>
             <File>
-              <FileName>hal_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\hal_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\hal_timer.c</FilePath>
-            </File>
-            <File>
               <FileName>system_stm32f1xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\hal\stm32f1xx\mal\system_stm32f1xx.c</FilePath>
@@ -454,6 +444,21 @@
               <FileName>startup_stm32f103xb.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\hal\stm32f1xx\mal\arm\startup_stm32f103xb.s</FilePath>
+            </File>
+            <File>
+              <FileName>map_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\map\map_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>map_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\map\map_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>map_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\map\map_usart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -464,6 +469,41 @@
               <FileName>core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\core\core.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>stm32_hal_library</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32f1xx_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\driver\stm32f1xx_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\driver\stm32f1xx_hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\driver\stm32f1xx_hal_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\driver\stm32f1xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\driver\stm32f1xx_hal_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f1xx\driver\stm32f1xx_hal_tim.c</FilePath>
             </File>
           </Files>
         </Group>
