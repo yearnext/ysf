@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32f101xe.h
+  * @file    stm32f101xg.h
   * @author  MCD Application Team
   * @version V4.1.0
   * @date    29-April-2016
@@ -48,12 +48,12 @@
   * @{
   */
 
-/** @addtogroup stm32f101xe
+/** @addtogroup stm32f101xg
   * @{
   */
     
-#ifndef __STM32F101xE_H
-#define __STM32F101xE_H
+#ifndef __STM32F101xG_H
+#define __STM32F101xG_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -65,7 +65,7 @@
 /**
   * @brief Configuration of the Cortex-M3 Processor and Core Peripherals 
  */
- #define __MPU_PRESENT             0      /*!< Other STM32 devices does not provide an MPU  */
+ #define __MPU_PRESENT             1      /*!< STM32 XL-density devices provide an MPU      */
 #define __CM3_REV                 0x0200  /*!< Core Revision r2p0                           */
 #define __NVIC_PRIO_BITS          4       /*!< STM32 uses 4 Bits for the Priority Levels    */
 #define __Vendor_SysTickConfig    0       /*!< Set to 1 if different SysTick Config is used */
@@ -116,8 +116,11 @@ typedef enum
   DMA1_Channel5_IRQn          = 15,     /*!< DMA1 Channel 5 global Interrupt                      */
   DMA1_Channel6_IRQn          = 16,     /*!< DMA1 Channel 6 global Interrupt                      */
   DMA1_Channel7_IRQn          = 17,     /*!< DMA1 Channel 7 global Interrupt                      */
-  ADC1_IRQn                   = 18,     /*!< ADC1 global Interrupt                                */
+  ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
   EXTI9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
+  TIM9_IRQn                   = 24,     /*!< TIM9 global Interrupt                                */
+  TIM10_IRQn                  = 25,     /*!< TIM10 global Interrupt                               */
+  TIM11_IRQn                  = 26,     /*!< TIM11 global interrupt                               */
   TIM2_IRQn                   = 28,     /*!< TIM2 global Interrupt                                */
   TIM3_IRQn                   = 29,     /*!< TIM3 global Interrupt                                */
   TIM4_IRQn                   = 30,     /*!< TIM4 global Interrupt                                */
@@ -132,6 +135,9 @@ typedef enum
   USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
   EXTI15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
   RTC_Alarm_IRQn              = 41,     /*!< RTC Alarm through EXTI Line Interrupt                */
+  TIM12_IRQn                  = 43,     /*!< TIM12 global Interrupt                               */
+  TIM13_IRQn                  = 44,     /*!< TIM13 global Interrupt                               */
+  TIM14_IRQn                  = 45,     /*!< TIM14 global Interrupt                               */
   FSMC_IRQn                   = 48,     /*!< FSMC global Interrupt                                */
   TIM5_IRQn                   = 50,     /*!< TIM5 global Interrupt                                */
   SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */
@@ -149,9 +155,10 @@ typedef enum
 /**
   * @}
   */
-#include "core_path.h"
-#include _HAL_PATH
-#include _HAL_STM32F1XX_CMSIS_CM3_PATH
+
+#include "core_cm3.h"
+#include "system_stm32f1xx.h"
+#include <stdint.h>
 
 /** @addtogroup Peripheral_registers_structures
   * @{
@@ -343,6 +350,12 @@ typedef struct
   __IO uint32_t RESERVED;
   __IO uint32_t OBR;
   __IO uint32_t WRPR;
+  uint32_t RESERVED1[8]; 
+  __IO uint32_t KEYR2;
+  uint32_t RESERVED2;   
+  __IO uint32_t SR2;
+  __IO uint32_t CR2;
+  __IO uint32_t AR2; 
 } FLASH_TypeDef;
 
 /** 
@@ -630,6 +643,7 @@ typedef struct
 
 #define FLASH_BASE            ((uint32_t)0x08000000) /*!< FLASH base address in the alias region */
 #define FLASH_BANK1_END       ((uint32_t)0x0807FFFF) /*!< FLASH END address of bank1 */
+#define FLASH_BANK2_END       ((uint32_t)0x080FFFFF) /*!< FLASH END address of bank2 */
 #define SRAM_BASE             ((uint32_t)0x20000000) /*!< SRAM base address in the alias region */
 #define PERIPH_BASE           ((uint32_t)0x40000000) /*!< Peripheral base address in the alias region */
 
@@ -650,6 +664,9 @@ typedef struct
 #define TIM5_BASE             (APB1PERIPH_BASE + 0x0C00)
 #define TIM6_BASE             (APB1PERIPH_BASE + 0x1000)
 #define TIM7_BASE             (APB1PERIPH_BASE + 0x1400)
+#define TIM12_BASE            (APB1PERIPH_BASE + 0x1800)
+#define TIM13_BASE            (APB1PERIPH_BASE + 0x1C00)
+#define TIM14_BASE            (APB1PERIPH_BASE + 0x2000)
 #define RTC_BASE              (APB1PERIPH_BASE + 0x2800)
 #define WWDG_BASE             (APB1PERIPH_BASE + 0x2C00)
 #define IWDG_BASE             (APB1PERIPH_BASE + 0x3000)
@@ -674,8 +691,12 @@ typedef struct
 #define GPIOF_BASE            (APB2PERIPH_BASE + 0x1C00)
 #define GPIOG_BASE            (APB2PERIPH_BASE + 0x2000)
 #define ADC1_BASE             (APB2PERIPH_BASE + 0x2400)
+#define ADC2_BASE             (APB2PERIPH_BASE + 0x2800)
 #define SPI1_BASE             (APB2PERIPH_BASE + 0x3000)
 #define USART1_BASE           (APB2PERIPH_BASE + 0x3800)
+#define TIM9_BASE             (APB2PERIPH_BASE + 0x4C00)
+#define TIM10_BASE            (APB2PERIPH_BASE + 0x5000)
+#define TIM11_BASE            (APB2PERIPH_BASE + 0x5400)
 
 #define SDIO_BASE             (PERIPH_BASE + 0x18000)
 
@@ -735,6 +756,9 @@ typedef struct
 #define TIM5                ((TIM_TypeDef *) TIM5_BASE)
 #define TIM6                ((TIM_TypeDef *) TIM6_BASE)
 #define TIM7                ((TIM_TypeDef *) TIM7_BASE)
+#define TIM12               ((TIM_TypeDef *) TIM12_BASE)
+#define TIM13               ((TIM_TypeDef *) TIM13_BASE)
+#define TIM14               ((TIM_TypeDef *) TIM14_BASE)
 #define RTC                 ((RTC_TypeDef *) RTC_BASE)
 #define WWDG                ((WWDG_TypeDef *) WWDG_BASE)
 #define IWDG                ((IWDG_TypeDef *) IWDG_BASE)
@@ -759,9 +783,13 @@ typedef struct
 #define GPIOF               ((GPIO_TypeDef *) GPIOF_BASE)
 #define GPIOG               ((GPIO_TypeDef *) GPIOG_BASE)
 #define ADC1                ((ADC_TypeDef *) ADC1_BASE)
-#define ADC1_COMMON         ((ADC_Common_TypeDef *) ADC1_BASE)
+#define ADC2                ((ADC_TypeDef *) ADC2_BASE)
+#define ADC12_COMMON        ((ADC_Common_TypeDef *) ADC1_BASE)
 #define SPI1                ((SPI_TypeDef *) SPI1_BASE)
 #define USART1              ((USART_TypeDef *) USART1_BASE)
+#define TIM9                ((TIM_TypeDef *) TIM9_BASE)
+#define TIM10               ((TIM_TypeDef *) TIM10_BASE)
+#define TIM11               ((TIM_TypeDef *) TIM11_BASE)
 #define SDIO                ((SDIO_TypeDef *) SDIO_BASE)
 #define DMA1                ((DMA_TypeDef *) DMA1_BASE)
 #define DMA2                ((DMA_TypeDef *) DMA2_BASE)
@@ -1425,6 +1453,9 @@ typedef struct
 #define RCC_APB2RSTR_ADC1RST_Msk             (0x1U << RCC_APB2RSTR_ADC1RST_Pos) /*!< 0x00000200 */
 #define RCC_APB2RSTR_ADC1RST                 RCC_APB2RSTR_ADC1RST_Msk          /*!< ADC 1 interface reset */
 
+#define RCC_APB2RSTR_ADC2RST_Pos             (10U)                             
+#define RCC_APB2RSTR_ADC2RST_Msk             (0x1U << RCC_APB2RSTR_ADC2RST_Pos) /*!< 0x00000400 */
+#define RCC_APB2RSTR_ADC2RST                 RCC_APB2RSTR_ADC2RST_Msk          /*!< ADC 2 interface reset */
 
 #define RCC_APB2RSTR_TIM1RST_Pos             (11U)                             
 #define RCC_APB2RSTR_TIM1RST_Msk             (0x1U << RCC_APB2RSTR_TIM1RST_Pos) /*!< 0x00000800 */
@@ -1449,6 +1480,15 @@ typedef struct
 #define RCC_APB2RSTR_IOPGRST                 RCC_APB2RSTR_IOPGRST_Msk          /*!< I/O port G reset */
 
 
+#define RCC_APB2RSTR_TIM9RST_Pos             (19U)                             
+#define RCC_APB2RSTR_TIM9RST_Msk             (0x1U << RCC_APB2RSTR_TIM9RST_Pos) /*!< 0x00080000 */
+#define RCC_APB2RSTR_TIM9RST                 RCC_APB2RSTR_TIM9RST_Msk          /*!< TIM9 Timer reset */
+#define RCC_APB2RSTR_TIM10RST_Pos            (20U)                             
+#define RCC_APB2RSTR_TIM10RST_Msk            (0x1U << RCC_APB2RSTR_TIM10RST_Pos) /*!< 0x00100000 */
+#define RCC_APB2RSTR_TIM10RST                RCC_APB2RSTR_TIM10RST_Msk         /*!< TIM10 Timer reset */
+#define RCC_APB2RSTR_TIM11RST_Pos            (21U)                             
+#define RCC_APB2RSTR_TIM11RST_Msk            (0x1U << RCC_APB2RSTR_TIM11RST_Pos) /*!< 0x00200000 */
+#define RCC_APB2RSTR_TIM11RST                RCC_APB2RSTR_TIM11RST_Msk         /*!< TIM11 Timer reset */
 
 /*****************  Bit definition for RCC_APB1RSTR register  *****************/
 #define RCC_APB1RSTR_TIM2RST_Pos             (0U)                              
@@ -1511,6 +1551,15 @@ typedef struct
 
 
 
+#define RCC_APB1RSTR_TIM12RST_Pos            (6U)                              
+#define RCC_APB1RSTR_TIM12RST_Msk            (0x1U << RCC_APB1RSTR_TIM12RST_Pos) /*!< 0x00000040 */
+#define RCC_APB1RSTR_TIM12RST                RCC_APB1RSTR_TIM12RST_Msk         /*!< TIM12 Timer reset */
+#define RCC_APB1RSTR_TIM13RST_Pos            (7U)                              
+#define RCC_APB1RSTR_TIM13RST_Msk            (0x1U << RCC_APB1RSTR_TIM13RST_Pos) /*!< 0x00000080 */
+#define RCC_APB1RSTR_TIM13RST                RCC_APB1RSTR_TIM13RST_Msk         /*!< TIM13 Timer reset */
+#define RCC_APB1RSTR_TIM14RST_Pos            (8U)                              
+#define RCC_APB1RSTR_TIM14RST_Msk            (0x1U << RCC_APB1RSTR_TIM14RST_Pos) /*!< 0x00000100 */
+#define RCC_APB1RSTR_TIM14RST                RCC_APB1RSTR_TIM14RST_Msk         /*!< TIM14 Timer reset */
 #define RCC_APB1RSTR_DACRST_Pos              (29U)                             
 #define RCC_APB1RSTR_DACRST_Msk              (0x1U << RCC_APB1RSTR_DACRST_Pos) /*!< 0x20000000 */
 #define RCC_APB1RSTR_DACRST                  RCC_APB1RSTR_DACRST_Msk           /*!< DAC interface reset */
@@ -1558,6 +1607,9 @@ typedef struct
 #define RCC_APB2ENR_ADC1EN_Msk               (0x1U << RCC_APB2ENR_ADC1EN_Pos)  /*!< 0x00000200 */
 #define RCC_APB2ENR_ADC1EN                   RCC_APB2ENR_ADC1EN_Msk            /*!< ADC 1 interface clock enable */
 
+#define RCC_APB2ENR_ADC2EN_Pos               (10U)                             
+#define RCC_APB2ENR_ADC2EN_Msk               (0x1U << RCC_APB2ENR_ADC2EN_Pos)  /*!< 0x00000400 */
+#define RCC_APB2ENR_ADC2EN                   RCC_APB2ENR_ADC2EN_Msk            /*!< ADC 2 interface clock enable */
 
 #define RCC_APB2ENR_TIM1EN_Pos               (11U)                             
 #define RCC_APB2ENR_TIM1EN_Msk               (0x1U << RCC_APB2ENR_TIM1EN_Pos)  /*!< 0x00000800 */
@@ -1582,6 +1634,15 @@ typedef struct
 #define RCC_APB2ENR_IOPGEN                   RCC_APB2ENR_IOPGEN_Msk            /*!< I/O port G clock enable */
 
 
+#define RCC_APB2ENR_TIM9EN_Pos               (19U)                             
+#define RCC_APB2ENR_TIM9EN_Msk               (0x1U << RCC_APB2ENR_TIM9EN_Pos)  /*!< 0x00080000 */
+#define RCC_APB2ENR_TIM9EN                   RCC_APB2ENR_TIM9EN_Msk            /*!< TIM9 Timer clock enable  */
+#define RCC_APB2ENR_TIM10EN_Pos              (20U)                             
+#define RCC_APB2ENR_TIM10EN_Msk              (0x1U << RCC_APB2ENR_TIM10EN_Pos) /*!< 0x00100000 */
+#define RCC_APB2ENR_TIM10EN                  RCC_APB2ENR_TIM10EN_Msk           /*!< TIM10 Timer clock enable  */
+#define RCC_APB2ENR_TIM11EN_Pos              (21U)                             
+#define RCC_APB2ENR_TIM11EN_Msk              (0x1U << RCC_APB2ENR_TIM11EN_Pos) /*!< 0x00200000 */
+#define RCC_APB2ENR_TIM11EN                  RCC_APB2ENR_TIM11EN_Msk           /*!< TIM11 Timer clock enable */
 
 /*****************  Bit definition for RCC_APB1ENR register  ******************/
 #define RCC_APB1ENR_TIM2EN_Pos               (0U)                              
@@ -1644,6 +1705,15 @@ typedef struct
 
 
 
+#define RCC_APB1ENR_TIM12EN_Pos              (6U)                              
+#define RCC_APB1ENR_TIM12EN_Msk              (0x1U << RCC_APB1ENR_TIM12EN_Pos) /*!< 0x00000040 */
+#define RCC_APB1ENR_TIM12EN                  RCC_APB1ENR_TIM12EN_Msk           /*!< TIM12 Timer clock enable  */
+#define RCC_APB1ENR_TIM13EN_Pos              (7U)                              
+#define RCC_APB1ENR_TIM13EN_Msk              (0x1U << RCC_APB1ENR_TIM13EN_Pos) /*!< 0x00000080 */
+#define RCC_APB1ENR_TIM13EN                  RCC_APB1ENR_TIM13EN_Msk           /*!< TIM13 Timer clock enable  */
+#define RCC_APB1ENR_TIM14EN_Pos              (8U)                              
+#define RCC_APB1ENR_TIM14EN_Msk              (0x1U << RCC_APB1ENR_TIM14EN_Pos) /*!< 0x00000100 */
+#define RCC_APB1ENR_TIM14EN                  RCC_APB1ENR_TIM14EN_Msk           /*!< TIM14 Timer clock enable */
 #define RCC_APB1ENR_DACEN_Pos                (29U)                             
 #define RCC_APB1ENR_DACEN_Msk                (0x1U << RCC_APB1ENR_DACEN_Pos)   /*!< 0x20000000 */
 #define RCC_APB1ENR_DACEN                    RCC_APB1ENR_DACEN_Msk             /*!< DAC interface clock enable */
@@ -2816,6 +2886,21 @@ typedef struct
 /******************  Bit definition for AFIO_MAPR2 register  ******************/
 
 
+#define AFIO_MAPR2_TIM9_REMAP_Pos            (5U)                              
+#define AFIO_MAPR2_TIM9_REMAP_Msk            (0x1U << AFIO_MAPR2_TIM9_REMAP_Pos) /*!< 0x00000020 */
+#define AFIO_MAPR2_TIM9_REMAP                AFIO_MAPR2_TIM9_REMAP_Msk         /*!< TIM9 remapping */
+#define AFIO_MAPR2_TIM10_REMAP_Pos           (6U)                              
+#define AFIO_MAPR2_TIM10_REMAP_Msk           (0x1U << AFIO_MAPR2_TIM10_REMAP_Pos) /*!< 0x00000040 */
+#define AFIO_MAPR2_TIM10_REMAP               AFIO_MAPR2_TIM10_REMAP_Msk        /*!< TIM10 remapping */
+#define AFIO_MAPR2_TIM11_REMAP_Pos           (7U)                              
+#define AFIO_MAPR2_TIM11_REMAP_Msk           (0x1U << AFIO_MAPR2_TIM11_REMAP_Pos) /*!< 0x00000080 */
+#define AFIO_MAPR2_TIM11_REMAP               AFIO_MAPR2_TIM11_REMAP_Msk        /*!< TIM11 remapping */
+#define AFIO_MAPR2_TIM13_REMAP_Pos           (8U)                              
+#define AFIO_MAPR2_TIM13_REMAP_Msk           (0x1U << AFIO_MAPR2_TIM13_REMAP_Pos) /*!< 0x00000100 */
+#define AFIO_MAPR2_TIM13_REMAP               AFIO_MAPR2_TIM13_REMAP_Msk        /*!< TIM13 remapping */
+#define AFIO_MAPR2_TIM14_REMAP_Pos           (9U)                              
+#define AFIO_MAPR2_TIM14_REMAP_Msk           (0x1U << AFIO_MAPR2_TIM14_REMAP_Pos) /*!< 0x00000200 */
+#define AFIO_MAPR2_TIM14_REMAP               AFIO_MAPR2_TIM14_REMAP_Msk        /*!< TIM14 remapping */
 #define AFIO_MAPR2_FSMC_NADV_REMAP_Pos       (10U)                             
 #define AFIO_MAPR2_FSMC_NADV_REMAP_Msk       (0x1U << AFIO_MAPR2_FSMC_NADV_REMAP_Pos) /*!< 0x00000400 */
 #define AFIO_MAPR2_FSMC_NADV_REMAP           AFIO_MAPR2_FSMC_NADV_REMAP_Msk    /*!< FSMC NADV remapping */
@@ -4014,7 +4099,7 @@ typedef struct
 /*
  * @brief Specific device feature definitions (not present on all devices in the STM32F1 family)
  */
-/* Note: No specific macro feature on this device */
+#define ADC_MULTIMODE_SUPPORT                          /*!< ADC feature available only on specific devices: multimode available on devices with several ADC instances */
 
 /********************  Bit definition for ADC_SR register  ********************/
 #define ADC_SR_AWD_Pos                      (0U)                               
@@ -4078,6 +4163,14 @@ typedef struct
 #define ADC_CR1_DISCNUM_0                   (0x1U << ADC_CR1_DISCNUM_Pos)      /*!< 0x00002000 */
 #define ADC_CR1_DISCNUM_1                   (0x2U << ADC_CR1_DISCNUM_Pos)      /*!< 0x00004000 */
 #define ADC_CR1_DISCNUM_2                   (0x4U << ADC_CR1_DISCNUM_Pos)      /*!< 0x00008000 */
+
+#define ADC_CR1_DUALMOD_Pos                 (16U)                              
+#define ADC_CR1_DUALMOD_Msk                 (0xFU << ADC_CR1_DUALMOD_Pos)      /*!< 0x000F0000 */
+#define ADC_CR1_DUALMOD                     ADC_CR1_DUALMOD_Msk                /*!< ADC multimode mode selection */
+#define ADC_CR1_DUALMOD_0                   (0x1U << ADC_CR1_DUALMOD_Pos)      /*!< 0x00010000 */
+#define ADC_CR1_DUALMOD_1                   (0x2U << ADC_CR1_DUALMOD_Pos)      /*!< 0x00020000 */
+#define ADC_CR1_DUALMOD_2                   (0x4U << ADC_CR1_DUALMOD_Pos)      /*!< 0x00040000 */
+#define ADC_CR1_DUALMOD_3                   (0x8U << ADC_CR1_DUALMOD_Pos)      /*!< 0x00080000 */
 
 #define ADC_CR1_JAWDEN_Pos                  (22U)                              
 #define ADC_CR1_JAWDEN_Msk                  (0x1U << ADC_CR1_JAWDEN_Pos)       /*!< 0x00400000 */
@@ -4521,6 +4614,9 @@ typedef struct
 #define ADC_DR_DATA_Pos                     (0U)                               
 #define ADC_DR_DATA_Msk                     (0xFFFFU << ADC_DR_DATA_Pos)       /*!< 0x0000FFFF */
 #define ADC_DR_DATA                         ADC_DR_DATA_Msk                    /*!< ADC group regular conversion data */
+#define ADC_DR_ADC2DATA_Pos                 (16U)                              
+#define ADC_DR_ADC2DATA_Msk                 (0xFFFFU << ADC_DR_ADC2DATA_Pos)   /*!< 0xFFFF0000 */
+#define ADC_DR_ADC2DATA                     ADC_DR_ADC2DATA_Msk                /*!< ADC group regular conversion data for ADC slave, in multimode */
 /******************************************************************************/
 /*                                                                            */
 /*                      Digital to Analog Converter                           */
@@ -6740,6 +6836,15 @@ typedef struct
 #define DBGMCU_CR_DBG_TIM7_STOP_Pos         (20U)                              
 #define DBGMCU_CR_DBG_TIM7_STOP_Msk         (0x1U << DBGMCU_CR_DBG_TIM7_STOP_Pos) /*!< 0x00100000 */
 #define DBGMCU_CR_DBG_TIM7_STOP             DBGMCU_CR_DBG_TIM7_STOP_Msk        /*!< TIM7 counter stopped when core is halted */
+#define DBGMCU_CR_DBG_TIM12_STOP_Pos        (25U)                              
+#define DBGMCU_CR_DBG_TIM12_STOP_Msk        (0x1U << DBGMCU_CR_DBG_TIM12_STOP_Pos) /*!< 0x02000000 */
+#define DBGMCU_CR_DBG_TIM12_STOP            DBGMCU_CR_DBG_TIM12_STOP_Msk       /*!< Debug TIM12 stopped when Core is halted */
+#define DBGMCU_CR_DBG_TIM13_STOP_Pos        (26U)                              
+#define DBGMCU_CR_DBG_TIM13_STOP_Msk        (0x1U << DBGMCU_CR_DBG_TIM13_STOP_Pos) /*!< 0x04000000 */
+#define DBGMCU_CR_DBG_TIM13_STOP            DBGMCU_CR_DBG_TIM13_STOP_Msk       /*!< Debug TIM13 stopped when Core is halted */
+#define DBGMCU_CR_DBG_TIM14_STOP_Pos        (27U)                              
+#define DBGMCU_CR_DBG_TIM14_STOP_Msk        (0x1U << DBGMCU_CR_DBG_TIM14_STOP_Pos) /*!< 0x08000000 */
+#define DBGMCU_CR_DBG_TIM14_STOP            DBGMCU_CR_DBG_TIM14_STOP_Msk       /*!< Debug TIM14 stopped when Core is halted */
 #define DBGMCU_CR_DBG_TIM9_STOP_Pos         (28U)                              
 #define DBGMCU_CR_DBG_TIM9_STOP_Msk         (0x1U << DBGMCU_CR_DBG_TIM9_STOP_Pos) /*!< 0x10000000 */
 #define DBGMCU_CR_DBG_TIM9_STOP             DBGMCU_CR_DBG_TIM9_STOP_Msk        /*!< Debug TIM9 stopped when Core is halted */
@@ -6864,8 +6969,11 @@ typedef struct
 #define FLASH_OBR_nRST_STDBY_Pos            (4U)                               
 #define FLASH_OBR_nRST_STDBY_Msk            (0x1U << FLASH_OBR_nRST_STDBY_Pos) /*!< 0x00000010 */
 #define FLASH_OBR_nRST_STDBY                FLASH_OBR_nRST_STDBY_Msk           /*!< nRST_STDBY */
+#define FLASH_OBR_BFB2_Pos                  (5U)                               
+#define FLASH_OBR_BFB2_Msk                  (0x1U << FLASH_OBR_BFB2_Pos)       /*!< 0x00000020 */
+#define FLASH_OBR_BFB2                      FLASH_OBR_BFB2_Msk                 /*!< BFB2 */
 #define FLASH_OBR_USER_Pos                  (2U)                               
-#define FLASH_OBR_USER_Msk                  (0x7U << FLASH_OBR_USER_Pos)       /*!< 0x0000001C */
+#define FLASH_OBR_USER_Msk                  (0xFU << FLASH_OBR_USER_Pos)       /*!< 0x0000003C */
 #define FLASH_OBR_USER                      FLASH_OBR_USER_Msk                 /*!< User Option Bytes */
 #define FLASH_OBR_DATA0_Pos                 (10U)                              
 #define FLASH_OBR_DATA0_Msk                 (0xFFU << FLASH_OBR_DATA0_Pos)     /*!< 0x0003FC00 */
@@ -6878,6 +6986,53 @@ typedef struct
 #define FLASH_WRPR_WRP_Pos                  (0U)                               
 #define FLASH_WRPR_WRP_Msk                  (0xFFFFFFFFU << FLASH_WRPR_WRP_Pos) /*!< 0xFFFFFFFF */
 #define FLASH_WRPR_WRP                      FLASH_WRPR_WRP_Msk                 /*!< Write Protect */
+
+/*****************  Bit definition for FLASH_OPTKEYR2 register ****************/
+#define FLASH_OPTKEYR_OPTKEYR2_Pos          (0U)                               
+#define FLASH_OPTKEYR_OPTKEYR2_Msk          (0xFFFFFFFFU << FLASH_OPTKEYR_OPTKEYR2_Pos) /*!< 0xFFFFFFFF */
+#define FLASH_OPTKEYR_OPTKEYR2              FLASH_OPTKEYR_OPTKEYR2_Msk         /*!< Option Byte Key */
+
+/******************  Bit definition for FLASH_SR2 register ********************/
+#define FLASH_SR2_BSY_Pos                   (0U)                               
+#define FLASH_SR2_BSY_Msk                   (0x1U << FLASH_SR2_BSY_Pos)        /*!< 0x00000001 */
+#define FLASH_SR2_BSY                       FLASH_SR2_BSY_Msk                  /*!< Busy */
+#define FLASH_SR2_PGERR_Pos                 (2U)                               
+#define FLASH_SR2_PGERR_Msk                 (0x1U << FLASH_SR2_PGERR_Pos)      /*!< 0x00000004 */
+#define FLASH_SR2_PGERR                     FLASH_SR2_PGERR_Msk                /*!< Programming Error */
+#define FLASH_SR2_WRPRTERR_Pos              (4U)                               
+#define FLASH_SR2_WRPRTERR_Msk              (0x1U << FLASH_SR2_WRPRTERR_Pos)   /*!< 0x00000010 */
+#define FLASH_SR2_WRPRTERR                  FLASH_SR2_WRPRTERR_Msk             /*!< Write Protection Error */
+#define FLASH_SR2_EOP_Pos                   (5U)                               
+#define FLASH_SR2_EOP_Msk                   (0x1U << FLASH_SR2_EOP_Pos)        /*!< 0x00000020 */
+#define FLASH_SR2_EOP                       FLASH_SR2_EOP_Msk                  /*!< End of operation */
+
+/*******************  Bit definition for FLASH_CR2 register *******************/
+#define FLASH_CR2_PG_Pos                    (0U)                               
+#define FLASH_CR2_PG_Msk                    (0x1U << FLASH_CR2_PG_Pos)         /*!< 0x00000001 */
+#define FLASH_CR2_PG                        FLASH_CR2_PG_Msk                   /*!< Programming */
+#define FLASH_CR2_PER_Pos                   (1U)                               
+#define FLASH_CR2_PER_Msk                   (0x1U << FLASH_CR2_PER_Pos)        /*!< 0x00000002 */
+#define FLASH_CR2_PER                       FLASH_CR2_PER_Msk                  /*!< Page Erase */
+#define FLASH_CR2_MER_Pos                   (2U)                               
+#define FLASH_CR2_MER_Msk                   (0x1U << FLASH_CR2_MER_Pos)        /*!< 0x00000004 */
+#define FLASH_CR2_MER                       FLASH_CR2_MER_Msk                  /*!< Mass Erase */
+#define FLASH_CR2_STRT_Pos                  (6U)                               
+#define FLASH_CR2_STRT_Msk                  (0x1U << FLASH_CR2_STRT_Pos)       /*!< 0x00000040 */
+#define FLASH_CR2_STRT                      FLASH_CR2_STRT_Msk                 /*!< Start */
+#define FLASH_CR2_LOCK_Pos                  (7U)                               
+#define FLASH_CR2_LOCK_Msk                  (0x1U << FLASH_CR2_LOCK_Pos)       /*!< 0x00000080 */
+#define FLASH_CR2_LOCK                      FLASH_CR2_LOCK_Msk                 /*!< Lock */
+#define FLASH_CR2_ERRIE_Pos                 (10U)                              
+#define FLASH_CR2_ERRIE_Msk                 (0x1U << FLASH_CR2_ERRIE_Pos)      /*!< 0x00000400 */
+#define FLASH_CR2_ERRIE                     FLASH_CR2_ERRIE_Msk                /*!< Error Interrupt Enable */
+#define FLASH_CR2_EOPIE_Pos                 (12U)                              
+#define FLASH_CR2_EOPIE_Msk                 (0x1U << FLASH_CR2_EOPIE_Pos)      /*!< 0x00001000 */
+#define FLASH_CR2_EOPIE                     FLASH_CR2_EOPIE_Msk                /*!< End of operation interrupt enable */
+
+/*******************  Bit definition for FLASH_AR2 register *******************/
+#define FLASH_AR_FAR2_Pos                   (0U)                               
+#define FLASH_AR_FAR2_Msk                   (0xFFFFFFFFU << FLASH_AR_FAR2_Pos) /*!< 0xFFFFFFFF */
+#define FLASH_AR_FAR2                       FLASH_AR_FAR2_Msk                  /*!< Flash Address */
 
 /*----------------------------------------------------------------------------*/
 
@@ -6960,9 +7115,12 @@ typedef struct
   */
 
 /****************************** ADC Instances *********************************/
-#define IS_ADC_ALL_INSTANCE(INSTANCE) (((INSTANCE) == ADC1))
+#define IS_ADC_ALL_INSTANCE(INSTANCE) (((INSTANCE) == ADC1) || \
+                                       ((INSTANCE) == ADC2))
 
-#define IS_ADC_COMMON_INSTANCE(INSTANCE) ((INSTANCE) == ADC1_COMMON)
+#define IS_ADC_COMMON_INSTANCE(INSTANCE) ((INSTANCE) == ADC12_COMMON)
+
+#define IS_ADC_MULTIMODE_MASTER_INSTANCE(INSTANCE) ((INSTANCE) == ADC1)
 
 #define IS_ADC_DMA_CAPABILITY_INSTANCE(INSTANCE) ((INSTANCE) == ADC1)
 
@@ -7021,19 +7179,33 @@ typedef struct
    ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM5)    || \
    ((INSTANCE) == TIM6)    || \
-   ((INSTANCE) == TIM7))
+   ((INSTANCE) == TIM7)    || \
+   ((INSTANCE) == TIM9)    || \
+   ((INSTANCE) == TIM10)   || \
+   ((INSTANCE) == TIM11)   || \
+   ((INSTANCE) == TIM12)   || \
+   ((INSTANCE) == TIM13)   || \
+   ((INSTANCE) == TIM14))
 
 #define IS_TIM_CC1_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
    ((INSTANCE) == TIM3)    || \
    ((INSTANCE) == TIM4)    || \
-   ((INSTANCE) == TIM5))
+   ((INSTANCE) == TIM5)    || \
+   ((INSTANCE) == TIM9)    || \
+   ((INSTANCE) == TIM10)   || \
+   ((INSTANCE) == TIM11)   || \
+   ((INSTANCE) == TIM12)   || \
+   ((INSTANCE) == TIM13)   || \
+   ((INSTANCE) == TIM14))
 
 #define IS_TIM_CC2_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
    ((INSTANCE) == TIM3)    || \
    ((INSTANCE) == TIM4)    || \
-   ((INSTANCE) == TIM5))
+   ((INSTANCE) == TIM5)    || \
+   ((INSTANCE) == TIM9)    || \
+   ((INSTANCE) == TIM12))
 
 #define IS_TIM_CC3_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
@@ -7063,13 +7235,17 @@ typedef struct
   (((INSTANCE) == TIM2)    || \
    ((INSTANCE) == TIM3)    || \
    ((INSTANCE) == TIM4)    || \
-   ((INSTANCE) == TIM5))
+   ((INSTANCE) == TIM5)    || \
+   ((INSTANCE) == TIM9)    || \
+   ((INSTANCE) == TIM12))
 
 #define IS_TIM_CLOCKSOURCE_ITRX_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
    ((INSTANCE) == TIM3)    || \
    ((INSTANCE) == TIM4)    || \
-   ((INSTANCE) == TIM5))
+   ((INSTANCE) == TIM5)    || \
+   ((INSTANCE) == TIM9)    || \
+   ((INSTANCE) == TIM12))
 
 #define IS_TIM_OCXREF_CLEAR_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
@@ -7095,13 +7271,15 @@ typedef struct
    ((INSTANCE) == TIM4)    || \
    ((INSTANCE) == TIM5)    || \
    ((INSTANCE) == TIM6)    || \
-   ((INSTANCE) == TIM7))
+   ((INSTANCE) == TIM7)    || \
+   ((INSTANCE) == TIM12))
 
 #define IS_TIM_SLAVE_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
    ((INSTANCE) == TIM3)    || \
    ((INSTANCE) == TIM4)    || \
-   ((INSTANCE) == TIM5))
+   ((INSTANCE) == TIM5)    || \
+   ((INSTANCE) == TIM12))
 
 #define IS_TIM_DMABURST_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
@@ -7134,10 +7312,30 @@ typedef struct
      (((CHANNEL) == TIM_CHANNEL_1) ||          \
       ((CHANNEL) == TIM_CHANNEL_2) ||          \
       ((CHANNEL) == TIM_CHANNEL_3) ||          \
-      ((CHANNEL) == TIM_CHANNEL_4))))
+      ((CHANNEL) == TIM_CHANNEL_4)))           \
+    ||                                         \
+    (((INSTANCE) == TIM9) &&                   \
+     (((CHANNEL) == TIM_CHANNEL_1) ||          \
+      ((CHANNEL) == TIM_CHANNEL_2)))           \
+    ||                                         \
+    (((INSTANCE) == TIM10) &&                  \
+     (((CHANNEL) == TIM_CHANNEL_1)))           \
+    ||                                         \
+    (((INSTANCE) == TIM11) &&                  \
+     (((CHANNEL) == TIM_CHANNEL_1)))           \
+    ||                                         \
+    (((INSTANCE) == TIM12) &&                  \
+     (((CHANNEL) == TIM_CHANNEL_1) ||          \
+      ((CHANNEL) == TIM_CHANNEL_2)))           \
+    ||                                         \
+    (((INSTANCE) == TIM13) &&                  \
+     (((CHANNEL) == TIM_CHANNEL_1)))           \
+    ||                                         \
+    (((INSTANCE) == TIM14) &&                  \
+     (((CHANNEL) == TIM_CHANNEL_1))))
 
 #define IS_TIM_CCXN_INSTANCE(INSTANCE, CHANNEL) (0)
- 
+
 #define IS_TIM_COUNTER_MODE_SELECT_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
    ((INSTANCE) == TIM3)    || \
@@ -7150,7 +7348,13 @@ typedef struct
   (((INSTANCE) == TIM2)    || \
    ((INSTANCE) == TIM3)    || \
    ((INSTANCE) == TIM4)    || \
-   ((INSTANCE) == TIM5))
+   ((INSTANCE) == TIM5)    || \
+   ((INSTANCE) == TIM9)    || \
+   ((INSTANCE) == TIM10)   || \
+   ((INSTANCE) == TIM11)   || \
+   ((INSTANCE) == TIM12)   || \
+   ((INSTANCE) == TIM13)   || \
+   ((INSTANCE) == TIM14))
 
 #define IS_TIM_DMA_INSTANCE(INSTANCE)\
   (((INSTANCE) == TIM2)    || \
@@ -7249,15 +7453,45 @@ typedef struct
 /******************************************************************************/
 
 /* Aliases for __IRQn */
-#define ADC1_2_IRQn        ADC1_IRQn
-#define DMA2_Channel4_IRQn DMA2_Channel4_5_IRQn
-#define TIM6_DAC_IRQn      TIM6_IRQn
+#define ADC1_IRQn               ADC1_2_IRQn
+#define DMA2_Channel4_IRQn      DMA2_Channel4_5_IRQn
+#define TIM1_UP_TIM16_IRQn      TIM10_IRQn
+#define TIM1_UP_IRQn            TIM10_IRQn
+#define TIM1_UP_TIM10_IRQn      TIM10_IRQn
+#define TIM1_TRG_COM_TIM11_IRQn TIM11_IRQn
+#define TIM1_TRG_COM_TIM17_IRQn TIM11_IRQn
+#define TIM1_TRG_COM_IRQn       TIM11_IRQn
+#define TIM8_BRK_TIM12_IRQn     TIM12_IRQn
+#define TIM8_BRK_IRQn           TIM12_IRQn
+#define TIM8_UP_IRQn            TIM13_IRQn
+#define TIM8_UP_TIM13_IRQn      TIM13_IRQn
+#define TIM8_TRG_COM_IRQn       TIM14_IRQn
+#define TIM8_TRG_COM_TIM14_IRQn TIM14_IRQn
+#define TIM6_DAC_IRQn           TIM6_IRQn
+#define TIM1_BRK_TIM15_IRQn     TIM9_IRQn
+#define TIM1_BRK_IRQn           TIM9_IRQn
+#define TIM1_BRK_TIM9_IRQn      TIM9_IRQn
 
 
 /* Aliases for __IRQHandler */
-#define ADC1_2_IRQHandler        ADC1_IRQHandler
-#define DMA2_Channel4_IRQHandler DMA2_Channel4_5_IRQHandler
-#define TIM6_DAC_IRQHandler      TIM6_IRQHandler
+#define ADC1_IRQHandler               ADC1_2_IRQHandler
+#define DMA2_Channel4_IRQHandler      DMA2_Channel4_5_IRQHandler
+#define TIM1_UP_TIM16_IRQHandler      TIM10_IRQHandler
+#define TIM1_UP_IRQHandler            TIM10_IRQHandler
+#define TIM1_UP_TIM10_IRQHandler      TIM10_IRQHandler
+#define TIM1_TRG_COM_TIM11_IRQHandler TIM11_IRQHandler
+#define TIM1_TRG_COM_TIM17_IRQHandler TIM11_IRQHandler
+#define TIM1_TRG_COM_IRQHandler       TIM11_IRQHandler
+#define TIM8_BRK_TIM12_IRQHandler     TIM12_IRQHandler
+#define TIM8_BRK_IRQHandler           TIM12_IRQHandler
+#define TIM8_UP_IRQHandler            TIM13_IRQHandler
+#define TIM8_UP_TIM13_IRQHandler      TIM13_IRQHandler
+#define TIM8_TRG_COM_IRQHandler       TIM14_IRQHandler
+#define TIM8_TRG_COM_TIM14_IRQHandler TIM14_IRQHandler
+#define TIM6_DAC_IRQHandler           TIM6_IRQHandler
+#define TIM1_BRK_TIM15_IRQHandler     TIM9_IRQHandler
+#define TIM1_BRK_IRQHandler           TIM9_IRQHandler
+#define TIM1_BRK_TIM9_IRQHandler      TIM9_IRQHandler
 
 
 /**
@@ -7273,7 +7507,7 @@ typedef struct
   }
 #endif /* __cplusplus */
   
-#endif /* __STM32F101xE_H */
+#endif /* __STM32F101xG_H */
   
   
   
