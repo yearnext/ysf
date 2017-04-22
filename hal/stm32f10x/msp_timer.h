@@ -114,27 +114,6 @@ struct Hal_Timer_Block
     uint32_t Period;
 };
 
-/**
- *******************************************************************************
- * @brief       define msp timer interface
- *******************************************************************************
- */
-typedef struct
-{    
-    hal_err_t (*Open)(uint8_t);
-    hal_err_t (*Close)(uint8_t);
-    
-    hal_err_t (*Start)(uint8_t);
-    hal_err_t (*Stop)(uint8_t);
-    
-    struct
-    {
-        hal_err_t (*Init)(uint8_t, uint32_t);
-        hal_err_t (*HandleRegister)(uint8_t, void (*)(void *), void*);
-        hal_err_t (*Arm)(uint8_t, uint32_t, void (*)(void *), void*);
-    }Base;
-}MSP_Timer_Interface;
-
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**

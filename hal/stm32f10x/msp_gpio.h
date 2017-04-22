@@ -149,35 +149,6 @@ struct MSP_GPIO_BLOCK
     uint8_t Mode;
 };
 
-/**
- *******************************************************************************
- * @brief      define msp gpio interface
- *******************************************************************************
- */
-#if USE_MSP_GPIO_COMPONENT
-typedef struct
-{
-    hal_err_t          (*Open)(uint8_t);
-    hal_err_t          (*Close)(uint8_t);
-    hal_err_t          (*Init)(uint8_t, uint8_t, uint8_t);
-    hal_err_t          (*Fini)(uint8_t, uint8_t);
-    
-	struct
-	{
-        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
-	}Input;
-	
-	struct
-	{
-        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
-        hal_err_t      (*Set)(uint8_t, uint8_t);
-        hal_err_t      (*Clr)(uint8_t, uint8_t);
-        hal_err_t      (*Toggle)(uint8_t, uint8_t);
-        hal_err_t      (*Cmd)(uint8_t, uint8_t, uint8_t);
-	}Output;
-}MSP_GPIO_Interface;
-#endif
-
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /*

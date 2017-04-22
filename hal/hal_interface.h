@@ -52,6 +52,59 @@ extern "C"
 #include _HAL_TIMER_PATH    
 
 /* Exported types ------------------------------------------------------------*/
+
+/**
+ *******************************************************************************
+ * @brief      define msp gpio interface
+ *******************************************************************************
+ */
+#if USE_MSP_GPIO_COMPONENT
+typedef struct
+{
+    hal_err_t          (*Open)(uint8_t);
+    hal_err_t          (*Close)(uint8_t);
+    hal_err_t          (*Init)(uint8_t, uint8_t, uint8_t);
+    hal_err_t          (*Fini)(uint8_t, uint8_t);
+    
+	struct
+	{
+        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
+	}Input;
+	
+	struct
+	{
+        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
+        hal_err_t      (*Set)(uint8_t, uint8_t);
+        hal_err_t      (*Clr)(uint8_t, uint8_t);
+        hal_err_t      (*Toggle)(uint8_t, uint8_t);
+        hal_err_t      (*Cmd)(uint8_t, uint8_t, uint8_t);
+	}Output;
+}MSP_GPIO_Interface;
+#endif
+
+#if USE_MSP_TIMER_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       define msp timer interface
+ *******************************************************************************
+ */
+typedef struct
+{    
+    hal_err_t (*Open)(uint8_t);
+    hal_err_t (*Close)(uint8_t);
+    
+    hal_err_t (*Start)(uint8_t);
+    hal_err_t (*Stop)(uint8_t);
+    
+    struct
+    {
+        hal_err_t (*Init)(uint8_t, uint32_t);
+        hal_err_t (*HandleRegister)(uint8_t, void (*)(void *), void*);
+        hal_err_t (*Arm)(uint8_t, uint32_t, void (*)(void *), void*);
+    }Base;
+}MSP_Timer_Interface;
+#endif
+
 /**
  *******************************************************************************
  * @brief        define hal interface
