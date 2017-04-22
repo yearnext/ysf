@@ -158,17 +158,17 @@ __DEFINE_EVENT_END
 /**
  *******************************************************************************
  * @brief      config MCU type
- * @note       STM32F10X_LD            STM32 Low density devices
- * @note       STM32F10X_LD_VL         STM32 Low density Value Line devices  
- * @note       STM32F10X_MD            STM32 Medium density devices
- * @note       STM32F10X_MD_VL         STM32 Medium density Value Line devices 
- * @note       STM32F10X_HD            STM32 High density devices
- * @note       STM32F10X_HD_VL         STM32 High density value line devices 
- * @note       STM32F10X_XL            STM32 XL-density devices
- * @note       STM32F10X_CL            STM32 Connectivity line devices					
+ * @note       USE_STM32F10X_LD        STM32 Low density devices
+ * @note       USE_STM32F10X_LD_VL     STM32 Low density Value Line devices  
+ * @note       USE_STM32F10X_MD        STM32 Medium density devices
+ * @note       USE_STM32F10X_MD_VL     STM32 Medium density Value Line devices 
+ * @note       USE_STM32F10X_HD        STM32 High density devices
+ * @note       USE_STM32F10X_HD_VL     STM32 High density value line devices 
+ * @note       USE_STM32F10X_XL        STM32 XL-density devices
+ * @note       USE_STM32F10X_CL        STM32 Connectivity line devices					
  *******************************************************************************
  */
-#define STM32F10X_HD
+#define USE_STM32F10X_HD
 	
 /**
  *******************************************************************************
@@ -235,8 +235,8 @@ __DEFINE_EVENT_END
 #define USE_HAL_DEBUG                                                        (1)
 
 #define USE_MCU_GPIO_COMPONENT                                               (1)
-#define USE_MCU_TIMER_COMPONENT                                              (1)
-#define USE_MCU_USART_COMPONENT                                              (1)
+#define USE_MCU_TIMER_COMPONENT                                              (0)
+#define USE_MCU_USART_COMPONENT                                              (0)
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

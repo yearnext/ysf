@@ -57,18 +57,18 @@ extern "C"
  * @brief        define hal interface
  *******************************************************************************
  */
-typedef struct
+struct HalInterface
 {
     char *Version;
     
-#if USE_MAP_GPIO_COMPONENT
-    HalGPIOInterface GPIO;
+#if USE_MSP_GPIO_COMPONENT
+    MSP_GPIO_Interface GPIO;
 #endif  
 
-#if USE_MAP_TIMER_COMPONENT
+#if USE_MSP_TIMER_COMPONENT
     HalTimerInterface Timer;
 #endif
-}FrameworkHalInterface;    
+};
     
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

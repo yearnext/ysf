@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32F103xE,USE_HAL_DRIVER</Define>
+              <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\app;..\..\core;..\..\hal\stm32f1xx\msp;..\..\hal\stm32f1xx\msp\mal</IncludePath>
+              <IncludePath>..\..\app;..\..\core</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,52 +383,57 @@
             <File>
               <FileName>fw_buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\buffer\fw_buffer.c</FilePath>
+              <FilePath>..\..\core\component\fw_buffer.c</FilePath>
             </File>
             <File>
               <FileName>fw_debug.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\debug\fw_debug.c</FilePath>
+              <FilePath>..\..\core\component\fw_debug.c</FilePath>
             </File>
             <File>
               <FileName>fw_event.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\event\fw_event.c</FilePath>
+              <FilePath>..\..\core\component\fw_event.c</FilePath>
             </File>
             <File>
               <FileName>fw_linklist.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\linklist\fw_linklist.c</FilePath>
+              <FilePath>..\..\core\component\fw_linklist.c</FilePath>
             </File>
             <File>
               <FileName>fw_memory.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\memory\fw_memory.c</FilePath>
+              <FilePath>..\..\core\component\fw_memory.c</FilePath>
             </File>
             <File>
               <FileName>fw_pt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\pt\fw_pt.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\component\task\fw_task.c</FilePath>
+              <FilePath>..\..\core\component\fw_pt.c</FilePath>
             </File>
             <File>
               <FileName>fw_signal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\signal\fw_signal.c</FilePath>
+              <FilePath>..\..\core\component\fw_signal.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\component\fw_task.c</FilePath>
             </File>
             <File>
               <FileName>fw_tick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\tick\fw_tick.c</FilePath>
+              <FilePath>..\..\core\component\fw_tick.c</FilePath>
             </File>
             <File>
               <FileName>fw_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\component\timer\fw_timer.c</FilePath>
+              <FilePath>..\..\core\component\fw_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\component\fw_core.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -436,81 +441,24 @@
           <GroupName>ysf/hal/msp</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f1xx.c</FileName>
+              <FileName>msp_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\mal\system_stm32f1xx.c</FilePath>
+              <FilePath>..\..\hal\stm32f10x\msp_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>startup_stm32f103xe.s</FileName>
+              <FileName>startup_stm32f10x_hd.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\mal\arm\startup_stm32f103xe.s</FilePath>
+              <FilePath>..\..\hal\stm32f10x\startup\arm\startup_stm32f10x_hd.s</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_hal.c</FileName>
+              <FileName>system_stm32f10x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\stm32f1xx_hal.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_hal_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\stm32f1xx_hal_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_hal_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\stm32f1xx_hal_rcc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_hal_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\stm32f1xx_hal_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\stm32f1xx_hal_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_hal_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\stm32f1xx_hal_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f1xx_ll_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\msp\stm32f1xx_ll_usb.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ysf/hal/map</GroupName>
-          <Files>
-            <File>
-              <FileName>map_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\map\map_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>map_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\map\map_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>map_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f1xx\map\map_usart.c</FilePath>
+              <FilePath>..\..\hal\stm32f10x\system_stm32f10x.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>ysf/core</GroupName>
-          <Files>
-            <File>
-              <FileName>core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\core\core.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>app</GroupName>

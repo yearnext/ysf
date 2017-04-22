@@ -60,17 +60,9 @@ extern "C"
 #ifdef USE_MCU_TIMER_COMPONENT
 #if USE_MCU_TIMER_COMPONENT
     #define USE_MSP_TIMER_COMPONENT                                          (1)
-    #define USE_MAP_TIMER_COMPONENT                                          (1)  
 #else
     #define USE_MSP_TIMER_COMPONENT                                          (0)
-    #define USE_MAP_TIMER_COMPONENT                                          (0)  
 #endif
-
-//#if USE_HAL_DEBUG
-//    #define USE_HAL_TIMER_DEBUG                                              (1)
-//#else
-//    #define USE_HAL_TIMER_DEBUG                                              (0)
-//#endif
     
 /**
  *******************************************************************************
@@ -81,8 +73,6 @@ extern "C"
  */
 #else
     #define USE_MSP_TIMER_COMPONENT                                          (1)
-    #define USE_MAP_TIMER_COMPONENT                                          (1)  
-//    #define USE_HAL_TIMER_DEBUG                                              (1)
 #endif
  
 /**

@@ -67,10 +67,10 @@ extern "C"
  *******************************************************************************
  */
 #if USE_BUFFER_COMPONENT
-#define fw_buffer_init                       Core.Component.RingBuffer.Init
-#define fw_buffer_write                      Core.Component.RingBuffer.Write
-#define fw_buffer_read                       Core.Component.RingBuffer.Read
-#define fw_buffer_getlen                     Core.Component.RingBuffer.GetLen
+#define fw_buffer_init                       Core.RingBuffer.Init
+#define fw_buffer_write                      Core.RingBuffer.Write
+#define fw_buffer_read                       Core.RingBuffer.Read
+#define fw_buffer_getlen                     Core.RingBuffer.GetLen
 #else
 #define fw_buffer_init                       
 #define fw_buffer_write                      
@@ -84,8 +84,8 @@ extern "C"
  *******************************************************************************
  */
 #if USE_DEBUG_COMPONENT
-#define fw_debug_init                        Core.Component.Debug.Init
-#define fw_debug_assert                      Core.Component.Debug.AssertFailed
+#define fw_debug_init                        Core.Debug.Init
+#define fw_debug_assert                      Core.Debug.AssertFailed
 #else
 #define fw_debug_init                        
 #define fw_debug_assert                      
@@ -97,9 +97,9 @@ extern "C"
  *******************************************************************************
  */  
 #if USE_EVENT_COMPONENT
-#define fw_event_init                        Core.Component.Event.Init
-#define fw_event_post                        Core.Component.Event.Post
-#define fw_event_get                         Core.Component.Event.Read
+#define fw_event_init                        Core.Event.Init
+#define fw_event_post                        Core.Event.Post
+#define fw_event_get                         Core.Event.Read
 #else
 #define fw_event_init                        
 #define fw_event_post                        
@@ -112,10 +112,10 @@ extern "C"
  *******************************************************************************
  */  
 #if USE_MEMORY_COMPONENT
-#define fw_memory_init                       Core.Component.Memory.Init
-#define fw_memory_malloc                     Core.Component.Memory.Malloc
-#define fw_memory_free                       Core.Component.Memory.Free
-#define fw_memory_is_in                      Core.Component.Memory.IsIn
+#define fw_memory_init                       Core.Memory.Init
+#define fw_memory_malloc                     Core.Memory.Malloc
+#define fw_memory_free                       Core.Memory.Free
+#define fw_memory_is_in                      Core.Memory.IsIn
 #else
 #define fw_memory_init                       
 #define fw_memory_malloc                     
@@ -129,13 +129,13 @@ extern "C"
  *******************************************************************************
  */  
 #if USE_SIGNAL_COMPONENT
-#define fw_signal_get_info                   Core.Component.Signal.GetInfo
-#define fw_signal_arm                        Core.Component.Signal.Arm
-#define fw_signal_disarm                     Core.Component.Signal.Disarm
-#define fw_signal_simple_init                Core.Component.Signal.Create.Simple
-#define fw_signal_complex_init               Core.Component.Signal.Create.Complex
-#define fw_signal_simple_ex_init             Core.Component.Signal.Create.SimpleEx
-#define fw_signal_complex_ex_init            Core.Component.Signal.Create.ComplexEx
+#define fw_signal_get_info                   Core.Signal.GetInfo
+#define fw_signal_arm                        Core.Signal.Arm
+#define fw_signal_disarm                     Core.Signal.Disarm
+#define fw_signal_simple_init                Core.Signal.Create.Simple
+#define fw_signal_complex_init               Core.Signal.Create.Complex
+#define fw_signal_simple_ex_init             Core.Signal.Create.SimpleEx
+#define fw_signal_complex_ex_init            Core.Signal.Create.ComplexEx
 #else
 #define fw_signal_get_info                   
 #define fw_signal_arm                        
@@ -152,10 +152,10 @@ extern "C"
  *******************************************************************************
  */ 
 #if USE_TICK_COMPONENT
-#define fw_tick_init                         Core.Component.Tick.Init
-#define fw_tick_inc                          Core.Component.Tick.Inc
-#define fw_tick_get                          Core.Component.Tick.Read
-#define fw_tick_cal                          Core.Component.Tick.Cal
+#define fw_tick_init                         Core.Tick.Init
+#define fw_tick_inc                          Core.Tick.Inc
+#define fw_tick_get                          Core.Tick.Read
+#define fw_tick_cal                          Core.Tick.Cal
 #else
 #define fw_tick_init                         
 #define fw_tick_inc              
@@ -169,17 +169,17 @@ extern "C"
  *******************************************************************************
  */ 
 #if USE_TIMER_COMPONENT
-#define fw_timer_init                        Core.Component.Timer.Init
-#define fw_timer_poll                        Core.Component.Timer.Handler
-#define fw_timer_arm                         Core.Component.Timer.Arm
-#define fw_timer_disarm                      Core.Component.Timer.Disarm
-#define fw_timer_get_status                  Core.Component.Timer.GetStatus
-#define fw_timer_cb_type_init                Core.Component.Timer.Create.CallBack
-#define fw_timer_evt_type_init               Core.Component.Timer.Create.EventHandle
-#define fw_timer_msg_type_init               Core.Component.Timer.Create.Message
-#define fw_timer_cb_ex_type_init             Core.Component.Timer.Create.CallBackEx
-#define fw_timer_evt_ex_type_init            Core.Component.Timer.Create.EventHandleEx
-#define fw_timer_msg_ex_type_init            Core.Component.Timer.Create.MessageHandleEx
+#define fw_timer_init                        Core.Timer.Init
+#define fw_timer_poll                        Core.Timer.Handler
+#define fw_timer_arm                         Core.Timer.Arm
+#define fw_timer_disarm                      Core.Timer.Disarm
+#define fw_timer_get_status                  Core.Timer.GetStatus
+#define fw_timer_cb_type_init                Core.Timer.Create.CallBack
+#define fw_timer_evt_type_init               Core.Timer.Create.EventHandle
+#define fw_timer_msg_type_init               Core.Timer.Create.Message
+#define fw_timer_cb_ex_type_init             Core.Timer.Create.CallBackEx
+#define fw_timer_evt_ex_type_init            Core.Timer.Create.EventHandleEx
+#define fw_timer_msg_ex_type_init            Core.Timer.Create.MessageHandleEx
 #else
 #define fw_timer_init                        
 #define fw_timer_poll                 
@@ -200,15 +200,15 @@ extern "C"
  *******************************************************************************
  */
 #if USE_TASK_COMPONENT
-#define fw_task_init                         Core.Component.Task.Init
-#define fw_task_poll                         Core.Component.Task.Poll
-#define fw_task_add                          Core.Component.Task.Add
-#define fw_task_cb_type_create               Core.Component.Task.Create.CallBack
-#define fw_task_evt_type_create              Core.Component.Task.Create.EventHandle
-#define fw_task_msg_type_create              Core.Component.Task.Create.MessageHandle
-#define fw_task_cb_ex_type_create            Core.Component.Task.Create.CallBackEx
-#define fw_task_evt_ex_type_create           Core.Component.Task.Create.EventHandleEx
-#define fw_task_msg_ex_type_create           Core.Component.Task.Create.MessageHandleEx
+#define fw_task_init                         Core.Task.Init
+#define fw_task_poll                         Core.Task.Poll
+#define fw_task_add                          Core.Task.Add
+#define fw_task_cb_type_create               Core.Task.Create.CallBack
+#define fw_task_evt_type_create              Core.Task.Create.EventHandle
+#define fw_task_msg_type_create              Core.Task.Create.MessageHandle
+#define fw_task_cb_ex_type_create            Core.Task.Create.CallBackEx
+#define fw_task_evt_ex_type_create           Core.Task.Create.EventHandleEx
+#define fw_task_msg_ex_type_create           Core.Task.Create.MessageHandleEx
 #else
 #define fw_task_init                         
 #define fw_task_poll                         
@@ -260,29 +260,27 @@ extern "C"
  *******************************************************************************
  */
 #if USE_MAP_GPIO_COMPONENT
-#define hal_gpio_open                        Core.Hal.GPIO.Enable
-#define hal_gpio_close                       Core.Hal.GPIO.Disable
-#define hal_gpio_input_init                  Core.Hal.GPIO.Input.Init
-#define hal_gpio_input_fini                  Core.Hal.GPIO.Input.Fini
-#define hal_gpio_input_get                   Core.Hal.GPIO.Input.Get
-#define hal_gpio_output_init                 Core.Hal.GPIO.Output.Init
-#define hal_gpio_output_fini                 Core.Hal.GPIO.Output.Fini
-#define hal_gpio_output_set                  Core.Hal.GPIO.Output.Set
-#define hal_gpio_output_clr                  Core.Hal.GPIO.Output.Clr
-#define hal_gpio_output_get                  Core.Hal.GPIO.Output.Get
-#define hal_gpio_output_toggle               Core.Hal.GPIO.Output.Toggle
+#define hal_gpio_open                            Hal.GPIO.Open
+#define hal_gpio_close                           Hal.GPIO.Close
+#define hal_gpio_init                            Hal.GPIO.Init
+#define hal_gpio_fini                            Hal.GPIO.Fini
+#define hal_gpio_input_get                       Hal.GPIO.Input.Get
+#define hal_gpio_output_set                      Hal.GPIO.Output.Set
+#define hal_gpio_output_clr                      Hal.GPIO.Output.Clr
+#define hal_gpio_output_get                      Hal.GPIO.Output.Get
+#define hal_gpio_output_toggle                   Hal.GPIO.Output.Toggle
+#define hal_gpio_output_cmd                      Hal.GPIO.Output.Cmd
 #else
-#define hal_gpio_open                        
-#define hal_gpio_close                    
-#define hal_gpio_input_init                
-#define hal_gpio_input_fini                
-#define hal_gpio_input_get                
-#define hal_gpio_output_init             
-#define hal_gpio_output_fini               
-#define hal_gpio_output_set                
-#define hal_gpio_output_clr               
-#define hal_gpio_output_get               
-#define hal_gpio_output_toggle             
+#define hal_gpio_open
+#define hal_gpio_close
+#define hal_gpio_init
+#define hal_gpio_fini
+#define hal_gpio_input_get
+#define hal_gpio_output_set
+#define hal_gpio_output_clr
+#define hal_gpio_output_get
+#define hal_gpio_output_toggle
+#define hal_gpio_output_cmd      
 #endif
 
 /**
@@ -310,24 +308,62 @@ extern "C"
  * @brief        define core interface
  *******************************************************************************
  */
-typedef struct 
+struct CoreInterface
 {
     char *Version;
     
     void (*Init)(void);
     void (*Start)(void);
     
-    FrameworkComponentInterface Component;
+#if USE_BUFFER_COMPONENT
+    RingBufferComponentInterface RingBuffer;
+#endif
 
-    FrameworkHalInterface       Hal;
-}CoreInterface;
+//#if USE_MEMORY_MANAGEMENT_COMPONENT
+//    MemoryManagementComponentInterface MemoryManagement;
+//#endif
+
+#if USE_DEBUG_COMPONENT
+    DebugComponentInterface Debug;
+#endif
+    
+#if USE_EVENT_COMPONENT
+    EventComponentInterface Event;
+#endif
+
+//#if USE_SINGLE_LIST_COMPONENT
+//    SingleListComponentInterface SingleLinkList;
+//#endif
+
+#if USE_MEMORY_COMPONENT
+    MemoryComponentInterface Memory;
+#endif
+    
+#if USE_SIGNAL_COMPONENT
+    SignalComponentInterface Signal;
+#endif   
+
+#if USE_TICK_COMPONENT
+    TickComponentInterface Tick;
+#endif
+
+#if USE_TIMER_COMPONENT
+    TimerComponentInterface Timer;
+#endif
+
+#if USE_TASK_COMPONENT
+    TaskComponentInterfact Task;
+#endif
+};
+
 /* Exported variables --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief        core interface
  *******************************************************************************
  */
-extern const CoreInterface Core;
+extern const struct CoreInterface Core;
+extern const struct HalInterface Hal;
 
 /* Exported functions --------------------------------------------------------*/
 /**

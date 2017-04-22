@@ -59,57 +59,6 @@ extern "C"
 #include _FW_TASK_COMPONENT_PATH
 #include _FW_PT_COMPONENT_PATH
     
-/* Exported type -------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        define framework interface
- *******************************************************************************
- */
-typedef struct
-{
-    char *Version;
-    
-#if USE_BUFFER_COMPONENT
-    RingBufferComponentInterface RingBuffer;
-#endif
-
-//#if USE_MEMORY_MANAGEMENT_COMPONENT
-//    MemoryManagementComponentInterface MemoryManagement;
-//#endif
-
-#if USE_DEBUG_COMPONENT
-    DebugComponentInterface Debug;
-#endif
-    
-#if USE_EVENT_COMPONENT
-    EventComponentInterface Event;
-#endif
-
-//#if USE_SINGLE_LIST_COMPONENT
-//    SingleListComponentInterface SingleLinkList;
-//#endif
-
-#if USE_MEMORY_COMPONENT
-    MemoryComponentInterface Memory;
-#endif
-    
-#if USE_SIGNAL_COMPONENT
-    SignalComponentInterface Signal;
-#endif   
-
-#if USE_TICK_COMPONENT
-    TickComponentInterface Tick;
-#endif
-
-#if USE_TIMER_COMPONENT
-    TimerComponentInterface Timer;
-#endif
-
-#if USE_TASK_COMPONENT
-    TaskComponentInterfact Task;
-#endif
-}FrameworkComponentInterface;
-
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
