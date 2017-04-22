@@ -155,45 +155,58 @@ __DEFINE_EVENT_END
  */
 /* STM32F1xx config ----------------------------------------------------------*/
 #if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-//	#define STM32F103xE
+/**
+ *******************************************************************************
+ * @brief      config MCU type
+ * @note       STM32F10X_LD            STM32 Low density devices
+ * @note       STM32F10X_LD_VL         STM32 Low density Value Line devices  
+ * @note       STM32F10X_MD            STM32 Medium density devices
+ * @note       STM32F10X_MD_VL         STM32 Medium density Value Line devices 
+ * @note       STM32F10X_HD            STM32 High density devices
+ * @note       STM32F10X_HD_VL         STM32 High density value line devices 
+ * @note       STM32F10X_XL            STM32 XL-density devices
+ * @note       STM32F10X_CL            STM32 Connectivity line devices					
+ *******************************************************************************
+ */
+#define STM32F10X_HD
 	
 /**
  *******************************************************************************
  * @brief      define mcu clock freq
  *******************************************************************************
  */
-	#define MCU_CLOCK_FREQ                                          (72000000UL) 
-	#define MCU_HSE_FREQ                                             (8000000UL)  
+#define MCU_CLOCK_FREQ                                              (72000000UL) 
+#define MCU_HSE_FREQ                                                 (8000000UL)  
 
 /**
  *******************************************************************************
  * @brief      define mcu sram constants
  *******************************************************************************
  */
-	#define MCU_SRAM_SIZE                                                   (64)
-	#define MCU_SRAM_HEAD_ADDR                                    (0x20000000UL)
-	#define MCU_SRAM_END_ADDR        (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
+#define MCU_SRAM_SIZE                                                       (64)
+#define MCU_SRAM_HEAD_ADDR                                        (0x20000000UL)
+#define MCU_SRAM_END_ADDR            (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
 	
 /* STM8S config --------------------------------------------------------------*/
 #elif __TARGET_CHIP__ == USE_MCU_STM8S
-    #define STM8S003
+#define STM8S003
 	
 /**
  *******************************************************************************
  * @brief      define mcu clock freq
  *******************************************************************************
  */
-	#define MCU_CLOCK_FREQ                                          (16000000UL) 
-	#define MCU_HSE_FREQ                                             (8000000UL)  
+#define MCU_CLOCK_FREQ                                              (16000000UL) 
+#define MCU_HSE_FREQ                                                 (8000000UL)  
 
 /**
  *******************************************************************************
  * @brief      define mcu sram constants
  *******************************************************************************
  */
-	#define MCU_SRAM_SIZE                                                    (1)
-	#define MCU_SRAM_HEAD_ADDR                                        (0x03FFUL)
-	#define MCU_SRAM_END_ADDR        (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
+#define MCU_SRAM_SIZE                                                        (1)
+#define MCU_SRAM_HEAD_ADDR                                            (0x03FFUL)
+#define MCU_SRAM_END_ADDR            (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
 
 /**
  *******************************************************************************

@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_path.h                                                      *
+ * @file       map_usart.c                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-03-07                                                      *
- * @brief      hal path head files                                             *
+ * @date       2017-04-20                                                      *
+ * @brief      map usart source files                                          *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -30,63 +30,22 @@
  * 1.XXXXX                                                                     *
  *******************************************************************************
  */
-
+ 
 /**
- * @defgroup path
+ * @defgroup usart component
  * @{
  */
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HAL_PATH_H__
-#define __HAL_PATH_H__
-
-/* Add c++ compatibility------------------------------------------------------*/
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-/* Define hal component path-------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        common head files path
- *******************************************************************************
- */
-#define _HAL_CORE_PATH                             "../hal/hal.h"
-#define _HAL_CONF_PATH                             "../hal/hal_conf.h"
-#define _HAL_TYPE_PATH                             "../hal/hal_type.h"
-#define _HAL_INTERFACE_PATH                        "../hal/hal_interface.h"
-
-/**
- *******************************************************************************
- * @brief        stm32f1xx device head files path
- *******************************************************************************
- */
-#define _HAL_STM32F1XX_GPIO_PATH                   "../hal/stm32f1xx/map/map_gpio.h"
-#define _HAL_STM32F1XX_TIMER_PATH                  "../hal/stm32f1xx/map/map_timer.h"
 
 /* Includes ------------------------------------------------------------------*/
-#include _HAL_CONF_PATH
-#include _HAL_TYPE_PATH
+#include "core_path.h"
 
-/* Define hal component path-------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        hal device head files path
- *******************************************************************************
- */
-#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-    #define _HAL_MAL_PATH                          "stm32f1xx.h"
-    #define _HAL_GPIO_PATH                         _HAL_STM32F1XX_GPIO_PATH
-    #define _HAL_TIMER_PATH                        _HAL_STM32F1XX_TIMER_PATH
-#endif
+/* Private define ------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Exported variables --------------------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
 
-/* Add c++ compatibility------------------------------------------------------*/
-#ifdef __cplusplus
-}
-#endif
-	
-#endif       /** end include define */
-
-/** @}*/     /** hal component path */
+/** @}*/     /** usart component */
 
 /**********************************END OF FILE*********************************/
