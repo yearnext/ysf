@@ -58,7 +58,9 @@ extern "C"
  * @brief      define function name macro 
  *******************************************************************************
  */
+#ifndef __FUNCNAME__
 #define __FUNCNAME__            __func__
+#endif
 
 ///**
 // *******************************************************************************
@@ -76,46 +78,112 @@ extern "C"
  * @brief      define compiler pragma cmd
  *******************************************************************************
  */
-#define PRAGMA(pragma)          _Pragma(#pragma)
+#ifndef __PRAGMA
+#define __PRAGMA(pragma)          _Pragma(#pragma)
+#endif
 
-#if !defined(__CORTEX_M)
+#ifndef __ASM
 #define __ASM                   __asm
+#endif
+
+#ifndef __INLINE
 #define __INLINE                inline
+#endif
+
+#ifndef __STATIC_INLINE
 #define __STATIC_INLINE         static inline
 #endif
 
+#ifndef __SECTION
 #define __SECTION(x)            @ x
+#endif
+
+#ifndef __UNUSED
 #define __UNUSED
+#endif
+
+#ifndef __USED
 #define __USED
+#endif
+
+#ifndef __WEAK
 #define __WEAK                  __weak
+#endif
+
+#ifndef __IMPORT_API
 #define __IMPORT_API            __declspec(dllimport)
+#endif
+
+#ifndef __EXPORT_API
 #define __EXPORT_API            __declspec(dllexport)
+#endif
 
 /**
  *******************************************************************************
  * @brief      define compiler alignment cmd 
  *******************************************************************************
  */
+#ifndef __ALIGN_HEAD
 #define __ALIGN_HEAD(n)         PRAGMA(pack(push, n))
+#endif
+
+#ifndef __ALIGN_TAIL
 #define __ALIGN_TAIL(n)         PRAGMA(pack(pop))
+#endif
+
+#ifndef __PACKED_HEAD
 #define __PACKED_HEAD           PRAGMA(pack(push, 1))
+#endif
+
+#ifndef __PACKED_TAIL
 #define __PACKED_TAIL           PRAGMA(pack(pop))
-    
+#endif
+   
 /**
  *******************************************************************************
  * @brief      define compiler critical cmd
  *******************************************************************************
  */
+#ifndef __ENTER_CRITICAL
 #define __ENTER_CRITICAL()      __disable_interrupt()
+#endif
+
+#ifndef __EXIT_CRITICAL
 #define __EXIT_CRITICAL()       __enable_interrupt()
+#endif
+
+#ifndef __NOP
+#define __NOP()                 __no_operation() 
+#endif
+
+// #ifndef __WFI
+// #define __WFI()                 __ASM ("wfi")
+// #endif
+
+// #ifndef __WFE
+// #define __WFE()                 __ASM ("wfe")
+// #endif
+
+// #ifndef __SEV
+// #define __SEV()                 __ASM ("sev")
+// #endif
+
+// #ifndef __CLREX
+// #define __CLREX()               __ASM ("clrex")
+// #endif
 
 /**
  *******************************************************************************
  * @brief      define atom opera
  *******************************************************************************
  */    
+#ifndef __ATOM_ACTIVE_BEGIN
 #define __ATOM_ACTIVE_BEGIN()   __ENTER_CRITICAL()
+#endif
+
+#ifndef __ATOM_ACTIVE_END
 #define __ATOM_ACTIVE_END()     __EXIT_CRITICAL()
+#endif
 
 /**
  *******************************************************************************

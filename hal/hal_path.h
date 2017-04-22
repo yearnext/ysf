@@ -58,11 +58,13 @@ extern "C"
 
 /**
  *******************************************************************************
- * @brief        stm32f1xx device head files path
+ * @brief        stm32f10x device head files path
  *******************************************************************************
  */
-#define _HAL_STM32F1XX_GPIO_PATH                   "../hal/stm32f1xx/map/map_gpio.h"
-#define _HAL_STM32F1XX_TIMER_PATH                  "../hal/stm32f1xx/map/map_timer.h"
+#define _HAL_STM32F10X_MAL_PATH                    "../hal/stm32f10x/stm32f10x.h"
+#define _HAL_STM32F10X_GPIO_PATH                   "../hal/stm32f10x/msp_gpio.h"
+#define _HAL_STM32F10X_TIMER_PATH                  "../hal/stm32f10x/msp_timer.h"
+#define _HAL_STM32F10x_USART_PATH                  "../hal/stm32f10x/msp_usart.h"
 
 /* Includes ------------------------------------------------------------------*/
 #include _HAL_CONF_PATH
@@ -75,9 +77,10 @@ extern "C"
  *******************************************************************************
  */
 #if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-    #define _HAL_MAL_PATH                          "stm32f1xx.h"
-    #define _HAL_GPIO_PATH                         _HAL_STM32F1XX_GPIO_PATH
-    #define _HAL_TIMER_PATH                        _HAL_STM32F1XX_TIMER_PATH
+    #define _HAL_MAL_PATH                          _HAL_STM32F10X_MAL_PATH
+    #define _HAL_GPIO_PATH                         _HAL_STM32F10X_GPIO_PATH
+    #define _HAL_TIMER_PATH                        _HAL_STM32F10X_TIMER_PATH
+	#define _HAL_USART_PATH                        _HAL_STM32F10X_USART_PATH
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
