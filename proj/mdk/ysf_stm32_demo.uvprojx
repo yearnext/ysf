@@ -446,14 +446,19 @@
               <FilePath>..\..\hal\stm32f10x\msp_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>startup_stm32f10x_hd.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\hal\stm32f10x\startup\arm\startup_stm32f10x_hd.s</FilePath>
+              <FileName>msp_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f10x\msp_timer.c</FilePath>
             </File>
             <File>
               <FileName>system_stm32f10x.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\hal\stm32f10x\system_stm32f10x.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32f10x_hd.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\hal\stm32f10x\startup\arm\startup_stm32f10x_hd.s</FilePath>
             </File>
           </Files>
         </Group>

@@ -139,6 +139,13 @@ const struct HalInterface Hal =
 #endif  
 
 #if USE_MSP_TIMER_COMPONENT
+    .Timer.Open                                        = MSP_Timer_Open,
+    .Timer.Close                                       = MSP_Timer_Close,
+    .Timer.Start                                       = MSP_Timer_Start,
+    .Timer.Stop                                        = MSP_Timer_Stop,
+    .Timer.Base.Init                                   = MSP_TimerBase_Init,
+    .Timer.Base.Arm                                    = MSP_TimerBase_Arm,
+    .Timer.Base.HandleRegister                         = MSP_TimerBaseHandle_Register,
 #endif
 }; 
 
@@ -182,15 +189,7 @@ void InitCoreScheduling(void)
     fw_tick_init();
     
 #if USE_MCU_TIMER_COMPONENT
-    struct HalTimerBlock TickTimer = 
-    {
-        .ID = MCU_TICK_TIMER,
-        .Period = TICK_PERIOD,
-        .Handler = Core.Component.Tick.Inc,
-    };
-    
-    Core.Timer.Init.Base(&TickTimer);
-    Core.Timer.Start(&TickTimer);
+    hal_timer_base_arm(MCU_TICK_TIMER, TICK_PERIOD, fw_tick_inc, NULL);
 #endif
     
 #endif

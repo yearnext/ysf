@@ -259,17 +259,17 @@ extern "C"
  * @brief        define hal gpio interface
  *******************************************************************************
  */
-#if USE_MAP_GPIO_COMPONENT
-#define hal_gpio_open                            Hal.GPIO.Open
-#define hal_gpio_close                           Hal.GPIO.Close
-#define hal_gpio_init                            Hal.GPIO.Init
-#define hal_gpio_fini                            Hal.GPIO.Fini
-#define hal_gpio_input_get                       Hal.GPIO.Input.Get
-#define hal_gpio_output_set                      Hal.GPIO.Output.Set
-#define hal_gpio_output_clr                      Hal.GPIO.Output.Clr
-#define hal_gpio_output_get                      Hal.GPIO.Output.Get
-#define hal_gpio_output_toggle                   Hal.GPIO.Output.Toggle
-#define hal_gpio_output_cmd                      Hal.GPIO.Output.Cmd
+#if USE_MSP_GPIO_COMPONENT
+#define hal_gpio_open                        Hal.GPIO.Open
+#define hal_gpio_close                       Hal.GPIO.Close
+#define hal_gpio_init                        Hal.GPIO.Init
+#define hal_gpio_fini                        Hal.GPIO.Fini
+#define hal_gpio_input_get                   Hal.GPIO.Input.Get
+#define hal_gpio_output_set                  Hal.GPIO.Output.Set
+#define hal_gpio_output_clr                  Hal.GPIO.Output.Clr
+#define hal_gpio_output_get                  Hal.GPIO.Output.Get
+#define hal_gpio_output_toggle               Hal.GPIO.Output.Toggle
+#define hal_gpio_output_cmd                  Hal.GPIO.Output.Cmd
 #else
 #define hal_gpio_open
 #define hal_gpio_close
@@ -288,18 +288,22 @@ extern "C"
  * @brief        define hal timer interface
  *******************************************************************************
  */
-#if USE_MAP_TIMER_COMPONENT
-#define hal_timer_open                       Core.Hal.Timer.Enable
-#define hal_timer_close                      Core.Hal.Timer.Disable 
-#define hal_timer_start                      Core.Hal.Timer.Start
-#define hal_timer_stop                       Core.Hal.Timer.Stop
-#define hal_timer_base_init                  Core.Hal.Timer.Init.Base
+#if USE_MSP_TIMER_COMPONENT
+#define hal_timer_open                       Hal.Timer.Open
+#define hal_timer_close                      Hal.Timer.Close 
+#define hal_timer_start                      Hal.Timer.Start
+#define hal_timer_stop                       Hal.Timer.Stop
+#define hal_timer_base_init                  Hal.Timer.Base.Init
+#define hal_timer_base_handle_register       Hal.Timer.Base.HandleRegister
+#define hal_timer_base_arm                   Hal.Timer.Base.Arm
 #else
-#define hal_timer_open                      
-#define hal_timer_close                  
-#define hal_timer_start                    
-#define hal_timer_stop                      
-#define hal_timer_base_init                 
+#define hal_timer_open
+#define hal_timer_close
+#define hal_timer_start
+#define hal_timer_stop
+#define hal_timer_base_init
+#define hal_timer_base_handle_register
+#define hal_timer_base_arm
 #endif
 
 /* Private typedef -----------------------------------------------------------*/

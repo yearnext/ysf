@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       map_gpio.c                                                      *
+ * @file       msp_gpio.c                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-04                                                      *
- * @brief      map gpio source files                                           *
+ * @brief      msp gpio source files                                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -80,6 +80,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+#if USE_MSP_GPIO_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable gpio
@@ -254,7 +255,6 @@ uint8_t _get_output(uint8_t port, uint8_t pin)
 }
 
 /* Exported functions --------------------------------------------------------*/
-#if USE_MSP_GPIO_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable gpio

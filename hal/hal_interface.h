@@ -66,7 +66,7 @@ struct HalInterface
 #endif  
 
 #if USE_MSP_TIMER_COMPONENT
-    HalTimerInterface Timer;
+    MSP_Timer_Interface Timer;
 #endif
 };
     

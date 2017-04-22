@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       map_gpio.h                                                      *
+ * @file       msp_gpio.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-21                                                      *
- * @brief      map gpio head files                                             *
+ * @brief      msp gpio head files                                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F1XX_HAL_MAP_GPIO_H__
-#define __STM32F1XX_HAL_MAP_GPIO_H__
+#ifndef __STM32F1XX_HAL_MSP_GPIO_H__
+#define __STM32F1XX_HAL_MSP_GPIO_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -47,7 +47,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
-#include _FW_PATH
+#include _HAL_PATH
     
 /* Exported macro ------------------------------------------------------------*/
 /**
