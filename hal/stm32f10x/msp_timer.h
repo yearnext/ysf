@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F10X_HAL_MSP_TIMER_H__
-#define __STM32F10X_HAL_MSP_TIMER_H__
+#ifndef __STM32F10X_MSP_TIMER_H__
+#define __STM32F10X_MSP_TIMER_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

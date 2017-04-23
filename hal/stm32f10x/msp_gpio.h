@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F1XX_HAL_MSP_GPIO_H__
-#define __STM32F1XX_HAL_MSP_GPIO_H__
+#ifndef __STM32F1XX_MSP_GPIO_H__
+#define __STM32F1XX_MSP_GPIO_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

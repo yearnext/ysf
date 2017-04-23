@@ -164,7 +164,7 @@ const struct HalInterface Hal =
  */
 void InitCoreScheduling(void)
 {
-    __ENTER_CRITICAL();
+    fw_enter_critical();
 
 #if USE_DEBUG_COMPONENT
     fw_debug_init();
@@ -194,7 +194,7 @@ void InitCoreScheduling(void)
     
 #endif
 
-    __EXIT_CRITICAL();
+    fw_exit_critical();
 }
 
 /**

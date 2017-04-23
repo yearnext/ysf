@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       map_usart.h                                                     *
+ * @file       msp_usart.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-22                                                      *
- * @brief      map usart head files                                            *
+ * @brief      msp usart head files                                            *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F10X_HAL_MAP_USART_H__
-#define __STM32F10X_HAL_MAP_USART_H__
+#ifndef __STM32F10X_MSP_USART_H__
+#define __STM32F10X_MSP_USART_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -47,127 +47,90 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
+#include _HAL_PATH
     
 /* Exported macro ------------------------------------------------------------*/
-// /**
- // *******************************************************************************
- // * @brief       framework component config flags
- // * @note        1                        enable
- // * @note        0                        disable
- // *******************************************************************************
- // */
-// #ifdef USE_MCU_TIMER_COMPONENT
-// #if USE_MCU_TIMER_COMPONENT
-    // #define USE_MSP_TIMER_COMPONENT                                          (1)
-    // #define USE_MAP_TIMER_COMPONENT                                          (1)  
-// #else
-    // #define USE_MSP_TIMER_COMPONENT                                          (0)
-    // #define USE_MAP_TIMER_COMPONENT                                          (0)  
-// #endif
+/**
+ *******************************************************************************
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
+ *******************************************************************************
+ */
+#ifdef USE_MCU_USART_COMPONENT
+#if USE_MCU_USART_COMPONENT
+    #define USE_MSP_USART_COMPONENT                                          (1)
+#else
+    #define USE_MSP_USART_COMPONENT                                          (0) 
+#endif
+    
+/**
+ *******************************************************************************
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
+ *******************************************************************************
+ */
+#else
+    #define USE_MSP_USART_COMPONENT                                          (1)
+#endif
+     
+#define MCU_DEBUG_USART                                             MCU_USART_0
 
-// #if USE_HAL_DEBUG
-   // #define USE_HAL_TIMER_DEBUG                                              (1)
-// #else
-   // #define USE_HAL_TIMER_DEBUG                                              (0)
-// #endif
-    
-// /**
- // *******************************************************************************
- // * @brief       user config flags
- // * @note        1         enable
- // * @note        0         disable
- // *******************************************************************************
- // */
-// #else
-    // #define USE_MSP_TIMER_COMPONENT                                          (1)
-    // #define USE_MAP_TIMER_COMPONENT                                          (1)  
-//   #define USE_HAL_TIMER_DEBUG                                              (1)
-// #endif
- 
-// /**
- // *******************************************************************************
- // * @brief       define tick timer symbol
- // *******************************************************************************
- // */
-// #define MCU_TICK_TIMER                                               MCU_TIMER_0
-    
 /* Exported types ------------------------------------------------------------*/
-// /**
- // *******************************************************************************
- // * @brief       define timer id
- // *******************************************************************************
- // */
-// enum
-// {
-    // MCU_TIMER_0 = 0,
-    // MCU_TIMER_1,
-    // MCU_TIMER_2,
-    // MCU_TIMER_3,
-    // MCU_TIMER_4,
-    // MCU_TIMER_5,
-    // MCU_TIMER_6,
-    // MCU_TIMER_7,
-    // MCU_TIMER_8,
-    
-    // MCU_TIMER_MAX,
-// };
-  
-// #if USE_MSP_TIMER_COMPONENT
-// /**
- // *******************************************************************************
- // * @brief       define msp timer interface
- // *******************************************************************************
- // */
-// typedef struct
-// {    
-    // hal_err_t (*Enable)(uint8_t);
-    // hal_err_t (*Disable)(uint8_t);
-    
-    // hal_err_t (*Start)(uint8_t);
-    // hal_err_t (*Stop)(uint8_t);
-    
-    // struct
-    // {
-        // hal_err_t (*Base)(uint8_t, uint32_t, void(*)(void));
-    // }Init;
-// }MspTimerInterface;
-// #endif
+/**
+ *******************************************************************************
+ * @brief       define usart id
+ *******************************************************************************
+ */
+enum
+{
+    MCU_USART_0 = 0,
+    MCU_USART_1,
+    MCU_USART_2,
+    MCU_USART_3,
+    MCU_USART_4,
+    MCU_USART_5,
 
-// /**
- // *******************************************************************************
- // * @brief       define map timer type
- // *******************************************************************************
- // */
-// struct HalTimerBlock
-// {
-    // uint8_t ID;
-    // uint32_t Period;
-    // void (*Handler)(void);
-// };
+    MCU_USART_MAX,
+};
 
-// #if USE_MAP_TIMER_COMPONENT
-// /**
- // *******************************************************************************
- // * @brief       define map timer interface
- // *******************************************************************************
- // */
-// typedef struct
-// {
-    // hal_err_t (*Enable)(struct HalTimerBlock*);
-    // hal_err_t (*Disable)(struct HalTimerBlock*);
-    
-    // hal_err_t (*Start)(struct HalTimerBlock*);
-    // hal_err_t (*Stop)(struct HalTimerBlock*);
-    
-    // struct
-    // {
-        // hal_err_t (*Base)(struct HalTimerBlock*);
-    // }Init;
-// }HalTimerInterface;
-// #endif
+/**
+ *******************************************************************************
+ * @brief       define map timer type
+ *******************************************************************************
+ */
+struct HalTimerBlock
+{
+    uint8_t  ID;
+    uint32_t Baud;
+    void (*Handler)(void);
+};
+
+/**
+ *******************************************************************************
+ * @brief       define msp timer interface
+ *******************************************************************************
+ */
+#if USE_MSP_TIMER_COMPONENT
+typedef struct
+{    
+    hal_err_t (*Open)(uint8_t);
+    hal_err_t (*Close)(uint8_t);
+
+    struct
+    {
+        hal_err_t (*Base)(uint8_t, uint32_t, void(*)(void));
+    }Init;
+}MSP_Usart_Interface;
+#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_MSP_TIMER_COMPONENT
+extern hal_err_t MSP_USART_Open(uint8_t);
+extern hal_err_t MSP_USART_Close(uint8_t);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -177,6 +140,6 @@ extern "C"
 /* End include define---------------------------------------------------------*/
 #endif
 
-/** @}*/     /** gpio component */
+/** @}*/     /** usart component */
 
 /**********************************END OF FILE*********************************/

@@ -451,6 +451,11 @@
               <FilePath>..\..\hal\stm32f10x\msp_timer.c</FilePath>
             </File>
             <File>
+              <FileName>msp_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\stm32f10x\msp_usart.c</FilePath>
+            </File>
+            <File>
               <FileName>system_stm32f10x.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\hal\stm32f10x\system_stm32f10x.c</FilePath>

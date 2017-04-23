@@ -64,7 +64,7 @@ extern "C"
 #define _HAL_STM32F10X_MAL_PATH                    "../hal/stm32f10x/stm32f10x.h"
 #define _HAL_STM32F10X_GPIO_PATH                   "../hal/stm32f10x/msp_gpio.h"
 #define _HAL_STM32F10X_TIMER_PATH                  "../hal/stm32f10x/msp_timer.h"
-#define _HAL_STM32F10x_USART_PATH                  "../hal/stm32f10x/msp_usart.h"
+#define _HAL_STM32F10X_USART_PATH                  "../hal/stm32f10x/msp_usart.h"
 
 /* Includes ------------------------------------------------------------------*/
 #include _HAL_CONF_PATH
