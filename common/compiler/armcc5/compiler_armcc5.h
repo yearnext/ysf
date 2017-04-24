@@ -162,65 +162,65 @@ extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
 #define __EXIT_CRITICAL()       __enable_irq()
 #endif
 
-#ifndef __NOP
-#define __NOP                             __nop
-#endif
+//#ifndef __NOP
+//#define __NOP                             __nop
+//#endif
 
-#ifndef __WFI
-#define __WFI                             __wfi
-#endif
+//#ifndef __WFI
+//#define __WFI                             __wfi
+//#endif
 
-#ifndef __WFE
-#define __WFE                             __wfe
-#endif
+//#ifndef __WFE
+//#define __WFE                             __wfe
+//#endif
 
-#ifndef __SEV
-#define __SEV                             __sev
-#endif
+//#ifndef __SEV
+//#define __SEV                             __sev
+//#endif
 
-#ifndef __ISB
-#define __ISB()                           __isb(0)
-#endif
+//#ifndef __ISB
+//#define __ISB()                           __isb(0)
+//#endif
 
-#ifndef __DSB
-#define __DSB()                           __dsb(0)
-#endif
+//#ifndef __DSB
+//#define __DSB()                           __dsb(0)
+//#endif
 
-#ifndef __DMB
-#define __DMB()                           __dmb(0)
-#endif
+//#ifndef __DMB
+//#define __DMB()                           __dmb(0)
+//#endif
 
-#ifndef __REV
-#define __REV                             __rev
-#endif
+//#ifndef __REV
+//#define __REV                             __rev
+//#endif
 
-#ifndef __RBIT
-#define __RBIT                            __rbit
-#endif
+//#ifndef __RBIT
+//#define __RBIT                            __rbit
+//#endif
 
-#ifndef __LDREXB
-#define __LDREXB(ptr)                     ((unsigned char ) __ldrex(ptr))
-#endif
+//#ifndef __LDREXB
+//#define __LDREXB(ptr)                     ((unsigned char ) __ldrex(ptr))
+//#endif
 
-#ifndef __LDREXH
-#define __LDREXH(ptr)                     ((unsigned short) __ldrex(ptr))
-#endif
+//#ifndef __LDREXH
+//#define __LDREXH(ptr)                     ((unsigned short) __ldrex(ptr))
+//#endif
 
-#ifndef __LDREXW
-#define __LDREXW(ptr)                     ((unsigned int  ) __ldrex(ptr))
-#endif
+//#ifndef __LDREXW
+//#define __LDREXW(ptr)                     ((unsigned int  ) __ldrex(ptr))
+//#endif
 
-#ifndef __STREXB
-#define __STREXB(value, ptr)              __strex(value, ptr)
-#endif
+//#ifndef __STREXB
+//#define __STREXB(value, ptr)              __strex(value, ptr)
+//#endif
 
-#ifndef __STREXH
-#define __STREXH(value, ptr)              __strex(value, ptr)
-#endif
+//#ifndef __STREXH
+//#define __STREXH(value, ptr)              __strex(value, ptr)
+//#endif
 
-#ifndef __STREXW
-#define __STREXW(value, ptr)              __strex(value, ptr)
-#endif
+//#ifndef __STREXW
+//#define __STREXW(value, ptr)              __strex(value, ptr)
+//#endif
 
 /**
  *******************************************************************************
