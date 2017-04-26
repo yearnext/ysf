@@ -124,10 +124,6 @@ typedef struct
         fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
         fw_err_t (*EventHandle)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
         fw_err_t (*MessageHandle)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-        
-        struct TaskBlock *(*CallBackEx)(fw_err_t (*)(void*), void*);
-        struct TaskBlock *(*EventHandleEx)(fw_err_t (*)(uint16_t), uint16_t);
-        struct TaskBlock *(*MessageHandleEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
     }Create;
 }TaskComponentInterfact;
 #endif
@@ -147,10 +143,6 @@ extern fw_err_t AddTaskToQueue(struct TaskBlock*);
 extern fw_err_t CreateCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
 extern fw_err_t CreateEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
 extern fw_err_t CreateMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-
-extern struct TaskBlock *CreateCallBackExTask(fw_err_t (*)(void*), void*);
-extern struct TaskBlock *CreateEventHandleExTask(fw_err_t (*)(uint16_t), uint16_t);
-extern struct TaskBlock *CreateMessageHandleExTask(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif    
     
 /* Add c++ compatibility------------------------------------------------------*/

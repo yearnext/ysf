@@ -114,9 +114,6 @@ const struct CoreInterface Core =
     .Task.Create.CallBack                              = CreateCallBackTask,
     .Task.Create.EventHandle                           = CreateEventHandleTask,
     .Task.Create.MessageHandle                         = CreateMessageHandleTask,
-    .Task.Create.CallBackEx                            = CreateCallBackExTask,
-    .Task.Create.EventHandleEx                         = CreateEventHandleExTask,
-    .Task.Create.MessageHandleEx                       = CreateMessageHandleExTask,
 #endif
 };
 

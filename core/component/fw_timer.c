@@ -439,7 +439,7 @@ void timer_trigger_handler(struct TimerBlock *timer)
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
             if( timer->Handler.CallBack != NULL )
             {
-                CreateCallBackExTask(timer->Handler.CallBack, timer->Param);
+                CreateCallBackTask(NULL, timer->Handler.CallBack, timer->Param);
             }
 #else
             if( timer->Task.Handler.CallBack != NULL )
@@ -453,7 +453,7 @@ void timer_trigger_handler(struct TimerBlock *timer)
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT    
             if( timer->Handler.Event != NULL )
             {
-                CreateEventHandleExTask(timer->Handler.Event, timer->Event);
+                CreateEventHandleTask(NULL, timer->Handler.Event, timer->Event);
             }
             
 #else
@@ -468,7 +468,7 @@ void timer_trigger_handler(struct TimerBlock *timer)
 #if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
             if( timer->Handler.Message != NULL )
             {
-                CreateMessageHandleExTask(timer->Handler.Message, timer->Param, timer->Event);
+                CreateMessageHandleTask(NULL, timer->Handler.Message, timer->Param, timer->Event);
             }
 #else
             if( timer->Task.Handler.Message != NULL )
