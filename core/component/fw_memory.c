@@ -89,7 +89,7 @@
 void InitMemoryComponent(void)
 {
 #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    InitHeapComponent(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
+    InitHeapMemory(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
 #endif
 }
 

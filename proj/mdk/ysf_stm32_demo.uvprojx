@@ -430,15 +430,17 @@
               <FileType>1</FileType>
               <FilePath>..\..\core\component\fw_timer.c</FilePath>
             </File>
-            <File>
-              <FileName>fw_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_core.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>ysf/core</GroupName>
+          <Files>
+            <File>
+              <FileName>core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\core\core.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>ysf/hal/msp</GroupName>

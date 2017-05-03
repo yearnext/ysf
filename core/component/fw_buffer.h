@@ -128,11 +128,15 @@ extern fw_err_t ReadRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
 __ALIGN_HEAD(8)
 struct HeapBlock
 {
+    struct HeapBlock   *Last;
 	struct HeapBlock   *Next;
-	uint32_t           Size   : 31;
-    uint32_t           Status :  1;
+	uint32_t           Size;
+    uint8_t            Status;
 };
 __ALIGN_TAIL(8)
+
+#define HEAP_MEMORY_ALIGNMENT_SIZE (sizeof(struct HeapBlock))
+#define HEAP_MEMORY_ALIGNMENT_POS  (4)
 
 /**
  *******************************************************************************
@@ -171,7 +175,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MEMORY_MANAGEMENT_COMPONENT
-extern fw_err_t InitHeapComponent(struct HeapControlBlock*,  uint8_t*, uint32_t);
+extern fw_err_t InitHeapMemory(struct HeapControlBlock*,  uint8_t*, uint32_t);
 extern fw_err_t AllocHeapMemory(struct HeapControlBlock*, uint32_t, void**);
 extern fw_err_t FreeHeapMemory(struct HeapControlBlock*,  void*);
 extern bool     IsInHeapMemory(struct HeapControlBlock*,  void*);

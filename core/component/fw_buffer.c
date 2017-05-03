@@ -264,28 +264,20 @@ fw_err_t ReadRingBuffer( struct RingBuffer *rb, uint8_t *readBuffer, uint16_t re
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitHeapComponent(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uint32_t heapSize)
+fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uint32_t heapSize)
 {
     fw_assert(IS_PTR_NULL(mem));
     fw_assert(IS_PTR_NULL(heapHeadAddr));
-    fw_assert(heapSize > INT32_MAX);
     fw_assert(heapSize < sizeof(struct HeapBlock));
-
-    if(heapSize > INT32_MAX)
-    {
-        mem->Size     = INT32_MAX;
-    }
-    else
-    {
-        mem->Size     = heapSize;
-    }
     
     mem->Buffer       = heapHeadAddr;
+    mem->Size         = heapSize;
     
+    mem->Head->Last   = NULL;
     mem->Head->Next   = NULL;
-	mem->Head->Size   = heapSize - sizeof(struct HeapBlock);
     mem->Head->Status = 0;
-    
+    mem->Head->Size   = mem->Size - sizeof(struct HeapBlock);
+
     return FW_ERR_NONE;
 }
 
@@ -310,7 +302,7 @@ fw_err_t InitHeapComponent(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, 
 
 /**
  *******************************************************************************
- * @brief       cal need memory block size
+ * @brief       cal need memory size
  * @param       [in/out]  size                memory control block
  * @param       [in/out]  alignment           memory alignment size
  * @return      [in/out]  value               need block size
@@ -318,15 +310,18 @@ fw_err_t InitHeapComponent(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, 
  *******************************************************************************
  */
 __STATIC_INLINE
-uint32_t heap_cal_need_block(uint32_t useSize, uint32_t memoryAlignment)
+uint32_t cal_need_memory_size(uint32_t useSize)
 {
-	uint32_t temp = useSize % memoryAlignment;
-	uint32_t needSize = useSize;
-
-	if (temp)
-	{
-		needSize += memoryAlignment - temp;
-	}
+	uint32_t needSize = useSize + HEAP_MEMORY_ALIGNMENT_SIZE;
+    
+    if( needSize % HEAP_MEMORY_ALIGNMENT_SIZE )
+    {
+        needSize >>= HEAP_MEMORY_ALIGNMENT_POS;
+        
+        needSize++;
+        
+        needSize <<= HEAP_MEMORY_ALIGNMENT_POS;
+    }
 
 	return needSize;
 }
@@ -347,46 +342,35 @@ fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *
     fw_assert(IS_PTR_NULL(mem));
     fw_assert(needSize == 0);
     
-    struct HeapBlock *now  = mem->Head;
-    struct HeapBlock *next = mem->Head;
-	uint32_t freeSize      = 0;
-	uint32_t useSize       = heap_cal_need_block(needSize, 4) + sizeof(struct HeapBlock);
-
-    while(1)
+    uint32_t useSize = cal_need_memory_size(needSize);
+    struct HeapBlock *now = mem->Head;
+    struct HeapBlock *next;
+    
+    while (1)
     {
-        if(now == NULL)
+        if (!now->Status && now->Size >= useSize)
         {
-            return FW_ERR_FAIL;
+            next = (struct HeapBlock *)( (uint8_t *)now + useSize - HEAP_MEMORY_ALIGNMENT_SIZE );
+            
+            next->Next = now->Next;
+            now->Next = next;
+            
+            
+            
+            now->Status = 1;
+            
+            *allocAddr = (void *)(now+1);
+            
+            return FW_ERR_NONE;
         }
         
-        if(now->Status == 0)
+        if ( (now = now->Next) == NULL )
         {
-            if( now->Size >= useSize )
-            {
-				freeSize     = now->Size;
-				now->Size    = useSize;
-                next         = (struct HeapBlock *)((void *)((uint8_t *)now + useSize));
-
-                if(now->Next != next)
-                {
-                    next->Size   = freeSize - useSize;
-                    next->Next   = now->Next;
-                    now->Next    = next;
-                    next->Status = false;
-                }
-                
-                now->Status  = true;
-                
-                *allocAddr = (void *)(now + 1);
-                
-                return FW_ERR_NONE;
-            }
+            break;
         }
-        
-        now = now->Next;
     }
     
-//    return NULL;
+    return FW_ERR_FAIL;
 }
 
 /**
@@ -403,71 +387,6 @@ fw_err_t FreeHeapMemory(struct HeapControlBlock *mem, void *freeBuffer)
 {
     fw_assert(IS_PTR_NULL(mem));
     fw_assert(IS_PTR_NULL(freeBuffer));
-    
-    struct HeapBlock *now       = mem->Head;
-    struct HeapBlock *last      = NULL;
-    struct HeapBlock *data_addr = NULL;
-    bool             status     = false;
-    
-    while(1)
-    {
-        // free memory
-        data_addr = now + 1;
-        if( data_addr == freeBuffer )
-        {
-            status      = true;
-            now->Status = 0;
-        }
-
-        // merge memory block
-        if( now->Status == 0 )
-        {
-            if( last == NULL )
-            {
-                last = now;
-            }
-            else if(now->Next == NULL)
-            {
-                if(now->Status == 0)
-                {
-                    last->Next = NULL;
-                    last->Size = ((uint32_t)(now - last)) * sizeof(struct HeapBlock) + now->Size;
-                }
-                else
-                {
-                    last->Next = now;
-                    last->Size = ((uint32_t)(now - last)) * sizeof(struct HeapBlock);
-                }
-                
-                last = NULL;
-            }
-        }
-        else
-        {
-            if( last != NULL )
-            {
-				if (last->Next != now)
-				{
-					last->Next = now;
-					last->Size = ((uint16_t)(now - last)) * sizeof(struct HeapBlock);
-				}
-
-				last = NULL;
-            }
-        }
-
-        now = now->Next;        
-		
-		if(now == NULL)
-        {
-            break;
-        }
-    }
-    
-    if( status == true )
-    {
-        return FW_ERR_NONE;
-    }
     
     return FW_ERR_FAIL;
 }

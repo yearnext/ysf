@@ -16,7 +16,7 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_core.c                                                       * 
+ * @file       core.c                                                          * 
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
@@ -48,8 +48,8 @@
 const struct CoreInterface Core = 
 {
     .Version                                           = _CORE_VERSION,
-    .Init                                              = InitCoreScheduling,
-    .Start                                             = StartCoreScheduling,
+    .Init                                              = InitFramework,
+    .Start                                             = StartFramework,
 
 #if USE_BUFFER_COMPONENT
     .RingBuffer.Init                                   = InitRingBufferComponent,
@@ -117,7 +117,11 @@ const struct CoreInterface Core =
 #endif
 };
 
-
+/**
+ *******************************************************************************
+ * @brief        hal interface config
+ *******************************************************************************
+ */
 const struct HalInterface Hal = 
 {
     .Version                                           = _HAL_VERSION,
@@ -159,9 +163,9 @@ const struct HalInterface Hal =
  * @note        None
  *******************************************************************************
  */
-void InitCoreScheduling(void)
+void InitFramework(void)
 {
-    fw_enter_critical();
+    __ATOM_ACTIVE_BEGIN();
 
 #if USE_DEBUG_COMPONENT
     fw_debug_init();
@@ -191,7 +195,7 @@ void InitCoreScheduling(void)
     
 #endif
 
-    fw_exit_critical();
+    __ATOM_ACTIVE_END();
 }
 
 /**
@@ -202,7 +206,7 @@ void InitCoreScheduling(void)
  * @note        None
  *******************************************************************************
  */
-void StartCoreScheduling(void)
+void StartFramework(void)
 {
     while(1)
     {

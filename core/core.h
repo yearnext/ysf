@@ -383,8 +383,8 @@ extern const struct HalInterface Hal;
  * @brief        core api
  *******************************************************************************
  */
-void InitCoreScheduling(void);
-void StartCoreScheduling(void);
+void InitFramework(void);
+void StartFramework(void);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
