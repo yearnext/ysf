@@ -488,7 +488,7 @@ void fw_signal_handler(uint8_t event)
         
     for( i=0; i<SIGNAL_MAX; i++ )
     {
-        if( IS_PTR_NULL(Signal[i].Scan) )
+        if( !IS_PTR_NULL(Signal[i].Scan) )
         {
             SignalDetection(&Signal[i]);
         }
