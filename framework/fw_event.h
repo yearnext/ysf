@@ -56,10 +56,8 @@ enum _FRAMEWORK_EVENT
 	FW_DELAY_EVENT,
 	
     /** user define event */
-    // UART_RX_END_EVENT,
-    // CALL_EVENT,
-    // CALL_START_EVENT,
-    // TELEPHONE_CLOSE,
+    CALL_START_EVENT,
+    UART_RX_END_EVENT,
     
     /** framework event */
     FW_EVENT_MAX,
@@ -75,7 +73,12 @@ enum _FRAMEWORK_TASK
     /** framework task */
     FW_TICK_TASK = 0,
  	FW_SIGNAL_TASK,
-     
+    
+    /** user define event */
+    USER_CALL_TASK,
+    USER_KEY_TASK,
+    USER_UART_RX_TASK,
+    
     /** framework task */
     FW_TASK_MAX,
  };

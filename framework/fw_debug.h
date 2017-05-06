@@ -38,11 +38,10 @@ extern "C"
  * @brief      debug config
  *******************************************************************************
  */    
-#if USE_FRAMEWORK_DEBUG
-// #include "bsp_uart.h"
+#if USE_GLOBAL_DEBUG
+#include "bsp_uart.h"
 
-// #define log(a)     bsp_uart_tx_config(a, sizeof(a))
-#define log(a)
+#define log(a)     bsp_uart_tx_config(a, sizeof(a))
 #else
 #define log(a)
 #endif

@@ -22,10 +22,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_event.h"
-
-// user head files
 #include "fw_timer.h"
 #include "fw_signal.h"
+
+// user head files
+#include "bsp_telephone.h"
+#include "bsp_gpio.h"
+#include "bsp_uart.h"
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -51,13 +54,19 @@ typedef void (*evtHandle)(uint8_t event);
  *******************************************************************************
  */
 #if USE_FRAMEWORK_EVENT_COMPONENT
-static evtHandle evtHandleFunction[] = 
+static evtHandle evtHandleFunction[FW_TASK_MAX] = 
 {
 	/** framework task handler function */
 	fw_timer_handler,
 	fw_signal_handler,
 	
 	/** user task handler function */
+    // USER_CALL_TASK
+    TelephoneCallHandler,
+    // USER_KEY_TASK
+    KeyHandler,
+    // USER_UART_RX_TASK
+    rxTelephoneNumberHandler,
 };
 #endif
 
@@ -130,21 +139,18 @@ void fw_event_post(uint8_t task, uint8_t event)
 inline
 void fw_event_poll(void)
 {
-	while(1)
-	{
-		while(EventQueue.Head < EventQueue.Tail)
-		{
-			evtHandleFunction[EventQueue.Pool[EventQueue.Head].Task](EventQueue.Pool[EventQueue.Head].Event);
-			
-			_ATOM_CODE_BEGIN();
-			if(++EventQueue.Head >= EventQueue.Tail)
-			{
-				EventQueue.Tail = 0;
-				EventQueue.Head = 0;
-			}
-			_ATOM_CODE_END();
-		}
-	}
+    while(EventQueue.Head < EventQueue.Tail)
+    {
+        evtHandleFunction[EventQueue.Pool[EventQueue.Head].Task](EventQueue.Pool[EventQueue.Head].Event);
+        
+        _ATOM_CODE_BEGIN();
+        if(++EventQueue.Head >= EventQueue.Tail)
+        {
+            EventQueue.Tail = 0;
+            EventQueue.Head = 0;
+        }
+        _ATOM_CODE_END();
+    }
 }
 #endif
 

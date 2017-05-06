@@ -40,7 +40,7 @@ extern "C"
  * @brief      debug config
  *******************************************************************************
  */    
-#define USE_FRAMEWORK_DEBUG                                                  (1)
+#define USE_GLOBAL_DEBUG                                                     (1)
     
 /* Exported types ------------------------------------------------------------*/
 /**

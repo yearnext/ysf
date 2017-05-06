@@ -46,7 +46,15 @@ extern "C"
  * @brief        framework signal preiod config
  *******************************************************************************
  */
-#define FW_SIGNAL_SCAN_PREIOD                              (FW_SET_TIME_CAL(10))
+#define FW_SIGNAL_SCAN_PREIOD                                  (FW_TIME_SET(10))
+
+/**
+ *******************************************************************************
+ * @brief       define signal info param
+ *******************************************************************************
+ */
+#define NO_SIGNAL_INFO                                                       (0)
+#define IS_NO_SIGNAL(signal)                        ((signal) == NO_SIGNAL_INFO)
     
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -60,12 +68,12 @@ typedef enum
     
     SIGNAL_STATUS_DETECTION,
     
-    SIGNAL_STATUS_PRESS_FILTER1,
-    SIGNAL_STATUS_PRESS_FILTER2,
-    SIGNAL_STATUS_PRESS_FILTER3,
-    SIGNAL_STATUS_RELEASE_FILTER1,
-    SIGNAL_STATUS_RELEASE_FILTER2,
-    SIGNAL_STATUS_RELEASE_FILTER3,
+    SIGNAL_STATUS_PRESS_FILTER_STEP1,
+    SIGNAL_STATUS_PRESS_FILTER_STEP2,
+    SIGNAL_STATUS_PRESS_FILTER_STEP3,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP1,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP2,
+    SIGNAL_STATUS_RELEASE_FILTER_STEP3,
     
 	SIGNAL_STATUS_RELEASE              = 0x80,
     SIGNAL_STATUS_PRESS_EDGE           = 0x81,
@@ -91,7 +99,9 @@ enum
 #if USE_FRAMEWORK_SIGNAL_COMPONENT
 extern void fw_signal_init( void );
 extern void fw_signal_handler(uint8_t);
-extern fw_err_t fw_signal_register(uint8_t, uint8_t, signal_status_t (*)(void));
+
+extern fw_err_t fw_signal_register(uint8_t, uint8_t, uint8_t (*)(void));
+extern uint8_t fw_signal_info_get(uint8_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

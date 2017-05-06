@@ -23,6 +23,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fw_timer.h"
 #include "fw_event.h"
+#include "fw_debug.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -108,6 +109,8 @@ void fw_timer_handler(uint8_t event)
 {
     uint32_t tick;
     uint8_t i;
+    
+//    log("tick handle! \n");
     
     _ATOM_CODE_BEGIN();
     tick = fw_tick_get();

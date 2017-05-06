@@ -47,7 +47,7 @@ extern "C"
  * @brief       cal timer set time
  *******************************************************************************
  */
-#define FW_SET_TIME_CAL(time)                            ((time)/FW_TICK_PREIOD)
+#define FW_TIME_SET(time)                                ((time)/FW_TICK_PREIOD)
 
 /**
  *******************************************************************************
