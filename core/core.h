@@ -137,21 +137,19 @@ extern "C"
  *******************************************************************************
  */  
 #if USE_SIGNAL_COMPONENT
+#define fw_signal_open                       Core.Signal.Open
+#define fw_signal_close                      Core.Signal.Close
+#define fw_signal_poll                       Core.Signal.Poll
 #define fw_signal_get_info                   Core.Signal.GetInfo
 #define fw_signal_arm                        Core.Signal.Arm
 #define fw_signal_disarm                     Core.Signal.Disarm
-#define fw_signal_simple_init                Core.Signal.Create.Simple
-#define fw_signal_complex_init               Core.Signal.Create.Complex
-#define fw_signal_simple_ex_init             Core.Signal.Create.SimpleEx
-#define fw_signal_complex_ex_init            Core.Signal.Create.ComplexEx
 #else
-#define fw_signal_get_info                   
-#define fw_signal_arm                        
-#define fw_signal_disarm                     
-#define fw_signal_simple_init                
-#define fw_signal_complex_init               
-#define fw_signal_simple_ex_init            
-#define fw_signal_complex_ex_init            
+#define fw_signal_open                       
+#define fw_signal_close              
+#define fw_signal_poll                    
+#define fw_signal_get_info                
+#define fw_signal_arm                  
+#define fw_signal_disarm              
 #endif
 
 /**
@@ -177,29 +175,29 @@ extern "C"
  *******************************************************************************
  */ 
 #if USE_TIMER_COMPONENT
-#define fw_timer_init                        Core.Timer.Init
-#define fw_timer_poll                        Core.Timer.Handler
+#define fw_timer_init                        Core.Timer.Open
+#define fw_timer_fini                        Core.Timer.Cose
+#define fw_timer_poll                        Core.Timer.Poll
+#define fw_timer_add                         Core.Timer.Add
 #define fw_timer_arm                         Core.Timer.Arm
 #define fw_timer_disarm                      Core.Timer.Disarm
 #define fw_timer_get_status                  Core.Timer.GetStatus
-#define fw_timer_cb_type_init                Core.Timer.Create.CallBack
-#define fw_timer_evt_type_init               Core.Timer.Create.EventHandle
-#define fw_timer_msg_type_init               Core.Timer.Create.Message
-#define fw_timer_cb_ex_type_init             Core.Timer.Create.CallBackEx
-#define fw_timer_evt_ex_type_init            Core.Timer.Create.EventHandleEx
-#define fw_timer_msg_ex_type_init            Core.Timer.Create.MessageHandleEx
+#define fw_timer_simp_init                   Core.Timer.Init.Simple
+#define fw_timer_cb_init                     Core.Timer.Init.CallBack
+#define fw_timer_evt_init                    Core.Timer.Init.EventHandle
+#define fw_timer_msg_init                    Core.Timer.Init.MessageHandle
 #else
-#define fw_timer_init                        
-#define fw_timer_poll                 
-#define fw_timer_arm                  
-#define fw_timer_disarm                     
-#define fw_timer_get_status                
-#define fw_timer_cb_type_init              
-#define fw_timer_evt_type_init             
-#define fw_timer_msg_type_init              
-#define fw_timer_cb_ex_type_init            
-#define fw_timer_evt_ex_type_init       
-#define fw_timer_msg_ex_type_init       
+#define fw_timer_init                       
+#define fw_timer_fini                     
+#define fw_timer_poll                   
+#define fw_timer_add               
+#define fw_timer_arm                   
+#define fw_timer_disarm                
+#define fw_timer_get_status            
+#define fw_timer_simp_init                  
+#define fw_timer_cb_init               
+#define fw_timer_evt_init             
+#define fw_timer_msg_init                
 #endif
 
 /**
@@ -208,25 +206,31 @@ extern "C"
  *******************************************************************************
  */
 #if USE_TASK_COMPONENT
-#define fw_task_init                         Core.Task.Init
+#define fw_task_init                         Core.Task.Open
+#define fw_task_fini                         Core.Task.Close
 #define fw_task_poll                         Core.Task.Poll
-#define fw_task_add                          Core.Task.Add
-#define fw_task_cb_type_create               Core.Task.Create.CallBack
-#define fw_task_evt_type_create              Core.Task.Create.EventHandle
-#define fw_task_msg_type_create              Core.Task.Create.MessageHandle
-#define fw_task_cb_ex_type_create            Core.Task.Create.CallBackEx
-#define fw_task_evt_ex_type_create           Core.Task.Create.EventHandleEx
-#define fw_task_msg_ex_type_create           Core.Task.Create.MessageHandleEx
+#define fw_task_arm                          Core.Task.Add
+#define fw_task_simp_init                    Core.Task.Init.Simple
+#define fw_task_cb_init                      Core.Task.Init.CallBack
+#define fw_task_evt_init                     Core.Task.Init.EventHandle
+#define fw_task_msg_init                     Core.Task.Init.MessageHandle
+#define fw_task_simp_create                  Core.Task.Create.Simple
+#define fw_task_cb_create                    Core.Task.Create.CallBack
+#define fw_task_evt_create                   Core.Task.Create.EventHandle
+#define fw_task_msg_create                   Core.Task.Create.MessageHandle
 #else
 #define fw_task_init                         
+#define fw_task_fini                         
 #define fw_task_poll                         
-#define fw_task_add                          
-#define fw_task_cb_type_create               
-#define fw_task_evt_type_create              
-#define fw_task_msg_type_create             
-#define fw_task_cb_ex_type_create            
-#define fw_task_evt_ex_type_create           
-#define fw_task_msg_ex_type_create           
+#define fw_task_arm                         
+#define fw_task_simp_init                    
+#define fw_task_cb_init                     
+#define fw_task_evt_init                    
+#define fw_task_msg_init                     
+#define fw_task_simp_create                 
+#define fw_task_cb_create                 
+#define fw_task_evt_create                
+#define fw_task_msg_create                    
 #endif
 
 /**
@@ -364,7 +368,7 @@ struct CoreInterface
 #endif
 
 #if USE_TASK_COMPONENT
-    TaskComponentInterfact Task;
+    TaskComponentInterface Task;
 #endif
 };
 

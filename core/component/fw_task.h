@@ -87,20 +87,23 @@ struct TaskBlock
     
     union
     {
-        fw_err_t (*Message)(void*, uint16_t);
-        fw_err_t (*Event)(uint16_t);
+        fw_err_t (*Simple)(void);
         fw_err_t (*CallBack)(void*);
-    }Handler;
+        fw_err_t (*Event)(uint16_t);
+        fw_err_t (*Message)(void*, uint16_t);
+    }Handle;
 
     void *Param;
     uint16_t Event;
 
     enum
     {
+        SIMPLE_TASK,
         CALL_BACK_TASK,
         EVENT_HANDLE_TASK,
         MESSAGE_HANDLE_TASK,
         
+        SIMPLE_EX_TASK,
         CALL_BACK_EX_TASK,
         EVENT_HANDLE_EX_TASK,
         MESSAGE_HANDLE_EX_TASK,
@@ -115,17 +118,29 @@ struct TaskBlock
 #if USE_TASK_COMPONENT
 typedef struct
 {
-    fw_err_t (*Init)(void);
+    fw_err_t (*Open)(void);
+    fw_err_t (*Close)(void);
+    
     fw_err_t (*Poll)(void);
-    fw_err_t (*Add)(struct TaskBlock*);
+    
+    fw_err_t (*Arm)(struct TaskBlock*);
     
     struct
     {
+        fw_err_t (*Simple)(struct TaskBlock*, fw_err_t (*)(void));
+        fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
+        fw_err_t (*EventHandle)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
+        fw_err_t (*MessageHandle)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+    }Init;
+    
+    struct
+    {
+        fw_err_t (*Simple)(struct TaskBlock*, fw_err_t (*)(void));
         fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
         fw_err_t (*EventHandle)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
         fw_err_t (*MessageHandle)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
     }Create;
-}TaskComponentInterfact;
+}TaskComponentInterface;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -137,9 +152,18 @@ typedef struct
  */
 #if USE_TASK_COMPONENT
 extern fw_err_t InitTaskComponent(void);
-extern fw_err_t TaskComponentPoll(void);
-extern fw_err_t AddTaskToQueue(struct TaskBlock*);
+extern fw_err_t DeinitTaskComponent(void);
 
+extern fw_err_t PollTaskComponent(void);
+
+extern fw_err_t ArmTaskModule(struct TaskBlock*);
+
+extern fw_err_t InitSimpleTask(struct TaskBlock*, fw_err_t (*)(void));
+extern fw_err_t InitCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
+extern fw_err_t InitEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t InitMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+
+extern fw_err_t CreateSimpleTask(struct TaskBlock*, fw_err_t (*)(void));
 extern fw_err_t CreateCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
 extern fw_err_t CreateEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
 extern fw_err_t CreateMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);

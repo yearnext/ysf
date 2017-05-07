@@ -41,7 +41,6 @@
 #include _FW_PATH
 #include _FW_SIGNAL_COMPONENT_PATH
 #include _FW_TIMER_COMPONENT_PATH
-#include _FW_MEMORY_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
@@ -51,22 +50,119 @@
  * @brief      detect signal status
  *******************************************************************************
  */
-#define IS_SIGNAL_INFO_CHANGED(signal, nowInfo) ((signal)->SignalInfo != (nowInfo))
+#define IS_SIGNAL_INFO_CHANGED(signal, nowInfo)    ((signal)->Info != (nowInfo))
 
+/**
+ *******************************************************************************
+ * @brief      detect signal use status
+ *******************************************************************************
+ */
+#define IS_SIGNAL_ENABLE(signal)                      ((signal)->Detect != NULL)
+#define IS_SIGNAL_DISABLE(signal)                     ((signal)->Detect == NULL)
+
+#define SIGNAL_DISABLE(signal)                         ((signal)->Detect = NULL)
 /**
  *******************************************************************************
  * @brief      update signal status
  *******************************************************************************
  */
-#define TRANSFER_SIGNAL_STATUS(signal, status)  ((signal)->SignalStatus = (status))
-#define UPDATE_SIGNAL_INFO(signal, info)        ((signal)->SignalInfo = (info))   
+#define TRANSFER_SIGNAL_STATUS(signal, status)     ((signal)->Status = (status))
+#define UPDATE_SIGNAL_INFO(signal, info)           ((signal)->Info = (info))   
 
 /* Private typedef -----------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/                     
+/* Private variables ---------------------------------------------------------*/   
+/**
+ *******************************************************************************
+ * @brief       signal component head point
+ *******************************************************************************
+ */
+#if USE_SIGNAL_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       ysf signal control block
+ *******************************************************************************
+ */
+static CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(struct SignalBlock, SignalControlBlock);
+
+/**
+ *******************************************************************************
+ * @brief       signal timer
+ *******************************************************************************
+ */
+static struct TimerBlock SignalTimer;
+#endif
+
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_SIGNAL_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       detect the signal is in queue
+ * @param       [in/out]  signal               will detect signal
+ * @return      [in/out]  true                 the signal in the queue
+ * @return      [in/out]  true                 the signal not in the queue
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+__STATIC_INLINE
+bool signal_is_in(struct SignalBlock *signal)
+{
+    IsInSingleLinkListFifo(struct SignalBlock, SignalControlBlock, signal);
+    
+    return false;
+}
+
+/**
+ *******************************************************************************
+ * @brief       pop signal to queue
+ * @param       [in/out]  signal              will signal task
+ * @return      [in/out]  FW_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+__STATIC_INLINE
+fw_err_t signal_push(struct SignalBlock *signal)
+{
+    PushSingleLinkListFifoNode(signal_is_in, SignalControlBlock, signal);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       push signal from queue
+ * @param       [in/out]  void
+ * @return      [in/out]  struct SignalBlock *     push timer addr in memory
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+__STATIC_INLINE
+struct SignalBlock *signal_pop(void)
+{
+    struct SignalBlock *signal = NULL;
+    
+    PopSingleLinkListFifoNode(SignalControlBlock, signal);
+    
+    return signal;
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal queue clear
+ * @param       [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE         no error
+ * @note        this function is static inline type
+ *******************************************************************************
+ */
+__STATIC_INLINE
+fw_err_t signal_clear(void)
+{    
+    while(signal_pop() != NULL);
+    
+    return FW_ERR_NONE;
+}
+
 /**
  *******************************************************************************
  * @brief       signal trigger handler
@@ -79,36 +175,8 @@ __STATIC_INLINE
 fw_err_t signal_trigger_handler(struct SignalBlock *signal)
 {
 //    fw_assert(IS_PTR_NULL(signal));
-
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    switch(signal->Type)
-    {
-        case SIMPLE_SIGNAL:
-        case SIMPLE_EX_SIGNAL:
-            CreateEventHandleTask(NULL, signal->Handle.Simple, signal->SignalStatus);
-            break;
-        case COMPLEX_SIGNAL:
-        case COMPLEX_EX_SIGNAL:
-            CreateMessageHandleTask(NULL, signal->Handle.Complex, (void*)signal, (uint16_t)signal->SignalStatus);
-            break;
-//        default:
-//            break;
-    }
-#else
-    switch(signal->Type)
-    {
-        case SIMPLE_SIGNAL:
-        case SIMPLE_EX_SIGNAL:
-            CreateEventHandleTask(&signal->Task, signal->Handle.Simple, signal->SignalStatus);
-            break;
-        case COMPLEX_SIGNAL:
-        case COMPLEX_EX_SIGNAL:
-            CreateMessageHandleTask(&signal->Task, signal->Handle.Complex, (void*)signal, (uint16_t)signal->SignalStatus);
-            break;
-        default:
-            break;
-    }
-#endif    
+    ArmTaskModule(&signal->Task);
+    
     return FW_ERR_NONE;
 }
 
@@ -122,17 +190,14 @@ fw_err_t signal_trigger_handler(struct SignalBlock *signal)
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t signal_judge(void *param)
+fw_err_t signal_judge(struct SignalBlock *signal)
 {
-    fw_assert(IS_PTR_NULL(param));
-    
-    struct SignalBlock *signal = (struct SignalBlock *)param;
-    
-    fw_assert(IS_PTR_NULL(signal->Detect));
+//    fw_assert(IS_PTR_NULL(signal));
+//    fw_assert(IS_PTR_NULL(signal->Detect));
     
     uint8_t nowInfo = signal->Detect();
     
-    switch( signal->SignalStatus )
+    switch(signal->Status)
     {
         case SIGNAL_STATUS_INIT:
             if(IS_SIGNAL_INFO_CHANGED(signal, nowInfo))
@@ -435,6 +500,92 @@ fw_err_t signal_judge(void *param)
 
 /**
  *******************************************************************************
+ * @brief       signal walk
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE 
+void signal_walk(void)
+{
+    struct SignalBlock *now  = GetSingleLinkListHead(SignalControlBlock);
+    struct SignalBlock *last = now;
+    
+    while(1)
+    {
+        if( IS_SIGNAL_ENABLE(now) )
+        {
+            signal_judge(now);
+            
+            last = now;
+            now  = now->Next;
+        }
+        else
+        {      
+            if( IsSingleLinkListHead(SignalControlBlock, now) )
+            {
+                UpdateSingleLinkListHead(SignalControlBlock, now->Next);
+                
+                now->Next  = NULL;
+                now        = GetSingleLinkListHead(SignalControlBlock);
+            }
+            else if( IsSingleLinkListTail(SignalControlBlock, now) )
+            {
+                last->Next = NULL;
+                now->Next  = NULL;
+                
+                UpdateSingleLinkListTail(SignalControlBlock, last);
+            }
+            else
+            { 
+                last->Next = now->Next;
+                now->Next  = NULL;
+                now        = last->Next;
+            }
+        }
+        
+        // break
+        if( now == NULL )
+        {
+            return;
+        }
+    }
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal component init
+ * @param       [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE       init finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitSignalComponent(void)
+{
+    signal_clear();
+    
+    InitSimpleTimerModule(&SignalTimer, PoolSignalComponent);
+    ArmTimerModule(&SignalTimer, SIGNAL_SCAN_TIME, TIMER_CYCLE_MODE);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal component deinit
+ * @param       [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE       deinit finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t DeinitSignalComponent(void)
+{
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
  * @brief       signal component init
  * @param       [in/out]  *signal           signal block
  * @param       [in/out]  *detect           signal detect function
@@ -444,126 +595,15 @@ fw_err_t signal_judge(void *param)
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitSimpleSignalModule(struct SignalBlock *signal, uint8_t (*detect)(void), fw_err_t (*handler)(uint16_t))
+fw_err_t ArmSignalModule(struct SignalBlock *signal, uint8_t (*detect)(void), fw_err_t (*handler)(uint16_t))
 {
     fw_assert(IS_PTR_NULL(signal));
     fw_assert(IS_PTR_NULL(detect));
     fw_assert(IS_PTR_NULL(handler));
     
-    signal->Detect            = detect;
-    signal->Handle.Simple     = handler;
-    signal->Type              = SIMPLE_SIGNAL;
+    signal->Detect = detect;
+    InitEventHandleTask(&signal->Task, handler, FW_EVENT_NONE);
 
-    return FW_ERR_NONE;
-}
-
-
-/**
- *******************************************************************************
- * @brief       signal component init
- * @param       [in/out]  *signal           signal block
- * @param       [in/out]  *detect           signal detect function
- * @param       [in/out]  *handler          signal handler function
- * @return      [in/out]  NOT NULL          arm success
- * @return      [in/out]  NULL              arm failed
- * @note        None
- *******************************************************************************
- */
-fw_err_t InitComplexSignalModule(struct SignalBlock* signal, uint8_t (*detect)(void), fw_err_t (*handler)(void*, uint16_t))
-{
-    fw_assert(IS_PTR_NULL(signal));
-    fw_assert(IS_PTR_NULL(detect));
-    fw_assert(IS_PTR_NULL(handler));
-
-    signal->Detect            = detect;
-    signal->Handle.Complex    = handler;
-    signal->Type              = COMPLEX_SIGNAL;
-
-    return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       signal ex component init
- * @param       [in/out]  *detect           signal detect function
- * @param       [in/out]  *handler          signal handler function
- * @return      [in/out]  FW_ERR_NONE       arm success
- * @return      [in/out]  FW_ERR_FAIL       arm failed
- * @note        None
- *******************************************************************************
- */
-struct SignalBlock *InitSimpleExSignalModule(uint8_t (*detect)(void), fw_err_t (*handler)(uint16_t))
-{
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    fw_assert(IS_PTR_NULL(detect));
-    fw_assert(IS_PTR_NULL(handler));
-    
-    struct SignalBlock *signal = (struct SignalBlock *)MallocMemory(sizeof(struct SignalBlock *));
-    fw_assert(IS_PTR_NULL(signal));
-    
-    signal->Detect            = detect;
-    signal->Handle.Simple     = handler;
-    signal->Type              = SIMPLE_EX_SIGNAL;
-
-    return signal;
-#else
-    return NULL;
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       signal ex component init
- * @param       [in/out]  *detect           signal detect function
- * @param       [in/out]  *handler          signal handler function
- * @return      [in/out]  NOT NULL          arm success
- * @return      [in/out]  NULL              arm failed
- * @note        None
- *******************************************************************************
- */
-struct SignalBlock *InitComplexExSignalModule(uint8_t (*detect)(void), fw_err_t (*handle)(void*, uint16_t))
-{
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    fw_assert(IS_PTR_NULL(detect));
-    fw_assert(IS_PTR_NULL(handle));
-    
-    struct SignalBlock *signal = (struct SignalBlock *)MallocMemory(sizeof(struct SignalBlock));
-    
-    fw_assert(IS_PTR_NULL(signal));
-
-    signal->Detect            = detect;
-    signal->Handle.Complex    = handle;
-    signal->Type              = COMPLEX_EX_SIGNAL;
-    
-    return signal;
-#else
-    return NULL;
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       signal component arm
- * @param       [in/out]  *signal           signal block
- * @param       [in/out]  scanTime          signal scan time
- * @param       [in/out]  scanCount         signal scan count
- * @return      [in/out]  FW_ERR_NONE       arm success
- * @return      [in/out]  FW_ERR_FAIL       arm failed
- * @note        None
- *******************************************************************************
- */
-fw_err_t ArmSignalModule(struct SignalBlock *signal, uint32_t scanTime, int16_t scanCount)
-{
-    fw_assert(IS_PTR_NULL(signal));
-    
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    signal->Timer = InitCallBackExTimer(signal_judge, (void *)signal);
-    ArmTimerModule(signal->Timer, scanTime, scanCount);
-#else
-    InitCallBackExTimer(&signal->Timer, signal_judge, (void *)signal);
-    ArmTimerModule(&signal->Timer, scanTime, scanCount);
-#endif    
-    
     return FW_ERR_NONE;
 }
 
@@ -579,12 +619,28 @@ fw_err_t DisarmSignalModule(struct SignalBlock *signal)
 {
     fw_assert(IS_PTR_NULL(signal));
     
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    DisarmTimerModule(signal->Timer);
-#else
-    DisarmTimerModule(&signal->Timer);
-#endif    
+    SIGNAL_DISABLE(signal);
 
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       signal component pool
+ * @param       [in/out]  event                event
+ * @return      [in/out]  FW_ERR_NONE          pool not error
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t PoolSignalComponent(void)
+{
+    if( IsSingleLinkListHeadEmpty(SignalControlBlock) )
+    {
+        return FW_ERR_NONE;
+    }
+    
+    signal_walk();
+    
     return FW_ERR_NONE;
 }
 
@@ -596,13 +652,18 @@ fw_err_t DisarmSignalModule(struct SignalBlock *signal)
  * @note        None
  *******************************************************************************
  */
-fw_err_t GetSignalInfo(struct SignalBlock *signal, uint8_t *info)
+inline uint8_t GetSignalModuleInfo(struct SignalBlock *signal)
 {
-    fw_assert(IS_PTR_NULL(signal));
+    uint8_t info;
     
-    *info = signal->SignalInfo;
+    if(IS_PTR_NULL(signal))
+    {
+        return 0;
+    }
+        
+    info = signal->Info;
 
-    return FW_ERR_NONE;
+    return info;
 }
 
 #endif

@@ -144,6 +144,148 @@ fw_err_t InitTaskComponent(void)
 
 /**
  *******************************************************************************
+ * @brief       task component deinit
+ * @param       [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE       deinit finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t DeinitTaskComponent(void)
+{    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init task
+ * @param       [in/out]  *task                    task block
+ * @param       [in/out]  *func                    task function
+ * @param       [in/out]  *param                   task param
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitSimpleTask(struct TaskBlock *task, fw_err_t (*func)(void))
+{
+    fw_assert(IS_PTR_NULL(func));
+    fw_assert(IS_PTR_NULL(task));
+
+    task->Handle.Simple = func;
+    task->Type          = SIMPLE_TASK;
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init task
+ * @param       [in/out]  *task                    task block
+ * @param       [in/out]  *func                    task function
+ * @param       [in/out]  *param                   task param
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), void *param)
+{
+    fw_assert(IS_PTR_NULL(func));
+    fw_assert(IS_PTR_NULL(task));
+
+    task->Handle.CallBack = func;
+    task->Param           = param;
+    task->Type            = CALL_BACK_TASK;
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init task
+ * @param       [in/out]  *task                    task block
+ * @param       [in/out]  *func                    task function
+ * @param       [in/out]  event                    task event
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t), uint16_t evt)
+{
+    fw_assert(IS_PTR_NULL(func));
+    fw_assert(IS_PTR_NULL(task));
+
+    task->Handle.Event = func;
+    task->Event        = evt;
+    task->Type         = EVENT_HANDLE_TASK;
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init task
+ * @param       [in/out]  *task                    task block
+ * @param       [in/out]  *func                    task function
+ * @param       [in/out]  *param                   task param
+ * @param       [in/out]  *expand                  task expand param
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+{
+    fw_assert(IS_PTR_NULL(func));
+    fw_assert(IS_PTR_NULL(task));
+    
+    task->Handle.Message = func;
+    task->Param          = param;
+    task->Event          = evt;
+    task->Type           = MESSAGE_HANDLE_TASK;
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add task to task queue
+ * @param       [in/out]  *task                     task block
+ * @param       [in/out]  *func                     task function
+ * @param       [in/out]  *param                    task param
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       add failed
+ * @return      [in/out]  FW_ERR_NONE              add success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t CreateSimpleTask(struct TaskBlock *task, fw_err_t (*func)(void))
+{
+    fw_assert(IS_PTR_NULL(func));
+
+#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
+    if(task == NULL)
+    {
+        task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
+        
+        fw_assert(IS_PTR_NULL(task));
+        
+        task->Type      = SIMPLE_EX_TASK;
+    }
+#else
+    fw_assert(IS_PTR_NULL(task));
+    task->Type          = SIMPLE_TASK;
+#endif
+
+    task->Handle.Simple = func;
+
+    task_push(task);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
  * @brief       add task to task queue
  * @param       [in/out]  *task                     task block
  * @param       [in/out]  *func                     task function
@@ -163,16 +305,17 @@ fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), voi
         task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
         
         fw_assert(IS_PTR_NULL(task));
+        
+        task->Type        = CALL_BACK_EX_TASK;
     }
 #else
     fw_assert(IS_PTR_NULL(task));
+    task->Type            = CALL_BACK_TASK;
 #endif
 
-    task->Handler.CallBack = func;
-    task->Param            = param;
-    task->Type             = CALL_BACK_EX_TASK;
-    
-//    task->Next         = NULL;
+    task->Handle.CallBack = func;
+    task->Param           = param;
+
     task_push(task);
     
     return FW_ERR_NONE;
@@ -199,16 +342,17 @@ fw_err_t CreateEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t
         task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
         
         fw_assert(IS_PTR_NULL(task));
+        
+        task->Type         = EVENT_HANDLE_EX_TASK;
     }
 #else
     fw_assert(IS_PTR_NULL(task));
+    task->Type         = EVENT_HANDLE_TASK;
 #endif
     
-    task->Handler.Event = func;
-    task->Event         = evt;
-    task->Type          = EVENT_HANDLE_TASK;
-    
-//    task->Next         = NULL;
+    task->Handle.Event = func;
+    task->Event        = evt;
+
     task_push(task);
     
     return FW_ERR_NONE;
@@ -236,119 +380,22 @@ fw_err_t CreateMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*,
         task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
         
         fw_assert(IS_PTR_NULL(task));
+        
+        task->Type       = MESSAGE_HANDLE_EX_TASK;
     }
 #else
     fw_assert(IS_PTR_NULL(task));
+    task->Type           = MESSAGE_HANDLE_TASK;
 #endif
     
-    task->Handler.Message = func;
-    task->Param           = param;
-    task->Event           = evt;
-    task->Type            = MESSAGE_HANDLE_TASK;
+    task->Handle.Message = func;
+    task->Param          = param;
+    task->Event          = evt;
     
-//    task->Next   = NULL;
     task_push(task);
     
     return FW_ERR_NONE;
 }
-
-///**
-// *******************************************************************************
-// * @brief       add task to task queue
-// * @param       [in/out]  *func                     task function
-// * @param       [in/out]  *param                    task param
-// * @return      [in/out]  NULL                      add failed
-// * @return      [in/out]  ARRDESS                   add success
-// * @note        None
-// *******************************************************************************
-// */
-//struct TaskBlock *CreateCallBackExTask(fw_err_t (*func)(void*), void *param)
-//{
-//#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-//    fw_assert(IS_PTR_NULL(func));
-//    
-//    struct TaskBlock *task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
-//     
-//    fw_assert(IS_PTR_NULL(task));
-//    
-//    task->Handler.CallBack = func;
-//    task->Param            = param;
-//    task->Type             = CALL_BACK_EX_TASK;
-//    
-////    task->Next         = NULL;
-//    task_push(task);
-//    
-//    return task;
-//#else
-//    return NULL;
-//#endif
-//}
-
-///**
-// *******************************************************************************
-// * @brief       add task to task queue
-// * @param       [in/out]  *func                     task function
-// * @param       [in/out]  event                     task event
-// * @return      [in/out]  NULL                      add failed
-// * @return      [in/out]  ARRDESS                   add success
-// * @note        None
-// *******************************************************************************
-// */
-//struct TaskBlock *CreateEventHandleExTask(fw_err_t (*func)(uint16_t), uint16_t evt)
-//{
-//#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-//    fw_assert(IS_PTR_NULL(func));
-//    
-//    struct TaskBlock *task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
-//     
-//    fw_assert(IS_PTR_NULL(task));
-//    
-//    task->Handler.Event = func;
-//    task->Event         = evt;
-//    task->Type          = EVENT_HANDLE_EX_TASK;
-//    
-////    task->Next         = NULL;
-//    task_push(task);
-//    
-//    return task;
-//#else
-//    return NULL;
-//#endif
-//}
-
-///**
-// *******************************************************************************
-// * @brief       add task to task queue
-// * @param       [in/out]  *func                     task function
-// * @param       [in/out]  *param                    task param
-// * @param       [in/out]  *expand                   task expand param
-// * @return      [in/out]  NULL                      add failed
-// * @return      [in/out]  ARRDESS                   add success
-// * @note        None
-// *******************************************************************************
-// */
-//struct TaskBlock *CreateMessageHandleExTask(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
-//{
-//#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-//    fw_assert(IS_PTR_NULL(func));
-//    
-//    struct TaskBlock *task = (struct TaskBlock *)MallocMemory(sizeof(struct TaskBlock));
-//     
-//    fw_assert(IS_PTR_NULL(task));
-//    
-//    task->Handler.Message = func;
-//    task->Param           = param;
-//    task->Event           = evt;
-//    task->Type            = MESSAGE_HANDLE_EX_TASK;
-//    
-////    task->Next         = NULL;
-//    task_push(task);
-//    
-//    return task;
-//#else
-//    return NULL;
-//#endif
-//}
 
 /**
  *******************************************************************************
@@ -363,25 +410,32 @@ fw_err_t task_handler(struct TaskBlock *task)
 {
     switch(task->Type)
     {
+        case SIMPLE_TASK:
+        case SIMPLE_EX_TASK:
+            if( task->Handle.Simple != NULL )
+            {
+                task->Handle.Simple();
+            }
+            break;
         case CALL_BACK_TASK:
         case CALL_BACK_EX_TASK:
-            if( task->Handler.CallBack != NULL )
+            if( task->Handle.CallBack != NULL )
             {
-                task->Handler.CallBack(task->Param);
+                task->Handle.CallBack(task->Param);
             }
             break;
         case EVENT_HANDLE_TASK:
         case EVENT_HANDLE_EX_TASK:
-            if( task->Handler.Event != NULL )
+            if( task->Handle.Event != NULL )
             {
-                task->Handler.Event(task->Event);
+                task->Handle.Event(task->Event);
             }
             break;
         case MESSAGE_HANDLE_TASK:
         case MESSAGE_HANDLE_EX_TASK:
-            if( task->Handler.Message != NULL )
+            if( task->Handle.Message != NULL )
             {
-                task->Handler.Message(task->Param, task->Event);
+                task->Handle.Message(task->Param, task->Event);
             }
             break;
 //        default:
@@ -400,7 +454,7 @@ fw_err_t task_handler(struct TaskBlock *task)
  * @note        this function is dependent on ysf memory management
  *******************************************************************************
  */
-fw_err_t TaskComponentPoll(void)
+fw_err_t PollTaskComponent(void)
 {   
     // read task from the task queue    
     struct TaskBlock *task = task_pop();
@@ -437,7 +491,7 @@ fw_err_t TaskComponentPoll(void)
  * @note        this function is dependent on ysf memory management
  *******************************************************************************
  */
-fw_err_t AddTaskToQueue(struct TaskBlock *task)
+fw_err_t ArmTaskModule(struct TaskBlock *task)
 {   
     fw_assert(IS_PTR_NULL(task));
     

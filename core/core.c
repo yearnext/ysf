@@ -77,13 +77,15 @@ const struct CoreInterface Core =
 #endif
     
 #if USE_SIGNAL_COMPONENT
-    .Signal.GetInfo                                    = GetSignalInfo,
+    .Signal.Open                                       = InitSignalComponent,
+    .Signal.Close                                      = DeinitSignalComponent,
+    
+    .Signal.Poll                                       = PoolSignalComponent,
+    
     .Signal.Arm                                        = ArmSignalModule,
     .Signal.Disarm                                     = DisarmSignalModule,
-    .Signal.Create.Simple                              = InitSimpleSignalModule,
-    .Signal.Create.Complex                             = InitComplexSignalModule,
-    .Signal.Create.SimpleEx                            = InitSimpleExSignalModule,
-    .Signal.Create.ComplexEx                           = InitComplexExSignalModule,
+    
+    .Signal.GetInfo                                    = GetSignalModuleInfo,
 #endif   
 
 #if USE_TICK_COMPONENT
@@ -94,23 +96,36 @@ const struct CoreInterface Core =
 #endif
 
 #if USE_TIMER_COMPONENT
-    .Timer.Init                                        = InitTimerComponent,
-    .Timer.Handler                                     = TimerComponentHandle,
+    .Timer.Open                                        = InitTimerComponent,
+    .Timer.Close                                       = DeinitTimerComponent,
+    
+    .Timer.Poll                                        = PollTimerComponent,
+    
+    .Timer.Add                                         = AddTimerModuleToQueue,
+    
     .Timer.Arm                                         = ArmTimerModule,
     .Timer.Disarm                                      = DisarmTimerModule,
-    .Timer.GetStatus                                   = GetTimerStatus,
-    .Timer.Create.CallBack                             = InitCallBackTimer,
-    .Timer.Create.EventHandle                          = InitEventHandleTimer,
-    .Timer.Create.Message                              = InitMessageHandleTimer,
-    .Timer.Create.CallBackEx                           = InitCallBackExTimer,
-    .Timer.Create.EventHandleEx                        = InitEventHandleExTimer,
-    .Timer.Create.MessageHandleEx                      = InitMessageHandleExTimer,
+    
+    .Timer.GetStatus                                   = GetTimerModuleStatus,
+    
+    .Timer.Init.Simple                                 = InitSimpleTimerModule,
+    .Timer.Init.CallBack                               = InitCallBackTimerModule,
+    .Timer.Init.EventHandle                            = InitEventHandleTimerModule,
+    .Timer.Init.MessageHandle                          = InitMessageHandleTimerModule,
 #endif
 
 #if USE_TASK_COMPONENT
-    .Task.Init                                         = InitTaskComponent,
-    .Task.Poll                                         = TaskComponentPoll,
-    .Task.Add                                          = AddTaskToQueue,
+    .Task.Open                                         = InitTaskComponent,
+    .Task.Close                                        = DeinitTaskComponent,
+    .Task.Poll                                         = PollTaskComponent,
+    .Task.Arm                                          = ArmTaskModule,
+    
+    .Task.Init.Simple                                  = InitSimpleTask,
+    .Task.Init.CallBack                                = InitCallBackTask,
+    .Task.Init.EventHandle                             = InitEventHandleTask,
+    .Task.Init.MessageHandle                           = InitMessageHandleTask,
+    
+    .Task.Create.Simple                                = CreateSimpleTask,
     .Task.Create.CallBack                              = CreateCallBackTask,
     .Task.Create.EventHandle                           = CreateEventHandleTask,
     .Task.Create.MessageHandle                         = CreateMessageHandleTask,

@@ -151,13 +151,13 @@ fw_err_t timer_clear(void)
 
 /**
  *******************************************************************************
- * @brief       ysf timer component init
+ * @brief       timer component init
  * @param       [in/out]  void
  * @return      [in/out]  FW_ERR_NONE       init finish
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitTimerComponent( void )
+fw_err_t InitTimerComponent(void)
 {
     timer_clear();
     
@@ -166,6 +166,19 @@ fw_err_t InitTimerComponent( void )
 
 /**
  *******************************************************************************
+ * @brief       timer component deinit
+ * @param       [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE       deinit finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t DeinitTimerComponent(void)
+{
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
  * @brief       call back trigger timer init
  * @param       [in/out]  *timer             timer block
  * @param       [in/out]  func               call back function
@@ -175,24 +188,36 @@ fw_err_t InitTimerComponent( void )
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitCallBackTimer(struct TimerBlock *timer, fw_err_t (*func)(void*), void *param)
+fw_err_t InitSimpleTimerModule(struct TimerBlock *timer, fw_err_t (*func)(void))
 {
     fw_assert(IS_PTR_NULL(timer));
     fw_assert(IS_PTR_NULL(func));
     
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    timer->Handler.CallBack      = func;
-    timer->Param                 = param;
-#else
-    timer->Task.Handler.CallBack = func;
-    timer->Task.Param            = param;
-#endif
+    InitSimpleTask(&timer->Task, func);
     
-    timer->Type                  = CALL_BACK_TIMER;
-
     return FW_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       call back trigger timer init
+ * @param       [in/out]  *timer             timer block
+ * @param       [in/out]  func               call back function
+ * @param       [in/out]  param              call back function param
+ * @return      [in/out]  FW_ERR_NONE       init success
+ * @return      [in/out]  FW_ERR_FAIL       init failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t InitCallBackTimerModule(struct TimerBlock *timer, fw_err_t (*func)(void*), void *param)
+{
+    fw_assert(IS_PTR_NULL(timer));
+    fw_assert(IS_PTR_NULL(func));
+    
+    InitCallBackTask(&timer->Task, func, param);
+
+    return FW_ERR_NONE;
+}
 
 /**
  *******************************************************************************
@@ -204,24 +229,15 @@ fw_err_t InitCallBackTimer(struct TimerBlock *timer, fw_err_t (*func)(void*), vo
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitEventHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(uint16_t), uint16_t evt)
+fw_err_t InitEventHandleTimerModule(struct TimerBlock *timer, fw_err_t (*func)(uint16_t), uint16_t evt)
 {
     fw_assert(IS_PTR_NULL(timer));
     fw_assert(IS_PTR_NULL(func));
     
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    timer->Handler.Event      = func;
-    timer->Event              = evt;
-#else
-    timer->Task.Handler.Event = func;
-    timer->Task.Event         = evt;
-#endif
-
-    timer->Type               = EVENT_HANDLE_TIMER;
+    InitEventHandleTask(&timer->Task, func, evt);
     
     return FW_ERR_NONE;
 }
-
 
 /**
  *******************************************************************************
@@ -235,112 +251,14 @@ fw_err_t InitEventHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(uint16_
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitMessageHandleTimer(struct TimerBlock *timer, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+fw_err_t InitMessageHandleTimerModule(struct TimerBlock *timer, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     fw_assert(IS_PTR_NULL(timer));
     fw_assert(IS_PTR_NULL(func));
     
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    timer->Handler.Message      = func;
-    timer->Param                = param;
-    timer->Event                = evt;
-#else
-    timer->Task.Handler.Message = func;
-    timer->Task.Param           = param;
-    timer->Task.Event           = evt;
-#endif
-
-    timer->Type                 = MESSAGE_HANDLE_TIMER;
+    InitMessageHandleTask(&timer->Task, func, param, evt);
     
     return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       call back trigger timer init
- * @param       [in/out]  func               call back function
- * @param       [in/out]  param              call back function param
- * @return      [in/out]  FW_ERR_NONE       init success
- * @return      [in/out]  FW_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-struct TimerBlock *InitCallBackExTimer(fw_err_t (*func)(void*), void *param)
-{
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    fw_assert(IS_PTR_NULL(func));
-    
-    struct TimerBlock *timer = (struct TimerBlock *)MallocMemory(sizeof(struct TimerBlock));
-    
-    fw_assert(IS_PTR_NULL(timer));
-
-    timer->Handler.CallBack = func;
-    timer->Param            = param;
-    timer->Type             = CALL_BACK_EX_TIMER;
-    
-    return timer;
-#else
-    return NULL;
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       event distribute timer init
- * @param       [in/out]  event              distribute event
- * @return      [in/out]  FW_ERR_NONE       init success
- * @return      [in/out]  FW_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-struct TimerBlock *InitEventHandleExTimer(fw_err_t (*func)(uint16_t), uint16_t evt)
-{
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    fw_assert(IS_PTR_NULL(func));
-    
-    struct TimerBlock *timer = (struct TimerBlock *)MallocMemory(sizeof(struct TimerBlock));
-    
-    fw_assert(IS_PTR_NULL(timer));
-    
-    timer->Handler.Event      = func;
-    timer->Event              = evt;
-    timer->Type               = EVENT_HANDLE_EX_TIMER;
-    
-    return timer;
-#else
-    return NULL;
-#endif
-}
-
-/**
- *******************************************************************************
- * @brief       event trigger timer init
- * @param       [in/out]  func               event handler function
- * @param       [in/out]  param              event function param
- * @param       [in/out]  event              trigger event
- * @return      [in/out]  FW_ERR_NONE       init success
- * @return      [in/out]  FW_ERR_FAIL       init failed
- * @note        None
- *******************************************************************************
- */
-struct TimerBlock *InitMessageHandleExTimer(fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
-{
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    fw_assert(IS_PTR_NULL(func));
-    
-    struct TimerBlock *timer = (struct TimerBlock *)MallocMemory(sizeof(struct TimerBlock));
-    
-    fw_assert(IS_PTR_NULL(timer));
-    
-    timer->Handler.Message      = func;
-    timer->Param                = param;
-    timer->Event                = evt;
-    timer->Type                 = MESSAGE_HANDLE_EX_TIMER;
-    
-    return timer;
-#else
-    return NULL;
-#endif
 }
 
 /**
@@ -432,54 +350,7 @@ bool is_timer_trigger(struct TimerBlock *timer, uint32_t ticks)
 __STATIC_INLINE
 void timer_trigger_handler(struct TimerBlock *timer)
 {    
-    switch(timer->Type)
-    {
-        case CALL_BACK_TIMER:
-        case CALL_BACK_EX_TIMER:
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-            if( timer->Handler.CallBack != NULL )
-            {
-                CreateCallBackTask(NULL, timer->Handler.CallBack, timer->Param);
-            }
-#else
-            if( timer->Task.Handler.CallBack != NULL )
-            {
-                CreateCallBackTask(&timer->Task, timer->Task.Handler.CallBack, timer->Task.Param);
-            }
-#endif
-            break;
-        case EVENT_HANDLE_TIMER:
-        case EVENT_HANDLE_EX_TIMER:
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT    
-            if( timer->Handler.Event != NULL )
-            {
-                CreateEventHandleTask(NULL, timer->Handler.Event, timer->Event);
-            }
-            
-#else
-            if( timer->Task.Handler.Event != NULL )
-            {
-                CreateEventHandleTask(&timer->Task, timer->Task.Handler.Event, timer->Task.Event);
-            }
-#endif
-            break;
-        case MESSAGE_HANDLE_TIMER:
-        case MESSAGE_HANDLE_EX_TIMER:
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-            if( timer->Handler.Message != NULL )
-            {
-                CreateMessageHandleTask(NULL, timer->Handler.Message, timer->Param, timer->Event);
-            }
-#else
-            if( timer->Task.Handler.Message != NULL )
-            {
-                CreateMessageHandleTask(&timer->Task, timer->Task.Handler.Message, timer->Task.Param, timer->Task.Event);
-            }
-#endif
-            break;
-//        default:
-//            break;
-    }
+    ArmTaskModule(&timer->Task);
 }
 
 /**
@@ -498,9 +369,6 @@ void timer_walk(uint32_t tick)
 {
     struct TimerBlock *now  = GetSingleLinkListHead(TimerControlBlock);
     struct TimerBlock *last = now;
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    struct TimerBlock *del  = NULL;
-#endif
     
     while(1)
     {
@@ -516,9 +384,6 @@ void timer_walk(uint32_t tick)
         // timer list delete
         if( IS_TIMER_DISABLE(now) )
         {   
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-            del = now;
-#endif      
             if( IsSingleLinkListHead(TimerControlBlock, now) )
             {
                 UpdateSingleLinkListHead(TimerControlBlock, now->Next);
@@ -539,18 +404,6 @@ void timer_walk(uint32_t tick)
                 now->Next  = NULL;
                 now        = last->Next;
             }
-            
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-            if (del->Type == CALL_BACK_EX_TIMER 
-                || del->Type == EVENT_HANDLE_EX_TIMER  
-                || del->Type == MESSAGE_HANDLE_EX_TIMER)
-            {
-                if( IsInMemory(del) == true )
-                {
-                    FreeMemory(del);
-                }
-            }
-#endif
         }
         else
         {
@@ -574,7 +427,7 @@ void timer_walk(uint32_t tick)
  * @note        timer processing function without errors
  *******************************************************************************
  */
-fw_err_t TimerComponentHandle(uint16_t event)
+fw_err_t PollTimerComponent(void)
 {
     if( IsSingleLinkListHeadEmpty(TimerControlBlock) )
     {
@@ -595,7 +448,7 @@ fw_err_t TimerComponentHandle(uint16_t event)
  * @note        timer processing function without errors
  *******************************************************************************
  */
-bool GetTimerStatus(struct TimerBlock *timer)
+bool GetTimerModuleStatus(struct TimerBlock *timer)
 {
     if( timer_is_in(timer) == true && IS_TIMER_ENABLE(timer) )
     {
@@ -614,7 +467,7 @@ bool GetTimerStatus(struct TimerBlock *timer)
  * @note        None
  *******************************************************************************
  */
-fw_err_t AddTimerToQueue(struct TimerBlock *timer)
+fw_err_t AddTimerModuleToQueue(struct TimerBlock *timer)
 {
     fw_assert(IS_PTR_NULL(timer));
        

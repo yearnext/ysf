@@ -96,30 +96,7 @@ struct TimerBlock
     uint32_t          LoadTicks;
     int16_t           Cycle;
 
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    union
-    {
-        fw_err_t (*Message)(void*, uint16_t);
-        fw_err_t (*Event)(uint16_t);
-        fw_err_t (*CallBack)(void*);
-    }Handler;
-
-    void *Param;
-    uint16_t Event;
-#else
     struct TaskBlock  Task;
-#endif
-    
-    enum
-    {
-        CALL_BACK_TIMER,
-        EVENT_HANDLE_TIMER,
-        MESSAGE_HANDLE_TIMER,
-        
-        CALL_BACK_EX_TIMER,
-        EVENT_HANDLE_EX_TIMER,
-        MESSAGE_HANDLE_EX_TIMER,
-    }Type;
 };
 
 /**
@@ -130,9 +107,13 @@ struct TimerBlock
 #if USE_TIMER_COMPONENT
 typedef struct
 {
-    fw_err_t (*Init)(void);
-    fw_err_t (*Handler)(uint16_t);
+    fw_err_t (*Open)(void);
+    fw_err_t (*Close)(void);
+    
+    fw_err_t (*Poll)(void);
 
+    fw_err_t (*Add)(struct TimerBlock*);
+    
     fw_err_t (*Arm)(struct TimerBlock*, uint32_t, int16_t);
     fw_err_t (*Disarm)(struct TimerBlock*);
     
@@ -140,14 +121,11 @@ typedef struct
     
     struct
     {
+        fw_err_t (*Simple)(struct TimerBlock*, fw_err_t (*)(void));
         fw_err_t (*CallBack)(struct TimerBlock*, fw_err_t (*)(void*), void*);
         fw_err_t (*EventHandle)(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*Message)(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-
-        struct TimerBlock *(*CallBackEx)(fw_err_t (*)(void*), void*);
-        struct TimerBlock *(*EventHandleEx)(fw_err_t (*)(uint16_t), uint16_t);
-        struct TimerBlock *(*MessageHandleEx)(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    }Create;
+        fw_err_t (*MessageHandle)(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+    }Init;
 }TimerComponentInterface;
 #endif
 
@@ -160,22 +138,21 @@ typedef struct
  */
 #if USE_TIMER_COMPONENT
 extern fw_err_t InitTimerComponent(void);
-extern fw_err_t TimerComponentHandle(uint16_t);
+extern fw_err_t DeinitTimerComponent(void);
+    
+extern fw_err_t PollTimerComponent(void);
 
-extern fw_err_t AddTimerToQueue(struct TimerBlock*);
+extern fw_err_t AddTimerModuleToQueue(struct TimerBlock*);
 
-extern bool GetTimerStatus(struct TimerBlock*);
+extern bool GetTimerModuleStatus(struct TimerBlock*);
 
 extern fw_err_t ArmTimerModule(struct TimerBlock*, uint32_t, int16_t);                                          
 extern fw_err_t DisarmTimerModule(struct TimerBlock*); 
 
-extern fw_err_t InitCallBackTimer(struct TimerBlock*, fw_err_t (*)(void*), void*); 
-extern fw_err_t InitEventHandleTimer(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t InitMessageHandleTimer(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-
-extern struct TimerBlock *InitCallBackExTimer(fw_err_t (*)(void*), void*);
-extern struct TimerBlock *InitEventHandleExTimer(fw_err_t (*)(uint16_t), uint16_t);
-extern struct TimerBlock *InitMessageHandleExTimer(fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+extern fw_err_t InitSimpleTimerModule(struct TimerBlock*, fw_err_t (*)(void)); 
+extern fw_err_t InitCallBackTimerModule(struct TimerBlock*, fw_err_t (*)(void*), void*); 
+extern fw_err_t InitEventHandleTimerModule(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t InitMessageHandleTimerModule(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

@@ -48,10 +48,7 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
-#include _FW_EVENT_COMPONENT_PATH
-#include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
-#include _FW_TIMER_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -148,30 +145,10 @@ struct SignalBlock
     
     uint8_t             (*Detect)(void);
     
-    union
-    {
-        fw_err_t        (*Simple)(uint16_t);
-        fw_err_t        (*Complex)(void*, uint16_t);
-    }Handle;
-
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-    struct TimerBlock   *Timer;
-#else
-    struct TimerBlock   Timer;
     struct TaskBlock    Task;
-#endif
-    
-    uint8_t             SignalInfo;
-    
-    enum SignalStatus   SignalStatus;
 
-    enum
-    {
-        SIMPLE_SIGNAL,
-        SIMPLE_EX_SIGNAL,
-        COMPLEX_SIGNAL,
-        COMPLEX_EX_SIGNAL,
-    }Type;
+    uint8_t             Info;    
+    enum SignalStatus   Status;
 };
 
 /**
@@ -182,19 +159,15 @@ struct SignalBlock
 #if USE_SIGNAL_COMPONENT
 typedef struct
 {
-    fw_err_t                (*GetInfo)(struct SignalBlock*, uint8_t*);
+    fw_err_t                (*Open)(void);
+    fw_err_t                (*Close)(void);
     
-    fw_err_t                (*Arm)(struct SignalBlock*, uint32_t, int16_t);
+    fw_err_t                (*Poll)(void);
+    
+    fw_err_t                (*Arm)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));
     fw_err_t                (*Disarm)(struct SignalBlock*);
     
-    struct
-    {
-        fw_err_t            (*Simple)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));
-        fw_err_t            (*Complex)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(void*, uint16_t));
-        
-        struct SignalBlock* (*SimpleEx)(uint8_t (*)(void), fw_err_t (*)(uint16_t));
-        struct SignalBlock* (*ComplexEx)(uint8_t (*)(void), fw_err_t (*)(void*, uint16_t));
-    }Create;
+    uint8_t                 (*GetInfo)(struct SignalBlock*);
 }SignalComponentInterface;
 #endif
 
@@ -206,17 +179,16 @@ typedef struct
  *******************************************************************************
  */
 #if USE_SIGNAL_COMPONENT
-extern fw_err_t GetSignalInfo(struct SignalBlock*, uint8_t*);
+extern fw_err_t InitSignalComponent(void);
+extern fw_err_t DeinitSignalComponent(void);
 
-extern fw_err_t ArmSignalModule(struct SignalBlock*, uint32_t, int16_t);
+extern fw_err_t PoolSignalComponent(void);
+
+extern fw_err_t ArmSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));     
 extern fw_err_t DisarmSignalModule(struct SignalBlock*);
 
-extern fw_err_t InitSimpleSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));   
-extern fw_err_t InitComplexSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(void*, uint16_t)); 
+extern inline uint8_t GetSignalModuleInfo(struct SignalBlock*);
 
-extern struct SignalBlock *InitSimpleExSignalModule(uint8_t (*)(void), fw_err_t (*)(uint16_t));                                  
-extern struct SignalBlock *InitComplexExSignalModule(uint8_t (*)(void), fw_err_t (*)(void*, uint16_t));       
-                                                                 
 #endif
                                        
 /* Add c++ compatibility------------------------------------------------------*/
