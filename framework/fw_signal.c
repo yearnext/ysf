@@ -501,6 +501,6 @@ void PollSignalComponent(uint8_t event)
 }
 #endif
 
-/** @}*/     /* ysf signal ≈‰÷√  */
+/** @}*/     /** framework signal component */
 
 /**********************************END OF FILE*********************************/

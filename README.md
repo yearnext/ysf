@@ -9,87 +9,12 @@
 直到在一次偶然间我接触到了多任务思想。
 
 ## 介绍
-### YSF目录介绍
-|目录名称|功能简介|
+### YSF组件介绍
+|文件名称|功能简介|
 |:-:|:-:|
-|common|YSF通用工具|
-|compiler|YSF编译器配置|
-|component|YSF通用组件|
-|hal|YSF底层硬件驱动|
-
-
-## 例程
-本例程主要演示单片机GPIO的配置、ysf定时器的使用方式以及ysf事件结构的使用。
-
-	#include "ysf.h"
-    
-    static struct ysf_map_gpio_t led1 = 
-    {
-	    .port = MCU_PORT_D,
-	    .pin  = MCU_PIN_13,
-	    .mode = GPIO_PIN_O_PP_LS_MODE,
-    };
-    
-    static struct ysf_map_gpio_t led2 = 
-    {
-	    .port = MCU_PORT_G,
-	    .pin  = MCU_PIN_14,
-	    .mode = GPIO_PIN_O_PP_LS_MODE,
-    };
-    
-    static struct ysf_timer_t *led1Timer = NULL;
-    static struct ysf_timer_t led2Timer;
-    
-    static ysf_err_t led1_blink_event_handler( uint16_t event )
-    {   
-	    if( hal.gpio.map.get(&led1) == true )
-	    {
-			hal.gpio.map.clr(&led1);
-	    }
-	    else
-	    {
-	    	hal.gpio.map.set(&led1);
-	    }
-	    
-	    return YSF_ERR_NONE;
-    }
-    
-    static ysf_err_t bsp_led2_blink( void *param )
-    {   
-	    if( hal.gpio.msp.get(led2.port, led2.pin) == true )
-	    {
-	    	hal.gpio.msp.clr(led2.port, led2.pin);
-	    }
-	    else
-	    {
-	    	hal.gpio.msp.set(led2.port, led2.pin);
-	    }
-	    
-	    return YSF_ERR_NONE;
-    }
-    
-    static void bsp_led_init( void )
-    {
-	    hal.gpio.map.init(&led1);
-	    hal.gpio.map.config(&led1);
-	    led1Timer = ysf.timer.simple.evt_arm(YSF_TIME_2_TICK(500), 0, LED1_BLINK_EVENT);
-	    ysf.event.evt_register(LED1_BLINK_EVENT, led1_blink_event_handler);
-	    
-	    hal.gpio.msp.init(led2.port);
-	    hal.gpio.msp.config(led2.port, led2.pin, led2.mode);
-	    ysf.timer.ex.cb_init(&led2Timer, bsp_led2_blink, NULL);
-	    ysf.timer.ex.arm(&led2Timer, YSF_TIME_2_TICK(1000), 0);
-    }
-    
-    static ysf_err_t user_init( void )
-    {
-	    bsp_led_init();
-	    
-	    return YSF_ERR_NONE;
-    }
-    
-    int main( void )
-    {   
-	    ysf.init(user_init);
-	    ysf.start();
-    }
+|"fw_core.h"|包含了框架的配置以及一些功能定义|
+|"fw_debug.h"|调试接口，用户可修改相关定义|
+|"fw_event.h" "fw_event.c"|事件组件，完成事件的分发处理工作|
+|"fw_signal.h" "fw_signal.c"|信号检测组件，完成信号的状态的检测工作|
+|"fw_tick.h" "fw_tick.c"|为定时器组件提供时钟源|
+|"fw_timer.h" "fw_timer.c"|定时器组件，完成定时功能|
