@@ -162,7 +162,7 @@ typedef struct
     fw_err_t                (*Open)(void);
     fw_err_t                (*Close)(void);
     
-    fw_err_t                (*Poll)(void);
+    fw_err_t                (*Poll)(uint16_t);
     
     fw_err_t                (*Arm)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));
     fw_err_t                (*Disarm)(struct SignalBlock*);
@@ -182,7 +182,7 @@ typedef struct
 extern fw_err_t InitSignalComponent(void);
 extern fw_err_t DeinitSignalComponent(void);
 
-extern fw_err_t PoolSignalComponent(void);
+extern fw_err_t PoolSignalComponent(uint16_t);
 
 extern fw_err_t ArmSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));     
 extern fw_err_t DisarmSignalModule(struct SignalBlock*);

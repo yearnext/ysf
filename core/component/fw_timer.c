@@ -40,9 +40,7 @@
 #include "core_path.h"
 #include _FW_PATH
 #include _FW_TIMER_COMPONENT_PATH
-#include _FW_EVENT_COMPONENT_PATH
 #include _FW_TICK_COMPONENT_PATH
-#include _FW_MEMORY_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
@@ -384,26 +382,7 @@ void timer_walk(uint32_t tick)
         // timer list delete
         if( IS_TIMER_DISABLE(now) )
         {   
-            if( IsSingleLinkListHead(TimerControlBlock, now) )
-            {
-                UpdateSingleLinkListHead(TimerControlBlock, now->Next);
-                
-                now->Next  = NULL;
-                now        = GetSingleLinkListHead(TimerControlBlock);
-            }
-            else if( IsSingleLinkListTail(TimerControlBlock, now) )
-            {
-                last->Next = NULL;
-                now->Next  = NULL;
-                
-                UpdateSingleLinkListTail(TimerControlBlock, last);
-            }
-            else
-            { 
-                last->Next = now->Next;
-                now->Next  = NULL;
-                now        = last->Next;
-            }
+            DeleteInSignalLinkList(TimerControlBlock, last, now);
         }
         else
         {

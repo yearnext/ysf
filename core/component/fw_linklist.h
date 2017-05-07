@@ -240,6 +240,68 @@ extern fw_err_t IsInSingleList(void**, void**);
 
 /**
  *******************************************************************************
+ * @brief       delete link list in link list fifo
+ * @param       [in/out]  controlBlock    link list control block
+ * @param       [in/out]  lastLinkList    last link list
+ * @param       [in/out]  nowLinkList     now link list
+ * @note        None
+ *******************************************************************************
+ */
+#define DeleteInSignalLinkList(controlBlock, lastLinkList, nowLinkList)        \
+{                                                                              \
+    if( IsSingleLinkListHead(controlBlock, nowLinkList) )                      \
+    {                                                                          \
+        UpdateSingleLinkListHead(controlBlock, nowLinkList->Next);             \
+                                                                               \
+        nowLinkList->Next  = NULL;                                             \
+        nowLinkList        = GetSingleLinkListHead(controlBlock);              \
+    }                                                                          \
+    else if( IsSingleLinkListTail(controlBlock, nowLinkList) )                 \
+    {                                                                          \
+        lastLinkList->Next = NULL;                                             \
+        nowLinkList->Next  = NULL;                                             \
+                                                                               \
+        UpdateSingleLinkListTail(controlBlock, lastLinkList);                  \
+    }                                                                          \
+    else                                                                       \
+    {                                                                          \
+        lastLinkList->Next = nowLinkList->Next;                                \
+        nowLinkList->Next  = NULL;                                             \
+        nowLinkList        = lastLinkList->Next;                               \
+    }                                                                          \
+}
+
+/**
+ *******************************************************************************
+ * @brief       get single link list by id
+ * @param       [in/out]  controlBlock    link list control block
+ * @param       [in/out]  nowLinkList     now link list
+ * @param       [in/out]  id              link list id
+ * @note        None
+ *******************************************************************************
+ */
+#define GetSingleLinkListById(controlBlock, nowLinkList, id)                   \
+{                                                                              \
+    uint8_t i;                                                                 \
+                                                                               \
+    (nowLinkList) = controlBlock.Head;                                         \
+                                                                               \
+    for(i=1; i<id; i++)                                                        \
+    {                                                                          \
+        if((nowLinkList)->Next != NULL)                                        \
+        {                                                                      \
+            (nowLinkList) = (nowLinkList)->Next;                               \
+        }                                                                      \
+        else                                                                   \
+        {                                                                      \
+            (nowLinkList) = NULL;                                              \
+            break;                                                             \
+        }                                                                      \
+    }                                                                          \
+}
+
+/**
+ *******************************************************************************
  * @brief       fifo clear
  * @param       [in/out]  block         block name
  * @note        None

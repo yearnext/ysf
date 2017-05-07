@@ -42,6 +42,7 @@
 #include _FW_SIGNAL_COMPONENT_PATH
 #include _FW_TIMER_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
+#include _FW_LINK_LIST_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
@@ -90,44 +91,53 @@ static CREATE_SINGLE_LIST_FIFO_CONTROL_BLOCK(struct SignalBlock, SignalControlBl
  *******************************************************************************
  */
 static struct TimerBlock SignalTimer;
+
+struct
+{
+    struct SignalBlock *Last;
+    struct SignalBlock *Now;
+    
+    uint8_t Cursor;
+    uint8_t Count;
+}static SignalPollBlock;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_SIGNAL_COMPONENT
-/**
- *******************************************************************************
- * @brief       detect the signal is in queue
- * @param       [in/out]  signal               will detect signal
- * @return      [in/out]  true                 the signal in the queue
- * @return      [in/out]  true                 the signal not in the queue
- * @note        this function is static inline type
- *******************************************************************************
- */
-__STATIC_INLINE
-bool signal_is_in(struct SignalBlock *signal)
-{
-    IsInSingleLinkListFifo(struct SignalBlock, SignalControlBlock, signal);
-    
-    return false;
-}
+///**
+// *******************************************************************************
+// * @brief       detect the signal is in queue
+// * @param       [in/out]  signal               will detect signal
+// * @return      [in/out]  true                 the signal in the queue
+// * @return      [in/out]  true                 the signal not in the queue
+// * @note        this function is static inline type
+// *******************************************************************************
+// */
+//__STATIC_INLINE
+//bool signal_is_in(struct SignalBlock *signal)
+//{
+//    IsInSingleLinkListFifo(struct SignalBlock, SignalControlBlock, signal);
+//    
+//    return false;
+//}
 
-/**
- *******************************************************************************
- * @brief       pop signal to queue
- * @param       [in/out]  signal              will signal task
- * @return      [in/out]  FW_ERR_NONE         no error
- * @note        this function is static inline type
- *******************************************************************************
- */
-__STATIC_INLINE
-fw_err_t signal_push(struct SignalBlock *signal)
-{
-    PushSingleLinkListFifoNode(signal_is_in, SignalControlBlock, signal);
-    
-    return FW_ERR_NONE;
-}
+///**
+// *******************************************************************************
+// * @brief       pop signal to queue
+// * @param       [in/out]  signal              will signal task
+// * @return      [in/out]  FW_ERR_NONE         no error
+// * @note        this function is static inline type
+// *******************************************************************************
+// */
+//__STATIC_INLINE
+//fw_err_t signal_push(struct SignalBlock *signal)
+//{
+//    PushSingleLinkListFifoNode(signal_is_in, SignalControlBlock, signal);
+//    
+//    return FW_ERR_NONE;
+//}
 
 /**
  *******************************************************************************
@@ -509,48 +519,38 @@ fw_err_t signal_judge(struct SignalBlock *signal)
 __STATIC_INLINE 
 void signal_walk(void)
 {
-    struct SignalBlock *now  = GetSingleLinkListHead(SignalControlBlock);
-    struct SignalBlock *last = now;
+    GetSingleLinkListById(SignalControlBlock, SignalPollBlock.Now, SignalPollBlock.Cursor);
     
-    while(1)
+    if(IS_PTR_NULL(SignalPollBlock.Now))
     {
-        if( IS_SIGNAL_ENABLE(now) )
+        SignalPollBlock.Cursor = 0;
+        SignalPollBlock.Count--;
+        
+        if(SignalPollBlock.Count)
         {
-            signal_judge(now);
-            
-            last = now;
-            now  = now->Next;
-        }
-        else
-        {      
-            if( IsSingleLinkListHead(SignalControlBlock, now) )
-            {
-                UpdateSingleLinkListHead(SignalControlBlock, now->Next);
-                
-                now->Next  = NULL;
-                now        = GetSingleLinkListHead(SignalControlBlock);
-            }
-            else if( IsSingleLinkListTail(SignalControlBlock, now) )
-            {
-                last->Next = NULL;
-                now->Next  = NULL;
-                
-                UpdateSingleLinkListTail(SignalControlBlock, last);
-            }
-            else
-            { 
-                last->Next = now->Next;
-                now->Next  = NULL;
-                now        = last->Next;
-            }
+            CreateEventHandleTask(NULL, PoolSignalComponent, FW_EVENT_NONE);
         }
         
-        // break
-        if( now == NULL )
-        {
-            return;
-        }
+        return;
     }
+    else
+    {
+        SignalPollBlock.Cursor++;
+    }
+    
+    if( IS_SIGNAL_ENABLE(SignalPollBlock.Now) )
+    {
+        signal_judge(SignalPollBlock.Now);
+        
+        SignalPollBlock.Last = SignalPollBlock.Now;
+        SignalPollBlock.Cursor++;
+    }
+    else
+    {      
+        DeleteInSignalLinkList(SignalControlBlock, SignalPollBlock.Last, SignalPollBlock.Now);
+    }
+    
+    CreateEventHandleTask(NULL, PoolSignalComponent, FW_EVENT_NONE);
 }
 
 /**
@@ -565,7 +565,12 @@ fw_err_t InitSignalComponent(void)
 {
     signal_clear();
     
-    InitSimpleTimerModule(&SignalTimer, PoolSignalComponent);
+    SignalPollBlock.Now    = NULL;
+    SignalPollBlock.Last   = NULL;
+    SignalPollBlock.Count  = 0;
+    SignalPollBlock.Cursor = 0;
+    
+    InitEventHandleTimerModule(&SignalTimer, PoolSignalComponent, FW_EVENT_DELAY);
     ArmTimerModule(&SignalTimer, SIGNAL_SCAN_TIME, TIMER_CYCLE_MODE);
     
     return FW_ERR_NONE;
@@ -632,14 +637,22 @@ fw_err_t DisarmSignalModule(struct SignalBlock *signal)
  * @note        None
  *******************************************************************************
  */
-fw_err_t PoolSignalComponent(void)
+fw_err_t PoolSignalComponent(uint16_t event)
 {
     if( IsSingleLinkListHeadEmpty(SignalControlBlock) )
     {
         return FW_ERR_NONE;
     }
     
-    signal_walk();
+    if(event == FW_EVENT_DELAY)
+    {
+        SignalPollBlock.Count++;
+    }
+    
+    if(SignalPollBlock.Count)
+    {
+        signal_walk();
+    }
     
     return FW_ERR_NONE;
 }

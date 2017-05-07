@@ -45,7 +45,6 @@ extern "C"
 #include "core_path.h"
 #include _FW_PATH
 #include _FW_TASK_COMPONENT_PATH
-#include _FW_MEMORY_COMPONENT_PATH
     
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -78,8 +77,13 @@ extern "C"
  * @brief       timer tick config
  *******************************************************************************
  */
-#define TIME_2_TICK(time)    ((time)/CORE_TICK_PERIOD)
+#define CAL_SET_TIME(time)                             ((time)/CORE_TICK_PERIOD)
 
+/**
+ *******************************************************************************
+ * @brief       define timer cycle mode
+ *******************************************************************************
+ */
 #define TIMER_CYCLE_MODE     (-1)
 
 /* Exported types ------------------------------------------------------------*/
