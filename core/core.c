@@ -48,8 +48,8 @@
 const struct CoreInterface Core = 
 {
     .Version                                           = _CORE_VERSION,
-    .Init                                              = InitFramework,
-    .Start                                             = StartFramework,
+    .Init                                              = InitFrameworkCore,
+    .Start                                             = StartFrameworkCore,
 
 #if USE_BUFFER_COMPONENT
     .RingBuffer.Init                                   = InitRingBufferComponent,
@@ -163,7 +163,7 @@ const struct HalInterface Hal =
  * @note        None
  *******************************************************************************
  */
-void InitFramework(void)
+void InitFrameworkCore(void)
 {
     __ATOM_ACTIVE_BEGIN();
 
@@ -206,7 +206,7 @@ void InitFramework(void)
  * @note        None
  *******************************************************************************
  */
-void StartFramework(void)
+void StartFrameworkCore(void)
 {
     while(1)
     {

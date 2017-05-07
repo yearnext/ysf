@@ -291,11 +291,11 @@
  */
 int main( void )
 {   
-    Core.Init();
+    fw_core_init();
     
 //    user_init();
     
-    Core.Start();
+    fw_core_start();
     
     return 0;
 }

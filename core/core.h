@@ -375,7 +375,7 @@ struct CoreInterface
  *******************************************************************************
  */
 extern const struct CoreInterface Core;
-extern const struct HalInterface Hal;
+extern const struct HalInterface  Hal;
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -383,8 +383,8 @@ extern const struct HalInterface Hal;
  * @brief        core api
  *******************************************************************************
  */
-void InitFramework(void);
-void StartFramework(void);
+void InitFrameworkCore(void);
+void StartFrameworkCore(void);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
