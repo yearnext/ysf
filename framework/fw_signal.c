@@ -188,7 +188,7 @@ void SignalDetection(fw_signal_t *nowSignal)
                 else
                 {
                     TRANSFER_SIGNAL_STATUS(nowSignal, SIGNAL_STATUS_PRESS_EDGE);
-                    fw_event_post(nowSignal->TaskId, nowSignal->Status);
+                    PostEvent(nowSignal->TaskId, nowSignal->Status);
                 }
             }
             break;
@@ -263,7 +263,7 @@ void SignalDetection(fw_signal_t *nowSignal)
                 if(IS_NO_SIGNAL(nowInfo))
                 {
                     TRANSFER_SIGNAL_STATUS(nowSignal, SIGNAL_STATUS_RELEASE_EDGE);
-                    fw_event_post(nowSignal->TaskId, nowSignal->Status);
+                    PostEvent(nowSignal->TaskId, nowSignal->Status);
                 }
                 else
                 {
@@ -290,7 +290,7 @@ void SignalDetection(fw_signal_t *nowSignal)
                 if(IS_NO_SIGNAL(nowInfo))
                 {
                     TRANSFER_SIGNAL_STATUS(nowSignal, SIGNAL_STATUS_RELEASE);
-                    fw_event_post(nowSignal->TaskId, nowSignal->Status);
+                    PostEvent(nowSignal->TaskId, nowSignal->Status);
                 }
                 else
                 {
@@ -317,7 +317,7 @@ void SignalDetection(fw_signal_t *nowSignal)
                 if(IS_NO_SIGNAL(nowInfo))
                 {
                     TRANSFER_SIGNAL_STATUS(nowSignal, SIGNAL_STATUS_RELEASE);
-                    fw_event_post(nowSignal->TaskId, nowSignal->Status);
+                    PostEvent(nowSignal->TaskId, nowSignal->Status);
                 }
                 else
                 {
@@ -348,7 +348,7 @@ void SignalDetection(fw_signal_t *nowSignal)
                 else
                 {
                     TRANSFER_SIGNAL_STATUS(nowSignal, SIGNAL_STATUS_PRESS);
-                    fw_event_post(nowSignal->TaskId, nowSignal->Status);
+                    PostEvent(nowSignal->TaskId, nowSignal->Status);
                 }
             }
             break;
@@ -375,7 +375,7 @@ void SignalDetection(fw_signal_t *nowSignal)
                 else
                 {
                     TRANSFER_SIGNAL_STATUS(nowSignal, SIGNAL_STATUS_PRESS);
-                    fw_event_post(nowSignal->TaskId, nowSignal->Status);
+                    PostEvent(nowSignal->TaskId, nowSignal->Status);
                 }
             }
             break;
@@ -385,6 +385,32 @@ void SignalDetection(fw_signal_t *nowSignal)
 }
 
 /* Exported functions --------------------------------------------------------*/
+
+/**
+ *******************************************************************************
+ * @brief       signal component init 
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+void InitSignalComponent(void)
+{
+    uint8_t i = 0;
+
+    for( i=0; i<SIGNAL_MAX; i++ )
+    {
+        Signal[i].Scan   = NULL;
+        Signal[i].TaskId = 0;
+        Signal[i].Status = SIGNAL_STATUS_INIT;
+    }
+    RegisterEvent(FW_SIGNAL_TASK, PollSignalComponent);
+    
+    ArmTimerModule(FW_SIGNAL_TASK, FW_SIGNAL_SCAN_PREIOD);
+    
+    PostEvent(FW_SIGNAL_TASK, FW_SIGNAL_EVENT);
+}
+
 /**
  *******************************************************************************
  * @brief       signal component register
@@ -395,9 +421,9 @@ void SignalDetection(fw_signal_t *nowSignal)
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_signal_register(uint8_t taskId, uint8_t id, uint8_t (*scan)(void))
+fw_err_t RegisterSignal(uint8_t taskId, uint8_t signalId, uint8_t (*scan)(void))
 {
-    if( id > SIGNAL_MAX )
+    if( signalId > SIGNAL_MAX )
     {
         return FW_ERR_FAIL;
     }
@@ -412,35 +438,12 @@ fw_err_t fw_signal_register(uint8_t taskId, uint8_t id, uint8_t (*scan)(void))
         return FW_ERR_FAIL;
     }
 
-    Signal[id].Scan   = scan;
-    Signal[id].TaskId = taskId;
-    Signal[id].Status = SIGNAL_STATUS_INIT;
+    Signal[signalId].Scan   = scan;
+    Signal[signalId].TaskId = taskId;
+    Signal[signalId].Status = SIGNAL_STATUS_INIT;
+    Signal[signalId].Info   = 0;
     
     return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       signal init 
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void fw_signal_init(void)
-{
-    uint8_t i = 0;
-
-    for( i=0; i<SIGNAL_MAX; i++ )
-    {
-        Signal[i].Scan   = NULL;
-        Signal[i].TaskId = 0;
-        Signal[i].Status = SIGNAL_STATUS_INIT;
-    }
-    
-    fw_timer_arm(FW_SIGNAL_TASK, FW_SIGNAL_SCAN_PREIOD);
-    
-    fw_event_post(FW_SIGNAL_TASK, FW_SIGNAL_EVENT);
 }
 
 /**
@@ -451,7 +454,7 @@ void fw_signal_init(void)
  * @note        None
  *******************************************************************************
  */
-uint8_t fw_signal_info_get(uint8_t taskId)
+uint8_t GetSignalInfo(uint8_t taskId)
 {
     uint8_t i;
     uint8_t info = 0;
@@ -480,11 +483,11 @@ uint8_t fw_signal_info_get(uint8_t taskId)
  * @note        None
  *******************************************************************************
  */
-void fw_signal_handler(uint8_t event)
+void PollSignalComponent(uint8_t event)
 {
     uint8_t i = 0;
         
-    log("signal handle! \n");
+//    log("signal handle! \n");
         
     for( i=0; i<SIGNAL_MAX; i++ )
     {
@@ -494,7 +497,7 @@ void fw_signal_handler(uint8_t event)
         }
     }
     
-    fw_timer_arm(FW_SIGNAL_TASK, FW_SIGNAL_SCAN_PREIOD);
+    ArmTimerModule(FW_SIGNAL_TASK, FW_SIGNAL_SCAN_PREIOD);
 }
 #endif
 

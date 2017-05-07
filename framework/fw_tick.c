@@ -33,7 +33,7 @@
  * @brief       framework tick
  *******************************************************************************
  */
-static volatile uint32_t FwCoreTick = 0;
+static volatile uint32_t Tick = 0;
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -46,9 +46,9 @@ static volatile uint32_t FwCoreTick = 0;
  * @note        None
  *******************************************************************************
  */
-void fw_tick_init( void )
+void InitTickComponent( void )
 {
-	FwCoreTick = 0;
+	Tick = 0;
 }
 
 /**
@@ -60,11 +60,11 @@ void fw_tick_init( void )
  *******************************************************************************
  */
 inline
-void fw_tick_inc(void)
+void IncTick(void)
 {
-    FwCoreTick++;
+    Tick++;
 
-    fw_event_post(FW_TICK_TASK, FW_TICK_EVENT);
+    PostEvent(FW_TICK_TASK, FW_TICK_EVENT);
 }
 
 /**
@@ -76,19 +76,19 @@ void fw_tick_inc(void)
  *******************************************************************************
  */
 inline
-uint32_t fw_tick_get(void)
+uint32_t GetTick(void)
 {
-    uint32_t tick;
+    uint32_t calTick;
     
 _ATOM_CODE_BEGIN();
     
-	 tick = FwCoreTick;
+    calTick = Tick;
     
-	FwCoreTick = 0;
+	Tick = 0;
     
 _ATOM_CODE_END();
 
-	return tick;
+	return calTick;
 }
 
 /** @}*/     /** framework tick component */

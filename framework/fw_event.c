@@ -25,27 +25,15 @@
 #include "fw_timer.h"
 #include "fw_signal.h"
 
-// user head files
-#include "bsp_telephone.h"
-#include "bsp_gpio.h"
-#include "bsp_uart.h"
-
 /* Private define ------------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       task size
  *******************************************************************************
  */
-#define FW_TASK_MAX_SIZE       (2*(sizeof(evtHandleFunction)/sizeof(evtHandle)))
+#define FW_TASK_MAX_SIZE                                       (2 * FW_TASK_MAX)
 
 /* Private typedef -----------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       event handler
- *******************************************************************************
- */
-typedef void (*evtHandle)(uint8_t event);
-
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -54,20 +42,10 @@ typedef void (*evtHandle)(uint8_t event);
  *******************************************************************************
  */
 #if USE_FRAMEWORK_EVENT_COMPONENT
-static evtHandle evtHandleFunction[FW_TASK_MAX] = 
+struct
 {
-	/** framework task handler function */
-	fw_timer_handler,
-	fw_signal_handler,
-	
-	/** user task handler function */
-    // USER_CALL_TASK
-    TelephoneCallHandler,
-    // USER_KEY_TASK
-    KeyHandler,
-    // USER_UART_RX_TASK
-    rxTelephoneNumberHandler,
-};
+    void (*Handle)(uint8_t);
+}static EventHandle[FW_TASK_MAX];
 #endif
 
 /**
@@ -80,9 +58,9 @@ static struct
 {
     struct
     {
-        uint8_t Task;
+        uint8_t TaskId;
         uint8_t Event;
-    }Pool[FW_TASK_MAX_SIZE];
+    }Buffer[FW_TASK_MAX_SIZE];
     
     uint8_t Tail;
     uint8_t Head;
@@ -101,10 +79,49 @@ static struct
  * @note        None
  *******************************************************************************
  */
-void fw_event_init(void)
+void InitEventComponent(void)
 {
+    uint8_t i;
+    
+    for(i=0; i<FW_TASK_MAX; i++)
+    {
+        EventHandle[i].Handle = NULL;
+    }   
+    
+    for(i=0; i<FW_TASK_MAX_SIZE; i++)
+    {
+        EventQueue.Buffer[i].TaskId = FW_EVENT_NONE;
+        EventQueue.Buffer[i].Event  = 0;
+    }  
+    
     EventQueue.Tail = 0;
     EventQueue.Head = 0;
+}
+
+/**
+ *******************************************************************************
+ * @brief       register event
+ * @param       [in/out]  taskId       task id
+ * @param       [in/out]  evtHandle    event handle function
+ * @return      [in/out]  fw_err_t     register status
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t RegisterEvent(uint8_t taskId, void (*evtHandle)(uint8_t))
+{
+    if( IS_PTR_NULL(evtHandle) )
+    {
+        return FW_ERR_FAIL;
+    }
+    
+    if(taskId >= FW_TASK_MAX)
+    {
+        return FW_ERR_FAIL;
+    }
+    
+    EventHandle[taskId].Handle = evtHandle;
+    
+    return FW_ERR_NONE;
 }
 
 /**
@@ -117,12 +134,12 @@ void fw_event_init(void)
  *******************************************************************************
  */
 inline
-void fw_event_post(uint8_t task, uint8_t event)
+void PostEvent(uint8_t taskId, uint8_t event)
 {
 	if(EventQueue.Tail < FW_TASK_MAX_SIZE)
 	{
-		EventQueue.Pool[EventQueue.Tail].Task  = task;
-		EventQueue.Pool[EventQueue.Tail].Event = event;
+		EventQueue.Buffer[EventQueue.Tail].TaskId  = taskId;
+		EventQueue.Buffer[EventQueue.Tail].Event = event;
 		
 		EventQueue.Tail++;
 	}
@@ -130,18 +147,21 @@ void fw_event_post(uint8_t task, uint8_t event)
 
 /**
  *******************************************************************************
- * @brief       event read
+ * @brief       event poll
  * @param       [in/out]  void
- * @return      [in/out]  evt      event
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
 inline
-void fw_event_poll(void)
+void PollEvent(void)
 {
     while(EventQueue.Head < EventQueue.Tail)
     {
-        evtHandleFunction[EventQueue.Pool[EventQueue.Head].Task](EventQueue.Pool[EventQueue.Head].Event);
+        if( !IS_PTR_NULL(EventHandle[EventQueue.Buffer[EventQueue.Head].TaskId].Handle) )
+        {
+            EventHandle[EventQueue.Buffer[EventQueue.Head].TaskId].Handle(EventQueue.Buffer[EventQueue.Head].Event);
+        }
         
         _ATOM_CODE_BEGIN();
         if(++EventQueue.Head >= EventQueue.Tail)

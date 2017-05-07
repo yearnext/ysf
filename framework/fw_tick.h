@@ -58,9 +58,9 @@ extern "C"
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_TICK_COMPONENT
-extern void fw_tick_init(void);
-extern inline void fw_tick_inc(void);
-extern inline uint32_t fw_tick_get(void);
+extern void InitTickComponent(void);
+extern inline void IncTick(void);
+extern inline uint32_t GetTick(void);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

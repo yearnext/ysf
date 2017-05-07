@@ -57,7 +57,7 @@ struct
  * @note        None
  *******************************************************************************
  */
-void fw_timer_init(void)
+void InitTimerComponent(void)
 {
     uint8_t i;
     
@@ -67,18 +67,20 @@ void fw_timer_init(void)
         Timer[i].Time   = 0;
         Timer[i].Status = 0;
     }
+    
+    RegisterEvent(FW_TICK_TASK, PollTimerComponent);
 }
 
 /**
  *******************************************************************************
  * @brief       timer component arm
- * @param       [in/out]  task        task id
+ * @param       [in/out]  taskId      task id
  * @param       [in/out]  time        timing
  * @return      [in/out]  fw_err_t    arm status
  * @note        None
  *******************************************************************************
  */
-fw_err_t fw_timer_arm(uint8_t taskId, uint16_t time)
+fw_err_t ArmTimerModule(uint8_t taskId, uint16_t time)
 {
     uint8_t i;
     
@@ -100,12 +102,12 @@ fw_err_t fw_timer_arm(uint8_t taskId, uint16_t time)
 /**
  *******************************************************************************
  * @brief       timer component handler
- * @param       [in/out]  void
+ * @param       [in/out]  event    trigger event
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-void fw_timer_handler(uint8_t event)
+void PollTimerComponent(uint8_t event)
 {
     uint32_t tick;
     uint8_t i;
@@ -113,7 +115,7 @@ void fw_timer_handler(uint8_t event)
 //    log("tick handle! \n");
     
     _ATOM_CODE_BEGIN();
-    tick = fw_tick_get();
+    tick = GetTick();
     _ATOM_CODE_END();
     
     for( i=0; i<USE_FRAMEWORK_TIMER_NUM; i++ )
@@ -127,7 +129,7 @@ void fw_timer_handler(uint8_t event)
             else
             {
                 Timer[i].Status = 0;
-                fw_event_post(Timer[i].TaskId, FW_DELAY_EVENT);
+                PostEvent(Timer[i].TaskId, FW_DELAY_EVENT);
             }
         }
     }

@@ -76,8 +76,8 @@ enum _FRAMEWORK_TASK
     
     /** user define event */
     USER_CALL_TASK,
-    USER_KEY_TASK,
     USER_UART_RX_TASK,
+    USER_KEY_TASK,
     
     /** framework task */
     FW_TASK_MAX,
@@ -86,9 +86,10 @@ enum _FRAMEWORK_TASK
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_EVENT_COMPONENT
-extern void fw_event_init(void);
-extern inline void fw_event_post(uint8_t, uint8_t);
-extern inline void fw_event_poll(void);
+extern void InitEventComponent(void);
+extern fw_err_t RegisterEvent(uint8_t, void (*)(uint8_t));
+extern inline void PostEvent(uint8_t, uint8_t);
+extern inline void PollEvent(void);
 #endif
 
 /* Define to prevent recursive inclusion -------------------------------------*/

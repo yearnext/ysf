@@ -61,9 +61,10 @@ extern "C"
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_TIMER_COMPONENT
-extern void     fw_timer_init(void);
-extern fw_err_t fw_timer_arm(uint8_t, uint16_t);
-extern void     fw_timer_handler(uint8_t);
+extern void     InitTimerComponent(void);
+extern void     PollTimerComponent(uint8_t);
+
+extern fw_err_t ArmTimerModule(uint8_t, uint16_t);
 #endif
 
 /* Define to prevent recursive inclusion -------------------------------------*/

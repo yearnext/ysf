@@ -97,11 +97,11 @@ enum
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_SIGNAL_COMPONENT
-extern void fw_signal_init( void );
-extern void fw_signal_handler(uint8_t);
+extern void InitSignalComponent( void );
+extern void PollSignalComponent(uint8_t);
 
-extern fw_err_t fw_signal_register(uint8_t, uint8_t, uint8_t (*)(void));
-extern uint8_t fw_signal_info_get(uint8_t);
+extern fw_err_t RegisterSignal(uint8_t, uint8_t, uint8_t (*)(void));
+extern uint8_t GetSignalInfo(uint8_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
