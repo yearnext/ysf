@@ -122,21 +122,26 @@ extern fw_err_t ReadRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
 
 /**
  *******************************************************************************
- * @brief       define memory block
+ * @brief       define heap memory block
  *******************************************************************************
  */
-__ALIGN_HEAD(8)
-struct HeapBlock
+struct HeapMemoryBlock
 {
-    struct HeapBlock   *Last;
-	struct HeapBlock   *Next;
-	uint32_t           Size;
-    uint8_t            Status;
+__ALIGN_HEAD(8)
+    struct
+    {
+        struct HeapMemoryBlock *Last;
+        struct HeapMemoryBlock *Next;
+        uint32_t               Size;
+        uint8_t                Status;
+    }Management;
+__ALIGN_TAIL(8)  
+    
+    uint8_t data[16];
 };
-__ALIGN_TAIL(8)
 
-#define HEAP_MEMORY_ALIGNMENT_SIZE (sizeof(struct HeapBlock))
-#define HEAP_MEMORY_ALIGNMENT_POS  (4)
+#define HEAP_MEMORY_ALIGNMENT_SIZE (sizeof(struct HeapMemoryBlock))
+#define HEAP_MEMORY_ALIGNMENT_POS  (5)
 
 /**
  *******************************************************************************
@@ -147,8 +152,8 @@ struct HeapControlBlock
 {
     union
     {
-        void             *Buffer;
-        struct HeapBlock *Head; 
+        void                   *Buffer;
+        struct HeapMemoryBlock *Head; 
     };
     
     uint32_t Size;

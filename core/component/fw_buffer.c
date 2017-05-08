@@ -255,6 +255,30 @@ fw_err_t ReadRingBuffer( struct RingBuffer *rb, uint8_t *readBuffer, uint16_t re
 #if USE_MEMORY_MANAGEMENT_COMPONENT
 /**
  *******************************************************************************
+ * @brief       cal need memory size
+ * @param       [in/out]  size                memory control block
+ * @param       [in/out]  alignment           memory alignment size
+ * @return      [in/out]  value               need block size
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+uint32_t cal_need_memory_size(uint32_t useSize)
+{
+	uint32_t needSize = useSize + 16;
+    
+    needSize >>= HEAP_MEMORY_ALIGNMENT_POS;
+    
+    if( needSize % HEAP_MEMORY_ALIGNMENT_SIZE )
+    {
+        needSize++;
+    }
+
+	return needSize;
+}
+
+/**
+ *******************************************************************************
  * @brief       memory init
  * @param       [in/out]  **mem              memory control block
  * @param       [in/out]  *buffer            memory buffer address
@@ -268,16 +292,31 @@ fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uin
 {
     fw_assert(IS_PTR_NULL(mem));
     fw_assert(IS_PTR_NULL(heapHeadAddr));
-    fw_assert(heapSize < sizeof(struct HeapBlock));
+    fw_assert(heapSize < HEAP_MEMORY_ALIGNMENT_SIZE);
+    
+    struct HeapMemoryBlock *now, *last;
+    uint32_t blockSize = heapSize / HEAP_MEMORY_ALIGNMENT_SIZE;
+    uint32_t i;
     
     mem->Buffer       = heapHeadAddr;
-    mem->Size         = heapSize;
-    
-    mem->Head->Last   = NULL;
-    mem->Head->Next   = NULL;
-    mem->Head->Status = 0;
-    mem->Head->Size   = mem->Size - sizeof(struct HeapBlock);
+    mem->Size         = blockSize;
 
+    for(i=1, last=NULL, now=mem->Head; i<blockSize; i++)
+    {
+        now->Management.Last   = last;
+        now->Management.Next   = now + 1;
+        now->Management.Size   = 1;
+        now->Management.Status = 0;
+        
+        last = now;
+        now  = now->Management.Next;
+    }
+    
+    now->Management.Last   = last;
+    now->Management.Next   = NULL;
+    now->Management.Size   = 1;
+    now->Management.Status = 0;
+    
     return FW_ERR_NONE;
 }
 
@@ -302,32 +341,6 @@ fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uin
 
 /**
  *******************************************************************************
- * @brief       cal need memory size
- * @param       [in/out]  size                memory control block
- * @param       [in/out]  alignment           memory alignment size
- * @return      [in/out]  value               need block size
- * @note        None
- *******************************************************************************
- */
-__STATIC_INLINE
-uint32_t cal_need_memory_size(uint32_t useSize)
-{
-	uint32_t needSize = useSize + HEAP_MEMORY_ALIGNMENT_SIZE;
-    
-    if( needSize % HEAP_MEMORY_ALIGNMENT_SIZE )
-    {
-        needSize >>= HEAP_MEMORY_ALIGNMENT_POS;
-        
-        needSize++;
-        
-        needSize <<= HEAP_MEMORY_ALIGNMENT_POS;
-    }
-
-	return needSize;
-}
-
-/**
- *******************************************************************************
  * @brief       memory alloc 
  * @param       [in/out]  *mem                memory control block
  * @param       [in/out]  size                alloc memory size
@@ -343,31 +356,48 @@ fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *
     fw_assert(needSize == 0);
     
     uint32_t useSize = cal_need_memory_size(needSize);
-    struct HeapBlock *now = mem->Head;
-    struct HeapBlock *next;
+    uint32_t count   = 0;
     
-    while (1)
+    struct HeapMemoryBlock *now, *begin;
+    
+    now = mem->Head;
+    
+    while(1)
     {
-        if (!now->Status && now->Size >= useSize)
+        if(now == NULL)
         {
-            next = (struct HeapBlock *)( (uint8_t *)now + useSize - HEAP_MEMORY_ALIGNMENT_SIZE );
-            
-            next->Next = now->Next;
-            now->Next = next;
-            
-            
-            
-            now->Status = 1;
-            
-            *allocAddr = (void *)(now+1);
-            
-            return FW_ERR_NONE;
-        }
-        
-        if ( (now = now->Next) == NULL )
-        {
+            *allocAddr = NULL;
             break;
         }
+        else
+        {
+            if(now->Management.Status == 0)
+            {
+                if(count == 0)
+                {
+                    begin = now;
+                    count++;
+                }
+                else
+                {
+                    if(++count >= useSize)
+                    {
+                        *allocAddr = (void *)&begin->data;
+                        begin->Management.Next = begin + useSize;
+                        begin->Management.Size = useSize;
+                        begin->Management.Status = 1;
+                        
+                        return FW_ERR_NONE;
+                    }
+                }
+            }
+            else
+            {
+                count = 0;
+            }
+        }
+        
+        now = now->Management.Next;
     }
     
     return FW_ERR_FAIL;
@@ -387,6 +417,39 @@ fw_err_t FreeHeapMemory(struct HeapControlBlock *mem, void *freeBuffer)
 {
     fw_assert(IS_PTR_NULL(mem));
     fw_assert(IS_PTR_NULL(freeBuffer));
+    
+    struct HeapMemoryBlock *now, *last;
+    uint32_t i;
+    
+    last = NULL;
+    now = mem->Head;
+    
+    while(1)
+    {
+        if(now == NULL)
+        {
+            break;
+        }
+        else
+        {
+            if(now->data == freeBuffer && now->Management.Status)
+            {
+                for(i=now->Management.Size; i>0; i--)
+                {
+                    now->Management.Last = last;
+                    now->Management.Next = now + 1;
+                    now->Management.Size = 1;
+                    now->Management.Status = 0;
+                    
+                    last = now;
+                    now = now->Management.Next;
+                }
+            }
+        }
+        
+        last = now;
+        now = now->Management.Next;
+    }
     
     return FW_ERR_FAIL;
 }
