@@ -84,7 +84,7 @@ extern "C"
  * @brief       define timer cycle mode
  *******************************************************************************
  */
-#define TIMER_CYCLE_MODE     (-1)
+#define TIMER_CYCLE_MODE                                                    (-1)
 
 /* Exported types ------------------------------------------------------------*/
 /**

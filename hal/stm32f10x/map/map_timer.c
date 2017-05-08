@@ -16,7 +16,7 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       msp_timer.c                                                     *
+ * @file       MAP_timer.c                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-22                                                      *
@@ -64,7 +64,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-#if USE_MSP_TIMER_COMPONENT
+#if USE_MAP_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief      define tick timer handle function
@@ -645,7 +645,7 @@ hal_err_t _timer_cb_register(uint8_t id, void (*cb)(void *), void *param)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_Timer_Open(uint8_t id)
+hal_err_t MAP_Timer_Open(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -663,7 +663,7 @@ hal_err_t MSP_Timer_Open(uint8_t id)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_Timer_Close(uint8_t id)
+hal_err_t MAP_Timer_Close(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -681,7 +681,7 @@ hal_err_t MSP_Timer_Close(uint8_t id)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_Timer_Start(uint8_t id)
+hal_err_t MAP_Timer_Start(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -699,7 +699,7 @@ hal_err_t MSP_Timer_Start(uint8_t id)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_Timer_Stop(uint8_t id)
+hal_err_t MAP_Timer_Stop(uint8_t id)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -718,7 +718,7 @@ hal_err_t MSP_Timer_Stop(uint8_t id)
  * @note        the function is static inline type
  *******************************************************************************
  */
-hal_err_t MSP_TimerBase_Init(uint8_t id, uint32_t tick)
+hal_err_t MAP_TimerBase_Init(uint8_t id, uint32_t tick)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     
@@ -739,7 +739,7 @@ hal_err_t MSP_TimerBase_Init(uint8_t id, uint32_t tick)
  * @note        the function is static inline type
  *******************************************************************************
  */
-hal_err_t MSP_TimerBaseHandle_Register(uint8_t id, void (*cb)(void *), void *param)
+hal_err_t MAP_TimerBaseHandle_Register(uint8_t id, void (*cb)(void *), void *param)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     hal_assert(IS_PTR_NULL(cb));
@@ -761,7 +761,7 @@ hal_err_t MSP_TimerBaseHandle_Register(uint8_t id, void (*cb)(void *), void *par
  * @note        the function is static inline type
  *******************************************************************************
  */
-hal_err_t MSP_TimerBase_Arm(uint8_t id, uint32_t tick, void (*cb)(void *), void *param)
+hal_err_t MAP_TimerBase_Arm(uint8_t id, uint32_t tick, void (*cb)(void *), void *param)
 {
     hal_assert(IS_TIMER_ID_INVAILD(id));
     

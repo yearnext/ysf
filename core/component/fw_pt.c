@@ -95,24 +95,6 @@ fw_err_t _pt_arm(struct TaskBlock *task, struct ProtoThreads *pt)
 
 /**
  *******************************************************************************
- * @brief       enable protothreads
- * @param       [in/out]  *pt                       protothreads block
- * @param       [in/out]  pt_thread                 protothreads function
- * @return      [in/out]  FW_ERR_INVAILD_PTR       enable failed
- * @return      [in/out]  FW_ERR_FAIL              enable failed
- * @return      [in/out]  FW_ERR_NONE              enable success
- * @note        None
- *******************************************************************************
- */
-fw_err_t _pt_ex_arm(struct ProtoThreads *pt)
-{
-    fw_assert(IS_PTR_NULL(pt));
-
-    return CreateMessageHandleTask(NULL, pt->Thread, pt, FW_EVENT_NONE);
-}
- 
-/**
- *******************************************************************************
  * @brief       disable protothreads
  * @param       [in/out]  *pt                       protothreads block
  * @return      [in/out]  FW_ERR_INVAILD_PTR       disable failed

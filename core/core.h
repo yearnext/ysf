@@ -121,13 +121,13 @@ extern "C"
  */  
 #if USE_MEMORY_COMPONENT
 #define fw_memory_init                       Core.Memory.Init
-#define fw_memory_malloc                     Core.Memory.Malloc
-#define fw_memory_free                       Core.Memory.Free
+#define fw_malloc                            Core.Memory.Malloc
+#define fw_free                              Core.Memory.Free
 #define fw_memory_is_in                      Core.Memory.IsIn
 #else
 #define fw_memory_init                       
-#define fw_memory_malloc                     
-#define fw_memory_free                      
+#define fw_malloc                     
+#define fw_free                      
 #define fw_memory_is_in                    
 #endif
 
@@ -242,7 +242,6 @@ extern "C"
 #define fw_pt_init                           _pt_init
 #define fw_pt_deinit                         _pt_deinit
 #define fw_pt_arm                            _pt_arm
-#define fw_pt_arm_ex                         _pt_arm_ex
 #define fw_pt_disarm                         _pt_disarm
 #define fw_pt_begin                          _pt_begin
 #define fw_pt_entry                          _pt_entry
@@ -255,7 +254,6 @@ extern "C"
 #define fw_pt_init
 #define fw_pt_deinit
 #define fw_pt_arm
-#define fw_pt_arm_ex
 #define fw_pt_disarm
 #define fw_pt_begin
 #define fw_pt_entry
@@ -271,7 +269,7 @@ extern "C"
  * @brief        define hal gpio interface
  *******************************************************************************
  */
-#if USE_MSP_GPIO_COMPONENT
+#if USE_MAP_GPIO_COMPONENT
 #define hal_gpio_open                        Hal.GPIO.Open
 #define hal_gpio_close                       Hal.GPIO.Close
 #define hal_gpio_init                        Hal.GPIO.Init
@@ -300,7 +298,7 @@ extern "C"
  * @brief        define hal timer interface
  *******************************************************************************
  */
-#if USE_MSP_TIMER_COMPONENT
+#if USE_MAP_TIMER_COMPONENT
 #define hal_timer_open                       Hal.Timer.Open
 #define hal_timer_close                      Hal.Timer.Close 
 #define hal_timer_start                      Hal.Timer.Start

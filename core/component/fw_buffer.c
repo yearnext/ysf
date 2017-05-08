@@ -299,7 +299,7 @@ fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uin
     uint32_t i;
     
     mem->Buffer       = heapHeadAddr;
-    mem->Size         = blockSize;
+    mem->Size         = heapSize;
 
     for(i=1, last=NULL, now=mem->Head; i<blockSize; i++)
     {

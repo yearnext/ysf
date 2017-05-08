@@ -16,7 +16,7 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       msp_gpio.c                                                      *
+ * @file       MAP_gpio.c                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-04                                                      *
@@ -124,7 +124,7 @@
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-#if USE_MSP_GPIO_COMPONENT
+#if USE_MAP_GPIO_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable gpio
@@ -314,7 +314,7 @@ uint8_t _get_output(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_Open(uint8_t port)
+hal_err_t MAP_GPIO_Open(uint8_t port)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
 
@@ -333,7 +333,7 @@ hal_err_t MSP_GPIO_Open(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_Close(uint8_t port)
+hal_err_t MAP_GPIO_Close(uint8_t port)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     
@@ -353,7 +353,7 @@ hal_err_t MSP_GPIO_Close(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_Init(uint8_t port, uint8_t pin, uint8_t mode)
+hal_err_t MAP_GPIO_Init(uint8_t port, uint8_t pin, uint8_t mode)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -374,7 +374,7 @@ hal_err_t MSP_GPIO_Init(uint8_t port, uint8_t pin, uint8_t mode)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_Deinit(uint8_t port, uint8_t pin)
+hal_err_t MAP_GPIO_Deinit(uint8_t port, uint8_t pin)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -394,7 +394,7 @@ hal_err_t MSP_GPIO_Deinit(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_Set(uint8_t port, uint8_t pin)
+hal_err_t MAP_GPIO_Set(uint8_t port, uint8_t pin)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -414,7 +414,7 @@ hal_err_t MSP_GPIO_Set(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_Clr(uint8_t port, uint8_t pin)
+hal_err_t MAP_GPIO_Clr(uint8_t port, uint8_t pin)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -435,7 +435,7 @@ hal_err_t MSP_GPIO_Clr(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_GetInputStatus(uint8_t port, uint8_t pin, uint8_t *status)
+hal_err_t MAP_GPIO_GetInputStatus(uint8_t port, uint8_t pin, uint8_t *status)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -456,7 +456,7 @@ hal_err_t MSP_GPIO_GetInputStatus(uint8_t port, uint8_t pin, uint8_t *status)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_GetOutputStatus(uint8_t port, uint8_t pin, uint8_t *status)
+hal_err_t MAP_GPIO_GetOutputStatus(uint8_t port, uint8_t pin, uint8_t *status)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -476,7 +476,7 @@ hal_err_t MSP_GPIO_GetOutputStatus(uint8_t port, uint8_t pin, uint8_t *status)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_Toggle(uint8_t port, uint8_t pin)
+hal_err_t MAP_GPIO_Toggle(uint8_t port, uint8_t pin)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
@@ -504,7 +504,7 @@ hal_err_t MSP_GPIO_Toggle(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-hal_err_t MSP_GPIO_OutputCmd(uint8_t port, uint8_t pin, uint8_t cmd)
+hal_err_t MAP_GPIO_OutputCmd(uint8_t port, uint8_t pin, uint8_t cmd)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));

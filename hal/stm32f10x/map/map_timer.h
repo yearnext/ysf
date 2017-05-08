@@ -16,7 +16,7 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       msp_timer.h                                                     *
+ * @file       map_timer.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-04                                                      *
@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F10X_MSP_TIMER_H__
-#define __STM32F10X_MSP_TIMER_H__
+#ifndef __STM32F10X_MAP_TIMER_H__
+#define __STM32F10X_MAP_TIMER_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -59,9 +59,9 @@ extern "C"
  */
 #ifdef USE_MCU_TIMER_COMPONENT
 #if USE_MCU_TIMER_COMPONENT
-    #define USE_MSP_TIMER_COMPONENT                                          (1)
+    #define USE_MAP_TIMER_COMPONENT                                          (1)
 #else
-    #define USE_MSP_TIMER_COMPONENT                                          (0)
+    #define USE_MAP_TIMER_COMPONENT                                          (0)
 #endif
     
 /**
@@ -72,7 +72,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-    #define USE_MSP_TIMER_COMPONENT                                          (1)
+    #define USE_MAP_TIMER_COMPONENT                                          (1)
 #endif
  
 /**
@@ -114,6 +114,29 @@ struct Hal_Timer_Block
     uint32_t Period;
 };
 
+#if USE_MAP_TIMER_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       define msp timer interface
+ *******************************************************************************
+ */
+typedef struct
+{    
+    hal_err_t (*Open)(uint8_t);
+    hal_err_t (*Close)(uint8_t);
+    
+    hal_err_t (*Start)(uint8_t);
+    hal_err_t (*Stop)(uint8_t);
+    
+    struct
+    {
+        hal_err_t (*Init)(uint8_t, uint32_t);
+        hal_err_t (*HandleRegister)(uint8_t, void (*)(void *), void*);
+        hal_err_t (*Arm)(uint8_t, uint32_t, void (*)(void *), void*);
+    }Base;
+}MAP_Timer_Interface;
+#endif
+
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -121,14 +144,14 @@ struct Hal_Timer_Block
  * @brief       define msp timer api
  *******************************************************************************
  */
-#if USE_MSP_TIMER_COMPONENT
-extern hal_err_t MSP_Timer_Open(uint8_t);
-extern hal_err_t MSP_Timer_Close(uint8_t);
-extern hal_err_t MSP_Timer_Start(uint8_t);
-extern hal_err_t MSP_Timer_Stop(uint8_t);
-extern hal_err_t MSP_TimerBase_Init(uint8_t, uint32_t);
-extern hal_err_t MSP_TimerBaseHandle_Register(uint8_t, void (*)(void *), void*);
-extern hal_err_t MSP_TimerBase_Arm(uint8_t, uint32_t, void (*)(void *), void*);
+#if USE_MAP_TIMER_COMPONENT
+extern hal_err_t MAP_Timer_Open(uint8_t);
+extern hal_err_t MAP_Timer_Close(uint8_t);
+extern hal_err_t MAP_Timer_Start(uint8_t);
+extern hal_err_t MAP_Timer_Stop(uint8_t);
+extern hal_err_t MAP_TimerBase_Init(uint8_t, uint32_t);
+extern hal_err_t MAP_TimerBaseHandle_Register(uint8_t, void (*)(void *), void*);
+extern hal_err_t MAP_TimerBase_Arm(uint8_t, uint32_t, void (*)(void *), void*);
 #endif
 
 /**

@@ -32,49 +32,49 @@
      * @brief   device port define
      *******************************************************************************
      */  
-    static struct HalGPIOBlock Led1 = 
-    {
+	static struct Hal_GPIO_Block Led1 = 
+	{
 	    .Port = MCU_PORT_D,
 	    .Pin  = MCU_PIN_13,
-	    .Mode = GPIO_PIN_O_PP_LS_MODE,
-    };
-    
-    static struct HalGPIOBlock Led2 = 
-    {
+	    .Mode = GPIO_MODE_PARAM(GPIO_LOW_SPEED_OUTPUT, GPIO_OUT_PUSH_PULL_MODE),
+	};
+	
+	static struct Hal_GPIO_Block Led2 = 
+	{
 	    .Port = MCU_PORT_G,
 	    .Pin  = MCU_PIN_14,
-	    .Mode = GPIO_PIN_O_PP_LS_MODE,
-    };
-    
-    static struct HalGPIOBlock Key1 = 
-    {
+	    .Mode = GPIO_MODE_PARAM(GPIO_LOW_SPEED_OUTPUT, GPIO_OUT_PUSH_PULL_MODE),
+	};
+	
+	static struct Hal_GPIO_Block Key1 = 
+	{
 	    .Port = MCU_PORT_E,
 	    .Pin  = MCU_PIN_0,
-	    .Mode = GPIO_PIN_I_UD_MODE,
-    };
-    
-    static struct HalGPIOBlock Key2 = 
-    {
+	    .Mode = GPIO_MODE_PARAM(GPIO_INPUT, GPIO_IN_PULL_UP_MODE),
+	};
+	
+	static struct Hal_GPIO_Block Key2 = 
+	{
 	    .Port = MCU_PORT_C,
 	    .Pin  = MCU_PIN_13,
-	    .Mode = GPIO_PIN_I_UD_MODE,
-    };
+	    .Mode = GPIO_MODE_PARAM(GPIO_INPUT, GPIO_IN_PULL_UP_MODE),
+	};
     
     /**
      *******************************************************************************
      * @brief   timer variable define
      *******************************************************************************
      */ 
-    static struct TimerBlock   *led1Timer;
-    static struct ProtoThreads Led2Threads;
+	static struct TimerBlock   led1Timer;
+	static struct ProtoThreads Led2Threads;
     
     /**
      *******************************************************************************
      * @brief   signal variable define
      *******************************************************************************
      */
-    static struct SignalBlock  KeySignal1;
-    static struct SignalBlock *KeySignal2;
+    static struct SignalBlock KeySignal1;
+    static struct SignalBlock KeySignal2;
     
     ///* Exported variables --------------------------------------------------------*/
     ///* Private functions ---------------------------------------------------------*/
@@ -86,7 +86,7 @@
      */
     static fw_err_t led1_blink_handler( void *param )
     {   
-		Core.Hal.GPIO.Output.Toggle(&Led1);
+		Hal.GPIO.Output.Toggle(Led1.Port, Led1.Mode);
 
 	    return FW_ERR_NONE;
     }
@@ -98,16 +98,16 @@
      */
     static _PT_THREAD(bsp_led2_blink)
     {
-	    _pt_begin();
+		fw_pt_begin();
 	    
 	    while(1)
 	    {
-		    Core.Hal.GPIO.Output.Toggle(&Led2);
-		    
-		    _pt_delay(250); 
+	        Hal.GPIO.Output.Toggle(Led2.Port, Led2.Pin);
+	        
+	        fw_pt_delay(250); 
 	    }
 	    
-	    _pt_end();
+	    fw_pt_end();
     }
     
     /**
@@ -117,24 +117,24 @@
      */
     static void app_led1_init(void)
     {
-	    led1Timer = Core.Component.Timer.CallBackExInit(led1_blink_handler, NULL);
-	    Core.Component.Timer.Arm(led1Timer, TIME_2_TICK(1000), TIMER_CYCLE_MODE);
+	    Core.Timer.Init.Simple(&led1Timer, led1_blink_handler);
+	    Core.Timer.Arm(&led1Timer, CAL_SET_TIME(1000), TIMER_CYCLE_MODE);
     }
     
     static void app_led1_deinit(void)
     {
-   		Core.Component.Timer.Disarm(led1Timer);
+   		Core.Timer.Disarm(&led1Timer);
     }
     
     static void app_led2_init(void)
     {
-	    _pt_init(&Led2Threads, bsp_led2_blink);
-	    _pt_ex_arm(&Led2Threads);
+		fw_pt_init(&Led2Threads, bsp_led2_blink);
+		fw_pt_arm(NULL, &Led2Threads);
     }
     
     static void app_led2_deinit(void)
     {
-    	_pt_disarm(&Led2Threads);
+    	fw_pt_disarm(&Led2Threads);
     }
     
     /**
@@ -146,7 +146,7 @@
     {
 	    bool status = false;
 	    
-	    Core.Hal.GPIO.Input.Get(&Key1, &status);
+	    Hal.GPIO.Input.Get(Key1.Port, Key1.Pin, &status);
 	    
 	    return status;
     }
@@ -160,7 +160,7 @@
     {
 	    bool status = false;
 	    
-	    Core.Hal.GPIO.Input.Get(&Key2, &status);
+	    Hal.GPIO.Input.Get(Key2.Port, Key2.Pin, &status);
 	    
 	    return status;
     }
@@ -179,8 +179,8 @@
 			    app_led2_deinit();
 		    	break;
 		    case SIGNAL_STATUS_PRESS:
-			    Core.Hal.GPIO.Output.Clr(&Led1);
-			    Core.Hal.GPIO.Output.Clr(&Led1);
+				Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
+				Hal.GPIO.Output.Clr(Led2.Port, Led2.Pin);
 		    	break;
 		    case SIGNAL_STATUS_RELEASE_EDGE:
 			    app_led1_init();
@@ -207,8 +207,8 @@
 			    app_led2_deinit();
 			    break;
 		    case SIGNAL_STATUS_PRESS:
-			    Core.Hal.GPIO.Output.Set(&Led1);
-			    Core.Hal.GPIO.Output.Set(&Led2);
+				Hal.GPIO.Output.Set(Led1.Port, Led1.Pin);
+				Hal.GPIO.Output.Set(Led2.Port, Led2.Pin);
 			    break;
 		    case SIGNAL_STATUS_RELEASE_EDGE:
 			    app_led1_init();
@@ -228,11 +228,11 @@
      */
     static void bsp_led_init( void )
     {
-	    Core.Hal.GPIO.Enable(&Led1);
-	    Core.Hal.GPIO.Output.Init(&Led1);
-	    
-	    Core.Hal.GPIO.Enable(&Led2);
-	    Core.Hal.GPIO.Output.Init(&Led2);
+	    Hal.GPIO.Open(Led1.Port);
+	    Hal.GPIO.Init(Led1.Port, Led1.Pin, Led1.Mode);
+	
+	    Hal.GPIO.Open(Led2.Port);
+	    Hal.GPIO.Init(Led2.Port, Led2.Pin, Led2.Mode);
     }
     
     /**
@@ -242,18 +242,13 @@
      */
     static void bsp_key_init(void)
     {
-	    Core.Hal.GPIO.Enable(&Key1);
-	    Core.Hal.GPIO.Input.Init(&Key1);
-	    Core.Component.Signal.Arm(&KeySignal1, key1_scan, key1_handler);
+	    Hal.GPIO.Open(Key1.Port);
+	    Hal.GPIO.Init(Key1.Port, Key1.Pin, Key1.Mode);
+	    Core.Signal.Arm(&KeySignal1, key1_scan, key1_handler);
 	    
-	    Core.Hal.GPIO.Enable(&Key2);
-	    Core.Hal.GPIO.Input.Init(&Key2);
-	    KeySignal2 = Core.Component.Signal.ArmEx(key2_scan, key2_handler);
-	    
-	    if( KeySignal2 == NULL )
-	    {
-	    	while(1);
-	    }
+	    Hal.GPIO.Open(Key2.Port);
+	    Hal.GPIO.Init(Key2.Port, Key2.Pin, Key2.Mode);
+	    Core.Signal.Arm(&KeySignal2, key2_scan, key2_handler);
     }
     
     /**

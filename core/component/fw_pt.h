@@ -154,26 +154,15 @@ extern "C"
  *******************************************************************************
  */
 #if defined(USE_TIMER_COMPONENT) && USE_TIMER_COMPONENT
-#if defined(USE_MEMORY_COMPONENT) && USE_MEMORY_COMPONENT
-#define _pt_delay(tick)         do                                                                           \
-                                {                                                                            \
-                                    struct TimerBlock *timer;                                                \
-                                    timer = InitMessageHandleExTimer(pt->Thread, ptTask, FW_EVENT_DELAY);    \
-                                    ArmTimerModule(timer, TIME_2_TICK(tick), 1);                             \
-                                    evt = FW_EVENT_NONE;                                                     \
-                                    _pt_wait(evt == FW_EVENT_DELAY);                                         \
-                                }while(0)
-#else
-#define _pt_delay(tick)         do                                                                           \
-                                {                                                                            \
-                                    InitMessageHandleTimer(&pt->Timer, pt->Thread, ptTask, FW_EVENT_DELAY);  \
-                                    ArmTimerModule(&pt->timer, TIME_2_TICK(tick), 1);                        \
-                                    evt = FW_EVENT_NONE;                                                     \
-                                    _pt_wait(evt == FW_EVENT_DELAY);                                         \
+#define _pt_delay(tick)         do                                                                                \
+                                {                                                                                 \
+                                    InitMessageHandleTimerModule(&pt->Timer, pt->Thread, ptTask, FW_EVENT_DELAY); \
+                                    ArmTimerModule(&pt->Timer, CAL_SET_TIME(tick), 1);                            \
+                                    evt = FW_EVENT_NONE;                                                          \
+                                    _pt_wait(evt == FW_EVENT_DELAY);                                              \
                                 }while(0)                        
-#endif
 #else
- #define _pt_delay(tick)                            
+#define _pt_delay(tick)                            
 #endif
                                 
 /**
@@ -199,10 +188,8 @@ extern "C"
 struct ProtoThreads
 {
     fw_err_t (*Thread)(void*, uint16_t);
-    
-#if !defined(USE_MEMORY_COMPONENT) && !USE_MEMORY_COMPONENT
+
     struct TimerBlock Timer;
-#endif
     
     uint16_t State;
     bool     UseStatus;
@@ -217,7 +204,6 @@ struct ProtoThreads
 #if defined(USE_PT_COMPONENT) && USE_PT_COMPONENT
 extern fw_err_t _pt_init(struct ProtoThreads*, _PT_THREAD_NAME);
 extern fw_err_t _pt_arm(struct TaskBlock*, struct ProtoThreads*);
-extern fw_err_t _pt_ex_arm(struct ProtoThreads*);
 extern fw_err_t _pt_disarm(struct ProtoThreads*);
 #endif
 

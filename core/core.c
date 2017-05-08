@@ -141,27 +141,27 @@ const struct HalInterface Hal =
 {
     .Version                                           = _HAL_VERSION,
     
-#if USE_MSP_GPIO_COMPONENT
-    .GPIO.Open                                         = MSP_GPIO_Open,
-    .GPIO.Close                                        = MSP_GPIO_Close,
-    .GPIO.Init                                         = MSP_GPIO_Init,
-    .GPIO.Fini                                         = MSP_GPIO_Deinit,
-    .GPIO.Input.Get                                    = MSP_GPIO_GetInputStatus,
-    .GPIO.Output.Get                                   = MSP_GPIO_GetOutputStatus,
-    .GPIO.Output.Set                                   = MSP_GPIO_Set,
-    .GPIO.Output.Clr                                   = MSP_GPIO_Clr,
-    .GPIO.Output.Toggle                                = MSP_GPIO_Toggle,
-    .GPIO.Output.Cmd                                   = MSP_GPIO_OutputCmd,
+#if USE_MAP_GPIO_COMPONENT
+    .GPIO.Open                                         = MAP_GPIO_Open,
+    .GPIO.Close                                        = MAP_GPIO_Close,
+    .GPIO.Init                                         = MAP_GPIO_Init,
+    .GPIO.Fini                                         = MAP_GPIO_Deinit,
+    .GPIO.Input.Get                                    = MAP_GPIO_GetInputStatus,
+    .GPIO.Output.Get                                   = MAP_GPIO_GetOutputStatus,
+    .GPIO.Output.Set                                   = MAP_GPIO_Set,
+    .GPIO.Output.Clr                                   = MAP_GPIO_Clr,
+    .GPIO.Output.Toggle                                = MAP_GPIO_Toggle,
+    .GPIO.Output.Cmd                                   = MAP_GPIO_OutputCmd,
 #endif  
 
-#if USE_MSP_TIMER_COMPONENT
-    .Timer.Open                                        = MSP_Timer_Open,
-    .Timer.Close                                       = MSP_Timer_Close,
-    .Timer.Start                                       = MSP_Timer_Start,
-    .Timer.Stop                                        = MSP_Timer_Stop,
-    .Timer.Base.Init                                   = MSP_TimerBase_Init,
-    .Timer.Base.Arm                                    = MSP_TimerBase_Arm,
-    .Timer.Base.HandleRegister                         = MSP_TimerBaseHandle_Register,
+#if USE_MAP_TIMER_COMPONENT
+    .Timer.Open                                        = MAP_Timer_Open,
+    .Timer.Close                                       = MAP_Timer_Close,
+    .Timer.Start                                       = MAP_Timer_Start,
+    .Timer.Stop                                        = MAP_Timer_Stop,
+    .Timer.Base.Init                                   = MAP_TimerBase_Init,
+    .Timer.Base.Arm                                    = MAP_TimerBase_Arm,
+    .Timer.Base.HandleRegister                         = MAP_TimerBaseHandle_Register,
 #endif
 }; 
 

@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       msp_gpio.h                                                      *
+ * @file       map_gpio.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-21                                                      *
- * @brief      msp gpio head files                                             *
+ * @brief      map gpio head files                                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -36,8 +36,8 @@
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F1XX_MSP_GPIO_H__
-#define __STM32F1XX_MSP_GPIO_H__
+#ifndef __STM32F1XX_MAP_GPIO_H__
+#define __STM32F1XX_MAP_GPIO_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -59,9 +59,9 @@ extern "C"
  */
 #ifdef USE_MCU_GPIO_COMPONENT
 #if USE_MCU_GPIO_COMPONENT
-    #define USE_MSP_GPIO_COMPONENT                                           (1) 
+    #define USE_MAP_GPIO_COMPONENT                                           (1) 
 #else
-    #define USE_MSP_GPIO_COMPONENT                                           (0)
+    #define USE_MAP_GPIO_COMPONENT                                           (0)
 #endif
 
 /**
@@ -72,7 +72,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-    #define USE_MSP_GPIO_COMPONENT                                           (1)
+    #define USE_MAP_GPIO_COMPONENT                                           (1)
 #endif
  
 /**
@@ -142,12 +142,41 @@ extern "C"
  * @brief      define map gpio
  *******************************************************************************
  */    
-struct MSP_GPIO_BLOCK
+struct Hal_GPIO_Block
 {
     uint8_t Port;
     uint8_t Pin;
     uint8_t Mode;
 };
+
+/**
+ *******************************************************************************
+ * @brief      define msp gpio interface
+ *******************************************************************************
+ */
+#if USE_MAP_GPIO_COMPONENT
+typedef struct
+{
+    hal_err_t          (*Open)(uint8_t);
+    hal_err_t          (*Close)(uint8_t);
+    hal_err_t          (*Init)(uint8_t, uint8_t, uint8_t);
+    hal_err_t          (*Fini)(uint8_t, uint8_t);
+    
+	struct
+	{
+        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
+	}Input;
+	
+	struct
+	{
+        hal_err_t      (*Get)(uint8_t, uint8_t, uint8_t*);
+        hal_err_t      (*Set)(uint8_t, uint8_t);
+        hal_err_t      (*Clr)(uint8_t, uint8_t);
+        hal_err_t      (*Toggle)(uint8_t, uint8_t);
+        hal_err_t      (*Cmd)(uint8_t, uint8_t, uint8_t);
+	}Output;
+}MAP_GPIO_Interface;
+#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -156,17 +185,17 @@ struct MSP_GPIO_BLOCK
  * @brief      define msp gpio api
  *******************************************************************************
  */   
-#if USE_MSP_GPIO_COMPONENT
-extern hal_err_t MSP_GPIO_Open(uint8_t);
-extern hal_err_t MSP_GPIO_Close(uint8_t);
-extern hal_err_t MSP_GPIO_Init(uint8_t, uint8_t, uint8_t);
-extern hal_err_t MSP_GPIO_Deinit(uint8_t, uint8_t);
-extern hal_err_t MSP_GPIO_Set(uint8_t, uint8_t);
-extern hal_err_t MSP_GPIO_Clr(uint8_t, uint8_t);
-extern hal_err_t MSP_GPIO_GetInputStatus(uint8_t, uint8_t, uint8_t*);
-extern hal_err_t MSP_GPIO_GetOutputStatus(uint8_t, uint8_t, uint8_t*);
-extern hal_err_t MSP_GPIO_Toggle(uint8_t, uint8_t);
-extern hal_err_t MSP_GPIO_OutputCmd(uint8_t, uint8_t, uint8_t);
+#if USE_MAP_GPIO_COMPONENT
+extern hal_err_t MAP_GPIO_Open(uint8_t);
+extern hal_err_t MAP_GPIO_Close(uint8_t);
+extern hal_err_t MAP_GPIO_Init(uint8_t, uint8_t, uint8_t);
+extern hal_err_t MAP_GPIO_Deinit(uint8_t, uint8_t);
+extern hal_err_t MAP_GPIO_Set(uint8_t, uint8_t);
+extern hal_err_t MAP_GPIO_Clr(uint8_t, uint8_t);
+extern hal_err_t MAP_GPIO_GetInputStatus(uint8_t, uint8_t, uint8_t*);
+extern hal_err_t MAP_GPIO_GetOutputStatus(uint8_t, uint8_t, uint8_t*);
+extern hal_err_t MAP_GPIO_Toggle(uint8_t, uint8_t);
+extern hal_err_t MAP_GPIO_OutputCmd(uint8_t, uint8_t, uint8_t);
 #endif
 
 #ifdef __cplusplus
