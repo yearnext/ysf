@@ -520,6 +520,7 @@ void signal_walk(void)
 {
     struct SignalBlock *now = NULL;
     
+    // init poll process
     if(SignalPollBlock.Flag == 0)
     {
         SignalPollBlock.Head = GetSingleLinkListHead(SignalControlBlock);
@@ -527,10 +528,12 @@ void signal_walk(void)
     }
     else
     {
+        // check poll is finish
         if(IsSingleLinkListHead(SignalControlBlock, SignalPollBlock.Head))
         {
             if(!--SignalPollBlock.Count)
             {
+                // exit poll
                 SignalPollBlock.Flag = 0;
                 SignalPollBlock.Head = NULL;
                 
@@ -539,10 +542,12 @@ void signal_walk(void)
         }
     }
     
+    // get now signal module
     now = signal_pop();
     
     if(SignalPollBlock.Flag)
     {
+        // check now signal is enable
         if(IS_SIGNAL_ENABLE(now))
         {
             signal_judge(now);
