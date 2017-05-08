@@ -215,7 +215,7 @@
 			    app_led2_init();
 			    break;
 		    default:
-		    	break;
+				break;
 	    }
 	    
 	    return FW_ERR_NONE;
