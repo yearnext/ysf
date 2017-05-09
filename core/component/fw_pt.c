@@ -86,7 +86,6 @@ fw_err_t _pt_init(struct ProtoThreads *pt, _PT_THREAD_NAME)
 fw_err_t _pt_arm(struct TaskBlock *task, struct ProtoThreads *pt)
 {
     fw_assert(IS_PTR_NULL(pt));
-    fw_assert(IS_PTR_NULL(task));
     
     CreateMessageHandleTask(task, pt->Thread, pt, FW_EVENT_NONE);
     

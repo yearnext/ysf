@@ -75,8 +75,9 @@ fw_err_t InitDebugComponent( void )
 void AssertFailed(uint8_t* file, uint32_t line)
 {
 __ATOM_ACTIVE_BEGIN();
-    while(1);
-//__ATOM_ACTIVE_END();
+    uint8_t DebugConfigFlag=1;
+    while(DebugConfigFlag);
+__ATOM_ACTIVE_END();
 }
 #endif
 
