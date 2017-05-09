@@ -226,9 +226,7 @@ void StartFrameworkCore(void)
     while(1)
     {
 #if USE_TASK_COMPONENT
-        __ATOM_ACTIVE_BEGIN();
         fw_task_poll();
-        __ATOM_ACTIVE_END();
 #endif
     }
 }

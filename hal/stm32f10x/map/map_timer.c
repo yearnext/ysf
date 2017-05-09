@@ -59,8 +59,8 @@
 #define STM32F10X_TIMER7_RCC_POS                                             (5)
 #define STM32F10X_TIMER8_RCC_POS                                            (11)
 
-#define STM32F10X_TIMER0_START_POS                                           (1)
-#define STM32F10X_TIMER0_STOP_POS                                            (1)
+#define STM32F10X_TIMER0_START_POS                                           (0)
+#define STM32F10X_TIMER0_STOP_POS                                            (0)
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -546,7 +546,7 @@ hal_err_t _start(uint8_t id)
             break;    
         default:
             return HAL_ERR_FAIL;
-//            break;
+            break;
     }
 
     return HAL_ERR_NONE;

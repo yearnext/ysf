@@ -109,7 +109,7 @@
  * @brief      define mcu address
  *******************************************************************************
  */
-#define GPIO_RCC_CONTROL_POS                                                 (4)
+#define GPIO_RCC_CONTROL_POS                                                 (2)
 #define GPIO_PIN_CONFIG_POS                                                  (1)
 #define GPIO_PIN_LOW_VALUE                                                 (0UL)
 #define STM32F1XX_GPIO_RORT_OFFSET (GPIOB_BASE - GPIOA_BASE)                               
@@ -136,7 +136,7 @@
 __STATIC_INLINE
 void _open(uint8_t port)
 {
-    _SET_BIT(RCC->APB2ENR, GPIO_RCC_CONTROL_POS << port);
+    _SET_BIT(RCC->APB2ENR, GPIO_RCC_CONTROL_POS + port);
 }
 
 /**
@@ -150,8 +150,8 @@ void _open(uint8_t port)
 __STATIC_INLINE
 void _close(uint8_t port)
 {
-    _SET_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS << port);
-    _CLR_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS << port);
+    _SET_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS + port);
+    _CLR_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS + port);
 }
 
 __STATIC_INLINE

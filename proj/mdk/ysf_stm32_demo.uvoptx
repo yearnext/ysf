@@ -117,6 +117,11 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+          <Key>DLGUARM</Key>
+          <Name>^</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
           <Key>UL2CM3</Key>
           <Name>UL2CM3(-S0 -C0 -P0 )  -FN1 -FC1000 -FD20000000 -FF0STM32F10x_512 -FL080000 -FS08000000 -FP0($$Device:STM32F103ZE$Flash\STM32F10x_512.FLM)</Name>
         </SetRegEntry>
@@ -128,7 +133,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
-          <Name>(1010=598,100,974,657,0)(1007=-1,-1,-1,-1,0)(1008=883,395,1259,631,0)(1009=287,40,531,588,0)(100=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(1011=-1,-1,-1,-1,0)(180=-1,-1,-1,-1,0)(120=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(123=-1,-1,-1,-1,0)(124=-1,-1,-1,-1,0)(125=-1,-1,-1,-1,0)(126=-1,-1,-1,-1,0)(140=-1,-1,-1,-1,0)(240=-1,-1,-1,-1,0)(190=-1,-1,-1,-1,0)(200=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(133=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(210=-1,-1,-1,-1,0)(211=-1,-1,-1,-1,0)(220=-1,-1,-1,-1,0)(221=-1,-1,-1,-1,0)(230=-1,-1,-1,-1,0)(231=-1,-1,-1,-1,0)(232=-1,-1,-1,-1,0)(233=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)</Name>
+          <Name>(1010=598,100,974,657,0)(1007=-1,-1,-1,-1,0)(1008=883,395,1259,631,0)(1009=287,40,531,588,0)(100=-1,-1,-1,-1,0)(110=197,60,417,520,0)(111=1030,308,1250,768,1)(1011=-1,-1,-1,-1,0)(180=-1,-1,-1,-1,0)(120=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(123=286,302,707,707,0)(124=-1,-1,-1,-1,0)(125=-1,-1,-1,-1,0)(126=476,363,897,768,0)(140=-1,-1,-1,-1,0)(240=-1,-1,-1,-1,0)(190=-1,-1,-1,-1,0)(200=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(133=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(210=-1,-1,-1,-1,0)(211=-1,-1,-1,-1,0)(220=-1,-1,-1,-1,0)(221=-1,-1,-1,-1,0)(230=-1,-1,-1,-1,0)(231=-1,-1,-1,-1,0)(232=-1,-1,-1,-1,0)(233=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -150,9 +155,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>221</LineNumber>
+          <LineNumber>296</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134224106</Address>
+          <Address>134224808</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -161,30 +166,30 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\..\demo\demo.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../demo/demo.c\221</Expression>
+          <Expression>\\ysf_stm32_demo\../../demo/demo.c\296</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>298</LineNumber>
+          <LineNumber>79</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134224244</Address>
+          <Address>134219014</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\demo\demo.c</Filename>
+          <Filename>..\..\core\component\fw_debug.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../demo/demo.c\298</Expression>
+          <Expression>\\ysf_stm32_demo\../../core/component/fw_debug.c\79</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>103</LineNumber>
+          <LineNumber>104</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134224204</Address>
+          <Address>134224770</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -193,44 +198,44 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\..\demo\demo.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../demo/demo.c\103</Expression>
+          <Expression>\\ysf_stm32_demo\../../demo/demo.c\104</Expression>
         </Bp>
         <Bp>
           <Number>3</Number>
           <Type>0</Type>
-          <LineNumber>353</LineNumber>
+          <LineNumber>793</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218470</Address>
+          <Address>134222418</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>E:\Project\ysf\component\buffer\fw_buffer.c</Filename>
+          <Filename>..\..\hal\stm32f10x\map\map_timer.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../component/buffer/fw_buffer.c\353</Expression>
+          <Expression>\\ysf_stm32_demo\../../hal/stm32f10x/map/map_timer.c\793</Expression>
         </Bp>
         <Bp>
           <Number>4</Number>
           <Type>0</Type>
-          <LineNumber>353</LineNumber>
+          <LineNumber>292</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218494</Address>
+          <Address>134224798</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>E:\Project\ysf\component\buffer\fw_buffer.c</Filename>
+          <Filename>..\..\demo\demo.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../component/buffer/fw_buffer.c\353</Expression>
+          <Expression>\\ysf_stm32_demo\../../demo/demo.c\292</Expression>
         </Bp>
         <Bp>
           <Number>5</Number>
           <Type>0</Type>
-          <LineNumber>296</LineNumber>
+          <LineNumber>771</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -239,7 +244,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\demo\demo.c</Filename>
+          <Filename>..\..\hal\stm32f10x\map\map_timer.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -248,7 +253,12 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>r_sp</ItemText>
+          <ItemText>Led1,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>1</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Led2,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
