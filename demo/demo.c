@@ -101,7 +101,7 @@ static struct SignalBlock KeySignal2;
  */
 static fw_err_t led1_blink_handler(void)
 {   
-    Hal.GPIO.Output.Toggle(Led1.Port, Led1.Mode);
+    Hal.GPIO.Output.Toggle(Led1.Port, Led1.Pin);
     
     return FW_ERR_NONE;
 }
