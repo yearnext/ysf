@@ -201,6 +201,10 @@ void InitFrameworkCore(void)
     fw_timer_init();
 #endif
     
+#if USE_SIGNAL_COMPONENT
+    InitSignalComponent();
+#endif
+    
 #if USE_TICK_COMPONENT
     fw_tick_init();
     

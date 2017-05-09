@@ -612,7 +612,8 @@ fw_err_t ArmSignalModule(struct SignalBlock *signal, uint8_t (*detect)(void), fw
     
     signal->Detect = detect;
     InitEventHandleTask(&signal->Task, handler, FW_EVENT_NONE);
-
+    signal_push(signal); 
+    
     return FW_ERR_NONE;
 }
 
@@ -643,21 +644,18 @@ fw_err_t DisarmSignalModule(struct SignalBlock *signal)
  */
 fw_err_t PoolSignalComponent(uint16_t event)
 {
-    if( IsSingleLinkListHeadEmpty(SignalControlBlock) )
+    if( !IsSingleLinkListHeadEmpty(SignalControlBlock) )
     {
-        return FW_ERR_NONE;
+        if(event == FW_EVENT_DELAY)
+        {
+            SignalPollBlock.Count++;
+        }
+        
+        if(SignalPollBlock.Count)
+        {
+            signal_walk();
+        }
     }
-    
-    if(event == FW_EVENT_DELAY)
-    {
-        SignalPollBlock.Count++;
-    }
-    
-    if(SignalPollBlock.Count)
-    {
-        signal_walk();
-    }
-    
     return FW_ERR_NONE;
 }
 
