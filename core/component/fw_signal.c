@@ -184,6 +184,7 @@ __STATIC_INLINE
 fw_err_t signal_trigger_handler(struct SignalBlock *signal)
 {
 //    fw_assert(IS_PTR_NULL(signal));
+    signal->Task.Event = signal->Status;
     ArmTaskModule(&signal->Task);
     
     return FW_ERR_NONE;
@@ -209,29 +210,15 @@ fw_err_t signal_judge(struct SignalBlock *signal)
     switch(signal->Status)
     {
         case SIGNAL_STATUS_INIT:
-            if(IS_SIGNAL_INFO_CHANGED(signal, nowInfo))
-            {
-                UPDATE_SIGNAL_INFO(signal, nowInfo);
+            UPDATE_SIGNAL_INFO(signal, nowInfo);
                 
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
-                }
+            if(IS_NO_SIGNAL(nowInfo))
+            {
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP1:
@@ -250,14 +237,7 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP2);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP2);
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP2:
@@ -276,14 +256,7 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP3);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP3);
             }
             break;
         case SIGNAL_STATUS_PRESS_FILTER_STEP3:
@@ -302,15 +275,8 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_EDGE);
-                    signal_trigger_handler(signal);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_EDGE);
+                signal_trigger_handler(signal);
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP1:
@@ -329,14 +295,7 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP2);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP2);
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP2:
@@ -355,14 +314,7 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP3);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP3);
             }
             break;
         case SIGNAL_STATUS_RELEASE_FILTER_STEP3:
@@ -381,15 +333,8 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_EDGE);
-                    signal_trigger_handler(signal);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
+                signal_trigger_handler(signal);
             }
             break;
         case SIGNAL_STATUS_RELEASE_EDGE:
@@ -408,15 +353,7 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
-                    signal_trigger_handler(signal);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
             }
             break;
         case SIGNAL_STATUS_RELEASE:
@@ -435,15 +372,8 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
-                    signal_trigger_handler(signal);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS_FILTER_STEP1);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE);
+                signal_trigger_handler(signal);
             }
             break;
         case SIGNAL_STATUS_PRESS_EDGE:
@@ -462,15 +392,8 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
-                    signal_trigger_handler(signal);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
+                signal_trigger_handler(signal);
             }
             break;
         case SIGNAL_STATUS_PRESS:
@@ -480,7 +403,8 @@ fw_err_t signal_judge(struct SignalBlock *signal)
                 
                 if(IS_NO_SIGNAL(nowInfo))
                 {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
+                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_EDGE);
+                    signal_trigger_handler(signal);
                 }
                 else
                 {
@@ -489,15 +413,8 @@ fw_err_t signal_judge(struct SignalBlock *signal)
             }
             else
             {
-                if(IS_NO_SIGNAL(nowInfo))
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_RELEASE_FILTER_STEP1);
-                }
-                else
-                {
-                    TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
-                    signal_trigger_handler(signal);
-                }
+                TRANSFER_SIGNAL_STATUS(signal, SIGNAL_STATUS_PRESS);
+                signal_trigger_handler(signal);
             }
             break;
         default:
@@ -611,6 +528,8 @@ fw_err_t ArmSignalModule(struct SignalBlock *signal, uint8_t (*detect)(void), fw
     fw_assert(IS_PTR_NULL(handler));
     
     signal->Detect = detect;
+    signal->Info   = 0;
+    signal->Status = SIGNAL_STATUS_INIT;
     InitEventHandleTask(&signal->Task, handler, FW_EVENT_NONE);
     signal_push(signal); 
     

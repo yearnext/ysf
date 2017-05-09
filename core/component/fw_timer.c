@@ -52,15 +52,15 @@
  * @brief      detect timer status
  *******************************************************************************
  */
-#define IS_TIMER_DISABLE(timer)  ((timer)->Cycle == 0)
-#define IS_TIMER_ENABLE(timer)   ((timer)->Cycle != 0)
+#define IS_TIMER_DISABLE(timer)                            ((timer)->Cycle == 0)
+#define IS_TIMER_ENABLE(timer)                             ((timer)->Cycle != 0)
 
 /**
  *******************************************************************************
  * @brief      timer disable function
  *******************************************************************************
  */
-#define TIMER_DISABLE(timer)    ((timer)->Cycle = 0)
+#define TIMER_DISABLE(timer)                                ((timer)->Cycle = 0)
 
 /* Private typedef -----------------------------------------------------------*/
 /**

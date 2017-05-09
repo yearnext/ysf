@@ -109,7 +109,7 @@ extern "C"
 //#define SIGNAL_STATUS_RELEASE_EDGE                                          (14)
 enum SignalStatus
 {
-    SIGNAL_STATUS_INIT,
+    SIGNAL_STATUS_INIT = 0,
     SIGNAL_STATUS_PRESS_FILTER_STEP1,
     SIGNAL_STATUS_PRESS_FILTER_STEP2,
     SIGNAL_STATUS_PRESS_FILTER_STEP3,
