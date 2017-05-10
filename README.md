@@ -121,10 +121,11 @@
 	    Core.Timer.Arm(&led1Timer, CAL_SET_TIME(1000), TIMER_CYCLE_MODE);
     }
     
-    static void app_led1_deinit(void)
-    {
-   		Core.Timer.Disarm(&led1Timer);
-    }
+	static void app_led1_deinit(void)
+	{
+		Core.Timer.Disarm(&led1Timer);
+		Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
+	}
     
     static void app_led2_init(void)
     {
@@ -135,6 +136,7 @@
     static void app_led2_deinit(void)
     {
     	fw_pt_disarm(&Led2Threads);
+		Hal.GPIO.Output.Clr(Led2.Port, Led2.Pin);
     }
     
     /**
