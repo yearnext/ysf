@@ -51,18 +51,18 @@ extern "C"
  * @brief      common component path
  *******************************************************************************
  */
-#define _COMM_TOOLS_PATH                      "../common/comm_tools.h"	
-#define _COMM_TYPE_PATH         		      "../common/comm_type.h"
+#define _COMM_TOOLS_PATH           "../common/comm_tools.h"	
+#define _COMM_TYPE_PATH            "../common/comm_type.h"
 
 /**
  *******************************************************************************
  * @brief      compiler path
  *******************************************************************************
  */	
-#define _COMPILER_PATH                        "../common/compiler/compiler.h"
-#define _ARMCC5_COMPILER_PATH                 "../common/compiler/armcc5/compiler_armcc5.h"
-#define _ARMCC6_COMPILER_PATH                 "../common/compiler/armcc6/compiler_armcc6.h"
-#define _ICCARM_COMPILER_PATH                 "../common/compiler/iccarm/compiler_iar_arm.h"
+#define _COMPILER_PATH             "../common/compiler/compiler.h"
+#define _ARMCC5_COMPILER_PATH      "../common/compiler/armcc5/compiler_armcc5.h"
+#define _ARMCC6_COMPILER_PATH      "../common/compiler/armcc6/compiler_armcc6.h"
+#define _ICCARM_COMPILER_PATH      "../common/compiler/iccarm/compiler_iccarm.h"
     
 /* Includes ------------------------------------------------------------------*/
 #include _COMM_TOOLS_PATH

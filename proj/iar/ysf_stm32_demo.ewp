@@ -32,11 +32,11 @@
                 </option>
                 <option>
                     <name>Input description</name>
-                    <state>Automatic choice of formatter.</state>
+                    <state>Automatic choice of formatter, without multibyte support.</state>
                 </option>
                 <option>
                     <name>Output description</name>
-                    <state>Automatic choice of formatter.</state>
+                    <state>Automatic choice of formatter, without multibyte support.</state>
                 </option>
                 <option>
                     <name>GOutputBinary</name>
@@ -66,7 +66,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.10.1.12859</state>
+                    <state>8.11.1.13270</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -116,7 +116,7 @@
                 </option>
                 <option>
                     <name>GBECoreSlave</name>
-                    <version>24</version>
+                    <version>25</version>
                     <state>38</state>
                 </option>
                 <option>
@@ -133,7 +133,7 @@
                 </option>
                 <option>
                     <name>CoreVariant</name>
-                    <version>24</version>
+                    <version>25</version>
                     <state>38</state>
                 </option>
                 <option>
@@ -156,7 +156,7 @@
                 </option>
                 <option>
                     <name>GFPUCoreSlave2</name>
-                    <version>24</version>
+                    <version>25</version>
                     <state>38</state>
                 </option>
                 <option>
@@ -332,8 +332,9 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\..\app</state>
-                    <state>$PROJ_DIR$\..\..\framework</state>
+                    <state>$PROJ_DIR$\..\..\demo</state>
+                    <state>$PROJ_DIR$\..\..\core</state>
+                    <state>$PROJ_DIR$\..\..\hal\stm32f10x\msp</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1127,7 +1128,7 @@
                 </option>
                 <option>
                     <name>GBECoreSlave</name>
-                    <version>24</version>
+                    <version>25</version>
                     <state>38</state>
                 </option>
                 <option>
@@ -1144,7 +1145,7 @@
                 </option>
                 <option>
                     <name>CoreVariant</name>
-                    <version>24</version>
+                    <version>25</version>
                     <state>38</state>
                 </option>
                 <option>
@@ -1167,7 +1168,7 @@
                 </option>
                 <option>
                     <name>GFPUCoreSlave2</name>
-                    <version>24</version>
+                    <version>25</version>
                     <state>38</state>
                 </option>
                 <option>
@@ -2025,163 +2026,283 @@
     <group>
         <name>app</name>
         <file>
-            <name>$PROJ_DIR$\..\..\app\key_control.c</name>
+            <name>$PROJ_DIR$\..\..\demo\demo.c</name>
         </file>
     </group>
     <group>
         <name>hal</name>
         <group>
-            <name>gpio</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_gpio.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_gpio.h</name>
-            </file>
-        </group>
-        <group>
-            <name>mal</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\mal\mal.h</name>
-            </file>
-        </group>
-        <group>
-            <name>startup</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\startup\iar\startup_stm32f103xe.s</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\startup\system_stm32f1xx.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\startup\system_stm32f1xx.h</name>
-            </file>
-        </group>
-        <group>
-            <name>timer</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_timer.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal_timer.h</name>
-            </file>
+            <name>stm32f1xx</name>
+            <group>
+                <name>mal</name>
+                <group>
+                    <name>cmsis</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\arm_common_tables.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\arm_const_structs.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\arm_math.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_armcc.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_armcc_V6.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_gcc.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_os.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm0.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm0plus.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm3.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm4.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm7.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cmFunc.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cmInstr.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cmSimd.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_sc000.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_sc300.h</name>
+                    </file>
+                </group>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f100xb.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f100xe.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101x6.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101xb.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101xe.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101xg.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f102x6.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f102xb.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103x6.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103xb.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103xe.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103xg.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f105xc.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f107xc.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f1xx.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\system_stm32f1xx.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\system_stm32f1xx.h</name>
+                </file>
+            </group>
+            <group>
+                <name>map</name>
+                <group>
+                    <name>gpio</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_gpio.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_gpio.h</name>
+                    </file>
+                </group>
+                <group>
+                    <name>timer</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_timer.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_timer.h</name>
+                    </file>
+                </group>
+                <group>
+                    <name>usart</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_usart.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_usart.h</name>
+                    </file>
+                </group>
+            </group>
         </group>
         <file>
-            <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal.c</name>
+            <name>$PROJ_DIR$\..\..\hal\hal_conf.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\framework\hal\stm32f1xx\hal.h</name>
+            <name>$PROJ_DIR$\..\..\hal\hal_interface.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\hal\hal_path.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\hal\hal_type.h</name>
         </file>
     </group>
     <group>
-        <name>ysf</name>
+        <name>framework</name>
         <group>
             <name>component</name>
             <group>
                 <name>buffer</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\buffer\ysf_buffer.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_buffer.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\buffer\ysf_buffer.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_buffer.h</name>
                 </file>
             </group>
             <group>
                 <name>debug</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\debug\ysf_debug.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_debug.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\debug\ysf_debug.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_debug.h</name>
                 </file>
             </group>
             <group>
                 <name>event</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\event\ysf_event.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_event.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\event\ysf_event.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_event.h</name>
                 </file>
             </group>
             <group>
-                <name>list</name>
+                <name>linklist</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\list\ysf_single_list.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_linklist.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\list\ysf_single_list.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_linklist.h</name>
                 </file>
             </group>
             <group>
                 <name>memory</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\memory\ysf_memory.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_memory.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\memory\ysf_memory.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_memory.h</name>
                 </file>
             </group>
             <group>
-                <name>pt</name>
+                <name>protothreads</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\pt\ysf_pt.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_pt.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\pt\ysf_pt.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_pt.h</name>
                 </file>
             </group>
             <group>
                 <name>signal</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\signal\ysf_signal.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_signal.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\signal\ysf_signal.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_signal.h</name>
                 </file>
             </group>
             <group>
                 <name>task</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\task\ysf_task.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_task.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\task\ysf_task.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_task.h</name>
                 </file>
             </group>
             <group>
                 <name>tick</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\tick\ysf_tick.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_tick.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\tick\ysf_tick.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_tick.h</name>
                 </file>
             </group>
             <group>
                 <name>timer</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\timer\ysf_timer.c</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_timer.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\component\timer\ysf_timer.h</name>
+                    <name>$PROJ_DIR$\..\..\core\component\fw_timer.h</name>
                 </file>
             </group>
+            <file>
+                <name>$PROJ_DIR$\..\..\core\component\fw_conf.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\core\component\fw_interface.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\core\component\fw_path.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\core\component\fw_type.h</name>
+            </file>
         </group>
         <file>
-            <name>$PROJ_DIR$\..\..\framework\ysf.c</name>
+            <name>$PROJ_DIR$\..\..\core\core.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\framework\ysf.h</name>
+            <name>$PROJ_DIR$\..\..\core\core.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\framework\ysf_conf.h</name>
+            <name>$PROJ_DIR$\..\..\core\core_conf.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\framework\ysf_hal_conf.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\framework\ysf_path.h</name>
+            <name>$PROJ_DIR$\..\..\core\core_path.h</name>
         </file>
     </group>
 </project>

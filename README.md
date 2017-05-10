@@ -76,9 +76,9 @@
     static struct SignalBlock KeySignal1;
     static struct SignalBlock KeySignal2;
     
-    ///* Exported variables --------------------------------------------------------*/
-    ///* Private functions ---------------------------------------------------------*/
-    ///* Exported functions --------------------------------------------------------*/
+    /* Exported variables --------------------------------------------------------*/
+    /* Private functions ---------------------------------------------------------*/
+    /* Exported functions --------------------------------------------------------*/
     /**
      *******************************************************************************
      * @brief   led1 blink function
@@ -170,56 +170,56 @@
      * @brief   key1 handler function
      *******************************************************************************
      */
-    static fw_err_t key1_handler(uint16_t status)
-    {
-	    switch(status)
-	    {
-		    case SIGNAL_STATUS_PRESS_EDGE:
-			    app_led1_deinit();
-			    app_led2_deinit();
-		    	break;
-		    case SIGNAL_STATUS_PRESS:
-				Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
-				Hal.GPIO.Output.Clr(Led2.Port, Led2.Pin);
-		    	break;
-		    case SIGNAL_STATUS_RELEASE_EDGE:
-			    app_led1_init();
-			    app_led2_init();
-		   		break;
-		    default:
-		    	break;
-	    }
-	    
-	    return FW_ERR_NONE;
-    }
+		static fw_err_t key1_handler(uint16_t status)
+		{
+			switch(status)
+			{
+				case SIGNAL_STATUS_PRESS_EDGE:
+					app_led1_deinit();
+					app_led2_deinit();
+					break;
+				case SIGNAL_STATUS_PRESS:
+					Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
+					Hal.GPIO.Output.Clr(Led2.Port, Led2.Pin);
+					break;
+				case SIGNAL_STATUS_RELEASE_EDGE:
+					app_led1_init();
+					app_led2_init();
+					break;
+				default:
+					break;
+			}
+			
+			return FW_ERR_NONE;
+		}
     
     /**
      *******************************************************************************
      * @brief   key2 handler function
      *******************************************************************************
      */
-    static fw_err_t key2_handler(uint16_t status)
-    {
-	    switch(status)
-	    {
-		    case SIGNAL_STATUS_PRESS_EDGE:
-			    app_led1_deinit();
-			    app_led2_deinit();
-			    break;
-		    case SIGNAL_STATUS_PRESS:
+	static fw_err_t key2_handler(uint16_t status)
+	{
+		switch(status)
+		{
+			case SIGNAL_STATUS_PRESS_EDGE:
+				app_led1_deinit();
+				app_led2_deinit();
+				break;
+			case SIGNAL_STATUS_PRESS:
 				Hal.GPIO.Output.Set(Led1.Port, Led1.Pin);
 				Hal.GPIO.Output.Set(Led2.Port, Led2.Pin);
-			    break;
-		    case SIGNAL_STATUS_RELEASE_EDGE:
-			    app_led1_init();
-			    app_led2_init();
-			    break;
-		    default:
 				break;
-	    }
-	    
-	    return FW_ERR_NONE;
-    }
+			case SIGNAL_STATUS_RELEASE_EDGE:
+				app_led1_init();
+				app_led2_init();
+				break;
+			default:
+				break;
+		}
+		
+		return FW_ERR_NONE;
+	}
     
     /**
      *******************************************************************************

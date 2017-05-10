@@ -124,19 +124,19 @@ extern "C"
  *******************************************************************************
  */
 #ifndef __ALIGN_HEAD
-#define __ALIGN_HEAD(n)         PRAGMA(pack(push, n))
+#define __ALIGN_HEAD(n)         __PRAGMA(pack(push, n))
 #endif
 
 #ifndef __ALIGN_TAIL
-#define __ALIGN_TAIL(n)         PRAGMA(pack(pop))
+#define __ALIGN_TAIL(n)         __PRAGMA(pack(pop))
 #endif
 
 #ifndef __PACKED_HEAD
-#define __PACKED_HEAD           PRAGMA(pack(push, 1))
+#define __PACKED_HEAD           __PRAGMA(pack(push, 1))
 #endif
 
 #ifndef __PACKED_TAIL
-#define __PACKED_TAIL           PRAGMA(pack(pop))
+#define __PACKED_TAIL           __PRAGMA(pack(pop))
 #endif
    
 /**
