@@ -164,8 +164,10 @@ typedef struct
     
     fw_err_t                (*Poll)(uint16_t);
     
-    fw_err_t                (*Arm)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));
-    fw_err_t                (*Disarm)(struct SignalBlock*);
+    fw_err_t                (*Start)(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));
+    fw_err_t                (*Stop)(struct SignalBlock*);
+    fw_err_t                (*Add)(struct SignalBlock*);
+    fw_err_t                (*Remove)(struct SignalBlock*);
     
     uint8_t                 (*GetInfo)(struct SignalBlock*);
 }SignalComponentInterface;
@@ -184,8 +186,11 @@ extern fw_err_t DeinitSignalComponent(void);
 
 extern fw_err_t PoolSignalComponent(uint16_t);
 
-extern fw_err_t ArmSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));     
-extern fw_err_t DisarmSignalModule(struct SignalBlock*);
+extern fw_err_t StartSignalModule(struct SignalBlock*, uint8_t (*)(void), fw_err_t (*)(uint16_t));     
+extern fw_err_t StopSignalModule(struct SignalBlock*);
+
+extern fw_err_t AddSignalModuleToQueue(struct SignalBlock*);
+extern fw_err_t RemoveSignalModuleFromQueue(struct SignalBlock*);
 
 extern inline uint8_t GetSignalModuleInfo(struct SignalBlock*);
 

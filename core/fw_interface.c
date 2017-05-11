@@ -37,7 +37,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core.h"
+#include "fw_interface.h"
 
 /* Exported constants --------------------------------------------------------*/
 /**
@@ -45,7 +45,7 @@
  * @brief        core interface config
  *******************************************************************************
  */
-const struct CoreInterface Core = 
+const struct FrameworkInterface Framework = 
 {
     .Version                                           = _CORE_VERSION,
     .Init                                              = InitFrameworkCore,
@@ -82,8 +82,11 @@ const struct CoreInterface Core =
     
     .Signal.Poll                                       = PoolSignalComponent,
     
-    .Signal.Arm                                        = ArmSignalModule,
-    .Signal.Disarm                                     = DisarmSignalModule,
+    .Signal.Add                                        = AddSignalModuleToQueue,
+    .Signal.Remove                                     = RemoveSignalModuleFromQueue,
+    
+    .Signal.Start                                      = StartSignalModule,
+    .Signal.Stop                                       = StopSignalModule,
     
     .Signal.GetInfo                                    = GetSignalModuleInfo,
 #endif   
@@ -101,10 +104,11 @@ const struct CoreInterface Core =
     
     .Timer.Poll                                        = PollTimerComponent,
     
-    .Timer.Add                                         = AddTimerModuleToQueue,
+    .Timer.Start                                       = StartTimerModule,
+    .Timer.Stop                                        = StopTimerModule,
     
-    .Timer.Arm                                         = ArmTimerModule,
-    .Timer.Disarm                                      = DisarmTimerModule,
+    .Timer.Add                                         = AddTimerModuleToQueue,
+    .Timer.Remove                                      = RemoveTimerModuleFromQueue,
     
     .Timer.GetStatus                                   = GetTimerModuleStatus,
     

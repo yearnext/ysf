@@ -157,7 +157,7 @@ extern "C"
 #define _pt_delay(tick)         do                                                                                \
                                 {                                                                                 \
                                     InitMessageHandleTimerModule(&pt->Timer, pt->Thread, ptTask, FW_EVENT_DELAY); \
-                                    ArmTimerModule(&pt->Timer, CAL_SET_TIME(tick), 1);                            \
+                                    StartTimerModule(&pt->Timer, CAL_SET_TIME(tick), 1);                          \
                                     evt = FW_EVENT_NONE;                                                          \
                                     _pt_wait(evt == FW_EVENT_DELAY);                                              \
                                 }while(0)                        

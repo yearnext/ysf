@@ -436,9 +436,9 @@
           <GroupName>ysf/core</GroupName>
           <Files>
             <File>
-              <FileName>core.c</FileName>
+              <FileName>fw_interface.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\core.c</FilePath>
+              <FilePath>..\..\core\fw_interface.c</FilePath>
             </File>
           </Files>
         </Group>

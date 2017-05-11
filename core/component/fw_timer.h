@@ -116,10 +116,11 @@ typedef struct
     
     fw_err_t (*Poll)(void);
 
+    fw_err_t (*Start)(struct TimerBlock*, uint32_t, int16_t);
+    fw_err_t (*Stop)(struct TimerBlock*);
+
     fw_err_t (*Add)(struct TimerBlock*);
-    
-    fw_err_t (*Arm)(struct TimerBlock*, uint32_t, int16_t);
-    fw_err_t (*Disarm)(struct TimerBlock*);
+    fw_err_t (*Remove)(struct TimerBlock*);
     
     bool (*GetStatus)(struct TimerBlock*);
     
@@ -146,12 +147,13 @@ extern fw_err_t DeinitTimerComponent(void);
     
 extern fw_err_t PollTimerComponent(void);
 
-extern fw_err_t AddTimerModuleToQueue(struct TimerBlock*);
-
 extern bool GetTimerModuleStatus(struct TimerBlock*);
 
-extern fw_err_t ArmTimerModule(struct TimerBlock*, uint32_t, int16_t);                                          
-extern fw_err_t DisarmTimerModule(struct TimerBlock*); 
+extern fw_err_t StartTimerModule(struct TimerBlock*, uint32_t, int16_t);                                          
+extern fw_err_t StopTimerModule(struct TimerBlock*); 
+
+extern fw_err_t AddTimerModuleToQueue(struct TimerBlock*);
+extern fw_err_t RemoveTimerModuleFromQueue(struct TimerBlock*);
 
 extern fw_err_t InitSimpleTimerModule(struct TimerBlock*, fw_err_t (*)(void)); 
 extern fw_err_t InitCallBackTimerModule(struct TimerBlock*, fw_err_t (*)(void*), void*); 

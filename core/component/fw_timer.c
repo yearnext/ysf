@@ -261,16 +261,16 @@ fw_err_t InitMessageHandleTimerModule(struct TimerBlock *timer, fw_err_t (*func)
 
 /**
  *******************************************************************************
- * @brief       timer arm
- * @param       [in/out]  *timer             timer block
- * @param       [in/out]  ticks              timer timing
- * @param       [in/out]  counts             cycle counts
+ * @brief       start timer
+ * @param       [in/out]  *timer            timer block
+ * @param       [in/out]  ticks             timer timing
+ * @param       [in/out]  counts            cycle counts
  * @return      [in/out]  FW_ERR_NONE       timer arm success
  * @return      [in/out]  FW_ERR_FAIL       timer arm failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t ArmTimerModule(struct TimerBlock *timer, uint32_t ticks, int16_t cycles)
+fw_err_t StartTimerModule(struct TimerBlock *timer, uint32_t ticks, int16_t cycles)
 {
     fw_assert(IS_PTR_NULL(timer));
     
@@ -285,20 +285,60 @@ fw_err_t ArmTimerModule(struct TimerBlock *timer, uint32_t ticks, int16_t cycles
 
 /**
  *******************************************************************************
- * @brief       timer disarm
+ * @brief       stop timer
  * @param       [in/out]  *timer             timer block
  * @return      [in/out]  FW_ERR_NONE       timer disarm success
  * @return      [in/out]  FW_ERR_FAIL       timer disarm failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t DisarmTimerModule(struct TimerBlock *timer)
+fw_err_t StopTimerModule(struct TimerBlock *timer)
 {
     fw_assert(IS_PTR_NULL(timer));
     
     TIMER_DISABLE(timer);
     
     return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       remove timer
+ * @param       [in/out]  *timer            timer block
+ * @return      [in/out]  FW_ERR_NONE       timer disarm success
+ * @return      [in/out]  FW_ERR_FAIL       timer disarm failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t RemoveTimerModuleFromQueue(struct TimerBlock *timer)
+{
+    fw_assert(IS_PTR_NULL(timer));
+    
+    struct TimerBlock *now  = GetSingleLinkListHead(TimerControlBlock);
+    struct TimerBlock *last = now;
+    
+    while(1)
+    {
+        // timer list delete
+        if(now == timer)
+        {   
+            DeleteInSignalLinkList(TimerControlBlock, last, now);
+            return FW_ERR_NONE;
+        }
+        else
+        {
+            last = now;
+            now  = now->Next;
+        }
+        
+        // break
+        if( now == NULL )
+        {
+            break;
+        }
+    }
+    
+    return FW_ERR_FAIL;
 }
 
 /**

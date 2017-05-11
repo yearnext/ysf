@@ -16,7 +16,7 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       core.h                                                          *
+ * @file       Framework.h                                                          *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
@@ -66,8 +66,8 @@ extern "C"
  * @brief        define framework core interface
  *******************************************************************************
  */
-#define fw_core_init                         Core.Init
-#define fw_core_start                        Core.Start
+#define fw_core_init                         Framework.Init
+#define fw_core_start                        Framework.Start
 
 /**
  *******************************************************************************
@@ -75,10 +75,10 @@ extern "C"
  *******************************************************************************
  */
 #if USE_BUFFER_COMPONENT
-#define fw_buffer_init                       Core.RingBuffer.Init
-#define fw_buffer_write                      Core.RingBuffer.Write
-#define fw_buffer_read                       Core.RingBuffer.Read
-#define fw_buffer_getlen                     Core.RingBuffer.GetLen
+#define fw_buffer_init                       Framework.RingBuffer.Init
+#define fw_buffer_write                      Framework.RingBuffer.Write
+#define fw_buffer_read                       Framework.RingBuffer.Read
+#define fw_buffer_getlen                     Framework.RingBuffer.GetLen
 #else
 #define fw_buffer_init                       
 #define fw_buffer_write                      
@@ -92,8 +92,8 @@ extern "C"
  *******************************************************************************
  */
 #if USE_DEBUG_COMPONENT
-#define fw_debug_init                        Core.Debug.Init
-#define fw_debug_assert                      Core.Debug.AssertFailed
+#define fw_debug_init                        Framework.Debug.Init
+#define fw_debug_assert                      Framework.Debug.AssertFailed
 #else
 #define fw_debug_init                        
 #define fw_debug_assert                      
@@ -105,9 +105,9 @@ extern "C"
  *******************************************************************************
  */  
 #if USE_EVENT_COMPONENT
-#define fw_event_init                        Core.Event.Init
-#define fw_event_post                        Core.Event.Post
-#define fw_event_get                         Core.Event.Read
+#define fw_event_init                        Framework.Event.Init
+#define fw_event_post                        Framework.Event.Post
+#define fw_event_get                         Framework.Event.Read
 #else
 #define fw_event_init                        
 #define fw_event_post                        
@@ -120,10 +120,10 @@ extern "C"
  *******************************************************************************
  */  
 #if USE_MEMORY_COMPONENT
-#define fw_memory_init                       Core.Memory.Init
-#define fw_malloc                            Core.Memory.Malloc
-#define fw_free                              Core.Memory.Free
-#define fw_memory_is_in                      Core.Memory.IsIn
+#define fw_memory_init                       Framework.Memory.Init
+#define fw_malloc                            Framework.Memory.Malloc
+#define fw_free                              Framework.Memory.Free
+#define fw_memory_is_in                      Framework.Memory.IsIn
 #else
 #define fw_memory_init                       
 #define fw_malloc                     
@@ -137,19 +137,23 @@ extern "C"
  *******************************************************************************
  */  
 #if USE_SIGNAL_COMPONENT
-#define fw_signal_open                       Core.Signal.Open
-#define fw_signal_close                      Core.Signal.Close
-#define fw_signal_poll                       Core.Signal.Poll
-#define fw_signal_get_info                   Core.Signal.GetInfo
-#define fw_signal_arm                        Core.Signal.Arm
-#define fw_signal_disarm                     Core.Signal.Disarm
+#define fw_signal_open                       Framework.Signal.Open
+#define fw_signal_close                      Framework.Signal.Close
+#define fw_signal_poll                       Framework.Signal.Poll
+#define fw_signal_get_info                   Framework.Signal.GetInfo
+#define fw_signal_start                      Framework.Signal.Start
+#define fw_signal_stop                       Framework.Signal.Stop
+#define fw_signal_add                        Framework.Signal.Add
+#define fw_signal_remove                     Framework.Signal.Remove
 #else
 #define fw_signal_open                       
 #define fw_signal_close              
 #define fw_signal_poll                    
 #define fw_signal_get_info                
 #define fw_signal_arm                  
-#define fw_signal_disarm              
+#define fw_signal_disarm  
+#define fw_signal_add                       
+#define fw_signal_remove                   
 #endif
 
 /**
@@ -158,10 +162,10 @@ extern "C"
  *******************************************************************************
  */ 
 #if USE_TICK_COMPONENT
-#define fw_tick_init                         Core.Tick.Init
-#define fw_tick_inc                          Core.Tick.Inc
-#define fw_tick_get                          Core.Tick.Read
-#define fw_tick_cal                          Core.Tick.Cal
+#define fw_tick_init                         Framework.Tick.Init
+#define fw_tick_inc                          Framework.Tick.Inc
+#define fw_tick_get                          Framework.Tick.Read
+#define fw_tick_cal                          Framework.Tick.Cal
 #else
 #define fw_tick_init                         
 #define fw_tick_inc              
@@ -175,24 +179,26 @@ extern "C"
  *******************************************************************************
  */ 
 #if USE_TIMER_COMPONENT
-#define fw_timer_init                        Core.Timer.Open
-#define fw_timer_fini                        Core.Timer.Cose
-#define fw_timer_poll                        Core.Timer.Poll
-#define fw_timer_add                         Core.Timer.Add
-#define fw_timer_arm                         Core.Timer.Arm
-#define fw_timer_disarm                      Core.Timer.Disarm
-#define fw_timer_get_status                  Core.Timer.GetStatus
-#define fw_timer_simp_init                   Core.Timer.Init.Simple
-#define fw_timer_cb_init                     Core.Timer.Init.CallBack
-#define fw_timer_evt_init                    Core.Timer.Init.EventHandle
-#define fw_timer_msg_init                    Core.Timer.Init.MessageHandle
+#define fw_timer_init                        Framework.Timer.Open
+#define fw_timer_fini                        Framework.Timer.Cose
+#define fw_timer_poll                        Framework.Timer.Poll
+#define fw_timer_add                         Framework.Timer.Add
+#define fw_timer_remove                      Framework.Timer.Remove
+#define fw_timer_start                       Framework.Timer.Start
+#define fw_timer_stop                        Framework.Timer.Stop
+#define fw_timer_get_status                  Framework.Timer.GetStatus
+#define fw_timer_simp_init                   Framework.Timer.Init.Simple
+#define fw_timer_cb_init                     Framework.Timer.Init.CallBack
+#define fw_timer_evt_init                    Framework.Timer.Init.EventHandle
+#define fw_timer_msg_init                    Framework.Timer.Init.MessageHandle
 #else
 #define fw_timer_init                       
 #define fw_timer_fini                     
 #define fw_timer_poll                   
-#define fw_timer_add               
-#define fw_timer_arm                   
-#define fw_timer_disarm                
+#define fw_timer_add  
+#define fw_timer_remove
+#define fw_timer_start                   
+#define fw_timer_stop                
 #define fw_timer_get_status            
 #define fw_timer_simp_init                  
 #define fw_timer_cb_init               
@@ -206,18 +212,18 @@ extern "C"
  *******************************************************************************
  */
 #if USE_TASK_COMPONENT
-#define fw_task_init                         Core.Task.Open
-#define fw_task_fini                         Core.Task.Close
-#define fw_task_poll                         Core.Task.Poll
-#define fw_task_arm                          Core.Task.Add
-#define fw_task_simp_init                    Core.Task.Init.Simple
-#define fw_task_cb_init                      Core.Task.Init.CallBack
-#define fw_task_evt_init                     Core.Task.Init.EventHandle
-#define fw_task_msg_init                     Core.Task.Init.MessageHandle
-#define fw_task_simp_create                  Core.Task.Create.Simple
-#define fw_task_cb_create                    Core.Task.Create.CallBack
-#define fw_task_evt_create                   Core.Task.Create.EventHandle
-#define fw_task_msg_create                   Core.Task.Create.MessageHandle
+#define fw_task_init                         Framework.Task.Open
+#define fw_task_fini                         Framework.Task.Close
+#define fw_task_poll                         Framework.Task.Poll
+#define fw_task_arm                          Framework.Task.Add
+#define fw_task_simp_init                    Framework.Task.Init.Simple
+#define fw_task_cb_init                      Framework.Task.Init.CallBack
+#define fw_task_evt_init                     Framework.Task.Init.EventHandle
+#define fw_task_msg_init                     Framework.Task.Init.MessageHandle
+#define fw_task_simp_create                  Framework.Task.Create.Simple
+#define fw_task_cb_create                    Framework.Task.Create.CallBack
+#define fw_task_evt_create                   Framework.Task.Create.EventHandle
+#define fw_task_msg_create                   Framework.Task.Create.MessageHandle
 #else
 #define fw_task_init                         
 #define fw_task_fini                         
@@ -319,10 +325,10 @@ extern "C"
 /* Private typedef -----------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        define core interface
+ * @brief        define Framework interface
  *******************************************************************************
  */
-struct CoreInterface
+struct FrameworkInterface
 {
     char *Version;
     
@@ -376,8 +382,8 @@ struct CoreInterface
  * @brief        core interface
  *******************************************************************************
  */
-extern const struct CoreInterface Core;
-extern const struct HalInterface  Hal;
+extern const struct FrameworkInterface Framework;
+extern const struct HalInterface       Hal;
 
 /* Exported functions --------------------------------------------------------*/
 /**

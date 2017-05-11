@@ -492,7 +492,7 @@ fw_err_t InitSignalComponent(void)
     SignalPollBlock.Flag  = 0;
     
     InitEventHandleTimerModule(&SignalTimer, PoolSignalComponent, FW_EVENT_DELAY);
-    ArmTimerModule(&SignalTimer, SIGNAL_SCAN_TIME, TIMER_CYCLE_MODE);
+    StartTimerModule(&SignalTimer, SIGNAL_SCAN_TIME, TIMER_CYCLE_MODE);
     
     return FW_ERR_NONE;
 }
@@ -512,7 +512,7 @@ fw_err_t DeinitSignalComponent(void)
 
 /**
  *******************************************************************************
- * @brief       signal component init
+ * @brief       start signal scan
  * @param       [in/out]  *signal           signal block
  * @param       [in/out]  *detect           signal detect function
  * @param       [in/out]  *handler          signal handler function
@@ -521,7 +521,7 @@ fw_err_t DeinitSignalComponent(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t ArmSignalModule(struct SignalBlock *signal, uint8_t (*detect)(void), fw_err_t (*handler)(uint16_t))
+fw_err_t StartSignalModule(struct SignalBlock *signal, uint8_t (*detect)(void), fw_err_t (*handler)(uint16_t))
 {
     fw_assert(IS_PTR_NULL(signal));
     fw_assert(IS_PTR_NULL(detect));
@@ -538,19 +538,76 @@ fw_err_t ArmSignalModule(struct SignalBlock *signal, uint8_t (*detect)(void), fw
 
 /**
  *******************************************************************************
- * @brief       signal disarm
+ * @brief       stop signal scan
  * @param       [in/out]  *signal           signal block
  * @return      [in/out]  FW_ERR_NONE       disarm success
  * @note        None
  *******************************************************************************
  */
-fw_err_t DisarmSignalModule(struct SignalBlock *signal)
+fw_err_t StopSignalModule(struct SignalBlock *signal)
 {
     fw_assert(IS_PTR_NULL(signal));
     
     SIGNAL_DISABLE(signal);
 
     return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add signal module
+ * @param       [in/out]  *signal           signal block
+ * @return      [in/out]  FW_ERR_NONE       disarm success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t AddSignalModuleToQueue(struct SignalBlock *signal)
+{
+    fw_assert(IS_PTR_NULL(signal));
+    
+    signal_push(signal);
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       remove timer
+ * @param       [in/out]  *timer            timer block
+ * @return      [in/out]  FW_ERR_NONE       timer disarm success
+ * @return      [in/out]  FW_ERR_FAIL       timer disarm failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t RemoveSignalModuleFromQueue(struct SignalBlock *timer)
+{
+    fw_assert(IS_PTR_NULL(timer));
+    
+    struct SignalBlock *now  = GetSingleLinkListHead(SignalControlBlock);
+    struct SignalBlock *last = now;
+    
+    while(1)
+    {
+        // timer list delete
+        if(now == timer)
+        {   
+            DeleteInSignalLinkList(SignalControlBlock, last, now);
+            return FW_ERR_NONE;
+        }
+        else
+        {
+            last = now;
+            now  = now->Next;
+        }
+        
+        // break
+        if( now == NULL )
+        {
+            break;
+        }
+    }
+    
+    return FW_ERR_FAIL;
 }
 
 /**

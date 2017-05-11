@@ -37,7 +37,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core.h"
+#include "fw_interface.h"
 
 /* Private define ------------------------------------------------------------*/                                                        
 /* Private typedef -----------------------------------------------------------*/
@@ -132,13 +132,13 @@ static _PT_THREAD(bsp_led2_blink)
  */
 static void app_led1_init(void)
 {
-    Core.Timer.Init.Simple(&led1Timer, led1_blink_handler);
-    Core.Timer.Arm(&led1Timer, CAL_SET_TIME(1000), TIMER_CYCLE_MODE);
+    Framework.Timer.Init.Simple(&led1Timer, led1_blink_handler);
+    Framework.Timer.Start(&led1Timer, CAL_SET_TIME(1000), TIMER_CYCLE_MODE);
 }
 
 static void app_led1_deinit(void)
 {
-    Core.Timer.Disarm(&led1Timer);
+    Framework.Timer.Stop(&led1Timer);
     Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
 }
 
@@ -261,11 +261,11 @@ static void bsp_key_init(void)
 {
     Hal.GPIO.Open(Key1.Port);
     Hal.GPIO.Init(Key1.Port, Key1.Pin, Key1.Mode);
-    Core.Signal.Arm(&KeySignal1, key1_scan, key1_handler);
+    Framework.Signal.Start(&KeySignal1, key1_scan, key1_handler);
     
     Hal.GPIO.Open(Key2.Port);
     Hal.GPIO.Init(Key2.Port, Key2.Pin, Key2.Mode);
-    Core.Signal.Arm(&KeySignal2, key2_scan, key2_handler);
+    Framework.Signal.Start(&KeySignal2, key2_scan, key2_handler);
 }
 
 /**
