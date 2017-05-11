@@ -22,7 +22,7 @@
 本例程主要演示单片机GPIO的配置、ysf定时器的使用方式以及ysf事件结构的使用。
 	
     /* Includes ------------------------------------------------------------------*/
-    #include "core.h"
+    #include "fw_interface.h"
     
     /* Private define ------------------------------------------------------------*/
     /* Private typedef -----------------------------------------------------------*/
@@ -117,13 +117,13 @@
      */
     static void app_led1_init(void)
     {
-	    Core.Timer.Init.Simple(&led1Timer, led1_blink_handler);
-	    Core.Timer.Arm(&led1Timer, CAL_SET_TIME(1000), TIMER_CYCLE_MODE);
+	    Framework.Timer.Init.Simple(&led1Timer, led1_blink_handler);
+	    Framework.Timer.Start(&led1Timer, CAL_SET_TIME(1000), TIMER_CYCLE_MODE);
     }
     
 	static void app_led1_deinit(void)
 	{
-		Core.Timer.Disarm(&led1Timer);
+		Framework.Timer.Stop(&led1Timer);
 		Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
 	}
     
@@ -246,11 +246,11 @@
     {
 	    Hal.GPIO.Open(Key1.Port);
 	    Hal.GPIO.Init(Key1.Port, Key1.Pin, Key1.Mode);
-	    Core.Signal.Arm(&KeySignal1, key1_scan, key1_handler);
+	    Framework.Signal.Start(&KeySignal1, key1_scan, key1_handler);
 	    
 	    Hal.GPIO.Open(Key2.Port);
 	    Hal.GPIO.Init(Key2.Port, Key2.Pin, Key2.Mode);
-	    Core.Signal.Arm(&KeySignal2, key2_scan, key2_handler);
+	    Framework.Signal.Start(&KeySignal2, key2_scan, key2_handler);
     }
     
     /**
@@ -276,11 +276,11 @@
      */
     int main( void )
     {   
-	    Core.Init();
+	    fw_core_init();
 	    
 	    user_init();
 	    
-	    Core.Start();
+	    fw_core_start();
 	    
 	    return 0;
     }
