@@ -104,6 +104,23 @@ extern void  InitMemoryComponent(void);
 extern void* MallocMemory(uint32_t);
 extern void  FreeMemory(void*);
 extern bool  IsInMemory(void*);
+
+/**
+ *******************************************************************************
+ * @brief        define framework memory interface
+ *******************************************************************************
+ */  
+#define fw_memory_init                       InitMemoryComponent
+#define fw_malloc                            MallocMemory
+#define fw_free                              FreeMemory
+#define fw_memory_is_in                      IsInMemory
+
+#else
+#define fw_memory_init()                       
+#define fw_malloc(a)                     
+#define fw_free(a)                      
+#define fw_memory_is_in(a)                   
+
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

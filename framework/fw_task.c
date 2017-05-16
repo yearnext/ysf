@@ -259,7 +259,7 @@ fw_err_t InitMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*, u
  * @note        None
  *******************************************************************************
  */
-fw_err_t CreateSimpleTask(struct TaskBlock *task, fw_err_t (*func)(void))
+fw_err_t AddSimpleTask(struct TaskBlock *task, fw_err_t (*func)(void))
 {
     fw_assert(IS_PTR_NULL(func));
 
@@ -295,7 +295,7 @@ fw_err_t CreateSimpleTask(struct TaskBlock *task, fw_err_t (*func)(void))
  * @note        None
  *******************************************************************************
  */
-fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), void *param)
+fw_err_t AddCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), void *param)
 {
     fw_assert(IS_PTR_NULL(func));
 
@@ -332,7 +332,7 @@ fw_err_t CreateCallBackTask(struct TaskBlock *task, fw_err_t (*func)(void*), voi
  * @note        None
  *******************************************************************************
  */
-fw_err_t CreateEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t), uint16_t evt)
+fw_err_t AddEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t), uint16_t evt)
 {
     fw_assert(IS_PTR_NULL(func));
     
@@ -370,7 +370,7 @@ fw_err_t CreateEventHandleTask(struct TaskBlock *task, fw_err_t (*func)(uint16_t
  * @note        None
  *******************************************************************************
  */
-fw_err_t CreateMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
+fw_err_t AddMessageHandleTask(struct TaskBlock *task, fw_err_t (*func)(void*, uint16_t), void *param, uint16_t evt)
 {
     fw_assert(IS_PTR_NULL(func));
     

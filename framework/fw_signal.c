@@ -471,7 +471,7 @@ void signal_walk(void)
             signal_push(now); 
         }
 
-        CreateEventHandleTask(NULL, PoolSignalComponent, FW_EVENT_NONE);
+        fw_task_evt_create(NULL, PoolSignalComponent, FW_EVENT_NONE);
     }
 }
 

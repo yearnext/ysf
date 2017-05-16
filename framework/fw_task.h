@@ -139,7 +139,7 @@ typedef struct
         fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
         fw_err_t (*EventHandle)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
         fw_err_t (*MessageHandle)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    }Create;
+    }Add;
 }TaskComponentInterface;
 #endif
 
@@ -163,11 +163,43 @@ extern fw_err_t InitCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
 extern fw_err_t InitEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
 extern fw_err_t InitMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
 
-extern fw_err_t CreateSimpleTask(struct TaskBlock*, fw_err_t (*)(void));
-extern fw_err_t CreateCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
-extern fw_err_t CreateEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t CreateMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-#endif    
+extern fw_err_t AddSimpleTask(struct TaskBlock*, fw_err_t (*)(void));
+extern fw_err_t AddCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
+extern fw_err_t AddEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
+extern fw_err_t AddMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+
+/**
+ *******************************************************************************
+ * @brief        define framework task interface
+ *******************************************************************************
+ */
+#define fw_task_init                         InitTaskComponent
+#define fw_task_fini                         DeinitTaskComponent
+#define fw_task_poll                         PollTaskComponent
+#define fw_task_arm                          ArmTaskModule
+#define fw_task_simp_init                    InitSimpleTask
+#define fw_task_cb_init                      InitCallBackTask
+#define fw_task_evt_init                     InitEventHandleTask
+#define fw_task_msg_init                     InitMessageHandleTask
+#define fw_task_simp_create                  AddSimpleTask
+#define fw_task_cb_create                    AddCallBackTask
+#define fw_task_evt_create                   AddEventHandleTask
+#define fw_task_msg_create                   AddMessageHandleTask
+
+#else
+#define fw_task_init()   
+#define fw_task_fini()                         
+#define fw_task_poll()                         
+#define fw_task_arm(a)                         
+#define fw_task_simp_init(a,b)                    
+#define fw_task_cb_init(a,b,c)                     
+#define fw_task_evt_init(a,b,c)                    
+#define fw_task_msg_init(a,b,c,d) 
+#define fw_task_simp_create(a,b)  
+#define fw_task_cb_create(a,b,c)         
+#define fw_task_evt_create(a,b,c)             
+#define fw_task_msg_create(a,b,c,d)                    
+#endif  
     
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

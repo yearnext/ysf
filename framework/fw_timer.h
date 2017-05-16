@@ -159,6 +159,39 @@ extern fw_err_t InitSimpleTimerModule(struct TimerBlock*, fw_err_t (*)(void));
 extern fw_err_t InitCallBackTimerModule(struct TimerBlock*, fw_err_t (*)(void*), void*); 
 extern fw_err_t InitEventHandleTimerModule(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
 extern fw_err_t InitMessageHandleTimerModule(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
+
+/**
+ *******************************************************************************
+ * @brief        define framework timer interface
+ *******************************************************************************
+ */ 
+#define fw_timer_init                        InitTimerComponent
+#define fw_timer_fini                        DeinitTimerComponent
+#define fw_timer_poll                        PollTimerComponent
+#define fw_timer_add                         AddTimerModuleToQueue
+#define fw_timer_remove                      RemoveTimerModuleFromQueue
+#define fw_timer_start                       StartTimerModule
+#define fw_timer_stop                        StopTimerModule
+#define fw_timer_get_status                  GetTimerModuleStatus
+#define fw_timer_simp_init                   InitSimpleTimerModule
+#define fw_timer_cb_init                     InitCallBackTimerModule
+#define fw_timer_evt_init                    InitEventHandleTimerModule
+#define fw_timer_msg_init                    InitMessageHandleTimerModule
+
+#else
+#define fw_timer_init()                       
+#define fw_timer_fini()                     
+#define fw_timer_poll()                  
+#define fw_timer_add(a)
+#define fw_timer_remove(a)
+#define fw_timer_start(a,b,c)              
+#define fw_timer_stop(a)         
+#define fw_timer_get_status(a)    
+#define fw_timer_simp_init(a,b)          
+#define fw_timer_cb_init(a,b,c)       
+#define fw_timer_evt_init(a,b,c)             
+#define fw_timer_msg_init(a,b,c,d)                
+
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

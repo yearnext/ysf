@@ -110,6 +110,17 @@ typedef struct
 #if USE_DEBUG_COMPONENT
 extern fw_err_t InitDebugComponent(void);
 extern void     AssertFailed(uint8_t*, uint32_t);
+
+/**
+ *******************************************************************************
+ * @brief        define framework debug interface
+ *******************************************************************************
+ */
+#define fw_debug_init                        InitDebugComponent
+#define fw_debug_assert                      AssertFailed
+#else
+#define fw_debug_init()                        
+#define fw_debug_assert(a,b)                      
 #endif        
 
 /**@} */

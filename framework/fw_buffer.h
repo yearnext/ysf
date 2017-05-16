@@ -118,6 +118,22 @@ extern fw_err_t InitRingBufferComponent(struct RingBuffer*, uint8_t*, uint16_t);
 extern fw_err_t GetRingBufferLen(struct RingBuffer*, uint16_t*);
 extern fw_err_t WriteRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
 extern fw_err_t ReadRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
+
+/**
+ *******************************************************************************
+ * @brief        define framework buffer interface
+ *******************************************************************************
+ */
+#define fw_buffer_init                       InitRingBufferComponent
+#define fw_buffer_write                      WriteRingBuffer
+#define fw_buffer_read                       ReadRingBuffer
+#define fw_buffer_getlen                     GetRingBufferLen
+
+#else
+#define fw_buffer_init(a,b,c)                       
+#define fw_buffer_write(a,b)              
+#define fw_buffer_read(a,b,c)          
+#define fw_buffer_getlen(a,b,c) 
 #endif
 
 /**

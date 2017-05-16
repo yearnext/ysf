@@ -194,6 +194,28 @@ extern fw_err_t RemoveSignalModuleFromQueue(struct SignalBlock*);
 
 extern inline uint8_t GetSignalModuleInfo(struct SignalBlock*);
 
+/**
+ *******************************************************************************
+ * @brief        define framework signal interface
+ *******************************************************************************
+ */  
+#define fw_signal_open                       InitSignalComponent
+#define fw_signal_close                      DeinitSignalComponent
+#define fw_signal_poll                       PoolSignalComponent
+#define fw_signal_get_info                   GetSignalModuleInfo
+#define fw_signal_start                      StartSignalModule
+#define fw_signal_stop                       StopSignalModule
+#define fw_signal_add                        AddSignalModuleToQueue
+#define fw_signal_remove                     RemoveSignalModuleFromQueue
+#else
+#define fw_signal_open()                       
+#define fw_signal_close()              
+#define fw_signal_poll(a)                    
+#define fw_signal_get_info(a)                
+#define fw_signal_start(a,b,c)                  
+#define fw_signal_stop(a)
+#define fw_signal_add(a)                      
+#define fw_signal_remove(b)                   
 #endif
                                        
 /* Add c++ compatibility------------------------------------------------------*/

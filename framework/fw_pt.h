@@ -178,7 +178,7 @@ extern "C"
  *******************************************************************************
  */
 #define _pt_end()               } return FW_ERR_NONE
-    
+
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -205,6 +205,36 @@ struct ProtoThreads
 extern fw_err_t _pt_init(struct ProtoThreads*, _PT_THREAD_NAME);
 extern fw_err_t _pt_arm(struct TaskBlock*, struct ProtoThreads*);
 extern fw_err_t _pt_disarm(struct ProtoThreads*);
+
+/**
+ *******************************************************************************
+ * @brief        define framework protothreads interface
+ *******************************************************************************
+ */
+#define fw_pt_init                           _pt_init
+#define fw_pt_deinit                         _pt_deinit
+#define fw_pt_arm                            _pt_arm
+#define fw_pt_disarm                         _pt_disarm
+#define fw_pt_begin                          _pt_begin
+#define fw_pt_entry                          _pt_entry
+#define fw_pt_wait                           _pt_wait
+#define fw_pt_wfe                            _pt_wfe
+#define fw_pt_delay                          _pt_delay
+#define fw_pt_exit                           _pt_exit
+#define fw_pt_end                            _pt_end
+
+#else
+#define fw_pt_init
+#define fw_pt_deinit
+#define fw_pt_arm
+#define fw_pt_disarm
+#define fw_pt_begin
+#define fw_pt_entry
+#define fw_pt_wait
+#define fw_pt_wfe
+#define fw_pt_delay
+#define fw_pt_exit
+#define fw_pt_end 
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

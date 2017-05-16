@@ -138,10 +138,10 @@ const struct FrameworkInterface Framework =
     .Task.Init.EventHandle                             = InitEventHandleTask,
     .Task.Init.MessageHandle                           = InitMessageHandleTask,
     
-    .Task.Create.Simple                                = CreateSimpleTask,
-    .Task.Create.CallBack                              = CreateCallBackTask,
-    .Task.Create.EventHandle                           = CreateEventHandleTask,
-    .Task.Create.MessageHandle                         = CreateMessageHandleTask,
+    .Task.Add.Simple                                   = AddSimpleTask,
+    .Task.Add.CallBack                                 = AddCallBackTask,
+    .Task.Add.EventHandle                              = AddEventHandleTask,
+    .Task.Add.MessageHandle                            = AddMessageHandleTask,
 #endif
 };
 

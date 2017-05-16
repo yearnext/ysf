@@ -84,7 +84,7 @@ void InitTickComponent(void)
  * @note        None
  *******************************************************************************
  */
-void IncTick(void *param)
+void IncTick(void)
 {
     tick++;
     

@@ -93,7 +93,7 @@ extern "C"
 typedef struct
 {
     void     (*Init)(void);
-    void     (*Inc)(void*);
+    void     (*Inc)(void);
     uint32_t (*Read)(void);
     uint32_t (*Cal)(void);
 }TickComponentInterface;
@@ -108,9 +108,23 @@ typedef struct
  */
 #if USE_TICK_COMPONENT
 extern void     InitTickComponent(void);
-extern void     IncTick(void*);
+extern void     IncTick(void);
 extern uint32_t GetTick(void);
-extern uint32_t CalPastTick(void );
+extern uint32_t CalPastTick(void);
+/**
+ *******************************************************************************
+ * @brief        define framework tick interface
+ *******************************************************************************
+ */ 
+#define fw_tick_init                         InitTickComponent
+#define fw_tick_inc                          IncTick
+#define fw_tick_get                          GetTick
+#define fw_tick_cal                          CalPastTick
+#else
+#define fw_tick_init()                         
+#define fw_tick_inc()              
+#define fw_tick_get()           
+#define fw_tick_cal()        
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

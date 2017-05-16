@@ -101,6 +101,20 @@ typedef struct
 extern fw_err_t InitEventComponent(void);
 extern fw_err_t PostEvent(uint16_t);
 extern fw_err_t GetEvent(uint16_t*);
+
+/**
+ *******************************************************************************
+ * @brief        define framework event interface
+ *******************************************************************************
+ */  
+#define fw_event_init                        InitEventComponent
+#define fw_event_post                        PostEvent
+#define fw_event_get                         GetEvent
+#else
+#define fw_event_init()                        
+#define fw_event_post(a)                        
+#define fw_event_get(a)                         
+
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
