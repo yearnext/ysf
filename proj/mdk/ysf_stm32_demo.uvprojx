@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32F103ZE</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.1.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.2.2.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x10000) IROM(0x08000000,0x80000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -383,52 +383,57 @@
             <File>
               <FileName>fw_buffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_buffer.c</FilePath>
+              <FilePath>..\..\framework\fw_buffer.c</FilePath>
             </File>
             <File>
               <FileName>fw_debug.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_debug.c</FilePath>
+              <FilePath>..\..\framework\fw_debug.c</FilePath>
             </File>
             <File>
               <FileName>fw_event.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_event.c</FilePath>
+              <FilePath>..\..\framework\fw_event.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\fw_interface.c</FilePath>
             </File>
             <File>
               <FileName>fw_linklist.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_linklist.c</FilePath>
+              <FilePath>..\..\framework\fw_linklist.c</FilePath>
             </File>
             <File>
               <FileName>fw_memory.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_memory.c</FilePath>
+              <FilePath>..\..\framework\fw_memory.c</FilePath>
             </File>
             <File>
               <FileName>fw_pt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_pt.c</FilePath>
+              <FilePath>..\..\framework\fw_pt.c</FilePath>
             </File>
             <File>
               <FileName>fw_signal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_signal.c</FilePath>
+              <FilePath>..\..\framework\fw_signal.c</FilePath>
             </File>
             <File>
               <FileName>fw_task.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_task.c</FilePath>
+              <FilePath>..\..\framework\fw_task.c</FilePath>
             </File>
             <File>
               <FileName>fw_tick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_tick.c</FilePath>
+              <FilePath>..\..\framework\fw_tick.c</FilePath>
             </File>
             <File>
               <FileName>fw_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\core\component\fw_timer.c</FilePath>
+              <FilePath>..\..\framework\fw_timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -436,9 +441,19 @@
           <GroupName>ysf/core</GroupName>
           <Files>
             <File>
-              <FileName>fw_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\core\fw_interface.c</FilePath>
+              <FileName>core_conf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\core\core_conf.h</FilePath>
+            </File>
+            <File>
+              <FileName>core_interface.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\core\core_interface.h</FilePath>
+            </File>
+            <File>
+              <FileName>core_path.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\core\core_path.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -474,6 +489,16 @@
               <FileName>map_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\hal\stm32f10x\map\map_usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ysf/hal</GroupName>
+          <Files>
+            <File>
+              <FileName>hal_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\hal_interface.c</FilePath>
             </File>
           </Files>
         </Group>

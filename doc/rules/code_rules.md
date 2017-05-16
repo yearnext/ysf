@@ -1,7 +1,7 @@
 # 编程规范
 
 ## 1.命名规范
-编程的命名方式主要有Pascal（每个单词的首字母大写）和Camel两种（首个单词的首字母小写，其余单词的首字母大写）。
+编程的命名方式主要有Pascal（每个单词的首字母大写）、Camel（首个单词的首字母小写，其余单词的首字母大写）以及下划线命名的方式(兼容)。
 
 ### 1.1 局部变量
 局部变量命名时，使用**Camel**命名规则。
@@ -15,24 +15,24 @@
 
 示例：
     
-    void AtOpera(uint8_t atCmd);
+    void StartTimer(uint8_t timerId);
 
 ### 1.3 结构体成员
 结构体成员命名时，使用**Pascal**命名规则。
 
 示例：
     
-    struct _demo
+    struct DemoStructure
 	{
-		uint8_t DemoVariable;
+		uint8_t Variable;
 	};
 
 ### 1.4 枚举
-结构体成员命名时，使用**Pascal**命名规则。
+枚举成员命名时，全部使用大写字母表示,每个单词之间使用下划线分隔。。
 
 示例：
     
-    enum
+    enum DemoEnum
 	{
 		SYSTEM_START_EVENT,
 		SYSTEM_END_EVENT,
@@ -43,7 +43,7 @@
 
 示例：
     
-    #define INCLUDE_PATH            "../include/include.h"
+    #define TIME_MAX                        (0xFFFFFFFF)
 
 ### 1.6 类型命名
 使用typedef定义新的类型时，需要在类型后面加上_t后缀。
@@ -81,7 +81,7 @@
 	 * @brief        demo
 	 *******************************************************************************
 	 */
-	struct _TempStruct
+	struct DemoStructure
 	{
 		/** max number */
 		uint8_t NumberMax,
@@ -95,7 +95,7 @@
 	 * @brief        demo
 	 *******************************************************************************
 	 */
-	union _TempUnion
+	union DemoUnion
 	{
 		/** max number */
 		uint8_t NumberMax;
@@ -119,13 +119,13 @@
 
     /**
      *******************************************************************************
-     * @brief     push data to fifo
-     * @param     [in/out]  pushData        push data
+     * @brief     stop timer
+     * @param     [in/out]  timerId         timer id number
      * @return    [in/out]  ERR_NONE        no error
      * @note      None
      *******************************************************************************
      */
-    err_t PushInFifo(uint8_t pushData)
+    err_t TimerStop(uint8_t timerId)
     {
 	    return ERR_NONE;
     }

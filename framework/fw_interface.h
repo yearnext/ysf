@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       Framework.h                                                          *
+ * @file       fw_interface.h                                                  *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
- * @brief      core head files                                                 *
+ * @brief      framework interface head files                                  *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -30,27 +30,34 @@
  * 1.XXXXX                                                                     *
  *******************************************************************************
  */
- 
+
 /**
- * @defgroup frameowrk core
+ * @defgroup framework interface
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef _FRAMEWORK_CORE_H__
-#define _FRAMEWORK_CORE_H__
+#ifndef __FRAMEWORK_INTERFACE_H__
+#define __FRAMEWORK_INTERFACE_H__
 
-/* Add c++ compatibility------------------------------------------------------*/
+/* Add c++ compatibility -----------------------------------------------------*/
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-    
-/* Includes ------------------------------------------------------------------*/
+
+/* Includes ------------------------------------------------------------------*/ 
 #include "core_path.h"
-#include _FW_PATH
-#include _FW_INTERFACE_PATH
-#include _HAL_PATH
-#include _HAL_INTERFACE_PATH
+#include _FW_PATH    
+#include _FW_BUFFER_COMPONENT_PATH
+#include _FW_DEBUG_COMPONENT_PATH
+#include _FW_EVENT_COMPONENT_PATH
+#include _FW_LINK_LIST_COMPONENT_PATH 
+#include _FW_MEMORY_COMPONENT_PATH
+#include _FW_SIGNAL_COMPONENT_PATH
+#include _FW_TICK_COMPONENT_PATH
+#include _FW_TIMER_COMPONENT_PATH
+#include _FW_TASK_COMPONENT_PATH
+#include _FW_PT_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/ 
 /**
@@ -268,61 +275,9 @@ extern "C"
 #define fw_pt_delay
 #define fw_pt_exit
 #define fw_pt_end 
-#endif
+#endif    
 
-/**
- *******************************************************************************
- * @brief        define hal gpio interface
- *******************************************************************************
- */
-#if USE_MAP_GPIO_COMPONENT
-#define hal_gpio_open                        Hal.GPIO.Open
-#define hal_gpio_close                       Hal.GPIO.Close
-#define hal_gpio_init                        Hal.GPIO.Init
-#define hal_gpio_fini                        Hal.GPIO.Fini
-#define hal_gpio_input_get                   Hal.GPIO.Input.Get
-#define hal_gpio_output_set                  Hal.GPIO.Output.Set
-#define hal_gpio_output_clr                  Hal.GPIO.Output.Clr
-#define hal_gpio_output_get                  Hal.GPIO.Output.Get
-#define hal_gpio_output_toggle               Hal.GPIO.Output.Toggle
-#define hal_gpio_output_cmd                  Hal.GPIO.Output.Cmd
-#else
-#define hal_gpio_open
-#define hal_gpio_close
-#define hal_gpio_init
-#define hal_gpio_fini
-#define hal_gpio_input_get
-#define hal_gpio_output_set
-#define hal_gpio_output_clr
-#define hal_gpio_output_get
-#define hal_gpio_output_toggle
-#define hal_gpio_output_cmd      
-#endif
-
-/**
- *******************************************************************************
- * @brief        define hal timer interface
- *******************************************************************************
- */
-#if USE_MAP_TIMER_COMPONENT
-#define hal_timer_open                       Hal.Timer.Open
-#define hal_timer_close                      Hal.Timer.Close 
-#define hal_timer_start                      Hal.Timer.Start
-#define hal_timer_stop                       Hal.Timer.Stop
-#define hal_timer_base_init                  Hal.Timer.Base.Init
-#define hal_timer_base_handle_register       Hal.Timer.Base.HandleRegister
-#define hal_timer_base_arm                   Hal.Timer.Base.Arm
-#else
-#define hal_timer_open
-#define hal_timer_close
-#define hal_timer_start
-#define hal_timer_stop
-#define hal_timer_base_init
-#define hal_timer_base_handle_register
-#define hal_timer_base_arm
-#endif
-
-/* Private typedef -----------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief        define Framework interface
@@ -383,16 +338,6 @@ struct FrameworkInterface
  *******************************************************************************
  */
 extern const struct FrameworkInterface Framework;
-extern const struct HalInterface       Hal;
-
-/* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        core api
- *******************************************************************************
- */
-void InitFrameworkCore(void);
-void StartFrameworkCore(void);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -401,6 +346,6 @@ void StartFrameworkCore(void);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework core interface */
+/** @}*/     /** framework interface  */
 
 /**********************************END OF FILE*********************************/

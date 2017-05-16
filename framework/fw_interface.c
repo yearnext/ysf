@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       core.c                                                          * 
+ * @file       fw_interface.c                                                  * 
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
- * @brief      framework core source files                                     *
+ * @brief      framework interface source files                                *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,21 @@
  */
 
 /**
- * @defgroup framework core interface
+ * @defgroup framework interface
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_interface.h"
+
+/* Private functions ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        core api
+ *******************************************************************************
+ */
+void InitFrameworkCore(void);
+void StartFrameworkCore(void);
 
 /* Exported constants --------------------------------------------------------*/
 /**
@@ -136,39 +145,6 @@ const struct FrameworkInterface Framework =
 #endif
 };
 
-/**
- *******************************************************************************
- * @brief        hal interface config
- *******************************************************************************
- */
-const struct HalInterface Hal = 
-{
-    .Version                                           = _HAL_VERSION,
-    
-#if USE_MAP_GPIO_COMPONENT
-    .GPIO.Open                                         = MAP_GPIO_Open,
-    .GPIO.Close                                        = MAP_GPIO_Close,
-    .GPIO.Init                                         = MAP_GPIO_Init,
-    .GPIO.Fini                                         = MAP_GPIO_Deinit,
-    .GPIO.Input.Get                                    = MAP_GPIO_GetInputStatus,
-    .GPIO.Output.Get                                   = MAP_GPIO_GetOutputStatus,
-    .GPIO.Output.Set                                   = MAP_GPIO_Set,
-    .GPIO.Output.Clr                                   = MAP_GPIO_Clr,
-    .GPIO.Output.Toggle                                = MAP_GPIO_Toggle,
-    .GPIO.Output.Cmd                                   = MAP_GPIO_OutputCmd,
-#endif  
-
-#if USE_MAP_TIMER_COMPONENT
-    .Timer.Open                                        = MAP_Timer_Open,
-    .Timer.Close                                       = MAP_Timer_Close,
-    .Timer.Start                                       = MAP_Timer_Start,
-    .Timer.Stop                                        = MAP_Timer_Stop,
-    .Timer.Base.Init                                   = MAP_TimerBase_Init,
-    .Timer.Base.Arm                                    = MAP_TimerBase_Arm,
-    .Timer.Base.HandleRegister                         = MAP_TimerBaseHandle_Register,
-#endif
-}; 
-
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -213,7 +189,7 @@ void InitFrameworkCore(void)
     fw_tick_init();
     
 #if USE_MCU_TIMER_COMPONENT
-    hal_timer_base_arm(MCU_TICK_TIMER, TICK_PERIOD, fw_tick_inc, NULL);
+//    hal_timer_base_arm(MCU_TICK_TIMER, TICK_PERIOD, fw_tick_inc, NULL);
 #endif
     
 #endif

@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       core_path.h                                                     *
+ * @file       file name.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-04-13                                                      *
- * @brief      core path head files                                            *
+ * @date       XXXX-XX-XX                                                      *
+ * @brief      XXXXX                                                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -31,13 +31,9 @@
  *******************************************************************************
  */
 
-/**
- * @defgroup core path
- * @{
- */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __CORE_PATH_H__
-#define __CORE_PATH_H__
+#ifndef __FILE_NAME_H__
+#define __FILE_NAME_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -45,23 +41,17 @@ extern "C"
 {
 #endif
 
-/* Define path ---------------------------------------------------------------*/
-#define _COMM_PATH                            "../common/comm_path.h"
-#define _FW_PATH                              "../framework/fw_path.h"
-#define _HAL_PATH                             "../hal/hal_path.h"
-    
 /* Includes ------------------------------------------------------------------*/
-#include _COMM_PATH
-    
 /* Exported macro ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
-	
-#endif       /** end include define */
 
-/** @}*/     /** core path  */
+#endif      /** prevent recursive inclusion */
 
 /**********************************END OF FILE*********************************/

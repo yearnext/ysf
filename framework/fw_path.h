@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       core_path.h                                                     *
+ * @file       fw_path.h                                                       *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
- * @brief      core path head files                                            *
+ * @brief      framework path head files                                       *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup core path
+ * @defgroup framework path
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __CORE_PATH_H__
-#define __CORE_PATH_H__
+#ifndef __FRAMEWORK_PATH_H__
+#define __FRAMEWORK_PATH_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -45,15 +45,37 @@ extern "C"
 {
 #endif
 
-/* Define path ---------------------------------------------------------------*/
-#define _COMM_PATH                            "../common/comm_path.h"
-#define _FW_PATH                              "../framework/fw_path.h"
-#define _HAL_PATH                             "../hal/hal_path.h"
-    
-/* Includes ------------------------------------------------------------------*/
-#include _COMM_PATH
-    
+
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      framework common path
+ *******************************************************************************
+ */
+#define _FW_TYPE_PATH                        "../framework/fw_type.h"
+#define _FW_CONF_PATH                        "../framework/fw_conf.h"
+#define _FW_INTERFACE_PATH                   "../framework/fw_interface.h"
+    
+/**
+ *******************************************************************************
+ * @brief      framework component path
+ *******************************************************************************
+ */
+#define _FW_BUFFER_COMPONENT_PATH             "../framework/fw_buffer.h"
+#define _FW_DEBUG_COMPONENT_PATH              "../framework/fw_debug.h"
+#define _FW_EVENT_COMPONENT_PATH              "../framework/fw_event.h"
+#define _FW_LINK_LIST_COMPONENT_PATH          "../framework/fw_linklist.h"
+#define _FW_MEMORY_COMPONENT_PATH             "../framework/fw_memory.h"
+#define _FW_SIGNAL_COMPONENT_PATH             "../framework/fw_signal.h"
+#define _FW_TICK_COMPONENT_PATH               "../framework/fw_tick.h"
+#define _FW_TIMER_COMPONENT_PATH              "../framework/fw_timer.h"
+#define _FW_TASK_COMPONENT_PATH               "../framework/fw_task.h"
+#define _FW_PT_COMPONENT_PATH                 "../framework/fw_pt.h"
+
+
+/* Includes ------------------------------------------------------------------*/
+#include _FW_TYPE_PATH
+#include _FW_CONF_PATH
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -62,6 +84,6 @@ extern "C"
 	
 #endif       /** end include define */
 
-/** @}*/     /** core path  */
+/** @}*/     /** framework path  */
 
 /**********************************END OF FILE*********************************/
