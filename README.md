@@ -5,14 +5,14 @@ ysf是一个基于事件机制的单片机编程框架。
 ## 目录介绍
 |目录名称|功能简介|
 |:-:|:-:|
-|common|公共组件，包含编译器配置、路径配置、基本数据类型定义以及一些使用工具|
-|Framework|包含了框架的api以及相关实现|
-|core|提供了全部api的接口|
-|demo|用于演示最新的api|
-|doc|包含了编程规范、框架结构、文件模版等|
-|hal|硬件驱动|
-|proj|工程目录|
-|stack|协议栈|
+|[common](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/common)|公共组件，包含编译器配置、路径配置、基本数据类型定义以及一些使用工具|
+|[framework](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/framework)|包含了框架的api以及相关实现|
+|[core](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/core)|提供了全部api的接口|
+|[demo](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/demo)|用于演示最新的api|
+|[doc](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/doc)|包含了编程规范、框架结构、文件模版等|
+|[hal](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/hal)|硬件驱动|
+|[proj](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/proj)|工程目录|
+|[stack](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha/stack)|协议栈|
 
 ## 相关文档
 1. [框架Logo](https://coding.net/u/yearnext/p/ysf/git/blob/ysf-stm32f1xx-alpha/doc/logo/logo_ver0.0.1.png) 
