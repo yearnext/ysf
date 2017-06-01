@@ -1,6 +1,6 @@
 # ysf——yearnext software framework
 ## 框架简介
-ysf是一个基于事件机制的单片机编程框架。
+ysf是一个基于事件驱动机制的单片机编程框架。
 
 ## 目录介绍
 |目录名称|功能简介|
