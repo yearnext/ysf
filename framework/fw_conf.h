@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_signal.h
+ * @file       fw_conf.h
  * @author     yearnext
  * @version    1.0.0
  * @date       2017-01-10
- * @brief      framework signal head files
+ * @brief      framework config component head files
  * @par        paltform                                  
  *                 Windows
  * @par        compiler									                         
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup framework signal component
+ * @defgroup framework config component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_SIGNAL_H__
-#define __FRAMEWORK_SIGNAL_H__
+#ifndef __FRAMEWORK_CONFIG_H__
+#define __FRAMEWORK_CONFIG_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,93 +46,133 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "fw_core.h"
-#include "fw_timer.h"
-    
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        framework signal preiod config
+ * @brief       API config
  *******************************************************************************
  */
-#define FW_SIGNAL_SCAN_PREIOD                                  (FW_TIME_SET(10))
+#define USE_FRAMEWORK_EVENT_COMPONENT                                        (1)
 
 /**
  *******************************************************************************
- * @brief       define signal info param
+ * @brief       queue compoent config flag
  *******************************************************************************
  */
-#define NO_SIGNAL_INFO                                                       (0)
-#define IS_NO_SIGNAL(signal)                        ((signal) == NO_SIGNAL_INFO)
+#define USE_FRAMEWORK_QUEUE_COMPONENT                                        (0)
+
+/**
+ *******************************************************************************
+ * @brief        framework signal component config
+ *******************************************************************************
+ */
+#define USE_FRAMEWORK_SIGNAL_COMPONENT                                       (0)
     
 /**
  *******************************************************************************
- * @brief       define signal event
+ * @brief       timer compoent config flag
  *******************************************************************************
  */
-#define Logon_Release_Event                                               (0x01)
-#define Logon_PressEdge_Event                                             (0x02)
-#define Logon_Press_Event                                                 (0x04)
-#define Logon_LongPress_Event                                             (0x08)
-#define Logon_MultiPress_Event                                            (0x10)
-#define Logon_ReleaseEdge_Event                                           (0x20)
-    
-#define Logout_Release_Event                                              (0x01)
-#define Logout_PressEdge_Event                                            (0x02)
-#define Logout_Press_Event                                                (0x04)
-#define Logout_LongPress_Event                                            (0x08)
-#define Logout_MultiPress_Event                                           (0x10)
-#define Logout_ReleaseEdge_Event                                          (0x20)
-
-#define Logon_Edge_Signal()                                               (0x22)
-#define Logon_All_Signal()                                                (0x3F)
-
-#define IsLogonReleaseEvent(n)                   ((n) & Logon_Release_Event)
-#define IsLogonPressEdgeEvent(n)                 ((n) & Logon_PressEdge_Event)
-#define IsLogonPressEvent(n)                     ((n) & Logon_Press_Event)
-#define IsLogonLongPressEvent(n)                 ((n) & Logon_LongPress_Event)
-#define IsLogonMultiPressEvent(n)                ((n) & Logon_MultiPress_Event)
-#define IsLogonReleaseEdgeEvent(n)               ((n) & Logon_ReleaseEdge_Event)
+#define USE_FRAMEWORK_TIMER_COMPONENT                                        (1)
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        framework signal status config
+ * @brief       define event class
+ * @note        event value can not be greater than FW_EVENT_MAX(127)
  *******************************************************************************
  */
-typedef enum
+enum define_fw_event
 {
-    SIGNAL_STATUS_INIT = 0x80,
-    SIGNAL_STATUS_PRESS_FILTER_STEP,
-	SIGNAL_STATUS_PRESS_EDGE,
-    SIGNAL_STATUS_PRESS,
-	SIGNAL_STATUS_LONG_PRESS,
-	SIGNAL_STATUS_MULTI_PRESS,
-    SIGNAL_STATUS_RELEASE_FILTER_STEP,
-    SIGNAL_STATUS_RELEASE_EDGE,
-	SIGNAL_STATUS_RELEASE,
-	SIGNAL_STATUS_END,
-}signal_status_t;
+    /** framework event */
+    FW_EVENT_NONE,
+    FW_TICK_EVENT,
+    FW_SIGNAL_EVENT,
+	FW_DELAY_EVENT,
+	FW_BEGIN_EVENT,
+	FW_END_EVENT,
+	FW_FLOW_EVENT,
+	FW_TIMEOUT_EVENT,
+    
+    /** user define begin */
+
+    /** user define end */
+    FW_EVENT_MAX,
+};
+
+/**
+ *******************************************************************************
+ * @brief       framework task config
+ *******************************************************************************
+ */
+enum define_fw_task
+{
+    /** framework task */
+    FW_TICK_TASK = 0,
+ 	FW_SIGNAL_TASK,
+    
+	/** user define begin */
+
+	/** user define end */
+    FW_TASK_MAX,
+};
+
+/**
+ *******************************************************************************
+ * @brief       framework queue config
+ *******************************************************************************
+ */
+enum define_fw_queue
+{
+	/** framework queue */
+	FW_TICK_QUEUE,
+
+	/** user define begin */
+
+	/** user define end */
+	FW_QUEUE_MAX,
+};
+
+/**
+ *******************************************************************************
+ * @brief        framework signal config
+ *******************************************************************************
+ */
+enum define_fw_signal
+{
+	/** framework signal */
+
+	/** user define begin */
+
+	/** user define end */
+	SIGNAL_MAX,
+};
+
+/**
+ *******************************************************************************
+ * @brief       framework timer config
+ *******************************************************************************
+ */
+enum define_fw_timer
+{
+	/** framework timer */
+    SIGNAL_SCAN_TIMER,
+    
+	/** user define begin */
+    
+	/** user define end */
+    Timer_Max,
+};
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_SIGNAL_COMPONENT
-extern void InitSignalComponent(void);
-extern void PollSignalComponent(uint8_t);
-
-extern fw_err_t RegisterSignal(uint8_t, uint8_t, uint8_t (*)(void), uint8_t);
-extern fw_err_t LogonSignalEvent(uint8_t, uint8_t);
-extern fw_err_t LogoutSignalEvent(uint8_t, uint8_t);
-extern uint8_t GetSignalInfo(uint8_t);
-#endif
-
-/* Add c++ compatibility------------------------------------------------------*/
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework signal component */
+/** @}*/     /** framework event component */
 
 /**********************************END OF FILE*********************************/

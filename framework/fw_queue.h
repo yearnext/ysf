@@ -16,28 +16,24 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_tick.h
- * @author     yearnext
- * @version    1.0.0
- * @date       2017-01-10
- * @brief      framework tick component head files
- * @par        paltform                                  
- *                 Windows
- * @par        compiler									                         
- * 				GCC
+ * @file       fw_queue.h                                                      *
+ * @author     Mr.Sun                                                          *
+ * @version    1.0.0                                                           *
+ * @date       2017-06-13                                                      *
+ * @brief      framework queue component                                       *
+ * @par        work platform                                                   *
+ *                 IAR                                                         *
+ * @par        compiler                                                        *
+ *                 STM8L052                                                    *
  *******************************************************************************
- * @note
- * 1.XXXXX                  						                     
+ * @note                                                                       *
+ * 1.XXXXX                                                                     *
  *******************************************************************************
  */
 
-/**
- * @defgroup framework tick component
- * @{
- */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_TICK_H__
-#define __FRAMEWORK_TICK_H__
+#ifndef __FRAMEWORK_QUEUE_H__
+#define __FRAMEWORK_QUEUE_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -49,44 +45,27 @@ extern "C"
 #include "fw_core.h"
 
 /* Exported macro ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @note        framework tick component config
- *******************************************************************************
- */
-#define USE_FRAMEWORK_TICK_COMPONENT                                         (1)
-    
-/**
- *******************************************************************************
- * @note        define tick max value
- *******************************************************************************
- */
-#define FW_TICK_MAX                                               (0xFFFFFFFFUL)
-    
-/**
- *******************************************************************************
- * @note        define tick preiod
- *******************************************************************************
- */
-#define FW_TICK_PREIOD                                                       (1)
-
 /* Exported types ------------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_TICK_COMPONENT
-extern void InitTickComponent(void);
-extern void IncTick(void);
-extern uint32_t GetTick(void);
-extern uint32_t CalPastTick(void);
-#endif
+/**
+ *******************************************************************************
+ * @brief       Queue Interface
+ *******************************************************************************
+ */
+extern fw_err_t Fw_Queue_Init(uint8_t, uint8_t*, uint8_t);
+extern fw_err_t Fw_Queue_GetLen(uint8_t, uint8_t*);
+extern fw_err_t Fw_Queue_PutByte(uint8_t, uint8_t);
+extern fw_err_t Fw_Queue_PutData(uint8_t, uint8_t*, uint8_t);
+extern fw_err_t Fw_Queue_PushByte(uint8_t, uint8_t*);
+extern fw_err_t Fw_Queue_PushData(uint8_t, uint8_t*, uint8_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
-	
-#endif       /** end include define */
 
-/** @}*/     /** framework tick component */
+#endif      /** prevent recursive inclusion */
 
 /**********************************END OF FILE*********************************/

@@ -16,56 +16,43 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       ysf_event.h
- * @author     yearnext
- * @version    1.0.0
- * @date       2017-01-10
- * @brief      framework event component head files
- * @par        paltform                                  
- *                 Windows
- * @par        compiler									                         
- * 				   GCC
+ * @file       demo.c                                                          *
+ * @author     yearnext                                                        *
+ * @version    1.0.0                                                           *
+ * @date       2017-04-19                                                      *
+ * @brief      demo source files                                               *
+ * @par        work platform                                                   *
+ *                 Windows                                                     *
+ * @par        compiler                                                        *
+ *                 GCC                                                         * 
  *******************************************************************************
- * @note
- * 1.XXXXX                  						                     
+ * @note                                                                       *
+ * 1.XXXXX                                                                     *
  *******************************************************************************
  */
-
+ 
 /**
- * @defgroup framework event component
+ * @defgroup demo
  * @{
  */
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_EVENT_H__
-#define __FRAMEWORK_EVENT_H__
-
-/* Add c++ compatibility------------------------------------------------------*/
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "fw_core.h"
-
-/* Exported macro ------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/                                                        
+/* Private typedef -----------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_EVENT_COMPONENT
-extern void InitEventComponent(void);
-extern fw_err_t RegisterEvent(uint8_t, void (*)(uint8_t));
-extern inline void PostEvent(uint8_t, uint8_t);
-extern inline void PollEvent(void);
-#endif
-
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifdef __cplusplus
+/**
+ *******************************************************************************
+ * @brief       main function
+ *******************************************************************************
+ */
+int main(void)
+{   
+    return 0;
 }
-#endif
-	
-#endif       /** end include define */
 
-/** @}*/     /** framework event component */
+/** @}*/     /* key control demo  */
 
 /**********************************END OF FILE*********************************/

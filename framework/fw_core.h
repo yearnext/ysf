@@ -1,5 +1,21 @@
 /**
- ******************************************************************************
+ *******************************************************************************
+ *                       Copyright (C) 2017  yearnext                          *
+ *                                                                             *
+ *    This program is free software; you can redistribute it and/or modify     *
+ *    it under the terms of the GNU General Public License as published by     *
+ *    the Free Software Foundation; either version 2 of the License, or        *
+ *    (at your option) any later version.                                      *
+ *                                                                             *
+ *    This program is distributed in the hope that it will be useful,          *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *    GNU General Public License for more details.                             *
+ *                                                                             *
+ *    You should have received a copy of the GNU General Public License along  *
+ *    with this program; if not, write to the Free Software Foundation, Inc.,  *
+ *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
+ *******************************************************************************
  * @file       fw_core.h
  * @author     yearnext
  * @version    1.0.0
@@ -9,10 +25,10 @@
  *                 Windows
  * @par        compiler
  *                 GCC
- ******************************************************************************
+ *******************************************************************************
  * @note
  * 1.XXXXX
- ******************************************************************************
+ *******************************************************************************
  */
 
 /**
@@ -33,6 +49,7 @@ extern "C"
 #include <stdint.h>
 #include <stdbool.h>
 #include <intrinsics.h>
+#include "fw_conf.h"
 
 /* Framework debug -----------------------------------------------------------*/
 /**
@@ -53,9 +70,9 @@ typedef unsigned char           uint8_t;
 typedef unsigned int            uint16_t;
 typedef unsigned long           uint32_t;
 
-typedef char                    int8_t;
-typedef int                     int16_t;
-typedef long                    int32_t;   
+typedef signed char             int8_t;
+typedef signed int              int16_t;
+typedef signed long             int32_t;   
 #endif
 
 /**
@@ -67,7 +84,7 @@ typedef long                    int32_t;
 typedef enum
 {
    false = 0,
-   true = 1,
+   true = !false,
 }bool;
 #endif
 
@@ -110,8 +127,8 @@ typedef enum
 #define _ENTER_CRITICAL()                                  __disable_interrupt()
 #define _EXIT_CRITICAL()                                    __enable_interrupt()
 
-#define _ATOM_CODE_BEGIN()                                     _ENTER_CRITICAL()
-#define _ATOM_CODE_END()                                        _EXIT_CRITICAL()
+#define _ATOM_ACTIVE_BEGIN()                                   _ENTER_CRITICAL()
+#define _ATOM_ACTIVE_END()                                      _EXIT_CRITICAL()
 
 /**
  *******************************************************************************
@@ -132,14 +149,14 @@ typedef enum
  * @brief      MACRO
  *******************************************************************************
  */
-#define CalTypeBitSize(type)             (CalTypeByteSize(type) * 8)
+#define CalTypeBitSize(type)                        (CalTypeByteSize(type) >> 3)
 
 /**
  *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
  */
-#define CalRemainder(dividend,divisor)   ((dividend)%(divisor))
+#define CalRemainder(dividend,divisor)                    ((dividend)%(divisor))
 
 /**
  *******************************************************************************
@@ -171,36 +188,64 @@ typedef enum
  * @brief      MACRO
  *******************************************************************************
  */ 
-#define _INLINE_MACRO_FUNCTION(code)                                      {code}
+#define _MACRO_ACTIVE(code)                                               {code}
+                                         
+/**
+ *******************************************************************************
+ * @brief      MACRO
+ *******************************************************************************
+ */ 
+#define _ST(code)                                            _MACRO_ACTIVE(code)
                                          
 /**
  *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
  */                                           
-#define _INLINE_PARAM_CHECK(n) _INLINE_MACRO_FUNCTION(if((n)) return _ERR_FAIL;)
+#define _PARAM_CHECK(n)                           _ST(if((n)) return _ERR_FAIL;)
 
 /**
  *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
  */     
-#define _SET_BIT(REG, BIT)                                      ((REG) |= (BIT))
+#define _SET_BIT(REG, BIT)                               ((REG) |= (1 << (BIT)))
 
 /**
  *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
  */     
-#define _CLR_BIT(REG, BIT)                                     ((REG) &= ~(BIT))
+#define _CLR_BIT(REG, BIT)                              ((REG) &= ~(1 << (BIT)))
 
 /**
  *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
  */     
-#define _READ_BIT(REG, BIT)                                      ((REG) & (BIT))
+#define _READ_BIT(REG, BIT)                               ((REG) & (1 << (BIT)))
 
+/**
+ *******************************************************************************
+ * @brief      MACRO
+ *******************************************************************************
+ */  
+#define _SET_REG(REG, VAL)                                      ((REG) |= (VAL))
+     
+/**
+ *******************************************************************************
+ * @brief      MACRO
+ *******************************************************************************
+ */  
+#define _CLR_REG(REG, VAL)                                     ((REG) &= ~(VAL))
+ 
+/**
+ *******************************************************************************
+ * @brief      MACRO
+ *******************************************************************************
+ */ 
+#define _GET_REG(REG, VAL)                                       ((REG) & (VAL))
+                                             
 /**
  *******************************************************************************
  * @brief      MACRO

@@ -1,5 +1,21 @@
 /**
- ******************************************************************************
+ *******************************************************************************
+ *                       Copyright (C) 2017  yearnext                          *
+ *                                                                             *
+ *    This program is free software; you can redistribute it and/or modify     *
+ *    it under the terms of the GNU General Public License as published by     *
+ *    the Free Software Foundation; either version 2 of the License, or        *
+ *    (at your option) any later version.                                      *
+ *                                                                             *
+ *    This program is distributed in the hope that it will be useful,          *
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+ *    GNU General Public License for more details.                             *
+ *                                                                             *
+ *    You should have received a copy of the GNU General Public License along  *
+ *    with this program; if not, write to the Free Software Foundation, Inc.,  *
+ *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
+ *******************************************************************************
  * @file       fw_debug.h
  * @author     yearnext
  * @version    1.0.0
@@ -9,10 +25,10 @@
  *                 Windows
  * @par        compiler
  *                 GCC
- ******************************************************************************
+ *******************************************************************************
  * @note
  * 1.XXXXX
- ******************************************************************************
+ *******************************************************************************
  */
 
 /**
@@ -31,7 +47,8 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_core.h"
-
+#include <stdarg.h>
+    
 /* Framework debug -----------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -39,11 +56,11 @@ extern "C"
  *******************************************************************************
  */    
 #if USE_GLOBAL_DEBUG
-#include "bsp_uart.h"
+#include <stdio.h>
 
-#define log(a)     bsp_uart_tx_config(a, sizeof(a))
+#define log(a, ...)     printf(a, ##__VA_ARGS__)
 #else
-#define log(a)
+#define log(a, ...)
 #endif
                              
 /* Add c++ compatibility------------------------------------------------------*/
