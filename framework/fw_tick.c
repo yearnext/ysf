@@ -52,13 +52,6 @@
  */
 static volatile uint32_t Tick = 0;
 
-/**
- *******************************************************************************
- * @brief       framework tick
- *******************************************************************************
- */
-//static uint32_t TickBuffer[10];
-
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -73,8 +66,6 @@ static volatile uint32_t Tick = 0;
 void InitTickComponent( void )
 {
 	Tick = 0;
-    
-//	Fw_Queue_Init(FW_TICK_QUEUE, (uint8_t *)&TickBuffer, CalTypeByteSize(TickBuffer));
 }
 
 /**
@@ -87,18 +78,9 @@ void InitTickComponent( void )
  */
 void IncTick(void)
 {
-//    _ATOM_ACTIVE_BEGIN();
-    
     Tick++;
     
     PostEvent(FW_TICK_TASK, FW_TICK_EVENT);
-    
-//    if(Fw_Queue_PutData(FW_TICK_QUEUE, (uint8_t *)&Tick, CalTypeByteSize(Tick)) == FW_ERR_FAIL)
-//    {
-//        log("Write Tick To Fifo Is Fail! \n");
-//    }
-    
-//    _ATOM_ACTIVE_END();
 }
 
 /**
