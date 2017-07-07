@@ -1604,6 +1604,9 @@
       <name>$PROJ_DIR$\..\..\framework\fw_core.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\framework\fw_debug.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\framework\fw_debug.h</name>
     </file>
     <file>
