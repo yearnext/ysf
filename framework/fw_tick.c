@@ -1,21 +1,5 @@
 /**
  *******************************************************************************
- *                       Copyright (C) 2017  yearnext                          *
- *                                                                             *
- *    This program is free software; you can redistribute it and/or modify     *
- *    it under the terms of the GNU General Public License as published by     *
- *    the Free Software Foundation; either version 2 of the License, or        *
- *    (at your option) any later version.                                      *
- *                                                                             *
- *    This program is distributed in the hope that it will be useful,          *
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of           *
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
- *    GNU General Public License for more details.                             *
- *                                                                             *
- *    You should have received a copy of the GNU General Public License along  *
- *    with this program; if not, write to the Free Software Foundation, Inc.,  *
- *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
- *******************************************************************************
  * @file       fw_tick.c
  * @author     yearnext
  * @version    1.0.0
@@ -24,7 +8,7 @@
  * @par        paltform                                  
  *                 Windows
  * @par        compiler									                         
- * 			       GCC
+ * 				GCC
  *******************************************************************************
  * @note
  * 1.XXXXX                  						                     
@@ -52,6 +36,13 @@
  */
 static volatile uint32_t Tick = 0;
 
+/**
+ *******************************************************************************
+ * @brief       framework tick
+ *******************************************************************************
+ */
+//static uint32_t TickBuffer[10];
+
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -66,6 +57,8 @@ static volatile uint32_t Tick = 0;
 void InitTickComponent( void )
 {
 	Tick = 0;
+    
+//	Fw_Queue_Init(FW_TICK_QUEUE, (uint8_t *)&TickBuffer, CalTypeByteSize(TickBuffer));
 }
 
 /**
@@ -78,9 +71,18 @@ void InitTickComponent( void )
  */
 void IncTick(void)
 {
+//    _ATOM_ACTIVE_BEGIN();
+    
     Tick++;
     
     PostEvent(FW_TICK_TASK, FW_TICK_EVENT);
+    
+//    if(Fw_Queue_PutData(FW_TICK_QUEUE, (uint8_t *)&Tick, CalTypeByteSize(Tick)) == FW_ERR_FAIL)
+//    {
+//        log("Write Tick To Fifo Is Fail! \n");
+//    }
+    
+//    _ATOM_ACTIVE_END();
 }
 
 /**
@@ -99,32 +101,25 @@ uint32_t GetTick(void)
 /**
  *******************************************************************************
  * @brief       cal past tick
- * @param       [in/out]  void
+ * @param       [in/out]  uint32_t    lastTick
  * @return      [in/out]  uint32_t    tick
  * @note        None
  *******************************************************************************
  */
-uint32_t CalPastTick(void)
+uint32_t CalPastTick(uint32_t lastTick, uint32_t nowTick)
 {
-    static uint32_t lastTick = 0;
     uint32_t calTick;
-    
-    _ATOM_ACTIVE_BEGIN();
-    
-    if (Tick < lastTick)
+
+    if (nowTick < lastTick)
     {
         calTick = UINT32_MAX - lastTick;
-        calTick = calTick + Tick;
+        calTick = calTick + nowTick;
     }
     else
     {
-        calTick = Tick - lastTick;
+        calTick = nowTick - lastTick;
     }
     
-    lastTick = Tick;
-    
-    _ATOM_ACTIVE_END();
-
     return calTick;
 }
 
