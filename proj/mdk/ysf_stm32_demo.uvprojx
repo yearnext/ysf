@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -325,7 +325,7 @@
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
             <useXO>0</useXO>
-            <v6Lang>3</v6Lang>
+            <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\app;..\..\core;..\..\hal\stm32f10x\mal;..\..\hal\stm32f10x\msp</IncludePath>
+              <IncludePath>..\..\core;..\..\hal\stm32f10x\mal;..\..\hal\stm32f10x\msp;..\..\demo</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -380,46 +380,6 @@
         <Group>
           <GroupName>ysf/framework</GroupName>
           <Files>
-            <File>
-              <FileName>fw_buffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_buffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_debug.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_event.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_event.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_linklist.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_linklist.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_memory.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_memory.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_pt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_pt.c</FilePath>
-            </File>
-            <File>
-              <FileName>fw_signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_signal.c</FilePath>
-            </File>
             <File>
               <FileName>fw_task.c</FileName>
               <FileType>1</FileType>
@@ -469,36 +429,6 @@
               <FileName>startup_stm32f103xe.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\hal\stm32f10x\mal\arm\startup_stm32f103xe.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ysf/hal/map</GroupName>
-          <Files>
-            <File>
-              <FileName>map_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f10x\map\map_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>map_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f10x\map\map_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>map_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\stm32f10x\map\map_usart.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ysf/hal</GroupName>
-          <Files>
-            <File>
-              <FileName>hal_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\hal_interface.c</FilePath>
             </File>
           </Files>
         </Group>

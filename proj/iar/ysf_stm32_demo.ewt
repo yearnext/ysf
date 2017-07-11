@@ -2322,69 +2322,6 @@
     <group>
         <name>framework</name>
         <group>
-            <name>buffer</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_buffer.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_buffer.h</name>
-            </file>
-        </group>
-        <group>
-            <name>debug</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_debug.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_debug.h</name>
-            </file>
-        </group>
-        <group>
-            <name>event</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_event.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_event.h</name>
-            </file>
-        </group>
-        <group>
-            <name>linklist</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_linklist.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_linklist.h</name>
-            </file>
-        </group>
-        <group>
-            <name>memory</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_memory.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_memory.h</name>
-            </file>
-        </group>
-        <group>
-            <name>protothreads</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_pt.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_pt.h</name>
-            </file>
-        </group>
-        <group>
-            <name>signal</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_signal.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_signal.h</name>
-            </file>
-        </group>
-        <group>
             <name>task</name>
             <file>
                 <name>$PROJ_DIR$\..\..\framework\fw_task.c</name>
@@ -2393,32 +2330,8 @@
                 <name>$PROJ_DIR$\..\..\framework\fw_task.h</name>
             </file>
         </group>
-        <group>
-            <name>tick</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_tick.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_tick.h</name>
-            </file>
-        </group>
-        <group>
-            <name>timer</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_timer.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\framework\fw_timer.h</name>
-            </file>
-        </group>
         <file>
             <name>$PROJ_DIR$\..\..\framework\fw_conf.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\framework\fw_interface.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\framework\fw_interface.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\framework\fw_path.h</name>
@@ -2539,51 +2452,6 @@
                     <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\system_stm32f1xx.h</name>
                 </file>
             </group>
-            <group>
-                <name>map</name>
-                <group>
-                    <name>gpio</name>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_gpio.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_gpio.h</name>
-                    </file>
-                </group>
-                <group>
-                    <name>timer</name>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_timer.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_timer.h</name>
-                    </file>
-                </group>
-                <group>
-                    <name>usart</name>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_usart.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\map\map_usart.h</name>
-                    </file>
-                </group>
-            </group>
         </group>
-        <file>
-            <name>$PROJ_DIR$\..\..\hal\hal_conf.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\hal\hal_interface.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\hal\hal_interface.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\hal\hal_path.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\hal\hal_type.h</name>
-        </file>
     </group>
 </project>

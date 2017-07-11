@@ -59,11 +59,7 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT
-#if USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT
 #define USE_SIGNAL_COMPONENT                                                 (1)
-#else
-#define USE_SIGNAL_COMPONENT                                                 (0)
-#endif
 
 /**
  *******************************************************************************
@@ -145,7 +141,7 @@ struct SignalBlock
     
     uint8_t             (*Detect)(void);
     
-    struct TaskBlock    Task;
+//    struct TaskBlock    Task;
 
     uint8_t             Info;    
     enum SignalStatus   Status;

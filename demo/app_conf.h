@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_tick.h                                                       *
+ * @file       app_conf.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-01-10                                                      *
- * @brief      tick component head files                                       *
+ * @date       2017-07-10                                                      *
+ * @brief      application config head files                                   *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -30,14 +30,14 @@
  * 1.XXXXX                                                                     *
  *******************************************************************************
  */
-
+ 
 /**
- * @defgroup tick component
+ * @defgroup application config
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TICK_COMPONENT_H__
-#define __TICK_COMPONENT_H__
+#ifndef __APPLICATION_CONF_H__
+#define __APPLICATION_CONF_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,83 +46,53 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-
-/* Exported macro ------------------------------------------------------------*/
+/* Define and config ---------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       framework component config flags
- * @note        1                        enable
- * @note        0                        disable
+ * @brief      define framework task
  *******************************************************************************
  */
-#ifdef USE_FRAMEWORK_TICK_COMPONENT
-#define USE_TICK_COMPONENT                                                   (1)
-
-/**
- *******************************************************************************
- * @brief       user config flags
- * @note        1         enable
- * @note        0         disable
- *******************************************************************************
- */
-#else
-#define USE_TICK_COMPONENT                                                   (1)
-#endif
+enum Define_Task
+{
+    /** define framework task */                            /** task priority */
+    FW_TICK_TASK                                                            = 0,
+    FW_SIGNAL_TASK                                                          = 1,
+    FW_DEBUG_TASK                                                           = 2,
+    
+    /** define user task begin */
+	
+    /** define user task end */
+    FW_TASK_MAX,
+};
 
 /**
  *******************************************************************************
- * @brief       define tick param
+ * @brief      define framework event
  *******************************************************************************
  */
-#define TICK_PERIOD                                             CORE_TICK_PERIOD
-#define TICK_VALUE_MAX                                                UINT32_MAX
+enum Define_Event
+{
+    /** define framework event */
+    FW_EVENT_NONE,
+    FW_TICK_EVENT,
+    FW_SIGNAL_EVENT,
+    FW_DELAY_EVENT,
+    FW_BEGIN_EVENT,
+    FW_END_EVENT,
+    FW_FLOW_EVENT,
+    FW_TIMEOUT_EVENT,
+    FW_TRANSFER_START_EVENT,
+    FW_TRANSFER_EVENT,
+    FW_TRANSFER_WAIT_EVNET,
+    FW_TRANSFER_COMPLET_EVENT,
+    
+    /** define user task begin */
+	
+    /** define user task end */
+    FW_EVENT_MAX,
+};
 
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define tick function interface
- *******************************************************************************
- */
-#if USE_TICK_COMPONENT
-typedef struct
-{
-    void     (*Init)(void);
-    void     (*Inc)(void);
-    uint32_t (*Read)(void);
-    uint32_t (*Cal)(void);
-}TickComponentInterface;
-#endif
-
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define tick function api
- *******************************************************************************
- */
-#if USE_TICK_COMPONENT
-extern void     InitTickComponent(void);
-extern void     IncTick(void);
-extern uint32_t GetTick(void);
-extern uint32_t CalPastTick(void);
-/**
- *******************************************************************************
- * @brief        define framework tick interface
- *******************************************************************************
- */ 
-#define fw_tick_init                         InitTickComponent
-#define fw_tick_inc                          IncTick
-#define fw_tick_get                          GetTick
-#define fw_tick_cal                          CalPastTick
-#else
-#define fw_tick_init()                         
-#define fw_tick_inc()              
-#define fw_tick_get()           
-#define fw_tick_cal()        
-#endif
-
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
@@ -130,6 +100,6 @@ extern uint32_t CalPastTick(void);
 	
 #endif       /** end include define */
 
-/** @}*/     /** tick component */
+/** @}*/     /** application config  */
 
 /**********************************END OF FILE*********************************/

@@ -52,28 +52,8 @@ extern "C"
  * @brief       define version
  *******************************************************************************
  */
-#define _CORE_VERSION                           "CORE_ALPHA_0.0.1_2017040132135"
-
-/**
- *******************************************************************************
- * @brief       define core events
- *******************************************************************************
- */
-#define __DEFINE_EVENT_BEGIN            typedef enum                           \
-                                        {                                      \
-                                            _EVENT_NONE = 0,                   \
-                                            _EVENT_DELAY,                   
-                                        
-#define __DEFINE_EVENT_END                  _EVENT_MAX,                        \
-                                        }_evt_t;
-
-/**
- *******************************************************************************
- * @brief       REGISTER EVENTS FUNCTION
- *******************************************************************************
- */
-#define __REG_EVENTS(event)                                               event,
-                                    
+#define _CORE_VERSION                           "CORE_ALPHA_0.0.1_"##__DATA__
+                               
 /* Framework config ----------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -97,19 +77,19 @@ extern "C"
  *******************************************************************************
  */
 #if USE_FRAMEWORK_COMPONENT_LIBRARY
-#define USE_FRAMEWORK_DEBUG                                                  (1)
-#define USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT                               (0)
+#define USE_FRAMEWORK_DEBUG                                       
+#define USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT             
 
-#define USE_FRAMEWORK_BUFFER_COMPONENT                                       (1)
-#define USE_FRAMEWORK_DEBUG_COMPONENT                                        (1)
-#define USE_FRAMEWORK_EVENT_COMPONENT                                        (0)
-#define USE_FRAMEWORK_LINK_LIST_COMPONENT                                    (1)
-#define USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT                            (1)
-#define USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT                                  (1)
-#define USE_FRAMEWORK_TICK_COMPONENT                                         (1)
-#define USE_FRAMEWORK_TIMER_COMPONENT                                        (1)
-#define USE_FRAMEWORK_TASK_COMPONENT                                         (1)
-#define USE_FRAMEWORK_PT_COMPONENT                                           (1)
+#define USE_FRAMEWORK_BUFFER_COMPONENT 
+#define USE_FRAMEWORK_DEBUG_COMPONENT
+#define USE_FRAMEWORK_EVENT_COMPONENT     
+#define USE_FRAMEWORK_LINK_LIST_COMPONENT           
+#define USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT          
+#define USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT                               
+#define USE_FRAMEWORK_TICK_COMPONENT                                      
+#define USE_FRAMEWORK_TIMER_COMPONENT                                      
+#define USE_FRAMEWORK_TASK_COMPONENT                                         
+#define USE_FRAMEWORK_PT_COMPONENT                                          
 #endif
 
 /**
@@ -117,7 +97,7 @@ extern "C"
  * @brief      define use memory pool size
  *******************************************************************************
  */
-#if !defined(USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT) || !USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
+#ifndef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
 #define FRAMEWORK_MEMORY_POOL_SIZE                                        (4096)
 
 #if (FRAMEWORK_MEMORY_POOL_SIZE % 8)
@@ -125,17 +105,6 @@ extern "C"
 #endif
 
 #endif
-
-/**
- *******************************************************************************
- * @brief      define events
- *******************************************************************************
- */
-__DEFINE_EVENT_BEGIN
-/** register user events */
-
-/** register user events */
-__DEFINE_EVENT_END	
 
 /* Hardware config -----------------------------------------------------------*/
 /**
@@ -190,7 +159,7 @@ __DEFINE_EVENT_END
  *******************************************************************************
  */
 #define STM32F103xE
-#define USE_HAL_DRIVER	
+//#define USE_HAL_DRIVER	
 
 /**
  *******************************************************************************
@@ -246,7 +215,7 @@ __DEFINE_EVENT_END
  * @note        0                         disable
  *******************************************************************************
  */
-#define USE_FRAMEWORK_HAL_LIBRARY                                            (1)
+#define USE_FRAMEWORK_HAL_LIBRARY                                            (0)
 
 /**
  *******************************************************************************
@@ -254,7 +223,7 @@ __DEFINE_EVENT_END
  *******************************************************************************
  */
 #if USE_FRAMEWORK_HAL_LIBRARY
-#define USE_HAL_DEBUG                                                        (1)
+#define USE_HAL_DEBUG                                                        
 
 #define USE_MCU_GPIO_COMPONENT                                               (1)
 #define USE_MCU_TIMER_COMPONENT                                              (1)

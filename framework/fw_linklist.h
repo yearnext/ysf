@@ -59,12 +59,8 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_LINK_LIST_COMPONENT
-#if USE_FRAMEWORK_LINK_LIST_COMPONENT
 #define USE_SINGLE_LIST_COMPONENT                                            (1)
-#else
-#define USE_SINGLE_LIST_COMPONENT                                            (0)
-#endif
-    
+  
 /**
  *******************************************************************************
  * @brief       user config flags

@@ -126,7 +126,7 @@ struct FrameworkInterface
 #endif
 
 #if USE_TASK_COMPONENT
-    TaskComponentInterface Task;
+//    TaskComponentInterface Task;
 #endif
 };
 

@@ -41,7 +41,6 @@
 #include _FW_PATH
 #include _FW_TICK_COMPONENT_PATH
 #include _FW_TASK_COMPONENT_PATH
-#include _FW_TIMER_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -52,10 +51,7 @@
  *******************************************************************************
  */
 #if USE_TICK_COMPONENT
-static uint32_t         tick = 0;
-
-static struct TaskBlock TickTask;
-
+static volatile uint32_t tick = 0;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -70,10 +66,9 @@ static struct TaskBlock TickTask;
  * @note        None
  *******************************************************************************
  */
-void InitTickComponent(void)
+void Fw_Tick_Init(void)
 {
     tick = 0;
-    InitSimpleTask(&TickTask, PollTimerComponent);
 }
 
 /**
@@ -84,57 +79,51 @@ void InitTickComponent(void)
  * @note        None
  *******************************************************************************
  */
-void IncTick(void)
+void Fw_Tick_Handle(void)
 {
     tick++;
-    
-#if defined(USE_TASK_COMPONENT) && USE_TASK_COMPONENT
-    ArmTaskModule(&TickTask);
-#endif
 }
 
 /**
  *******************************************************************************
  * @brief       tick value get
  * @param       [in/out]  void
- * @return      [in/out]  ysf_tick_t    now tick
+ * @return      [in/out]  tick    now tick
  * @note        None
  *******************************************************************************
  */
-uint32_t GetTick( void )
+uint32_t Fw_GetTick(void)
 {
     return tick;
 }
 
 /**
  *******************************************************************************
- * @brief       calculate the distance past the previous read tick tick
- * @param       [in/out]  void
- * @return      [in/out]  ysf_tick_t    past tick
+ * @brief       cal past tick
+ * @param       [in/out]  lastTick    last tick
+ * @param       [in/out]  nowTick     now tick
+ * @return      [in/out]  uint32_t    tick
  * @note        None
  *******************************************************************************
  */
-uint32_t CalPastTick( void )
+uint32_t Fw_GetPastTick(uint32_t lastTick, uint32_t nowTick)
 {
-	static uint32_t lastTick = 0;
-	uint32_t calTick = 0;
-	
-	if( tick >= lastTick )
-	{
-		calTick = tick - lastTick;
-	}
-	else
-	{
-		calTick = TICK_VALUE_MAX - lastTick;
-		calTick = calTick + tick;
-	}
-	
-	lastTick = tick;
-	
-	return calTick;
+    uint32_t calTick;
+
+    if (nowTick < lastTick)
+    {
+        calTick = UINT32_MAX - lastTick;
+        calTick = calTick + nowTick;
+    }
+    else
+    {
+        calTick = nowTick - lastTick;
+    }
+    
+    return calTick;
 }
 
 #endif
-/** @}*/     /** tick component */
+/** @}*/     /** framework tick component */
 
 /**********************************END OF FILE*********************************/

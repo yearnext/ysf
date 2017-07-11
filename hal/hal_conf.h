@@ -61,7 +61,7 @@ extern "C"
  * @brief        debug hal assert configuration
  *******************************************************************************
  */
-#if USE_HAL_DEBUG
+#ifdef USE_HAL_DEBUG
     #define hal_param_check(expr)                      _INLINE_PARAM_CHECK(expr)
 #else
     #define hal_param_check(expr)

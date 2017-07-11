@@ -47,6 +47,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "core_conf.h"
+#include "app_conf.h"
 //#include _HAL_PATH
 //#include _HAL_TIMER_PATH     
 
@@ -60,14 +61,10 @@ extern "C"
 
 /**
  *******************************************************************************
- * @brief        debug framework assert configuration
+ * @brief        debug framework task queue size
  *******************************************************************************
  */
-#if USE_FRAMEWORK_DEBUG
-    #define fw_param_check(expr)                      _INLINE_PARAM_CHECK(expr)
-#else
-    #define fw_param_check(expr)
-#endif
+#define FW_TASK_QUEUE_SIZE                                     (2*FW_TASK_MAX+1)
 
 /**
  *******************************************************************************
@@ -82,11 +79,7 @@ extern "C"
  * @brief      define framework events type
  *******************************************************************************
  */
-#define FW_EVENT_NONE                                   (_EVENT_NONE)
-#define FW_EVENT_DELAY                                  (_EVENT_DELAY)
-#define FW_EVENT_MAX                                    (_EVENT_MAX)
-
-typedef _evt_t                                          fw_evt_t;
+typedef int16_t fw_evt_t;
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

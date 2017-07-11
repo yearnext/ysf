@@ -58,12 +58,8 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-#if USE_FRAMEWORK_DEBUG_COMPONENT
 #define USE_DEBUG_COMPONENT                                                  (1)
-#else
-#define USE_DEBUG_COMPONENT                                                  (0)
-#endif
-    
+
 /**
  *******************************************************************************
  * @brief       user config flags
@@ -80,10 +76,10 @@ extern "C"
  * @brief       define assert macros
  *******************************************************************************
  */ 
-#if defined(USE_FRAMEWORK_DEBUG) && USE_FRAMEWORK_DEBUG
-#define fw_assert(expr) _INLINE_MACRO_FUNCTION( ((expr) ? AssertFailed((uint8_t *)__FILE__, __LINE__) : (void)0 ); )
+#ifndef USE_FRAMEWORK_DEBUG
+#define FW_Assert(expr)
 #else
-#define fw_assert(expr) fw_param_check(from)
+#define FW_Assert(expr)
 #endif 
 
 /* Exported types ------------------------------------------------------------*/

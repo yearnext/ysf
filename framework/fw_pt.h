@@ -60,11 +60,8 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_PT_COMPONENT
-#if USE_FRAMEWORK_PT_COMPONENT 
 #define USE_PT_COMPONENT                                                     (1)
-#else
-#define USE_PT_COMPONENT                                                     (0)
-#endif
+
 /**
  *******************************************************************************
  * @brief       user config flags

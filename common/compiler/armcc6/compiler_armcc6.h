@@ -108,7 +108,7 @@ extern "C"
 #define __STATIC_INLINE         static __inline
 #endif
 
-#ifndef
+#ifndef __SECTION
 #define __SECTION(x)            __attribute__((section(x)))
 #endif
 

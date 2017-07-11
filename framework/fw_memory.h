@@ -59,12 +59,8 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT
-#if USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT   
 #define USE_MEMORY_COMPONENT                                                 (1)
-#else
-#define USE_MEMORY_COMPONENT                                                 (0)
-#endif
-
+  
 /**
  *******************************************************************************
  * @brief       user config flags

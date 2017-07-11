@@ -58,11 +58,7 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_TASK_COMPONENT
-#if USE_FRAMEWORK_TASK_COMPONENT
 #define USE_TASK_COMPONENT                                                   (1)
-#else
-#define USE_TASK_COMPONENT                                                   (0)
-#endif
 
 /**
  *******************************************************************************
@@ -78,70 +74,31 @@ extern "C"
 /* Exported types ------------------------------------------------------------*/    
 /**
  *******************************************************************************
- * @brief       task block
+ * @brief       task handle block
  *******************************************************************************
  */
-struct TaskBlock
+struct _Fw_Task_Handle
 {
-    struct TaskBlock *Next;
-    
+    //< task handle
     union
     {
-        fw_err_t (*Simple)(void);
+        void (*Simple)(void);
         fw_err_t (*CallBack)(void*);
         fw_err_t (*Event)(uint16_t);
-        fw_err_t (*Message)(void*, uint16_t);
-    }Handle;
-
-    void *Param;
-    uint16_t Event;
-
-    enum
-    {
-        SIMPLE_TASK,
-        CALL_BACK_TASK,
-        EVENT_HANDLE_TASK,
-        MESSAGE_HANDLE_TASK,
+        fw_err_t (*Message)(void*, uint32_t);
         
-        SIMPLE_EX_TASK,
-        CALL_BACK_EX_TASK,
-        EVENT_HANDLE_EX_TASK,
-        MESSAGE_HANDLE_EX_TASK,
+        void *Check;
+    };
+    
+    //< task handle type
+    enum _Fw_Task_Type
+    {
+        FW_SIMPLE_TASK,
+        FW_CALL_BACK_TASK,
+        FW_EVENT_HANDLE_TASK,
+        FW_MESSAGE_HANDLE_TASK,
     }Type;
 };
-
-/**
- *******************************************************************************
- * @brief       framework task interface
- *******************************************************************************
- */
-#if USE_TASK_COMPONENT
-typedef struct
-{
-    fw_err_t (*Open)(void);
-    fw_err_t (*Close)(void);
-    
-    fw_err_t (*Poll)(void);
-    
-    fw_err_t (*Arm)(struct TaskBlock*);
-    
-    struct
-    {
-        fw_err_t (*Simple)(struct TaskBlock*, fw_err_t (*)(void));
-        fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
-        fw_err_t (*EventHandle)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*MessageHandle)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    }Init;
-    
-    struct
-    {
-        fw_err_t (*Simple)(struct TaskBlock*, fw_err_t (*)(void));
-        fw_err_t (*CallBack)(struct TaskBlock*, fw_err_t (*)(void*), void*);
-        fw_err_t (*EventHandle)(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*MessageHandle)(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    }Add;
-}TaskComponentInterface;
-#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -151,56 +108,14 @@ typedef struct
  *******************************************************************************
  */
 #if USE_TASK_COMPONENT
-extern fw_err_t InitTaskComponent(void);
-extern fw_err_t DeinitTaskComponent(void);
+extern void Fw_Task_Init(void);
+extern fw_err_t Fw_Task_Create(uint8_t, char*, void*, enum _Fw_Task_Type);
+extern fw_err_t Fw_Task_Delete(uint8_t);
+extern void Fw_Task_PostEvent(uint8_t, uint32_t);
+extern void Fw_Task_PostMessage(uint8_t, void*, uint32_t);
+extern void Fw_Task_StartDispatch(void);
+#endif
 
-extern fw_err_t PollTaskComponent(void);
-
-extern fw_err_t ArmTaskModule(struct TaskBlock*);
-
-extern fw_err_t InitSimpleTask(struct TaskBlock*, fw_err_t (*)(void));
-extern fw_err_t InitCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
-extern fw_err_t InitEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t InitMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-
-extern fw_err_t AddSimpleTask(struct TaskBlock*, fw_err_t (*)(void));
-extern fw_err_t AddCallBackTask(struct TaskBlock*, fw_err_t (*)(void*), void*);
-extern fw_err_t AddEventHandleTask(struct TaskBlock*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t AddMessageHandleTask(struct TaskBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-
-/**
- *******************************************************************************
- * @brief        define framework task interface
- *******************************************************************************
- */
-#define fw_task_init                         InitTaskComponent
-#define fw_task_fini                         DeinitTaskComponent
-#define fw_task_poll                         PollTaskComponent
-#define fw_task_arm                          ArmTaskModule
-#define fw_task_simp_init                    InitSimpleTask
-#define fw_task_cb_init                      InitCallBackTask
-#define fw_task_evt_init                     InitEventHandleTask
-#define fw_task_msg_init                     InitMessageHandleTask
-#define fw_task_simp_create                  AddSimpleTask
-#define fw_task_cb_create                    AddCallBackTask
-#define fw_task_evt_create                   AddEventHandleTask
-#define fw_task_msg_create                   AddMessageHandleTask
-
-#else
-#define fw_task_init()   
-#define fw_task_fini()                         
-#define fw_task_poll()                         
-#define fw_task_arm(a)                         
-#define fw_task_simp_init(a,b)                    
-#define fw_task_cb_init(a,b,c)                     
-#define fw_task_evt_init(a,b,c)                    
-#define fw_task_msg_init(a,b,c,d) 
-#define fw_task_simp_create(a,b)  
-#define fw_task_cb_create(a,b,c)         
-#define fw_task_evt_create(a,b,c)             
-#define fw_task_msg_create(a,b,c,d)                    
-#endif  
-    
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

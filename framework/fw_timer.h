@@ -55,11 +55,7 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_TIMER_COMPONENT
-#if USE_FRAMEWORK_TIMER_COMPONENT
 #define USE_TIMER_COMPONENT                                                  (1)
-#else
-#define USE_TIMER_COMPONENT                                                  (0)
-#endif
 
 /**
  *******************************************************************************
@@ -92,47 +88,20 @@ extern "C"
  * @brief        timer block
  *******************************************************************************
  */
-struct TimerBlock
+struct _Fw_Timer
 {
+    struct TimerBlock *Last;
     struct TimerBlock *Next;
+    
+    char              *str;
 
-    uint32_t          SetTicks;
-    uint32_t          LoadTicks;
+    uint32_t          InitTick;
+    uint32_t          TimeOutTick;
     int16_t           Cycle;
-
-    struct TaskBlock  Task;
+    
+    uint8_t           TaskId;
+    uint8_t           TaskEvent;
 };
-
-/**
- *******************************************************************************
- * @brief      interface function defineitions 
- *******************************************************************************
- */
-#if USE_TIMER_COMPONENT
-typedef struct
-{
-    fw_err_t (*Open)(void);
-    fw_err_t (*Close)(void);
-    
-    fw_err_t (*Poll)(void);
-
-    fw_err_t (*Start)(struct TimerBlock*, uint32_t, int16_t);
-    fw_err_t (*Stop)(struct TimerBlock*);
-
-    fw_err_t (*Add)(struct TimerBlock*);
-    fw_err_t (*Remove)(struct TimerBlock*);
-    
-    bool (*GetStatus)(struct TimerBlock*);
-    
-    struct
-    {
-        fw_err_t (*Simple)(struct TimerBlock*, fw_err_t (*)(void));
-        fw_err_t (*CallBack)(struct TimerBlock*, fw_err_t (*)(void*), void*);
-        fw_err_t (*EventHandle)(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
-        fw_err_t (*MessageHandle)(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-    }Init;
-}TimerComponentInterface;
-#endif
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -141,56 +110,7 @@ typedef struct
  * @brief      defineitions interface function 
  *******************************************************************************
  */
-#if USE_TIMER_COMPONENT
-extern fw_err_t InitTimerComponent(void);
-extern fw_err_t DeinitTimerComponent(void);
-    
-extern fw_err_t PollTimerComponent(void);
-
-extern bool GetTimerModuleStatus(struct TimerBlock*);
-
-extern fw_err_t StartTimerModule(struct TimerBlock*, uint32_t, int16_t);                                          
-extern fw_err_t StopTimerModule(struct TimerBlock*); 
-
-extern fw_err_t AddTimerModuleToQueue(struct TimerBlock*);
-extern fw_err_t RemoveTimerModuleFromQueue(struct TimerBlock*);
-
-extern fw_err_t InitSimpleTimerModule(struct TimerBlock*, fw_err_t (*)(void)); 
-extern fw_err_t InitCallBackTimerModule(struct TimerBlock*, fw_err_t (*)(void*), void*); 
-extern fw_err_t InitEventHandleTimerModule(struct TimerBlock*, fw_err_t (*)(uint16_t), uint16_t);
-extern fw_err_t InitMessageHandleTimerModule(struct TimerBlock*, fw_err_t (*)(void*, uint16_t), void*, uint16_t);
-
-/**
- *******************************************************************************
- * @brief        define framework timer interface
- *******************************************************************************
- */ 
-#define fw_timer_init                        InitTimerComponent
-#define fw_timer_fini                        DeinitTimerComponent
-#define fw_timer_poll                        PollTimerComponent
-#define fw_timer_add                         AddTimerModuleToQueue
-#define fw_timer_remove                      RemoveTimerModuleFromQueue
-#define fw_timer_start                       StartTimerModule
-#define fw_timer_stop                        StopTimerModule
-#define fw_timer_get_status                  GetTimerModuleStatus
-#define fw_timer_simp_init                   InitSimpleTimerModule
-#define fw_timer_cb_init                     InitCallBackTimerModule
-#define fw_timer_evt_init                    InitEventHandleTimerModule
-#define fw_timer_msg_init                    InitMessageHandleTimerModule
-
-#else
-#define fw_timer_init()                       
-#define fw_timer_fini()                     
-#define fw_timer_poll()                  
-#define fw_timer_add(a)
-#define fw_timer_remove(a)
-#define fw_timer_start(a,b,c)              
-#define fw_timer_stop(a)         
-#define fw_timer_get_status(a)    
-#define fw_timer_simp_init(a,b)          
-#define fw_timer_cb_init(a,b,c)       
-#define fw_timer_evt_init(a,b,c)             
-#define fw_timer_msg_init(a,b,c,d)                
+#if USE_TIMER_COMPONENT           
 
 #endif
 

@@ -59,14 +59,9 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_BUFFER_COMPONENT
-#if USE_FRAMEWORK_BUFFER_COMPONENT
     #define USE_BUFFER_COMPONENT                                             (1)
     #define USE_MEMORY_MANAGEMENT_COMPONENT                                  (1)
-#else
-    #define USE_BUFFER_COMPONENT                                             (0)
-    #define USE_MEMORY_MANAGEMENT_COMPONENT                                  (0)
-#endif
-
+  
 /**
  *******************************************************************************
  * @brief       user config flags

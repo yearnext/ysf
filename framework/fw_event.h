@@ -58,12 +58,7 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_EVENT_COMPONENT
-#if USE_FRAMEWORK_EVENT_COMPONENT
-    #define USE_EVENT_COMPONENT                                              (1)
-#else
-    #define USE_EVENT_COMPONENT                                              (0)
-#endif
-
+#define USE_EVENT_COMPONENT                                                  (1)
 /**
  *******************************************************************************
  * @brief       user config flags
@@ -72,7 +67,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-    #define USE_EVENT_COMPONENT                                              (1)
+#define USE_EVENT_COMPONENT                                                  (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/
