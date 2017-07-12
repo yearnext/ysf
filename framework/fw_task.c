@@ -38,12 +38,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
-#include <stddef.h>
 #include "core_path.h"
 #include _FW_PATH
 #include _FW_TASK_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
-#include _FW_MEMORY_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
@@ -62,6 +60,14 @@
  */
 #define Is_TaskEventQueue_Empty()                   (TaskBlock.Queue.Size <= 0)
 #define Is_TaskEventQueue_Full()     (TaskBlock.Queue.Size >= FW_TASK_QUEUE_SIZE - 1)
+
+/**
+ *******************************************************************************
+ * @brief       event memory use flag function
+ *******************************************************************************
+ */
+#define SetEventQueueUseFlag(a, b, c)                   ClrBitMap((a), (b), (c))
+#define ClrEvenrQueueUseFlag(a, b, c)                   SetBitMap((a), (b), (c))
 
 /* Private typedef -----------------------------------------------------------*/
 /**
@@ -120,12 +126,15 @@ struct
     //< task block
     struct _Fw_Task_Block Task[FW_TASK_MAX];
     
+//    uint8_t TaskReadyTab[CalUseMemorySize(FW_TASK_MAX)];
+//    uint32_t TaskReadyGroup;
+    
     //< task queue
     struct
     {
         struct _Fw_Task_Event Event[FW_TASK_QUEUE_SIZE];
         
-        uint8_t FreeSpaceTab[CalUseMemorySize(FW_TASK_MAX)];
+        uint8_t FreeSpaceTab[CalUseMemorySize(FW_TASK_QUEUE_SIZE)];
         uint32_t FreeSpaceGroup;
     }Queue;
     
@@ -235,28 +244,6 @@ fw_err_t Fw_Task_Create(uint8_t taskId, char *str, void *handle, enum _Fw_Task_T
 
 /**
  *******************************************************************************
- * @brief       delete task (disable task dispatch)
- * @param       [in/out]  taskId         task id
- * @return      [in/out]  FW_ERR_NONE    create success
- * @note        None
- *******************************************************************************
- */
-fw_err_t Fw_Task_Delete(uint8_t taskId)
-{
-    FW_Assert(IS_INVAILD_TASK_ID(taskId));
-    
-    struct _Fw_Task_Block *nowTask = &TaskBlock.Task[taskId];
-    
-    nowTask->EventQueue.Num = 0;
-    nowTask->Name = NULL;
-    nowTask->Handle.Type = FW_SIMPLE_TASK;
-    nowTask->Handle.Simple = EmptyTaskHandle;
-    
-    return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
  * @brief       set memory is used
  * @param       [in/out]  offset      memory id
  * @return      [in/out]  void
@@ -264,16 +251,16 @@ fw_err_t Fw_Task_Delete(uint8_t taskId)
  *******************************************************************************
  */
 __STATIC_INLINE
-void SetEventQueueUseFlag(uint8_t offset)
+void ClrBitMap(uint8_t offset, uint8_t *tab, uint32_t *group)
 {
     uint8_t l = offset / 8;
     uint8_t r = offset % 8;
 
-    TaskBlock.Queue.FreeSpaceTab[l] &= ~(1 << r);
+    tab[l] &= ~(1 << r);
     
-    if(TaskBlock.Queue.FreeSpaceTab[l] == 0x00)
+    if(tab[l] == 0x00)
     {
-        TaskBlock.Queue.FreeSpaceGroup &= ~(1 << l);
+        *group &= ~(1 << l);
     }
 }
 
@@ -286,13 +273,13 @@ void SetEventQueueUseFlag(uint8_t offset)
  *******************************************************************************
  */
 __STATIC_INLINE
-void ClrEvenrQueueUseFlag(uint8_t offset)
+void SetBitMap(uint8_t offset, uint8_t *tab, uint32_t *group)
 {
     uint8_t l = offset / 8;
     uint8_t r = offset % 8;
     
-    TaskBlock.Queue.FreeSpaceTab[l] |= 1 << r;
-    TaskBlock.Queue.FreeSpaceGroup  |= 1 << l;
+    tab[l] |= 1 << r;
+    *group |= 1 << l;
 }
 
 /**
@@ -315,7 +302,7 @@ struct _Fw_Task_Event *EventAlloc(void)
         return NULL;
     }
     
-    SetEventQueueUseFlag(prio);
+    SetEventQueueUseFlag(prio, (uint8_t *)&TaskBlock.Queue.FreeSpaceTab, &TaskBlock.Queue.FreeSpaceGroup);
     return &TaskBlock.Queue.Event[prio];
 }
 
@@ -333,7 +320,7 @@ void EventFree(struct _Fw_Task_Event *event)
     uint32_t offset = (uint32_t)event - (uint32_t)&TaskBlock.Queue.Event;
     offset = offset / sizeof(struct _Fw_Task_Event);
     
-    ClrEvenrQueueUseFlag(offset);
+    ClrEvenrQueueUseFlag(offset, (uint8_t *)&TaskBlock.Queue.FreeSpaceTab, &TaskBlock.Queue.FreeSpaceGroup);
 }
 
 /**
@@ -552,7 +539,6 @@ void TaskHandle(struct _Fw_Task_Block *task)
  * @note        None
  *******************************************************************************
  */
-__STATIC_INLINE
 void Fw_Task_Dispatch(void)
 {
     uint8_t i;
@@ -576,22 +562,6 @@ void Fw_Task_Dispatch(void)
     
     //< 3. task handle
     TaskHandle(task);
-}
-
-/**
- *******************************************************************************
- * @brief       start task component dispatch
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Fw_Task_StartDispatch(void)
-{
-    while(1)
-    {
-        Fw_Task_Dispatch();
-    }
 }
 
 #endif

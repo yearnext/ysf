@@ -110,10 +110,9 @@ struct _Fw_Task_Handle
 #if USE_TASK_COMPONENT
 extern void Fw_Task_Init(void);
 extern fw_err_t Fw_Task_Create(uint8_t, char*, void*, enum _Fw_Task_Type);
-extern fw_err_t Fw_Task_Delete(uint8_t);
 extern void Fw_Task_PostEvent(uint8_t, uint32_t);
 extern void Fw_Task_PostMessage(uint8_t, void*, uint32_t);
-extern void Fw_Task_StartDispatch(void);
+extern void Fw_Task_Dispatch(void);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
