@@ -90,8 +90,8 @@ extern "C"
  */
 struct _Fw_Timer
 {
-    struct TimerBlock *Last;
-    struct TimerBlock *Next;
+    struct _Fw_Timer  *Last;
+    struct _Fw_Timer  *Next;
     
     char              *str;
 

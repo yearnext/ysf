@@ -55,57 +55,6 @@ extern "C"
 #define _CORE_VERSION                           "CORE_ALPHA_0.0.1_"##__DATA__
                                
 /* Framework config ----------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       core tick time(unit: ms)
- *******************************************************************************
- */
-#define CORE_TICK_PERIOD                                                  (10UL)
-    
-/**
- *******************************************************************************
- * @brief       framwork component config flags
- * @note        1                       enable
- * @note        0                       disable
- *******************************************************************************
- */
-#define USE_FRAMEWORK_COMPONENT_LIBRARY                                      (1)
-
-/**
- *******************************************************************************
- * @brief      frameowrk component config <user config in>
- *******************************************************************************
- */
-#if USE_FRAMEWORK_COMPONENT_LIBRARY
-#define USE_FRAMEWORK_DEBUG                                       
-#define USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT             
-
-#define USE_FRAMEWORK_BUFFER_COMPONENT 
-#define USE_FRAMEWORK_DEBUG_COMPONENT
-#define USE_FRAMEWORK_EVENT_COMPONENT     
-#define USE_FRAMEWORK_LINK_LIST_COMPONENT           
-#define USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT          
-#define USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT                               
-#define USE_FRAMEWORK_TICK_COMPONENT                                      
-#define USE_FRAMEWORK_TIMER_COMPONENT                                      
-#define USE_FRAMEWORK_TASK_COMPONENT                                         
-#define USE_FRAMEWORK_PT_COMPONENT                                          
-#endif
-
-/**
- *******************************************************************************
- * @brief      define use memory pool size
- *******************************************************************************
- */
-#ifndef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
-#define FRAMEWORK_MEMORY_POOL_SIZE                                        (4096)
-
-#if (FRAMEWORK_MEMORY_POOL_SIZE % 8)
-#error "This memory pool is not 8 byte alignment!"
-#endif
-
-#endif
-
 /* Hardware config -----------------------------------------------------------*/
 /**
  *******************************************************************************

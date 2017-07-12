@@ -166,7 +166,7 @@ const uint8_t EventQueueBitMap[] =
     /* C0 */ 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
     /* D0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
     /* E0 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    /* F0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
+    /* F0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
 };
 
 #endif
@@ -227,9 +227,9 @@ void Fw_Task_Init(void)
  */
 fw_err_t Fw_Task_Create(uint8_t taskId, char *str, void *handle, enum _Fw_Task_Type type)
 {
-    FW_Assert(IS_PTR_NULL(str));
-    FW_Assert(IS_PTR_NULL(handle));
-    FW_Assert(IS_INVAILD_TASK_ID(taskId));
+    Fw_Assert(IS_PTR_NULL(str));
+    Fw_Assert(IS_PTR_NULL(handle));
+    Fw_Assert(IS_INVAILD_TASK_ID(taskId));
 
     struct _Fw_Task_Block *nowTask     = &TaskBlock.Task[taskId];
     struct _Fw_Task_Handle *taskHandle = &TaskBlock.Task[taskId].Handle;
@@ -340,8 +340,8 @@ void WriteTaskEventQueue(struct _Fw_Task_Block *task, void *message, uint32_t ev
     struct _Fw_Task_Event *nowNode = EventAlloc();
     struct _Fw_Task_Event_Queue *queue;
     
-    FW_Assert(IS_PTR_NULL(task));
-    FW_Assert(IS_PTR_NULL(nowNode));
+    Fw_Assert(IS_PTR_NULL(task));
+    Fw_Assert(IS_PTR_NULL(nowNode));
     
     //< 2. init queue
     queue = &task->EventQueue;
@@ -349,20 +349,20 @@ void WriteTaskEventQueue(struct _Fw_Task_Block *task, void *message, uint32_t ev
     //< 3. update event info
     nowNode->Event = event;
     nowNode->Param = message;
-    nowNode->Next  = NULL;
     
     //< 4. add event to queue
-    if(queue->Head == NULL && queue->Tail == NULL)
-    {
-        queue->Tail = nowNode;
-        queue->Head = nowNode;
-    }   
-    else
-    {
-        queue->Tail->Next = nowNode;
-        queue->Tail       = nowNode;
-    }
-
+//    if(queue->Head == NULL && queue->Tail == NULL)
+//    {
+//        queue->Tail = nowNode;
+//        queue->Head = nowNode;
+//    }   
+//    else
+//    {
+//        queue->Tail->Next = nowNode;
+//        queue->Tail       = nowNode;
+//    }
+    p_PushLinkListNode(queue, nowNode);
+    
     //< 5. inc task wait handle event num
     if(queue->Num < 255)
     {
@@ -383,29 +383,30 @@ __STATIC_INLINE
 fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *event)
 {
     //< 1. check task is vaild
-    FW_Assert(IS_PTR_NULL(task));
+    Fw_Assert(IS_PTR_NULL(task));
 
     //< 2. check queue is vaild
     struct _Fw_Task_Event_Queue *queue = &task->EventQueue;
     
-    FW_Assert(IS_PTR_NULL(queue->Head));
-    FW_Assert(IS_PTR_NULL(queue->Tail));
+    Fw_Assert(IS_PTR_NULL(queue->Head));
+    Fw_Assert(IS_PTR_NULL(queue->Tail));
     
     //< 3. get event
     struct _Fw_Task_Event *getEvent = NULL;
     
-    if(queue->Head == queue->Tail)
-    {
-        getEvent = queue->Head;
-        
-        queue->Head = NULL;
-        queue->Tail = NULL;
-    }
-    else
-    {
-        getEvent = queue->Head;
-        queue->Head = getEvent->Next;
-    }
+//    if(queue->Head == queue->Tail)
+//    {
+//        getEvent = queue->Head;
+//        
+//        queue->Head = NULL;
+//        queue->Tail = NULL;
+//    }
+//    else
+//    {
+//        getEvent = queue->Head;
+//        queue->Head = getEvent->Next;
+//    }
+    p_PopLinkListNode(queue, getEvent);
     
     //< 4. clear event count
     if(queue->Num > 0)
@@ -435,7 +436,7 @@ fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *
  */
 void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
 {
-    FW_Assert(IS_VAILD_TASK_ID(taskId));
+    Fw_Assert(IS_VAILD_TASK_ID(taskId));
 
     WriteTaskEventQueue(&TaskBlock.Task[taskId], (void *)(&TaskBlock.Task[taskId]), event);
 }
@@ -452,8 +453,8 @@ void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
  */
 void Fw_Task_PostMessage(uint8_t taskId, void *message, uint32_t event)
 {
-    FW_Assert(IS_VAILD_TASK_ID(taskId));
-    FW_Assert(IS_PTR_NULL(Msg));
+    Fw_Assert(IS_VAILD_TASK_ID(taskId));
+    Fw_Assert(IS_PTR_NULL(Msg));
     
     WriteTaskEventQueue(&TaskBlock.Task[taskId], message, event);
 }

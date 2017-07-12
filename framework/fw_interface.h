@@ -122,7 +122,7 @@ struct FrameworkInterface
 #endif
 
 #if USE_TIMER_COMPONENT
-    TimerComponentInterface Timer;
+//TimerComponentInterface Timer;
 #endif
 
 #if USE_TASK_COMPONENT

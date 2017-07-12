@@ -77,9 +77,9 @@ extern "C"
  *******************************************************************************
  */ 
 #ifndef USE_FRAMEWORK_DEBUG
-#define FW_Assert(expr)
+#define Fw_Assert(expr)
 #else
-#define FW_Assert(expr)
+#define Fw_Assert(expr)
 #endif 
 
 /* Exported types ------------------------------------------------------------*/

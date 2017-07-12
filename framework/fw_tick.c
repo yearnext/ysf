@@ -82,6 +82,8 @@ void Fw_Tick_Init(void)
 void Fw_Tick_Handle(void)
 {
     tick++;
+    
+    Fw_Task_PostEvent(FW_TICK_TASK, FW_TICK_EVENT);
 }
 
 /**

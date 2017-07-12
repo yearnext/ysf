@@ -75,12 +75,13 @@
  * @brief      timer control block
  *******************************************************************************
  */
-struct
+struct _Fw_Timer_Block
 {
     struct _Fw_Timer *Head;
     struct _Fw_Timer *Tail;
     
     uint32_t Tick;
+    uint8_t Num;
 }static TimerBlock;
 
 #endif
@@ -92,6 +93,34 @@ struct
 fw_err_t Fw_Timer_Init(void)
 {
     memset(&TimerBlock, 0, sizeof(TimerBlock));
+    
+    return FW_ERR_NONE;
+}
+
+fw_err_t Fw_Timer_Create(struct _Fw_Timer *timer, char *str, uint8_t taskiId, uint8_t taskEvent)
+{
+    Fw_Assert(IS_PTR_NUL(timer));
+    
+    timer->str = str;
+    timer->TaskId = taskiId;
+    timer->TaskEvent = taskEvent;
+    
+    return FW_ERR_NONE;
+}
+
+fw_err_t Fw_Timer_Start(struct _Fw_Timer *timer, uint32_t tick, int16_t count)
+{
+    Fw_Assert(IS_PTR_NUL(timer));
+    
+    struct _Fw_Timer_Block *timerBlock = &TimerBlock;
+        
+    timer->InitTick    = tick;
+    timer->TimeOutTick = tick;
+    timer->Cycle       = count;
+    
+    p_PushLinkListNode(timerBlock, timer);
+    
+    TimerBlock.Num++;
     
     return FW_ERR_NONE;
 }

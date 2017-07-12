@@ -172,28 +172,20 @@ extern fw_err_t IsInSingleList(void**, void**);
  * @note        None
  *******************************************************************************
  */    
-#define PushSingleLinkListFifoNode(isInFunc, block, pushData)                  \
-{                                                                              \
-    if( isInFunc(pushData) == false )                                          \
-    {                                                                          \
-        pushData->Next = NULL;                                                 \
+#define p_PushLinkListNode(block, node) _ST(                                   \
+    (node)->Next = NULL;                                                       \
                                                                                \
-        if(block.Tail != NULL)                                                 \
-        {                                                                      \
-            block.Tail->Next = pushData;                                       \
-            block.Tail       = pushData;                                       \
-        }                                                                      \
-        else                                                                   \
-        {                                                                      \
-            block.Head       = pushData;                                       \
-            block.Tail       = pushData;                                       \
-        }                                                                      \
+    if((block)->Head == NULL && (block)->Tail == NULL)                         \
+    {                                                                          \
+        (block)->Tail = node;                                                  \
+        (block)->Head = node;                                                  \
     }                                                                          \
     else                                                                       \
     {                                                                          \
-        return FW_ERR_INVAILD_PARAM;                                           \
+        (block)->Tail->Next = node;                                            \
+        (block)->Tail       = node;                                            \
     }                                                                          \
-}
+)                                                                       
 
 /**
  *******************************************************************************
@@ -203,23 +195,21 @@ extern fw_err_t IsInSingleList(void**, void**);
  * @note        None
  *******************************************************************************
  */   
-#define PopSingleLinkListFifoNode(block, popData)                              \
-{                                                                              \
-    if( block.Head == NULL )                                                   \
+#define p_PopLinkListNode(block, node) _ST(                                    \
+    if((block)->Head == (block)->Tail)                                         \
     {                                                                          \
-        block.Tail = NULL;                                                     \
-        return NULL;                                                           \
+        (node)        = (block)->Head;                                         \
+        (block)->Tail = NULL;                                                  \
+        (block)->Head = NULL;                                                  \
+    }                                                                          \
+    else                                                                       \
+    {                                                                          \
+        (node) = (block)->Head;                                                \
+        (block)->Head = (node)->Next;                                          \
     }                                                                          \
                                                                                \
-    popData       = block.Head;                                                \
-    block.Head    = block.Head->Next;                                          \
-    popData->Next = NULL;                                                      \
-                                                                               \
-    if( block.Head == NULL )                                                   \
-    {                                                                          \
-        block.Tail = NULL;                                                     \
-    }                                                                          \
-}
+    (node)->Next = NULL;                                                       \
+)   
 
 /**
  *******************************************************************************
