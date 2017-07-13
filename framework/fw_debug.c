@@ -604,13 +604,32 @@ void TransferEventHandle(uint8_t event)
             {
                 break;
             }
+            
+            //< straem transfer timeout
+            if(DebugBlock.Type == DEBUG_DEVICE_OUTPUT_STREAM_TYPE)
+            {
+                StartDebugTimer(100);
+            }
+            else
+            {
+                goto _TRANSFER_END_PROCESS;
+            }
 		case BUFFER_WAIT_TRANSFER_COMPLET_STATUS:
+            //< stream transfer timeout handle
+            if(event == FW_TIMEOUT_EVENT)
+            {
+                goto _TRANSFER_END_PROCESS;
+            }
+            
             //< wait transfer complet (stream transfer complet trigger by transfer complet event)
             if(DebugBlock.Type == DEBUG_DEVICE_OUTPUT_STREAM_TYPE && event != FW_TRANSFER_COMPLET_EVENT)
             {
                 break;
             }
             
+            StopDebugTimer();
+            
+        _TRANSFER_END_PROCESS:
             //< load start tick value
             tick = pipeline->Tick;
             
@@ -632,7 +651,7 @@ void TransferEventHandle(uint8_t event)
                 if(tick == 0)
                 {
                     pipeline->Status = BUFFER_TRANSFER_STATUS;
-                    event = FW_ERR_NONE;
+                    event = FW_EVENT_NONE;
                     
                     goto _DEBUG_SEND_PROCESS;
                 }
