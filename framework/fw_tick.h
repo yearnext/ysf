@@ -103,10 +103,10 @@ typedef struct
  *******************************************************************************
  */
 #if USE_TICK_COMPONENT
-extern void     InitTickComponent(void);
-extern void     IncTick(void);
-extern uint32_t GetTick(void);
-extern uint32_t CalPastTick(void);
+extern void     Fw_Tick_Init(void);
+extern void     Fw_Tick_Handle(void);
+extern uint32_t Fw_GetTick(void);
+extern uint32_t Fw_GetPastTick(uint32_t, uint32_t);
 /**
  *******************************************************************************
  * @brief        define framework tick interface

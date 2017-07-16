@@ -186,7 +186,7 @@ struct ProtoThreads
 {
     fw_err_t (*Thread)(void*, uint16_t);
 
-    struct TimerBlock Timer;
+//    struct TimerBlock Timer;
     
     uint16_t State;
     bool     UseStatus;
@@ -199,9 +199,9 @@ struct ProtoThreads
  *******************************************************************************
  */
 #if defined(USE_PT_COMPONENT) && USE_PT_COMPONENT
-extern fw_err_t _pt_init(struct ProtoThreads*, _PT_THREAD_NAME);
-extern fw_err_t _pt_arm(struct TaskBlock*, struct ProtoThreads*);
-extern fw_err_t _pt_disarm(struct ProtoThreads*);
+//extern fw_err_t _pt_init(struct ProtoThreads*, _PT_THREAD_NAME);
+//extern fw_err_t _pt_arm(struct TaskBlock*, struct ProtoThreads*);
+//extern fw_err_t _pt_disarm(struct ProtoThreads*);
 
 /**
  *******************************************************************************

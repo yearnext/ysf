@@ -51,7 +51,7 @@
  *******************************************************************************
  */
 #if USE_TICK_COMPONENT
-static volatile uint32_t tick = 0;
+static volatile uint32_t SystemTick = 0;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -68,7 +68,7 @@ static volatile uint32_t tick = 0;
  */
 void Fw_Tick_Init(void)
 {
-    tick = 0;
+    SystemTick = 0;
 }
 
 /**
@@ -81,9 +81,9 @@ void Fw_Tick_Init(void)
  */
 void Fw_Tick_Handle(void)
 {
-    tick++;
+    SystemTick++;
     
-    Fw_Task_PostEvent(FW_TICK_TASK, FW_TICK_EVENT);
+    Fw_Task_PostMessage(FW_TICK_TASK, (void *)&SystemTick, FW_TICK_EVENT);
 }
 
 /**
@@ -96,7 +96,7 @@ void Fw_Tick_Handle(void)
  */
 uint32_t Fw_GetTick(void)
 {
-    return tick;
+    return SystemTick;
 }
 
 /**

@@ -43,6 +43,7 @@
 #include _FW_TASK_COMPONENT_PATH
 #include _FW_DEBUG_COMPONENT_PATH
 #include _FW_LINK_LIST_COMPONENT_PATH
+#include _FW_TIMER_COMPONENT_PATH
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -109,6 +110,9 @@ struct _Fw_Task_Block
         
         uint8_t Num;
     }EventQueue;
+    
+    //< task id
+    uint8_t TaskId;
     
     //< task handle
     struct _Fw_Task_Handle Handle;
@@ -209,8 +213,9 @@ void Fw_Task_Init(void)
     //< init task handle 
     for(i=0; i<FW_TASK_MAX; i++)
     {
-        TaskBlock.Task[i].Handle.Type = FW_SIMPLE_TASK;
+        TaskBlock.Task[i].Handle.Type   = FW_SIMPLE_TASK;
         TaskBlock.Task[i].Handle.Simple = EmptyTaskHandle;
+        TaskBlock.Task[i].TaskId        = i;
     }
 }
 

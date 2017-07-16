@@ -44,7 +44,6 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
-#include _FW_TASK_COMPONENT_PATH
     
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -80,7 +79,7 @@ extern "C"
  * @brief       define timer cycle mode
  *******************************************************************************
  */
-#define TIMER_CYCLE_MODE                                                    (-1)
+#define FW_TIMER_CYCLE_MODE                                                 (-1)
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -111,7 +110,10 @@ struct _Fw_Timer
  *******************************************************************************
  */
 #if USE_TIMER_COMPONENT           
-
+extern fw_err_t Fw_Timer_Init(void);
+extern fw_err_t Fw_Timer_Create(struct _Fw_Timer *, char *, uint8_t, uint8_t);
+extern fw_err_t Fw_Timer_Start(struct _Fw_Timer *, uint32_t, int16_t);
+extern fw_err_t Fw_Timer_Poll(void *);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
