@@ -61,17 +61,18 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitRingBufferComponent(struct RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize )
+fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize)
 {
-    fw_assert(IS_PTR_NULL(rb));
-    fw_assert(IS_PTR_NULL(rbBuffer));
-    fw_assert(rbSize == 0);
+    Fw_Assert(IS_PTR_NULL(rb));
+    Fw_Assert(IS_PTR_NULL(rbBuffer));
+    Fw_Assert(rbSize == 0);
     
     rb->Buffer = rbBuffer;
     rb->Size   = rbSize;
     rb->Head   = 0;
     rb->Tail   = 0;
-
+    rb->Len    = 0;
+    
     return FW_ERR_NONE;
 }
 
@@ -84,12 +85,12 @@ fw_err_t InitRingBufferComponent(struct RingBuffer *rb, uint8_t *rbBuffer, uint1
  * @note        None
  *******************************************************************************
  */
-fw_err_t GetRingBufferLen(struct RingBuffer *rb, uint16_t *getSize)
+fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer *rb, uint16_t *getSize)
 {
-    fw_assert(IS_PTR_NULL(rb));
-    fw_assert(IS_PTR_NULL(getSize));
+    Fw_Assert(IS_PTR_NULL(rb));
+    Fw_Assert(IS_PTR_NULL(getSize));
     
-    *getSize =  rb->Size;
+    *getSize =  rb->Len;
     
     return FW_ERR_NONE;
 }
@@ -98,56 +99,32 @@ fw_err_t GetRingBufferLen(struct RingBuffer *rb, uint16_t *getSize)
  *******************************************************************************
  * @brief       get ring buffer can read data size
  * @param       [in/out]  *rb                 ring buffer control block
- * @return      [in/out]  ysf_buffer_size_t   ring buffer can read data size
+ * @return      [in/out]  uint16_t            ring buffer can read data size
  * @note        None
  *******************************************************************************
  */
 __STATIC_INLINE 
-uint16_t rb_can_read(struct RingBuffer *rb )
+uint16_t RingBufferCanRead(struct _Fw_RingBuffer *rb)
 {
-    fw_assert(IS_PTR_NULL(rb));
+    Fw_Assert(IS_PTR_NULL(rb));
 
-    if( rb->Tail >= rb->Head )
-    {
-        return ((uint16_t)(rb->Tail - rb->Head));
-    }
-    else
-    {
-        return ((uint16_t)(rb->Size - (rb->Head - rb->Tail)));
-    }
-
-//    return 0;
+    return rb->Len;
 }
 
 /**
  *******************************************************************************
  * @brief       get ring buffer can write data size
  * @param       [in/out]  *rb                 ring buffer control block
- * @return      [in/out]  ysf_buffer_size_t   ring buffer can write data size
+ * @return      [in/out]  uint16_t            ring buffer can write data size
  * @note        one byte in the ring buffer is occupied by the control system
  *******************************************************************************
  */
 __STATIC_INLINE 
-uint16_t rb_can_write(struct RingBuffer *rb)
+uint16_t RingBufferCanWrite(struct _Fw_RingBuffer *rb)
 {
-    fw_assert(IS_PTR_NULL(rb));
-
-    uint16_t size = 0;
-
-    if( rb->Tail >= rb->Head )
-    {
-        size = rb->Size - (rb->Tail - rb->Head);
-
-        return size;
-    }
-    else
-    {
-        size = rb->Head - rb->Tail;
-
-        return ((size > 1) ? (size) : (0));
-    }
-
-//    return 0;
+    Fw_Assert(IS_PTR_NULL(rb));
+    
+    return rb->Size - rb->Len - 1;
 }
 
 /**
@@ -161,19 +138,19 @@ uint16_t rb_can_write(struct RingBuffer *rb)
  * @note        None
  *******************************************************************************
  */
-fw_err_t WriteRingBuffer(struct RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
+fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
 {
-    fw_assert(IS_PTR_NULL(rb));
-    fw_assert(IS_PTR_NULL(writeBuffer));
-    fw_assert(writeSize == 0);
+    Fw_Assert(IS_PTR_NULL(rb));
+    Fw_Assert(IS_PTR_NULL(writeBuffer));
+    Fw_Assert(writeSize == 0);
     
     uint16_t free = 0;
     uint16_t i = 0;
+    uint16_t canWriteSize = RingBufferCanWrite(rb);
 
-
-    if( writeSize <= rb_can_write(rb) )
+    if(writeSize <= canWriteSize)
     {
-        if( (rb->Tail + writeSize) >= rb->Size )
+        if((rb->Tail + writeSize) >= rb->Size)
         {
             free = rb->Size - rb->Tail;
 
@@ -212,16 +189,17 @@ fw_err_t WriteRingBuffer(struct RingBuffer *rb, uint8_t *writeBuffer, uint16_t w
  * @note        None
  *******************************************************************************
  */
-fw_err_t ReadRingBuffer( struct RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
+fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
 {
-    fw_assert(IS_PTR_NULL(rb));
-    fw_assert(IS_PTR_NULL(readBuffer));
-    fw_assert(readSize == 0); 
+    Fw_Assert(IS_PTR_NULL(rb));
+    Fw_Assert(IS_PTR_NULL(readBuffer));
+    Fw_Assert(readSize == 0); 
     
     uint16_t free = 0;
     uint16_t i = 0;
-
-    if (readSize <= rb_can_read(rb))
+    uint16_t canReadSize = RingBufferCanRead(rb);
+    
+    if (readSize <= canReadSize)
     {
         if ((rb->Head + readSize) >= rb->Size)
         {
@@ -269,7 +247,7 @@ uint32_t cal_need_memory_size(uint32_t useSize)
     
     needSize >>= HEAP_MEMORY_ALIGNMENT_POS;
     
-    if( needSize % HEAP_MEMORY_ALIGNMENT_SIZE )
+    if(needSize % HEAP_MEMORY_ALIGNMENT_SIZE)
     {
         needSize++;
     }
@@ -290,9 +268,9 @@ uint32_t cal_need_memory_size(uint32_t useSize)
  */
 fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uint32_t heapSize)
 {
-    fw_assert(IS_PTR_NULL(mem));
-    fw_assert(IS_PTR_NULL(heapHeadAddr));
-    fw_assert(heapSize < HEAP_MEMORY_ALIGNMENT_SIZE);
+    Fw_Assert(IS_PTR_NULL(mem));
+    Fw_Assert(IS_PTR_NULL(heapHeadAddr));
+    Fw_Assert(heapSize < HEAP_MEMORY_ALIGNMENT_SIZE);
     
     struct HeapMemoryBlock *now, *last;
     uint32_t blockSize = heapSize / HEAP_MEMORY_ALIGNMENT_SIZE;
@@ -331,7 +309,7 @@ fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uin
 // */
 //fw_err_t ysf_mem_deinit(struct HeapControlBlock *mem)
 //{
-//    fw_assert(IS_PTR_NULL(mem));
+//    Fw_Assert(IS_PTR_NULL(mem));
 //    
 //	mem->Buffer = NULL;
 //    mem->Size   = 0;
@@ -352,8 +330,8 @@ fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uin
  */
 fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void **allocAddr)
 {
-    fw_assert(IS_PTR_NULL(mem));
-    fw_assert(needSize == 0);
+    Fw_Assert(IS_PTR_NULL(mem));
+    Fw_Assert(needSize == 0);
     
     uint32_t useSize = cal_need_memory_size(needSize);
     uint32_t count   = 0;
@@ -415,8 +393,8 @@ fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void *
  */
 fw_err_t FreeHeapMemory(struct HeapControlBlock *mem, void *freeBuffer)
 {
-    fw_assert(IS_PTR_NULL(mem));
-    fw_assert(IS_PTR_NULL(freeBuffer));
+    Fw_Assert(IS_PTR_NULL(mem));
+    Fw_Assert(IS_PTR_NULL(freeBuffer));
     
     struct HeapMemoryBlock *now, *last;
     uint32_t i;
@@ -466,8 +444,8 @@ fw_err_t FreeHeapMemory(struct HeapControlBlock *mem, void *freeBuffer)
  */
 bool IsInHeapMemory(struct HeapControlBlock *mem, void *buffer)
 {
-    fw_assert(IS_PTR_NULL(mem));
-    fw_assert(IS_PTR_NULL(buffer));
+    Fw_Assert(IS_PTR_NULL(mem));
+    Fw_Assert(IS_PTR_NULL(buffer));
     
     void *end_addr = (void *)((uint8_t *)mem->Buffer + mem->Size - 1);
     

@@ -190,7 +190,6 @@ void TimerDelete(struct _Fw_Timer *timer)
     {
         TimerBlock.Num--;
     }
-    
 }
 
 /**

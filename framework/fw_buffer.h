@@ -80,28 +80,14 @@ extern "C"
  * @brief       define buffer type
  *******************************************************************************
  */
-struct RingBuffer
+struct _Fw_RingBuffer
 {
     uint8_t  *Buffer;
-    uint16_t Size;
     uint16_t Head;
     uint16_t Tail;
+    uint16_t Size;
+    uint16_t Len;
 };
-
-/**
- *******************************************************************************
- * @brief       define ring buffer interface
- *******************************************************************************
- */
-#if USE_BUFFER_COMPONENT
-typedef struct
-{
-    fw_err_t (*Init)(struct RingBuffer*, uint8_t*, uint16_t);
-    fw_err_t (*GetLen)(struct RingBuffer*, uint16_t*);
-    fw_err_t (*Write)(struct RingBuffer*, uint8_t*, uint16_t);
-    fw_err_t (*Read)(struct RingBuffer*, uint8_t*, uint16_t);
-}RingBufferComponentInterface;
-#endif
 
 /**
  *******************************************************************************
@@ -109,10 +95,10 @@ typedef struct
  *******************************************************************************
  */
 #if USE_BUFFER_COMPONENT
-extern fw_err_t InitRingBufferComponent(struct RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t GetRingBufferLen(struct RingBuffer*, uint16_t*);
-extern fw_err_t WriteRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t ReadRingBuffer(struct RingBuffer*, uint8_t*, uint16_t);
+fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
+fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer*, uint16_t*);
+fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
+fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
 
 /**
  *******************************************************************************

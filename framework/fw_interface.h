@@ -90,7 +90,7 @@ struct FrameworkInterface
     void (*Start)(void);
     
 #if USE_BUFFER_COMPONENT
-    RingBufferComponentInterface RingBuffer;
+//    RingBufferComponentInterface RingBuffer;
 #endif
 
 //#if USE_MEMORY_MANAGEMENT_COMPONENT
