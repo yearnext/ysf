@@ -145,31 +145,37 @@ __ALIGN_TAIL(8)
  * @brief       define memory control block
  *******************************************************************************
  */
-struct HeapControlBlock
+//struct HeapControlBlock
+//{
+//    union
+//    {
+//        void                   *Buffer;
+//        struct HeapMemoryBlock *Head; 
+//    };
+//    
+//    uint32_t Size;
+//};
+
+struct _Fw_MemBlock
 {
-    union
-    {
-        void                   *Buffer;
-        struct HeapMemoryBlock *Head; 
-    };
-    
+    struct _Fw_MemBlock *Last;
+    struct _Fw_MemBlock *Next;
     uint32_t Size;
+    bool     Status;
+    uint8_t Buffer[];
 };
 
-/**
- *******************************************************************************
- * @brief       define memory management interface
- *******************************************************************************
- */
-#if USE_MEMORY_MANAGEMENT_COMPONENT
-typedef struct
+struct _Fw_MemMgmtBlock
 {
-    fw_err_t (*Init)(struct HeapControlBlock*,  uint8_t*, uint32_t);
-    fw_err_t (*Alloc)(struct HeapControlBlock*, uint16_t, void**);
-    fw_err_t (*Free)(struct HeapControlBlock*,  void*);
-    fw_err_t (*IsIn)(struct HeapControlBlock*,  void*);
-}MemoryManagementComponentInterface;
-#endif
+    struct _Fw_MemBlock *Poll;
+    uint32_t Size;
+    
+    struct _Fw_MemBlock *FreeListHead;
+    struct _Fw_MemBlock *FreeListTail;
+    
+    struct _Fw_MemBlock *UseListHead;
+    struct _Fw_MemBlock *UseListTail;
+};
 
 /**
  *******************************************************************************
@@ -177,10 +183,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MEMORY_MANAGEMENT_COMPONENT
-extern fw_err_t InitHeapMemory(struct HeapControlBlock*,  uint8_t*, uint32_t);
-extern fw_err_t AllocHeapMemory(struct HeapControlBlock*, uint32_t, void**);
-extern fw_err_t FreeHeapMemory(struct HeapControlBlock*,  void*);
-extern bool     IsInHeapMemory(struct HeapControlBlock*,  void*);
+
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

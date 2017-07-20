@@ -42,7 +42,7 @@
 #include _FW_MEMORY_COMPONENT_PATH
 #include _FW_BUFFER_COMPONENT_PATH
 
-#if defined(USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT) && USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
+#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
 #include <stdlib.h>
 #endif
 
@@ -55,23 +55,23 @@
  *******************************************************************************
  */
 #if USE_MEMORY_COMPONENT
-    #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-        #ifndef USE_COMPILER_HEAP_ADDR            
-            __ALIGN_HEAD(8)
-                static uint8_t McuHeap[FRAMEWORK_MEMORY_POOL_SIZE];
-            __ALIGN_TAIL(8)
-            
-            #define _HEAP_HEAD_ADDR    (&McuHeap)
-            #define _HEAP_TAIL_ADDR    (&McuHeap[FRAMEWORK_MEMORY_POOL_SIZE-1])
-            #define _HEAP_SIZE         FRAMEWORK_MEMORY_POOL_SIZE
-        #else
-            #define _HEAP_HEAD_ADDR    __HEAP_HEAD_ADDR
-            #define _HEAP_TAIL_ADDR    MCU_SRAM_END_ADDR
-            #define _HEAP_SIZE         (_HEAP_TAIL_ADDR - _HEAP_HEAD_ADDR)
-        #endif
-    
-        static struct HeapControlBlock Managemrnt;
-    #endif
+//    #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
+//        #ifndef USE_COMPILER_HEAP_ADDR            
+//            __ALIGN_HEAD(8)
+//                static uint8_t McuHeap[FRAMEWORK_MEMORY_POOL_SIZE];
+//            __ALIGN_TAIL(8)
+//            
+//            #define _HEAP_HEAD_ADDR    (&McuHeap)
+//            #define _HEAP_TAIL_ADDR    (&McuHeap[FRAMEWORK_MEMORY_POOL_SIZE-1])
+//            #define _HEAP_SIZE         FRAMEWORK_MEMORY_POOL_SIZE
+//        #else
+//            #define _HEAP_HEAD_ADDR    __HEAP_HEAD_ADDR
+//            #define _HEAP_TAIL_ADDR    MCU_SRAM_END_ADDR
+//            #define _HEAP_SIZE         (_HEAP_TAIL_ADDR - _HEAP_HEAD_ADDR)
+//        #endif
+//    
+//        static struct HeapControlBlock Managemrnt;
+//    #endif
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -86,11 +86,11 @@
  * @note        None
  *******************************************************************************
  */
-void InitMemoryComponent(void)
+void Fw_Mem_Init(void)
 {
-#if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-    InitHeapMemory(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
-#endif
+//#if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
+//    InitHeapMemory(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
+//#endif
 }
 
 /**
@@ -101,15 +101,9 @@ void InitMemoryComponent(void)
  * @note        None
  *******************************************************************************
  */
-void *MallocMemory(uint32_t size)
+void *Fw_Mem_Alloc(uint32_t size)
 {
-#if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
     return malloc(size);
-#else 
-    void *mem = NULL;
-    AllocHeapMemory(&Managemrnt, size, (void **)&mem);
-    return mem;
-#endif
 }
 
 /**
@@ -120,32 +114,32 @@ void *MallocMemory(uint32_t size)
  * @note        None
  *******************************************************************************
  */
-void FreeMemory(void *memory)
+void Fw_Mem_Free(void *memory)
 {
-#if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
+#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
     free(memory);
 #else
-    FreeHeapMemory(&Managemrnt, memory);
+//    FreeHeapMemory(&Managemrnt, memory);
 #endif
 }
 
-/**
- *******************************************************************************
- * @brief       detecting the memory is in memory pool
- * @param       [in/out]  void*             wait detect memory
- * @return      [in/out]  false             the memory not in memory pool
- * @return      [in/out]  true              the memory is in memory pool
- * @note        None
- *******************************************************************************
- */
-bool IsInMemory(void *memory)
-{
-#if defined(USE_STD_LIBRARY) && USE_STD_LIBRARY
-    return true;
-#else
-    return IsInHeapMemory(&Managemrnt, memory);
-#endif
-}
+///**
+// *******************************************************************************
+// * @brief       detecting the memory is in memory pool
+// * @param       [in/out]  void*             wait detect memory
+// * @return      [in/out]  false             the memory not in memory pool
+// * @return      [in/out]  true              the memory is in memory pool
+// * @note        None
+// *******************************************************************************
+// */
+//bool IsInMemory(void *memory)
+//{
+//#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
+//    return true;
+//#else
+////    return IsInHeapMemory(&Managemrnt, memory);
+//#endif
+//}
 
 #endif
 

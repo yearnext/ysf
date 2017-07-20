@@ -400,6 +400,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\framework\fw_buffer.c</FilePath>
             </File>
+            <File>
+              <FileName>fw_memory.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\fw_memory.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -73,21 +73,6 @@ extern "C"
 #endif
 
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        memory management interface
- *******************************************************************************
- */
-#if USE_MEMORY_COMPONENT
-typedef struct 
-{
-    void  (*Init)(void);
-    void* (*Malloc)(uint32_t);
-    void  (*Free)(void*);
-    bool  (*IsIn)(void *);
-}MemoryComponentInterface;
-#endif
-
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -96,26 +81,9 @@ typedef struct
  *******************************************************************************
  */
 #if USE_MEMORY_COMPONENT
-extern void  InitMemoryComponent(void);
-extern void* MallocMemory(uint32_t);
-extern void  FreeMemory(void*);
-extern bool  IsInMemory(void*);
-
-/**
- *******************************************************************************
- * @brief        define framework memory interface
- *******************************************************************************
- */  
-#define fw_memory_init                       InitMemoryComponent
-#define fw_malloc                            MallocMemory
-#define fw_free                              FreeMemory
-#define fw_memory_is_in                      IsInMemory
-
-#else
-#define fw_memory_init()                       
-#define fw_malloc(a)                     
-#define fw_free(a)                      
-#define fw_memory_is_in(a)                   
+extern void  Fw_Mem_Init(void);
+extern void *Fw_Mem_Alloc(uint32_t);
+extern void  Fw_Mem_Free(void *);
 
 #endif
 

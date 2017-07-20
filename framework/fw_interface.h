@@ -110,7 +110,7 @@ struct FrameworkInterface
 //#endif
 
 #if USE_MEMORY_COMPONENT
-    MemoryComponentInterface Memory;
+//    MemoryComponentInterface Memory;
 #endif
     
 #if USE_SIGNAL_COMPONENT
