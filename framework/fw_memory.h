@@ -59,7 +59,7 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT
-#define USE_MEMORY_COMPONENT                                                 (1)
+#define USE_MEMORY_MANAGEMENT_COMPONENT                                      (1)
   
 /**
  *******************************************************************************
@@ -69,7 +69,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_MEMORY_COMPONENT                                                 (1)
+#define USE_MEMORY_MANAGEMENT_COMPONENT                                      (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/

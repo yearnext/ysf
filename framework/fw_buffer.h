@@ -60,7 +60,6 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_BUFFER_COMPONENT
     #define USE_BUFFER_COMPONENT                                             (1)
-    #define USE_MEMORY_MANAGEMENT_COMPONENT                                  (1)
   
 /**
  *******************************************************************************
@@ -71,7 +70,6 @@ extern "C"
  */
 #else
     #define USE_BUFFER_COMPONENT                                             (1)
-    #define USE_MEMORY_MANAGEMENT_COMPONENT                                  (1)
 #endif
 
 /* Exported types ------------------------------------------------------------*/
