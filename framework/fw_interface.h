@@ -114,7 +114,7 @@ struct FrameworkInterface
 #endif
     
 #if USE_SIGNAL_COMPONENT
-    SignalComponentInterface Signal;
+//    SignalComponentInterface Signal;
 #endif   
 
 #if USE_TICK_COMPONENT

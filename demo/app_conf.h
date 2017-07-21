@@ -85,6 +85,7 @@ enum Define_Event
     FW_TRANSFER_EVENT,
     FW_TRANSFER_WAIT_EVNET,
     FW_TRANSFER_COMPLET_EVENT,
+    FW_SIGNAL_HANDLE_EVENT,
     
     /** define user task begin */
 	
