@@ -92,7 +92,7 @@ struct _Fw_Timer
     struct _Fw_Timer  *Last;
     struct _Fw_Timer  *Next;
     
-    char              *str;
+    char              *String;
 
     uint32_t          InitTick;
     uint32_t          TimeOutTick;

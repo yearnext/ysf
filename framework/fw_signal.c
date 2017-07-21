@@ -37,6 +37,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>
 #include "core_path.h"
 #include _FW_PATH
 #include _FW_SIGNAL_COMPONENT_PATH
@@ -304,6 +305,58 @@ void SignalDetection(struct Fw_Signal *nowSignal)
         default:
             break;
     }
+}
+
+void Fw_Signal_Poll(void)
+{
+    
+}
+
+struct _Fw_Signal_Block
+{
+    struct Fw_Signal *Head;
+    struct Fw_Signal *Tail;
+    
+    uint8_t Num;
+};
+
+static struct _Fw_Signal_Block SignalBlock;
+
+fw_err_t Fw_Signal_Init(void)
+{
+    memset(&SignalBlock, 0, sizeof(SignalBlock));
+    
+    Fw_Task_Create(FW_SIGNAL_TASK, "Framework Signal Task", (void *)Fw_Signal_Poll, FW_SIMPLE_TASK);
+    
+    return FW_ERR_NONE;
+}
+
+fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, uint8_t taskiId, uint8_t triggerEvent)
+{
+    Fw_Assert(IS_PTR_NUL(timer));
+    
+    signal->String = str;
+    signal->TaskId = taskiId;
+    signal->TriggerEvent = triggerEvent;
+    
+    return FW_ERR_NONE;
+}
+
+fw_err_t Fw_Signal_Start(struct Fw_Signal *signal, uint32_t tick, int16_t count)
+{
+//    Fw_Assert(IS_PTR_NUL(timer));
+//    
+//    struct Fw_Signal *signalBlock = &SignalBlock;
+//        
+//    signal->InitTick    = tick;
+//    timer->TimeOutTick = tick + Fw_GetTick();
+//    timer->Cycle       = count;
+//    
+//    p_PushLinkListNode(timerBlock, timer);
+    
+    SignalBlock.Num++;
+    
+    return FW_ERR_NONE;
 }
 
 ///**

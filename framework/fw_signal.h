@@ -142,6 +142,8 @@ typedef enum
  */
 struct Fw_Signal
 {
+    struct Fw_Signal *Next;
+    char             *String;
     uint8_t          (*Scan)(void);
     SignalStatus_t   Status;
     uint8_t          Filter;

@@ -121,7 +121,7 @@ fw_err_t Fw_Timer_Create(struct _Fw_Timer *timer, char *str, uint8_t taskiId, ui
 {
     Fw_Assert(IS_PTR_NUL(timer));
     
-    timer->str = str;
+    timer->String = str;
     timer->TaskId = taskiId;
     timer->TaskEvent = taskEvent;
     
@@ -183,7 +183,7 @@ void TimerDelete(struct _Fw_Timer *timer)
     //< 2. clear block param
     timer->Next = NULL;
     timer->Last = NULL;
-    timer->str  = NULL;
+    timer->String  = NULL;
     
     //< 3. sub timer num
     if(TimerBlock.Num > 0)
