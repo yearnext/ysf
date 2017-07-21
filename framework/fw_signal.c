@@ -331,18 +331,17 @@ fw_err_t Fw_Signal_Init(void)
     return FW_ERR_NONE;
 }
 
-fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, uint8_t taskiId, uint8_t triggerEvent)
+fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, uint8_t taskId)
 {
     Fw_Assert(IS_PTR_NUL(timer));
     
     signal->String = str;
-    signal->TaskId = taskiId;
-    signal->TriggerEvent = triggerEvent;
-    
+    signal->TaskId = taskId;
+
     return FW_ERR_NONE;
 }
 
-fw_err_t Fw_Signal_Start(struct Fw_Signal *signal, uint32_t tick, int16_t count)
+fw_err_t Fw_Signal_Start(struct Fw_Signal *signal, uint8_t triggerEvent, uint32_t tick, int16_t count)
 {
 //    Fw_Assert(IS_PTR_NUL(timer));
 //    

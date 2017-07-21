@@ -117,12 +117,12 @@ fw_err_t Fw_Timer_Init(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Timer_Create(struct _Fw_Timer *timer, char *str, uint8_t taskiId, uint8_t taskEvent)
+fw_err_t Fw_Timer_Create(struct _Fw_Timer *timer, char *str, uint8_t taskId, uint8_t taskEvent)
 {
     Fw_Assert(IS_PTR_NUL(timer));
     
     timer->String = str;
-    timer->TaskId = taskiId;
+    timer->TaskId = taskId;
     timer->TaskEvent = taskEvent;
     
     return FW_ERR_NONE;
