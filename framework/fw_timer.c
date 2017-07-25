@@ -78,8 +78,11 @@
  */
 struct _Fw_Timer_Block
 {
-    struct _Fw_Timer *Head;
-    struct _Fw_Timer *Tail;
+    struct
+    {
+        struct _Fw_Timer *Head;
+        struct _Fw_Timer *Tail;
+    }LinkList;
 
     uint8_t Num;
 }static TimerBlock;
@@ -125,6 +128,8 @@ fw_err_t Fw_Timer_Create(struct _Fw_Timer *timer, char *str, uint8_t taskId, uin
     timer->TaskId = taskId;
     timer->TaskEvent = taskEvent;
     
+    Fw_dLinkList_Init((struct Fw_dLinkList*)&timer->LinkList);
+    
     return FW_ERR_NONE;
 }
 
@@ -142,14 +147,13 @@ fw_err_t Fw_Timer_Start(struct _Fw_Timer *timer, uint32_t tick, int16_t count)
 {
     Fw_Assert(IS_PTR_NUL(timer));
     
-    struct _Fw_Timer_Block *timerBlock = &TimerBlock;
-        
     timer->InitTick    = tick;
     timer->TimeOutTick = tick + Fw_GetTick();
     timer->Cycle       = count;
     
-    p_PushLinkListNode(timerBlock, timer);
-    
+    Fw_dLinkList_Push((struct Fw_LinkList_Block *)&TimerBlock.LinkList,\
+                      (struct Fw_dLinkList*)&timer->LinkList);
+
     TimerBlock.Num++;
     
     return FW_ERR_NONE;
@@ -167,22 +171,10 @@ __STATIC_INLINE
 void TimerDelete(struct _Fw_Timer *timer)
 {
     //< 1. remove timer link list
-    if(TimerBlock.Head == timer)
-    {
-        TimerBlock.Head = timer->Next;
-    }
-    else if(TimerBlock.Tail == timer)
-    {
-        TimerBlock.Tail = timer->Last;
-    }
-    else
-    {
-        timer->Last->Next = timer->Next;
-    }
+    Fw_dLinkList_Remove((struct Fw_LinkList_Block *)&TimerBlock.LinkList, \
+                        (struct Fw_dLinkList*)&timer->LinkList);
 
     //< 2. clear block param
-    timer->Next = NULL;
-    timer->Last = NULL;
     timer->String  = NULL;
     
     //< 3. sub timer num
@@ -204,7 +196,7 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
 {
     //< 1. init param
     uint8_t i;
-    struct _Fw_Timer *timer = TimerBlock.Head;
+    struct _Fw_Timer *timer = TimerBlock.LinkList.Head;
     uint32_t tick = *((uint32_t *)tickPtr);
     
     Fw_Assert(IS_PTR_NULL(tickPtr));
@@ -237,7 +229,7 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
         }
         
         //< 7. poll timer link list
-        timer = timer->Next;
+        timer = timer->LinkList.Next;
     }
     
     return FW_ERR_NONE;

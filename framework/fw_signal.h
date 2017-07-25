@@ -121,7 +121,7 @@ extern "C"
  * @brief        define signal status
  *******************************************************************************
  */
-typedef enum
+typedef enum FW_SIGNAL_STATE
 {
     SIGNAL_STATUS_INIT = 0x80,
     SIGNAL_STATUS_PRESS_FILTER,
@@ -133,7 +133,7 @@ typedef enum
     SIGNAL_STATUS_RELEASE_EDGE,
 	SIGNAL_STATUS_RELEASE,
 	SIGNAL_STATUS_END,
-}SignalStatus_t;
+}Fw_Signal_State;
 
 /**
  *******************************************************************************
@@ -142,14 +142,22 @@ typedef enum
  */
 struct Fw_Signal
 {
-    struct Fw_Signal *Next;
+    struct
+    {
+        struct Fw_Signal *Next;
+    }LinkList;
     char             *String;
+    
     uint8_t          (*Scan)(void);
-    SignalStatus_t   Status;
+    
+    Fw_Signal_State  Status;
+    
     uint8_t          Filter;
     uint8_t          Value;
+    
     uint8_t          TaskId;
     uint8_t          TriggerEvent;
+    
     struct _Fw_Timer Timer;
 };
 

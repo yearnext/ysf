@@ -89,8 +89,11 @@ extern "C"
  */
 struct _Fw_Timer
 {
-    struct _Fw_Timer  *Last;
-    struct _Fw_Timer  *Next;
+    struct
+    {
+        struct _Fw_Timer  *Last;
+        struct _Fw_Timer  *Next;
+    }LinkList;
     
     char              *String;
 

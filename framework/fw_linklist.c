@@ -64,9 +64,9 @@
 bool SingleListWalk(void **listHead, bool (*func)(void**, void**, void**),
                     void **ctx,      void **expand)
 {
-    fw_assert(IS_PTR_NULL(listHead));
-    fw_assert(IS_PTR_NULL(*listHead));
-    fw_assert(IS_PTR_NULL(func));
+    Fw_Assert(IS_PTR_NULL(listHead));
+    Fw_Assert(IS_PTR_NULL(*listHead));
+    Fw_Assert(IS_PTR_NULL(func));
     
     bool status = false;
     struct SingleList **sList = (struct SingleList **)listHead;
@@ -99,7 +99,7 @@ bool SingleListWalk(void **listHead, bool (*func)(void**, void**, void**),
  */
 bool SingleListModuleAdd(void **node, void **ctx, void **expand)
 {
-    fw_assert(IS_PTR_NULL(*ctx));
+    Fw_Assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
     struct SingleList *temp = (struct SingleList *)(*ctx);
@@ -141,7 +141,7 @@ bool SingleListModuleAdd(void **node, void **ctx, void **expand)
  */
 bool SingleListModuleDel( void **node, void **ctx, void **expand )
 {
-    fw_assert(IS_PTR_NULL(*ctx));
+    Fw_Assert(IS_PTR_NULL(*ctx));
 
     struct SingleList *now = (struct SingleList *)(*node);
     struct SingleList *next = (struct SingleList *)(*ctx);
@@ -187,7 +187,7 @@ bool SingleListModuleDel( void **node, void **ctx, void **expand )
  */
 bool SingleListModuleIsExist( void **node, void **ctx, void **expand )
 {
-    fw_assert(IS_PTR_NULL(*ctx));
+    Fw_Assert(IS_PTR_NULL(*ctx));
 
     bool status = false;
 
@@ -245,7 +245,7 @@ bool SingleListModuleFindLastNode(void **node, void **ctx, void **expand)
  */
 fw_err_t InitSingleListComponent( void **listHead )
 {
-    fw_assert(IS_PTR_NULL(listHead));
+    Fw_Assert(IS_PTR_NULL(listHead));
 
     *listHead = NULL;
 
@@ -264,8 +264,8 @@ fw_err_t InitSingleListComponent( void **listHead )
  */
 fw_err_t AddNodeToSingleList( void **listHead, void **ctx )
 {
-    fw_assert(IS_PTR_NULL(listHead));
-    fw_assert(IS_PTR_NULL(*ctx));
+    Fw_Assert(IS_PTR_NULL(listHead));
+    Fw_Assert(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleAdd, ctx, NULL) == false )
     {
@@ -287,8 +287,8 @@ fw_err_t AddNodeToSingleList( void **listHead, void **ctx )
  */
 fw_err_t DelNodeFromSingleList( void **listHead, void **ctx )
 {
-    fw_assert(IS_PTR_NULL(listHead));
-    fw_assert(IS_PTR_NULL(*ctx));
+    Fw_Assert(IS_PTR_NULL(listHead));
+    Fw_Assert(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleDel, ctx, NULL) == false )
     {
@@ -310,14 +310,186 @@ fw_err_t DelNodeFromSingleList( void **listHead, void **ctx )
  */
 fw_err_t IsInSingleList( void **listHead, void **ctx )
 {
-    fw_assert(IS_PTR_NULL(listHead));
-    fw_assert(IS_PTR_NULL(*ctx));
+    Fw_Assert(IS_PTR_NULL(listHead));
+    Fw_Assert(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleIsExist, ctx, NULL) == false )
     {
         return FW_ERR_FAIL;
     }
 
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       Init single link list
+ * @param       [in/out]  *node        node address
+ * @return      [in/out]  FW_ERR_FAIL  init failed
+ * @return      [in/out]  FW_ERR_NONE  init success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList *node)
+{
+    Fw_Assert(IS_PTR_NULL(node));
+    
+    node->Next = NULL;
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       Init double link list
+ * @param       [in/out]  *node        node address
+ * @return      [in/out]  FW_ERR_FAIL  init failed
+ * @return      [in/out]  FW_ERR_NONE  init success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList *node)
+{
+    Fw_Assert(IS_PTR_NULL(node));
+    
+    node->Last = NULL;
+    node->Next = NULL;
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       add node to link list tail
+ * @param       [in/out]  *block       link list management block address
+ * @param       [in/out]  *node        node address
+ * @return      [in/out]  FW_ERR_FAIL  add failed
+ * @return      [in/out]  FW_ERR_NONE  add success
+ * @note        application in fifo link list
+ *******************************************************************************
+ */
+fw_err_t Fw_dLinkList_Push(struct Fw_LinkList_Block *block, struct Fw_dLinkList *node)
+{
+    Fw_Assert(IS_PTR_NULL(block));
+    Fw_Assert(IS_PTR_NULL(node));
+    Fw_Assert(!IS_PTR_NULL(node->Next));
+    Fw_Assert(!IS_PTR_NULL(node->Last));
+
+    if(IS_PTR_NULL(block->Head))
+    {
+        block->Tail = node;                                                  
+        block->Head = node;
+    }
+    else if(IS_PTR_NULL(block->Tail))
+    {
+        return FW_ERR_BUG;
+    }
+    else
+    {
+        block->Tail->Next = node;                                            
+        block->Tail       = node;     
+    }
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       delete node from link list head
+ * @param       [in/out]  *block       link list management block address
+ * @param       [in/out]  *node        node address
+ * @return      [in/out]  FW_ERR_FAIL  delete failed
+ * @return      [in/out]  FW_ERR_NONE  delete success
+ * @note        application in fifo link list
+ *******************************************************************************
+ */
+fw_err_t Fw_dLinkList_Pop(struct Fw_LinkList_Block *block, struct Fw_dLinkList **node)
+{
+    Fw_Assert(IS_PTR_NULL(block));
+    Fw_Assert(IS_PTR_NULL(*node));
+    Fw_Assert(IS_PTR_NULL(block->Head));
+    Fw_Assert(IS_PTR_NULL(block->Tail));
+    
+    if(block->Head == block->Tail)
+    {
+        *node = block->Head;
+        
+        block->Tail = NULL;
+        block->Head = NULL;
+    }
+    else
+    {
+        *node = block->Head;
+        
+        block->Head = block->Head->Next;
+        
+        ((struct Fw_dLinkList *)(*node))->Next = NULL;
+        ((struct Fw_dLinkList *)(*node))->Last = NULL;
+    }
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       remove node from link list
+ * @param       [in/out]  *block       link list management block address
+ * @param       [in/out]  *node        node address
+ * @return      [in/out]  FW_ERR_FAIL  remove failed
+ * @return      [in/out]  FW_ERR_NONE  remove success
+ * @note        application in fifo link list
+ *******************************************************************************
+ */
+fw_err_t Fw_dLinkList_Remove(struct Fw_LinkList_Block *block, struct Fw_dLinkList *node)
+{
+    Fw_Assert(IS_PTR_NULL(block));
+    Fw_Assert(IS_PTR_NULL(node));
+    Fw_Assert(IS_PTR_NULL(block->Head));
+    Fw_Assert(IS_PTR_NULL(block->Tail));
+    
+    struct Fw_dLinkList *ptr = block->Head;
+    
+    //< is link list head
+    if(ptr == node)
+    {
+        block->Head = block->Head->Next;
+        
+        node->Next = NULL;
+        node->Last = NULL;
+        
+        return FW_ERR_NONE;
+    }
+
+    //< poll link list
+    while(ptr->Next != NULL)
+    {
+        ptr = ptr->Next;
+        
+        //< remove handle
+        if(ptr == node)
+        {
+            ptr->Last = ptr->Next;
+            
+            node->Next = NULL;
+            node->Last = NULL;
+            
+            return FW_ERR_NONE;
+        }
+    }
+    
+    //< is link list tail
+    if(ptr == node)
+    {
+        block->Tail = block->Tail->Last;
+        
+        node->Next = NULL;
+        node->Last = NULL;
+    }
+    else
+    {
+        return FW_ERR_FAIL;
+    }        
+      
     return FW_ERR_NONE;
 }
 

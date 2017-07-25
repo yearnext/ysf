@@ -84,21 +84,23 @@ struct SingleList
     uint8_t           UserData[];
 };
 
-/**
- *******************************************************************************
- * @brief       single list interface
- *******************************************************************************
- */
-#if USE_SINGLE_LIST_COMPONENT
-typedef struct
+struct Fw_sLinkList
 {
-    fw_err_t (*Init)(void**);
-    bool     (*Walk)(void**, bool (*)(void**, void**, void**), void**, void**);
-    fw_err_t (*Add)(void**, void **);
-    fw_err_t (*Del)(void**, void **);
-    fw_err_t (*IsExist)(void**, void **);
-}SingleListComponentInterface;
-#endif
+    struct Fw_sLinkList *Next;
+    uint8_t             UserData[];
+};
+
+struct Fw_dLinkList
+{
+    struct Fw_dLinkList *Next;
+    struct Fw_dLinkList *Last;
+};
+
+struct Fw_LinkList_Block
+{
+    struct Fw_dLinkList *Head;
+    struct Fw_dLinkList *Tail;
+};
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -118,6 +120,12 @@ extern fw_err_t InitSingleListComponent(void**);
 extern fw_err_t AddNodeToSingleList(void**, void**);
 extern fw_err_t DelNodeFromSingleList(void**, void**);
 extern fw_err_t IsInSingleList(void**, void**);
+
+extern fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList*);
+extern fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList*);
+extern fw_err_t Fw_dLinkList_Push(struct Fw_LinkList_Block*, struct Fw_dLinkList*);
+extern fw_err_t Fw_dLinkList_Pop(struct Fw_LinkList_Block*, struct Fw_dLinkList**);
+extern fw_err_t Fw_dLinkList_Remove(struct Fw_LinkList_Block*, struct Fw_dLinkList*);
 
 #endif
 
