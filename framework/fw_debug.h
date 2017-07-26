@@ -75,27 +75,23 @@ extern "C"
  *******************************************************************************
  * @brief       define assert macros
  *******************************************************************************
- */ 
-#ifndef USE_FRAMEWORK_DEBUG
-#define Fw_Assert(expr)
-#else
-#define Fw_Assert(expr)
-#endif 
+ */                                          
+//#define _FW_ASSERT(expr) _ST(if(expr) {Fw_AssertFailed((uint8_t *)__FILE__, __LINE__));})
+#define _FW_ASSERT(expr)
 
-/* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define debug interface
+ * @brief      define debug output message type
  *******************************************************************************
- */ 
-#if USE_DEBUG_COMPONENT
-typedef struct
+ */
+enum _DEBUG_MESSAGE_TYPE
 {
-    fw_err_t (*Init)(void);
-    void (*AssertFailed)(uint8_t*, uint32_t);
-}DebugComponentInterface;
-#endif
-      
+	DEBUG_OUTPUT_ERROR_MESSAGE,
+	DEBUG_OUTPUT_WARNING_MESSAGE,
+	DEBUG_OUTPUT_NORMAL_MESSAGE,
+};
+
+/* Exported types ------------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -104,19 +100,8 @@ typedef struct
  *******************************************************************************
  */ 
 #if USE_DEBUG_COMPONENT
-extern fw_err_t InitDebugComponent(void);
-extern void     AssertFailed(uint8_t*, uint32_t);
+extern fw_err_t Fw_Debug_Init(void);
 
-/**
- *******************************************************************************
- * @brief        define framework debug interface
- *******************************************************************************
- */
-#define fw_debug_init                        InitDebugComponent
-#define fw_debug_assert                      AssertFailed
-#else
-#define fw_debug_init()                        
-#define fw_debug_assert(a,b)                      
 #endif        
 
 /**@} */
@@ -128,6 +113,6 @@ extern void     AssertFailed(uint8_t*, uint32_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** debug component */
+/** @}*/     /** framework debug component */
 
 /**********************************END OF FILE*********************************/

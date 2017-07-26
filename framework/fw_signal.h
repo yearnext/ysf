@@ -35,6 +35,7 @@
  * @defgroup signal component
  * @{
  */
+ 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __SIGNAL_COMPONENT_H__
 #define __SIGNAL_COMPONENT_H__
@@ -48,7 +49,6 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
-#include _FW_TASK_COMPONENT_PATH
 #include _FW_TIMER_COMPONENT_PATH
 
 /* Exported macro ------------------------------------------------------------*/
@@ -92,28 +92,22 @@ extern "C"
  * @brief       define signal event
  *******************************************************************************
  */
-#define Logon_Release_Event                                               (0x01)
-#define Logon_PressEdge_Event                                             (0x02)
-#define Logon_Press_Event                                                 (0x04)
-#define Logon_LongPress_Event                                             (0x08)
-#define Logon_MultiPress_Event                                            (0x10)
-#define Logon_ReleaseEdge_Event                                           (0x20)
-    
-#define Logout_Release_Event                                              (0x01)
-#define Logout_PressEdge_Event                                            (0x02)
-#define Logout_Press_Event                                                (0x04)
-#define Logout_LongPress_Event                                            (0x08)
-#define Logout_MultiPress_Event                                           (0x10)
-#define Logout_ReleaseEdge_Event                                          (0x20)
-#define Logon_Edge_Signal()                                               (0x22)
-#define Logon_All_Signal()                                                (0x3F)
+#define REG_RELEASE_STATE                                                (0x01)
+#define REG_PRESS_EDGE_STATE                                             (0x02)
+#define REG_PRESS_STATE                                                  (0x04)
+#define REG_LONG_PRESS_STATE                                             (0x08)
+#define REG_MULTI_PRESS_STATE                                            (0x10)
+#define REG_RELEASE_EDGE_STATE                                           (0x20)
 
-#define IsLogonReleaseEvent(n)                   ((n) & Logon_Release_Event)
-#define IsLogonPressEdgeEvent(n)                 ((n) & Logon_PressEdge_Event)
-#define IsLogonPressEvent(n)                     ((n) & Logon_Press_Event)
-#define IsLogonLongPressEvent(n)                 ((n) & Logon_LongPress_Event)
-#define IsLogonMultiPressEvent(n)                ((n) & Logon_MultiPress_Event)
-#define IsLogonReleaseEdgeEvent(n)               ((n) & Logon_ReleaseEdge_Event)
+#define REG_DOUBLE_EDGE_STATE                                            (0x22)
+#define REG_ALL_STATE                                                    (0x3F)
+
+#define IsRegReleaseState(n)                      ((n) & REG_RELEASE_STATE)
+#define IsRegPressEdgeState(n)                    ((n) & REG_PRESS_EDGE_STATE)
+#define IsRegPressState(n)                        ((n) & REG_PRESS_STATE)
+#define IsRegLongPressState(n)                    ((n) & REG_LONG_PRESS_STATE)
+#define IsRegMultiPressState(n)                   ((n) & REG_MULTI_PRESS_STATE)
+#define IsRegReleaseEdgeState(n)                  ((n) & REG_RELEASE_EDGE_STATE)
 
 /* Public typedef ------------------------------------------------------------*/
 /**
@@ -123,16 +117,16 @@ extern "C"
  */
 typedef enum FW_SIGNAL_STATE
 {
-    SIGNAL_STATUS_INIT = 0x80,
-    SIGNAL_STATUS_PRESS_FILTER,
-	SIGNAL_STATUS_PRESS_EDGE,
-    SIGNAL_STATUS_PRESS,
-	SIGNAL_STATUS_LONG_PRESS,
-	SIGNAL_STATUS_MULTI_PRESS,
-    SIGNAL_STATUS_RELEASE_FILTER,
-    SIGNAL_STATUS_RELEASE_EDGE,
-	SIGNAL_STATUS_RELEASE,
-	SIGNAL_STATUS_END,
+    SIGNAL_INIT_STATE = 0x80,
+    SIGNAL_PRESS_FILTER_STATE,
+	SIGNAL_PRESS_EDGE_STATE,
+    SIGNAL_PRESS_STATE,
+	SIGNAL_LONG_PRESS_STATE,
+	SIGNAL_MULTI_PRESS_STATE,
+    SIGNAL_RELEASE_FILTER_STATE,
+    SIGNAL_RELEASE_EDGE_STATE,
+	SIGNAL_RELEASE_STATE,
+	SIGNAL_END_STATE,
 }Fw_Signal_State;
 
 /**
@@ -142,23 +136,19 @@ typedef enum FW_SIGNAL_STATE
  */
 struct Fw_Signal
 {
-    struct
-    {
-        struct Fw_Signal *Next;
-    }LinkList;
     char             *String;
     
     uint8_t          (*Scan)(void);
     
-    Fw_Signal_State  Status;
+    Fw_Signal_State  State;
     
     uint8_t          Filter;
     uint8_t          Value;
     
     uint8_t          TaskId;
-    uint8_t          TriggerEvent;
+    uint8_t          TriggerState;
     
-    struct _Fw_Timer Timer;
+    struct Fw_Timer  Timer;
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -168,7 +158,13 @@ struct Fw_Signal
  * @brief       signal component api
  *******************************************************************************
  */
-                                     
+#if USE_SIGNAL_COMPONENT
+extern fw_err_t Fw_Signal_Init(void);
+extern fw_err_t Fw_Signal_Create(struct Fw_Signal*, char*, uint8_t);
+extern fw_err_t Fw_Signal_Start(struct Fw_Signal*, uint8_t, uint32_t);
+extern uint8_t Fw_Signal_GetNum(void);
+#endif
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

@@ -232,9 +232,9 @@ void Fw_Task_Init(void)
  */
 fw_err_t Fw_Task_Create(uint8_t taskId, char *str, void *handle, enum _Fw_Task_Type type)
 {
-    Fw_Assert(IS_PTR_NULL(str));
-    Fw_Assert(IS_PTR_NULL(handle));
-    Fw_Assert(IS_INVAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_PTR_NULL(str));
+    _FW_ASSERT(IS_PTR_NULL(handle));
+    _FW_ASSERT(IS_INVAILD_TASK_ID(taskId));
 
     struct _Fw_Task_Block *nowTask     = &TaskBlock.Task[taskId];
     struct _Fw_Task_Handle *taskHandle = &TaskBlock.Task[taskId].Handle;
@@ -345,8 +345,8 @@ void WriteTaskEventQueue(struct _Fw_Task_Block *task, void *message, uint32_t ev
     struct _Fw_Task_Event *nowNode = EventAlloc();
     struct _Fw_Task_Event_Queue *queue;
     
-    Fw_Assert(IS_PTR_NULL(task));
-    Fw_Assert(IS_PTR_NULL(nowNode));
+    _FW_ASSERT(IS_PTR_NULL(task));
+    _FW_ASSERT(IS_PTR_NULL(nowNode));
     
     //< 2. init queue
     queue = &task->EventQueue;
@@ -388,13 +388,13 @@ __STATIC_INLINE
 fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *event)
 {
     //< 1. check task is vaild
-    Fw_Assert(IS_PTR_NULL(task));
+    _FW_ASSERT(IS_PTR_NULL(task));
 
     //< 2. check queue is vaild
     struct _Fw_Task_Event_Queue *queue = &task->EventQueue;
     
-    Fw_Assert(IS_PTR_NULL(queue->Head));
-    Fw_Assert(IS_PTR_NULL(queue->Tail));
+    _FW_ASSERT(IS_PTR_NULL(queue->Head));
+    _FW_ASSERT(IS_PTR_NULL(queue->Tail));
     
     //< 3. get event
     struct _Fw_Task_Event *getEvent = NULL;
@@ -441,7 +441,7 @@ fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *
  */
 void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
 {
-    Fw_Assert(IS_VAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_VAILD_TASK_ID(taskId));
 
     WriteTaskEventQueue(&TaskBlock.Task[taskId], (void *)(&TaskBlock.Task[taskId]), event);
 }
@@ -456,10 +456,10 @@ void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_PostMessage(uint8_t taskId, void *message, uint32_t event)
+void Fw_Task_PostMessage(uint8_t taskId, uint32_t event, void *message)
 {
-    Fw_Assert(IS_VAILD_TASK_ID(taskId));
-    Fw_Assert(IS_PTR_NULL(Msg));
+    _FW_ASSERT(IS_VAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_PTR_NULL(message));
     
     WriteTaskEventQueue(&TaskBlock.Task[taskId], message, event);
 }

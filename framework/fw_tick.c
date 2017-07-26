@@ -83,7 +83,7 @@ void Fw_Tick_Handle(void)
 {
     SystemTick++;
     
-    Fw_Task_PostMessage(FW_TICK_TASK, (void *)&SystemTick, FW_TICK_EVENT);
+    Fw_Task_PostMessage(FW_TICK_TASK, FW_TICK_EVENT, (void *)&SystemTick);
 }
 
 /**

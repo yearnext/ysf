@@ -89,45 +89,45 @@ struct FrameworkInterface
     void (*Init)(void);
     void (*Start)(void);
     
-#if USE_BUFFER_COMPONENT
+//#if USE_BUFFER_COMPONENT
 //    RingBufferComponentInterface RingBuffer;
-#endif
+//#endif
 
 //#if USE_MEMORY_MANAGEMENT_COMPONENT
 //    MemoryManagementComponentInterface MemoryManagement;
 //#endif
 
-#if USE_DEBUG_COMPONENT
-    DebugComponentInterface Debug;
-#endif
+//#if USE_DEBUG_COMPONENT
+//    DebugComponentInterface Debug;
+//#endif
     
-#if USE_EVENT_COMPONENT
-    EventComponentInterface Event;
-#endif
+//#if USE_EVENT_COMPONENT
+//    EventComponentInterface Event;
+//#endif
 
 //#if USE_SINGLE_LIST_COMPONENT
 //    SingleListComponentInterface SingleLinkList;
 //#endif
 
-#if USE_MEMORY_COMPONENT
+//#if USE_MEMORY_COMPONENT
 //    MemoryComponentInterface Memory;
-#endif
+//#endif
     
-#if USE_SIGNAL_COMPONENT
+//#if USE_SIGNAL_COMPONENT
 //    SignalComponentInterface Signal;
-#endif   
+//#endif   
 
-#if USE_TICK_COMPONENT
-    TickComponentInterface Tick;
-#endif
+//#if USE_TICK_COMPONENT
+//    TickComponentInterface Tick;
+//#endif
 
-#if USE_TIMER_COMPONENT
+//#if USE_TIMER_COMPONENT
 //TimerComponentInterface Timer;
-#endif
+//#endif
 
-#if USE_TASK_COMPONENT
+//#if USE_TASK_COMPONENT
 //    TaskComponentInterface Task;
-#endif
+//#endif
 };
 
 /* Exported variables --------------------------------------------------------*/

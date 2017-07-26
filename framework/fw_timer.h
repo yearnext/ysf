@@ -87,12 +87,12 @@ extern "C"
  * @brief        timer block
  *******************************************************************************
  */
-struct _Fw_Timer
+struct Fw_Timer
 {
     struct
     {
-        struct _Fw_Timer  *Last;
-        struct _Fw_Timer  *Next;
+        struct Fw_Timer *Last;
+        struct Fw_Timer *Next;
     }LinkList;
     
     char              *String;
@@ -103,6 +103,7 @@ struct _Fw_Timer
     
     uint8_t           TaskId;
     uint8_t           TaskEvent;
+	void              *TaskParam;
 };
 
 /* Exported constants --------------------------------------------------------*/
@@ -114,8 +115,9 @@ struct _Fw_Timer
  */
 #if USE_TIMER_COMPONENT           
 extern fw_err_t Fw_Timer_Init(void);
-extern fw_err_t Fw_Timer_Create(struct _Fw_Timer *, char *, uint8_t, uint8_t);
-extern fw_err_t Fw_Timer_Start(struct _Fw_Timer *, uint32_t, int16_t);
+extern fw_err_t Fw_Timer_Create(struct Fw_Timer *, char *, uint8_t, uint8_t, void*);
+extern fw_err_t Fw_Timer_Start(struct Fw_Timer *, uint32_t, int16_t);
+extern fw_err_t Fw_Timer_Stop(struct Fw_Timer *);
 extern fw_err_t Fw_Timer_Poll(void *);
 #endif
 

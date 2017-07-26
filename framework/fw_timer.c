@@ -65,23 +65,18 @@
 #define TIMER_DISABLE(timer)                                ((timer)->Cycle = 0)
 
 /* Private typedef -----------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      timer head node
- *******************************************************************************
- */
 #if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief      timer control block
  *******************************************************************************
  */
-struct _Fw_Timer_Block
+struct Fw_Timer_Block
 {
     struct
     {
-        struct _Fw_Timer *Head;
-        struct _Fw_Timer *Tail;
+        struct Fw_Timer *Head;
+        struct Fw_Timer *Tail;
     }LinkList;
 
     uint8_t Num;
@@ -120,14 +115,15 @@ fw_err_t Fw_Timer_Init(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Timer_Create(struct _Fw_Timer *timer, char *str, uint8_t taskId, uint8_t taskEvent)
+fw_err_t Fw_Timer_Create(struct Fw_Timer *timer, char *str, uint8_t taskId, uint8_t taskEvent, void *taskParam)
 {
-    Fw_Assert(IS_PTR_NUL(timer));
+    _FW_ASSERT(IS_PTR_NUL(timer));
     
     timer->String = str;
     timer->TaskId = taskId;
     timer->TaskEvent = taskEvent;
-    
+    timer->TaskParam = taskParam;
+	
     Fw_dLinkList_Init((struct Fw_dLinkList*)&timer->LinkList);
     
     return FW_ERR_NONE;
@@ -143,9 +139,9 @@ fw_err_t Fw_Timer_Create(struct _Fw_Timer *timer, char *str, uint8_t taskId, uin
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Timer_Start(struct _Fw_Timer *timer, uint32_t tick, int16_t count)
+fw_err_t Fw_Timer_Start(struct Fw_Timer *timer, uint32_t tick, int16_t count)
 {
-    Fw_Assert(IS_PTR_NUL(timer));
+    _FW_ASSERT(IS_PTR_NUL(timer));
     
     timer->InitTick    = tick;
     timer->TimeOutTick = tick + Fw_GetTick();
@@ -161,6 +157,28 @@ fw_err_t Fw_Timer_Start(struct _Fw_Timer *timer, uint32_t tick, int16_t count)
 
 /**
  *******************************************************************************
+ * @brief       stop timer function
+ * @param       [in/out]  *timer         timer block
+ * @return      [in/out]  FW_ERR_NONE    create success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Timer_Stop(struct Fw_Timer *timer)
+{
+    _FW_ASSERT(IS_PTR_NULL(timer));
+    
+    Fw_dLinkList_Remove((struct Fw_LinkList_Block *)&TimerBlock.LinkList, \
+                        (struct Fw_dLinkList*)&timer->LinkList);
+    
+    timer->Cycle = 0;
+    
+    TimerBlock.Num--;
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
  * @brief       timer delete function
  * @param       [in/out]  *timer         timer block
  * @return      [in/out]  void
@@ -168,15 +186,29 @@ fw_err_t Fw_Timer_Start(struct _Fw_Timer *timer, uint32_t tick, int16_t count)
  *******************************************************************************
  */
 __STATIC_INLINE
-void TimerDelete(struct _Fw_Timer *timer)
+void TimerDelete(struct Fw_Timer *timer)
 {
     //< 1. remove timer link list
-    Fw_dLinkList_Remove((struct Fw_LinkList_Block *)&TimerBlock.LinkList, \
-                        (struct Fw_dLinkList*)&timer->LinkList);
+    struct Fw_Timer **ctxTimer;
 
-    //< 2. clear block param
-    timer->String  = NULL;
-    
+    if(TimerBlock.LinkList.Head == timer)
+    {
+        TimerBlock.LinkList.Head = timer->LinkList.Next;
+    }
+    else if(TimerBlock.LinkList.Tail == timer)
+    {
+        TimerBlock.LinkList.Tail = timer->LinkList.Last;
+    }
+    else
+    {
+        ctxTimer = (struct Fw_Timer **)&timer->LinkList.Last->LinkList.Next;
+        *ctxTimer = timer->LinkList.Next;
+    }
+
+    //< 2. clear block link list param
+	timer->LinkList.Last = NULL;
+	timer->LinkList.Next = NULL;
+	
     //< 3. sub timer num
     if(TimerBlock.Num > 0)
     {
@@ -196,11 +228,11 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
 {
     //< 1. init param
     uint8_t i;
-    struct _Fw_Timer *timer = TimerBlock.LinkList.Head;
+    struct Fw_Timer *timer = TimerBlock.LinkList.Head;
     uint32_t tick = *((uint32_t *)tickPtr);
     
-    Fw_Assert(IS_PTR_NULL(tickPtr));
-    Fw_Assert(IS_PTR_NULL(timer));
+    _FW_ASSERT(IS_PTR_NULL(tickPtr));
+    _FW_ASSERT(IS_PTR_NULL(timer));
 
     //< 2. poll timer
     for(i=0; i<TimerBlock.Num; i++)
@@ -215,8 +247,8 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
         if(timer->TimeOutTick <= tick)
         {
             //< 5. post event to task
-            Fw_Task_PostEvent(timer->TaskId, timer->TaskEvent);
-            
+			Fw_Task_PostMessage(timer->TaskId, timer->TaskEvent, timer->TaskParam);
+			
             //< 6. detect timer is active
             if(timer->Cycle == FW_TIMER_CYCLE_MODE || --timer->Cycle)
             {

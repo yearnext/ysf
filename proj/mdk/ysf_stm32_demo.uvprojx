@@ -410,6 +410,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\framework\fw_signal.c</FilePath>
             </File>
+            <File>
+              <FileName>fw_linklist.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\fw_linklist.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\fw_debug.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

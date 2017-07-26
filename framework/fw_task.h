@@ -111,7 +111,7 @@ struct _Fw_Task_Handle
 extern void Fw_Task_Init(void);
 extern fw_err_t Fw_Task_Create(uint8_t, char*, void*, enum _Fw_Task_Type);
 extern void Fw_Task_PostEvent(uint8_t, uint32_t);
-extern void Fw_Task_PostMessage(uint8_t, void*, uint32_t);
+extern void Fw_Task_PostMessage(uint8_t, uint32_t, void*);
 extern void Fw_Task_Dispatch(void);
 #endif
 

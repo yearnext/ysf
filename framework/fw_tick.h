@@ -106,21 +106,7 @@ typedef struct
 extern void     Fw_Tick_Init(void);
 extern void     Fw_Tick_Handle(void);
 extern uint32_t Fw_GetTick(void);
-extern uint32_t Fw_GetPastTick(uint32_t, uint32_t);
-/**
- *******************************************************************************
- * @brief        define framework tick interface
- *******************************************************************************
- */ 
-#define fw_tick_init                         InitTickComponent
-#define fw_tick_inc                          IncTick
-#define fw_tick_get                          GetTick
-#define fw_tick_cal                          CalPastTick
-#else
-#define fw_tick_init()                         
-#define fw_tick_inc()              
-#define fw_tick_get()           
-#define fw_tick_cal()        
+extern uint32_t Fw_GetPastTick(uint32_t, uint32_t);        
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

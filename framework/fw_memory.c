@@ -77,7 +77,7 @@
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_MEMORY_MANAGEMENT_COMPONENT
+#if USE_MEMORY_COMPONENT
 /**
  *******************************************************************************
  * @brief       init ysf memory 
@@ -144,7 +144,7 @@ void Fw_Mem_Free(void *memory)
 #endif
 
 
-#if USE_MEMORY_MANAGEMENT_COMPONENT
+#if USE_MEMORY_COMPONENT
 //fw_err_t Fw_Mem_Init(struct _Fw_MemMgmtBlock *memMgmt, void *buffer, uint32_t len)
 //{
 //    Fw_Assert(IS_PTR_NULL(memMgmt));

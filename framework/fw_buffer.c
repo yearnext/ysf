@@ -63,9 +63,9 @@
  */
 fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize)
 {
-    Fw_Assert(IS_PTR_NULL(rb));
-    Fw_Assert(IS_PTR_NULL(rbBuffer));
-    Fw_Assert(rbSize == 0);
+    _FW_ASSERT(IS_PTR_NULL(rb));
+    _FW_ASSERT(IS_PTR_NULL(rbBuffer));
+    _FW_ASSERT(rbSize == 0);
     
     rb->Buffer = rbBuffer;
     rb->Size   = rbSize;
@@ -87,8 +87,8 @@ fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t r
  */
 fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer *rb, uint16_t *getSize)
 {
-    Fw_Assert(IS_PTR_NULL(rb));
-    Fw_Assert(IS_PTR_NULL(getSize));
+    _FW_ASSERT(IS_PTR_NULL(rb));
+    _FW_ASSERT(IS_PTR_NULL(getSize));
     
     *getSize =  rb->Len;
     
@@ -106,7 +106,7 @@ fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer *rb, uint16_t *getSize)
 __STATIC_INLINE 
 uint16_t RingBufferCanRead(struct _Fw_RingBuffer *rb)
 {
-    Fw_Assert(IS_PTR_NULL(rb));
+    _FW_ASSERT(IS_PTR_NULL(rb));
 
     return rb->Len;
 }
@@ -122,7 +122,7 @@ uint16_t RingBufferCanRead(struct _Fw_RingBuffer *rb)
 __STATIC_INLINE 
 uint16_t RingBufferCanWrite(struct _Fw_RingBuffer *rb)
 {
-    Fw_Assert(IS_PTR_NULL(rb));
+    _FW_ASSERT(IS_PTR_NULL(rb));
     
     return rb->Size - rb->Len - 1;
 }
@@ -140,9 +140,9 @@ uint16_t RingBufferCanWrite(struct _Fw_RingBuffer *rb)
  */
 fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
 {
-    Fw_Assert(IS_PTR_NULL(rb));
-    Fw_Assert(IS_PTR_NULL(writeBuffer));
-    Fw_Assert(writeSize == 0);
+    _FW_ASSERT(IS_PTR_NULL(rb));
+    _FW_ASSERT(IS_PTR_NULL(writeBuffer));
+    _FW_ASSERT(writeSize == 0);
     
     uint16_t free = 0;
     uint16_t i = 0;
@@ -191,9 +191,9 @@ fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16
  */
 fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
 {
-    Fw_Assert(IS_PTR_NULL(rb));
-    Fw_Assert(IS_PTR_NULL(readBuffer));
-    Fw_Assert(readSize == 0); 
+    _FW_ASSERT(IS_PTR_NULL(rb));
+    _FW_ASSERT(IS_PTR_NULL(readBuffer));
+    _FW_ASSERT(readSize == 0); 
     
     uint16_t free = 0;
     uint16_t i = 0;

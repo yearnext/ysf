@@ -64,9 +64,9 @@
 bool SingleListWalk(void **listHead, bool (*func)(void**, void**, void**),
                     void **ctx,      void **expand)
 {
-    Fw_Assert(IS_PTR_NULL(listHead));
-    Fw_Assert(IS_PTR_NULL(*listHead));
-    Fw_Assert(IS_PTR_NULL(func));
+    _FW_ASSERT(IS_PTR_NULL(listHead));
+    _FW_ASSERT(IS_PTR_NULL(*listHead));
+    _FW_ASSERT(IS_PTR_NULL(func));
     
     bool status = false;
     struct SingleList **sList = (struct SingleList **)listHead;
@@ -99,7 +99,7 @@ bool SingleListWalk(void **listHead, bool (*func)(void**, void**, void**),
  */
 bool SingleListModuleAdd(void **node, void **ctx, void **expand)
 {
-    Fw_Assert(IS_PTR_NULL(*ctx));
+    _FW_ASSERT(IS_PTR_NULL(*ctx));
 
     bool status = false;
     struct SingleList *temp = (struct SingleList *)(*ctx);
@@ -141,7 +141,7 @@ bool SingleListModuleAdd(void **node, void **ctx, void **expand)
  */
 bool SingleListModuleDel( void **node, void **ctx, void **expand )
 {
-    Fw_Assert(IS_PTR_NULL(*ctx));
+    _FW_ASSERT(IS_PTR_NULL(*ctx));
 
     struct SingleList *now = (struct SingleList *)(*node);
     struct SingleList *next = (struct SingleList *)(*ctx);
@@ -187,7 +187,7 @@ bool SingleListModuleDel( void **node, void **ctx, void **expand )
  */
 bool SingleListModuleIsExist( void **node, void **ctx, void **expand )
 {
-    Fw_Assert(IS_PTR_NULL(*ctx));
+    _FW_ASSERT(IS_PTR_NULL(*ctx));
 
     bool status = false;
 
@@ -245,7 +245,7 @@ bool SingleListModuleFindLastNode(void **node, void **ctx, void **expand)
  */
 fw_err_t InitSingleListComponent( void **listHead )
 {
-    Fw_Assert(IS_PTR_NULL(listHead));
+    _FW_ASSERT(IS_PTR_NULL(listHead));
 
     *listHead = NULL;
 
@@ -264,8 +264,8 @@ fw_err_t InitSingleListComponent( void **listHead )
  */
 fw_err_t AddNodeToSingleList( void **listHead, void **ctx )
 {
-    Fw_Assert(IS_PTR_NULL(listHead));
-    Fw_Assert(IS_PTR_NULL(*ctx));
+    _FW_ASSERT(IS_PTR_NULL(listHead));
+    _FW_ASSERT(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleAdd, ctx, NULL) == false )
     {
@@ -287,8 +287,8 @@ fw_err_t AddNodeToSingleList( void **listHead, void **ctx )
  */
 fw_err_t DelNodeFromSingleList( void **listHead, void **ctx )
 {
-    Fw_Assert(IS_PTR_NULL(listHead));
-    Fw_Assert(IS_PTR_NULL(*ctx));
+    _FW_ASSERT(IS_PTR_NULL(listHead));
+    _FW_ASSERT(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleDel, ctx, NULL) == false )
     {
@@ -310,8 +310,8 @@ fw_err_t DelNodeFromSingleList( void **listHead, void **ctx )
  */
 fw_err_t IsInSingleList( void **listHead, void **ctx )
 {
-    Fw_Assert(IS_PTR_NULL(listHead));
-    Fw_Assert(IS_PTR_NULL(*ctx));
+    _FW_ASSERT(IS_PTR_NULL(listHead));
+    _FW_ASSERT(IS_PTR_NULL(*ctx));
 
     if( SingleListWalk(listHead, SingleListModuleIsExist, ctx, NULL) == false )
     {
@@ -332,7 +332,7 @@ fw_err_t IsInSingleList( void **listHead, void **ctx )
  */
 fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList *node)
 {
-    Fw_Assert(IS_PTR_NULL(node));
+    _FW_ASSERT(IS_PTR_NULL(node));
     
     node->Next = NULL;
     
@@ -350,7 +350,7 @@ fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList *node)
  */
 fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList *node)
 {
-    Fw_Assert(IS_PTR_NULL(node));
+    _FW_ASSERT(IS_PTR_NULL(node));
     
     node->Last = NULL;
     node->Next = NULL;
@@ -370,10 +370,10 @@ fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList *node)
  */
 fw_err_t Fw_dLinkList_Push(struct Fw_LinkList_Block *block, struct Fw_dLinkList *node)
 {
-    Fw_Assert(IS_PTR_NULL(block));
-    Fw_Assert(IS_PTR_NULL(node));
-    Fw_Assert(!IS_PTR_NULL(node->Next));
-    Fw_Assert(!IS_PTR_NULL(node->Last));
+    _FW_ASSERT(IS_PTR_NULL(block));
+    _FW_ASSERT(IS_PTR_NULL(node));
+    _FW_ASSERT(!IS_PTR_NULL(node->Next));
+    _FW_ASSERT(!IS_PTR_NULL(node->Last));
 
     if(IS_PTR_NULL(block->Head))
     {
@@ -405,10 +405,10 @@ fw_err_t Fw_dLinkList_Push(struct Fw_LinkList_Block *block, struct Fw_dLinkList 
  */
 fw_err_t Fw_dLinkList_Pop(struct Fw_LinkList_Block *block, struct Fw_dLinkList **node)
 {
-    Fw_Assert(IS_PTR_NULL(block));
-    Fw_Assert(IS_PTR_NULL(*node));
-    Fw_Assert(IS_PTR_NULL(block->Head));
-    Fw_Assert(IS_PTR_NULL(block->Tail));
+    _FW_ASSERT(IS_PTR_NULL(block));
+    _FW_ASSERT(IS_PTR_NULL(*node));
+    _FW_ASSERT(IS_PTR_NULL(block->Head));
+    _FW_ASSERT(IS_PTR_NULL(block->Tail));
     
     if(block->Head == block->Tail)
     {
@@ -442,10 +442,10 @@ fw_err_t Fw_dLinkList_Pop(struct Fw_LinkList_Block *block, struct Fw_dLinkList *
  */
 fw_err_t Fw_dLinkList_Remove(struct Fw_LinkList_Block *block, struct Fw_dLinkList *node)
 {
-    Fw_Assert(IS_PTR_NULL(block));
-    Fw_Assert(IS_PTR_NULL(node));
-    Fw_Assert(IS_PTR_NULL(block->Head));
-    Fw_Assert(IS_PTR_NULL(block->Tail));
+    _FW_ASSERT(IS_PTR_NULL(block));
+    _FW_ASSERT(IS_PTR_NULL(node));
+    _FW_ASSERT(IS_PTR_NULL(block->Head));
+    _FW_ASSERT(IS_PTR_NULL(block->Tail));
     
     struct Fw_dLinkList *ptr = block->Head;
     
