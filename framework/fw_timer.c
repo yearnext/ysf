@@ -90,7 +90,7 @@ struct Timer_Block
  * @note        None
  *******************************************************************************
  */
-void InitTimerComponent(void)
+void Fw_Timer_InitComponent(void)
 {
     uint8_t i;
     
@@ -104,7 +104,7 @@ void InitTimerComponent(void)
         Timer[i].TaskEvent   = FW_EVENT_NONE;
     }
     
-    RegisterEvent(FW_TICK_TASK, PollTimerComponent);
+    Fw_Event_Register(FW_TICK_TASK, Fw_Timer_Poll);
 }
 
 /**
@@ -264,11 +264,11 @@ fw_err_t Fw_Timer_GetStatus(uint8_t timerId, int16_t *status)
  * @note        None
  *******************************************************************************
  */
-void PollTimerComponent(uint8_t event)
+void Fw_Timer_Poll(uint8_t event)
 {
     static uint32_t lastTick = 0;
-    uint32_t nowTick = GetTick();
-    uint32_t tick = CalPastTick(lastTick, nowTick);
+    uint32_t nowTick = Fw_Tick_GetInfo();
+    uint32_t tick = Fw_Tick_CalPastTick(lastTick, nowTick);
     uint8_t i;
 
     lastTick = nowTick;
@@ -284,14 +284,21 @@ void PollTimerComponent(uint8_t event)
                     --Timer[i].Count;
                 }
 
-                if(Timer[i].Count == 0 && !IS_PTR_NULL(Timer[i].Hook))
+                if(!IS_PTR_NULL(Timer[i].Hook))
                 {
-                    Timer[i].Hook(FW_END_EVENT);
+                	if(Timer[i].Count == 0)
+                	{
+                	    Timer[i].Hook(FW_END_EVENT);
+                	}
+					else
+					{
+						Timer[i].Hook(FW_TIMEOUT_EVENT);
+					}
                 }
 
                 Timer[i].TimeOutTick = Timer[i].Tick;
                 
-                PostEvent(Timer[i].TaskId, Timer[i].TaskEvent); 
+                Fw_Event_Post(Timer[i].TaskId, Timer[i].TaskEvent); 
             }
             else
             {

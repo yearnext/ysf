@@ -49,11 +49,32 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
+ * @note        framework tick component config
+ *******************************************************************************
+ */
+#define USE_FRAMEWORK_TICK_COMPONENT                                         (1)
+
+/**
+ *******************************************************************************
+ * @note        framework stream component config
+ *******************************************************************************
+ */
+#define USE_FRAMEWORK_STREAM_COMPONENT                                       (1)
+
+/**
+ *******************************************************************************
  * @brief       API config
  *******************************************************************************
  */
 #define USE_FRAMEWORK_EVENT_COMPONENT                                        (1)
 
+/**
+ *******************************************************************************
+ * @brief        framework signal component config
+ *******************************************************************************
+ */
+#define USE_FRAMEWORK_SIGNAL_COMPONENT                                       (1)
+    
 /**
  *******************************************************************************
  * @brief       queue compoent config flag
@@ -88,18 +109,18 @@ enum define_fw_event
     FW_EVENT_NONE,
     FW_TICK_EVENT,
     FW_SIGNAL_EVENT,
-	FW_DELAY_EVENT,
-	FW_BEGIN_EVENT,
-	FW_END_EVENT,
-	FW_FLOW_EVENT,
-	FW_TIMEOUT_EVENT,
+    FW_DELAY_EVENT,
+    FW_BEGIN_EVENT,
+    FW_END_EVENT,
+    FW_FLOW_EVENT,
+    FW_TIMEOUT_EVENT,
     FW_TRANSFER_START_EVENT,
     FW_TRANSFER_EVENT,
     FW_TRANSFER_WAIT_EVNET,
     FW_TRANSFER_COMPLET_EVENT,
     
     /** user define begin */
-
+      
     /** user define end */
     FW_EVENT_MAX,
 };
@@ -117,7 +138,7 @@ enum define_fw_task
  	FW_DEBUG_TASK,
     
 	/** user define begin */
-
+    
 	/** user define end */
     FW_TASK_MAX,
 };
@@ -129,13 +150,13 @@ enum define_fw_task
  */
 enum define_fw_queue
 {
-	/** framework queue */
-	FW_TICK_QUEUE,
+    /** framework queue */
+    FW_TICK_QUEUE,
 
-	/** user define begin */
+    /** user define begin */
 
-	/** user define end */
-	FW_QUEUE_MAX,
+    /** user define end */
+    FW_QUEUE_MAX,
 };
 
 /**
@@ -145,19 +166,13 @@ enum define_fw_queue
  */
 enum define_fw_signal
 {
-	/** framework signal */
+    /** framework signal */
+    
+    /** user define begin */
+    USER_SIGNAL,
 
-	/** user define begin */
-	SIGNAL_MouseKey,
-    SIGNAL_SetKey,
-    SIGNAL_LedSetKey,
-    SIGNAL_SoundSetKey,
-    SIGNAL_SleepLedSetKey,
-    SIGNAL_BackLightSetKey,
-    SIGNAL_ShockSwitch,
-
-	/** user define end */
-	SIGNAL_MAX,
+    /** user define end */
+    SIGNAL_MAX,
 };
 
 /**
@@ -167,13 +182,18 @@ enum define_fw_signal
  */
 enum define_fw_timer
 {
-	/** framework timer */
+    /** framework timer */
+#if USE_FRAMEWORK_SIGNAL_COMPONENT
     SIGNAL_SCAN_TIMER,
-    FW_DEBUG_TIMER,
+#endif
     
-	/** user define begin */
+#if USE_FRAMEWORK_DEBUG_COMPONENT
+    FW_DEBUG_TIMER,
+#endif
+    
+    /** user define begin */
 
-	/** user define end */
+    /** user define end */
     Timer_Max,
 };
 

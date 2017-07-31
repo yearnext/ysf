@@ -53,10 +53,10 @@ extern "C"
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_EVENT_COMPONENT
-extern void InitEventComponent(void);
-extern fw_err_t RegisterEvent(uint8_t, void (*)(uint8_t));
-extern inline void PostEvent(uint8_t, uint8_t);
-extern inline void PollEvent(void);
+extern void Fw_Event_InitComponent(void);
+extern fw_err_t Fw_Event_Register(uint8_t, void (*)(uint8_t));
+extern inline void Fw_Event_Post(uint8_t, uint8_t);
+extern inline void Fw_Event_Poll(void);
 #endif
 
 /* Define to prevent recursive inclusion -------------------------------------*/

@@ -96,7 +96,7 @@ static struct
  * @note        None
  *******************************************************************************
  */
-void InitEventComponent(void)
+void Fw_Event_InitComponent(void)
 {
     uint8_t i;
     
@@ -124,7 +124,7 @@ void InitEventComponent(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t RegisterEvent(uint8_t taskId, void (*evtHandle)(uint8_t))
+fw_err_t Fw_Event_Register(uint8_t taskId, void (*evtHandle)(uint8_t))
 {
     if( IS_PTR_NULL(evtHandle) )
     {
@@ -151,7 +151,7 @@ fw_err_t RegisterEvent(uint8_t taskId, void (*evtHandle)(uint8_t))
  *******************************************************************************
  */
 inline
-void PostEvent(uint8_t taskId, uint8_t event)
+void Fw_Event_Post(uint8_t taskId, uint8_t event)
 {
 	if(EventQueue.Tail < FW_TASK_MAX_SIZE)
 	{
@@ -173,7 +173,7 @@ void PostEvent(uint8_t taskId, uint8_t event)
  *******************************************************************************
  */
 inline
-void PollEvent(void)
+void Fw_Event_Poll(void)
 {
     while(EventQueue.Head < EventQueue.Tail)
     {

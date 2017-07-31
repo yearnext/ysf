@@ -185,11 +185,11 @@ static void DebugComponentEventHandle(uint8_t);
  * @note        None
  *******************************************************************************
  */
-void InitDebugComponent(void)
+void Fw_Debug_InitComponent(void)
 {
 	memset(&DebugBlock, 0, sizeof(DebugBlock));
 	
-	RegisterEvent(FW_DEBUG_TASK, DebugComponentEventHandle);	
+	Fw_Event_Register(FW_DEBUG_TASK, DebugComponentEventHandle);	
 	
 	InitDebugTimer();
 }
@@ -203,12 +203,12 @@ void InitDebugComponent(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t LoginDebugISRSendByteCallBack(void (*sendByte)(uint8_t))
+fw_err_t Fw_Debug_RegisterCallback(fw_err_t (*sendByte)(uint8_t))
 {
 	_PARAM_CHECK(IS_PTR_NULL(sendByte));
 	
-	DebugBlock.Device.ISRSend = sendByte;
-	DebugBlock.Type           = DEBUG_DEVICE_OUTPUT_SINGLE_ISR_TYPE;
+	DebugBlock.Device.Send = sendByte;
+	DebugBlock.Type        = DEBUG_DEVICE_OUTPUT_SINGLE_TYPE;
 	
 	return FW_ERR_NONE;
 }
@@ -222,12 +222,12 @@ fw_err_t LoginDebugISRSendByteCallBack(void (*sendByte)(uint8_t))
  * @note        None
  *******************************************************************************
  */
-fw_err_t LoginDebugSendByteCallBack(fw_err_t (*sendByte)(uint8_t))
+fw_err_t Fw_Debug_RegisterIsrCallback(void (*sendByte)(uint8_t))
 {
 	_PARAM_CHECK(IS_PTR_NULL(sendByte));
 	
-	DebugBlock.Device.Send = sendByte;
-	DebugBlock.Type        = DEBUG_DEVICE_OUTPUT_SINGLE_TYPE;
+	DebugBlock.Device.ISRSend = sendByte;
+	DebugBlock.Type           = DEBUG_DEVICE_OUTPUT_SINGLE_ISR_TYPE;
 	
 	return FW_ERR_NONE;
 }
@@ -241,7 +241,7 @@ fw_err_t LoginDebugSendByteCallBack(fw_err_t (*sendByte)(uint8_t))
  * @note        None
  *******************************************************************************
  */
-fw_err_t LoginDebugSendDataCallBack(void (*write)(uint8_t*, uint8_t))
+fw_err_t Fw_Debug_RegisterDmaCallback(void (*write)(uint8_t*, uint8_t))
 {
 	_PARAM_CHECK(IS_PTR_NULL(write));
 	
@@ -308,7 +308,7 @@ uint8_t FillingDebugHeadInfo(struct _BUFFER_BLOCK *pipeLine, enum _DEBUG_MESSAGE
 		return 0;
 	}
 
-	pipeLine->Tick = GetTick();
+	pipeLine->Tick = Fw_Tick_GetInfo();
 
 	if(type == DEBUG_OUTPUT_ERROR_MESSAGE)
 	{
@@ -337,7 +337,7 @@ uint8_t FillingDebugHeadInfo(struct _BUFFER_BLOCK *pipeLine, enum _DEBUG_MESSAGE
  *******************************************************************************
  */
 #if USE_DEBUG_COMPONENT_FILLING_MODE 
-void WriteDebugMessage(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
+void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
 {
 	struct _BUFFER_BLOCK *pipeLine = FindIdleChannel();
 	uint8_t bufferLen = 0;
@@ -366,7 +366,7 @@ void WriteDebugMessage(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
 			{
                 DebugBlock.ChannelStatus = DEBUG_BLOCK_CHANNEL_BUSY_STATUS;
                 
-				PostEvent(FW_DEBUG_TASK, FW_TRANSFER_START_EVENT);
+				Fw_Event_Post(FW_DEBUG_TASK, FW_TRANSFER_START_EVENT);
 			}
 			break;	
 		default:
@@ -400,7 +400,7 @@ void WriteDebugMessage(enum _DEBUG_MESSAGE_TYPE type, const char *str, va_list a
 		case BUFFER_WAIT_TRANSFER_STATUS:
 			if(DebugBlock.ChannelStatus == DEBUG_BLOCK_CHANNEL_IDLE_STATUS)
 			{
-				PostEvent(FW_DEBUG_TASK, FW_TRANSFER_START_EVENT);
+				Fw_Event_Post(FW_DEBUG_TASK, FW_TRANSFER_START_EVENT);
 			}
 			break;	
 		default:
@@ -524,7 +524,7 @@ enum _BUFFER_STATUS TransferFunction(struct _BUFFER_BLOCK *pipeline)
             return BUFFER_TRANSFER_STATUS;
         }
 
-//        PostEvent(FW_DEBUG_TASK, FW_TRANSFER_COMPLET_EVENT);
+//        Fw_Event_Post(FW_DEBUG_TASK, FW_TRANSFER_COMPLET_EVENT);
         return BUFFER_WAIT_TRANSFER_COMPLET_STATUS;
 	}
     //< buffer dma transfer
@@ -542,7 +542,7 @@ enum _BUFFER_STATUS TransferFunction(struct _BUFFER_BLOCK *pipeline)
             //< transfer complet
             if(++DebugBlock.Indicator >= pipeline->Size)
             {
-//                PostEvent(FW_DEBUG_TASK, FW_TRANSFER_COMPLET_EVENT);
+//                Fw_Event_Post(FW_DEBUG_TASK, FW_TRANSFER_COMPLET_EVENT);
                 
                 return BUFFER_WAIT_TRANSFER_COMPLET_STATUS;
             }
@@ -552,7 +552,7 @@ enum _BUFFER_STATUS TransferFunction(struct _BUFFER_BLOCK *pipeline)
         else
         {
             //< wait now byte transfer complex
-            PostEvent(FW_DEBUG_TASK, FW_TRANSFER_WAIT_EVNET);
+            Fw_Event_Post(FW_DEBUG_TASK, FW_TRANSFER_WAIT_EVNET);
             
             return BUFFER_TRANSFER_STATUS;
         }
@@ -646,7 +646,7 @@ void TransferEventHandle(uint8_t event)
 		case BUFFER_TRANSFER_COMPLET_STATUS:
             if(pipeline->Status == BUFFER_WAIT_TRANSFER_STATUS)
             {
-                tick = CalPastTick(tick, pipeline->Tick);
+                tick = Fw_Tick_CalPastTick(tick, pipeline->Tick);
                 
                 if(tick == 0)
                 {
@@ -704,17 +704,17 @@ static void DebugComponentEventHandle(uint8_t event)
  * @note        None
  *******************************************************************************
  */
-void DebugComponentISRCallBack(void)
+void Fw_Debug_IsrCallback(void)
 {
-        //< buffer interrupt transfer
+    //< buffer interrupt transfer
     if(DebugBlock.Type == DEBUG_DEVICE_OUTPUT_SINGLE_ISR_TYPE)
 	{
-        PostEvent(FW_DEBUG_TASK, FW_TRANSFER_EVENT);
+        Fw_Event_Post(FW_DEBUG_TASK, FW_TRANSFER_EVENT);
 	}
     //< buffer dma transfer
 	else if(DebugBlock.Type == DEBUG_DEVICE_OUTPUT_STREAM_TYPE)
 	{
-        PostEvent(FW_DEBUG_TASK, FW_TRANSFER_COMPLET_EVENT);
+        Fw_Event_Post(FW_DEBUG_TASK, FW_TRANSFER_COMPLET_EVENT);
 	}
     //< device transfer function is not register 
 	else

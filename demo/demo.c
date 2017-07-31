@@ -48,9 +48,9 @@
  * @brief       main function
  *******************************************************************************
  */
-int main(void)
+void InitUserComponent(void)
 {   
-    return 0;
+    return;
 }
 
 /** @}*/     /* key control demo  */

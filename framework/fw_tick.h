@@ -51,13 +51,6 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @note        framework tick component config
- *******************************************************************************
- */
-#define USE_FRAMEWORK_TICK_COMPONENT                                         (1)
-    
-/**
- *******************************************************************************
  * @note        define tick max value
  *******************************************************************************
  */
@@ -74,10 +67,10 @@ extern "C"
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_TICK_COMPONENT
-extern void InitTickComponent(void);
-extern void IncTick(void);
-extern uint32_t GetTick(void);
-extern uint32_t CalPastTick(uint32_t, uint32_t);
+extern void Fw_Tick_InitComponent(void);
+extern void Fw_Tick_Inc(void);
+extern uint32_t Fw_Tick_GetInfo(void);
+extern uint32_t Fw_Tick_CalPastTick(uint32_t, uint32_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

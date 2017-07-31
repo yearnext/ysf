@@ -76,7 +76,7 @@ enum _DEBUG_MESSAGE_TYPE
  * @brief      debug component init function
  *******************************************************************************
  */  
-extern void InitDebugComponent(void);
+extern void Fw_Debug_InitComponent(void);
 
 /**
  *******************************************************************************
@@ -84,9 +84,9 @@ extern void InitDebugComponent(void);
  * @note       please login deivce function to debug component
  *******************************************************************************
  */  
-extern fw_err_t LoginDebugSendByteCallBack(fw_err_t (*)(uint8_t));
-extern fw_err_t LoginDebugISRSendByteCallBack(void (*sendByte)(uint8_t));
-extern fw_err_t LoginDebugSendDataCallBack(void (*)(uint8_t*, uint8_t));
+extern fw_err_t Fw_Debug_RegisterCallback(fw_err_t (*)(uint8_t));
+extern fw_err_t Fw_Debug_RegisterIsrCallback(void (*sendByte)(uint8_t));
+extern fw_err_t Fw_Debug_RegisterDmaCallback(void (*)(uint8_t*, uint8_t));
 
 /**
  *******************************************************************************
@@ -94,7 +94,7 @@ extern fw_err_t LoginDebugSendDataCallBack(void (*)(uint8_t*, uint8_t));
  * @note       please add this function in device isr handle or main loop
  *******************************************************************************
  */ 
-extern void DebugComponentISRCallBack(void);
+extern void Fw_Debug_IsrCallback(void);
 
 /**
  *******************************************************************************
@@ -102,12 +102,12 @@ extern void DebugComponentISRCallBack(void);
  *******************************************************************************
  */ 
 #if USE_DEBUG_COMPONENT_FILLING_MODE
-extern void WriteDebugMessage(enum _DEBUG_MESSAGE_TYPE, const char*, ...); 
+extern void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE, const char*, ...); 
 
-#define log(str, ...)    WriteDebugMessage(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
-#define log_e(str, ...)  WriteDebugMessage(DEBUG_OUTPUT_ERROR_MESSAGE, str, ##__VA_ARGS__)
-#define log_w(str, ...)  WriteDebugMessage(DEBUG_OUTPUT_WARNING_MESSAGE, str, ##__VA_ARGS__)
-#define log_d(str, ...)  WriteDebugMessage(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
+#define log(str, ...)    Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
+#define log_e(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_ERROR_MESSAGE, str, ##__VA_ARGS__)
+#define log_w(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_WARNING_MESSAGE, str, ##__VA_ARGS__)
+#define log_d(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
 #else 
 extern void log(const char *str, ...);
 extern void log_e(const char *str, ...);

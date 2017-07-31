@@ -52,18 +52,10 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        framework signal component config
- *******************************************************************************
- */
-#define USE_FRAMEWORK_SIGNAL_COMPONENT                                       (1)
- 
-/**
- *******************************************************************************
  * @brief        framework signal preiod config
  *******************************************************************************
  */
 #define FW_SIGNAL_SCAN_PREIOD                                  (FW_TIME_SET(10))
-
 /**
  *******************************************************************************
  * @brief       define signal info param
@@ -77,60 +69,51 @@ extern "C"
  * @brief       define signal event
  *******************************************************************************
  */
-#define Logon_Release_Event                                               (0x01)
-#define Logon_PressEdge_Event                                             (0x02)
-#define Logon_Press_Event                                                 (0x04)
-#define Logon_LongPress_Event                                             (0x08)
-#define Logon_MultiPress_Event                                            (0x10)
-#define Logon_ReleaseEdge_Event                                           (0x20)
-    
-#define Logout_Release_Event                                              (0x01)
-#define Logout_PressEdge_Event                                            (0x02)
-#define Logout_Press_Event                                                (0x04)
-#define Logout_LongPress_Event                                            (0x08)
-#define Logout_MultiPress_Event                                           (0x10)
-#define Logout_ReleaseEdge_Event                                          (0x20)
-
-#define Logon_Edge_Signal()                                               (0x22)
-#define Logon_All_Signal()                                                (0x3F)
-
-#define IsLogonReleaseEvent(n)                   ((n) & Logon_Release_Event)
-#define IsLogonPressEdgeEvent(n)                 ((n) & Logon_PressEdge_Event)
-#define IsLogonPressEvent(n)                     ((n) & Logon_Press_Event)
-#define IsLogonLongPressEvent(n)                 ((n) & Logon_LongPress_Event)
-#define IsLogonMultiPressEvent(n)                ((n) & Logon_MultiPress_Event)
-#define IsLogonReleaseEdgeEvent(n)               ((n) & Logon_ReleaseEdge_Event)
+#define REG_RELEASE_STATE                                                (0x01)
+#define REG_PRESS_EDGE_STATE                                             (0x02)
+#define REG_PRESS_STATE                                                  (0x04)
+#define REG_LONG_PRESS_STATE                                             (0x08)
+#define REG_MULTI_PRESS_STATE                                            (0x10)
+#define REG_RELEASE_EDGE_STATE                                           (0x20)
+#define REG_DOUBLE_EDGE_STATE                                            (0x22)
+#define REG_ALL_STATE                                                    (0x3F)
+#define IsRegReleaseState(n)                      ((n) & REG_RELEASE_STATE)
+#define IsRegPressEdgeState(n)                    ((n) & REG_PRESS_EDGE_STATE)
+#define IsRegPressState(n)                        ((n) & REG_PRESS_STATE)
+#define IsRegLongPressState(n)                    ((n) & REG_LONG_PRESS_STATE)
+#define IsRegMultiPressState(n)                   ((n) & REG_MULTI_PRESS_STATE)
+#define IsRegReleaseEdgeState(n)                  ((n) & REG_RELEASE_EDGE_STATE)
 
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief        framework signal status config
+ * @brief        define signal status
  *******************************************************************************
  */
-typedef enum
+typedef enum FW_SIGNAL_STATE
 {
-    SIGNAL_STATUS_INIT = 0x80,
-    SIGNAL_STATUS_PRESS_FILTER_STEP,
-	SIGNAL_STATUS_PRESS_EDGE,
-    SIGNAL_STATUS_PRESS,
-	SIGNAL_STATUS_LONG_PRESS,
-	SIGNAL_STATUS_MULTI_PRESS,
-    SIGNAL_STATUS_RELEASE_FILTER_STEP,
-    SIGNAL_STATUS_RELEASE_EDGE,
-	SIGNAL_STATUS_RELEASE,
-	SIGNAL_STATUS_END,
-}signal_status_t;
+    SIGNAL_INIT_STATE = 0x80,
+    SIGNAL_PRESS_FILTER_STATE,
+    SIGNAL_PRESS_EDGE_STATE,
+    SIGNAL_PRESS_STATE,
+    SIGNAL_LONG_PRESS_STATE,
+    SIGNAL_MULTI_PRESS_STATE,
+    SIGNAL_RELEASE_FILTER_STATE,
+    SIGNAL_RELEASE_EDGE_STATE,
+    SIGNAL_RELEASE_STATE,
+    SIGNAL_END_STATE,
+}Fw_Signal_State;
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_FRAMEWORK_SIGNAL_COMPONENT
-extern void InitSignalComponent(void);
-extern void PollSignalComponent(uint8_t);
+extern void Fw_Signal_InitComponent(void);
+extern void Fw_Signal_Poll(uint8_t);
 
-extern fw_err_t RegisterSignal(uint8_t, uint8_t, uint8_t (*)(void), uint8_t);
-extern fw_err_t LogonSignalEvent(uint8_t, uint8_t);
-extern fw_err_t LogoutSignalEvent(uint8_t, uint8_t);
-extern uint8_t GetSignalInfo(uint8_t);
+extern fw_err_t Fw_Signal_Init(uint8_t, uint8_t, uint8_t (*)(void), uint8_t);
+extern fw_err_t Fw_Signal_RegisterState(uint8_t, uint8_t);
+extern fw_err_t Fw_Signal_UnregisterState(uint8_t, uint8_t);
+extern uint8_t Fw_Signal_GetInfo(uint8_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

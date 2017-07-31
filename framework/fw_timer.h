@@ -95,8 +95,8 @@ extern "C"
  *******************************************************************************
  */
 #if USE_FRAMEWORK_TIMER_COMPONENT
-extern void     InitTimerComponent(void);
-extern void     PollTimerComponent(uint8_t);
+extern void     Fw_Timer_InitComponent(void);
+extern void     Fw_Timer_Poll(uint8_t);
 
 extern fw_err_t Fw_Timer_Init(uint8_t, uint8_t, uint8_t, void (*)(uint8_t));
 extern fw_err_t Fw_Timer_Start(uint8_t, int16_t, uint32_t);

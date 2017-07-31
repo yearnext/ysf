@@ -1,271 +1,321 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <fileVersion>2</fileVersion>
-  <fileChecksum>1329532440</fileChecksum>
-  <configuration>
-    <name>Debug</name>
-    <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\fw_signal.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\demo.__cstat.et</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_event.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_tick.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_signal.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_event.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_queue.o</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_signal.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Exe\ysf_stm8_alpha.out</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_queue.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ysf_stm8_alpha.pbd</file>
-      <file>$PROJ_DIR$\Debug\List\ysf_stm8_alpha.map</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdbool.h</file>
-      <file>$TOOLKIT_DIR$\lib\dlstm8smn.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_tick.pbi</file>
-      <file>$TOOLKIT_DIR$\lib\dbgstm8smd.a</file>
-      <file>$PROJ_DIR$\Debug\Obj\demo.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_timer.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\demo.o</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_timer.c</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_signal.c</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_tick.h</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_debug.h</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_event.h</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_timer.h</file>
-      <file>$TOOLKIT_DIR$\lib\dlstm8smn.h</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_tick.c</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_signal.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_tick.__cstat.et</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$PROJ_DIR$\..\..\demo\demo.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_timer.__cstat.et</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_event.__cstat.et</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_core.h</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_queue.h</file>
-      <file>$TOOLKIT_DIR$\config\lnkstm8l152c8.icf</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_event.c</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_conf.h</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_queue.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_timer.o</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_debug.o</file>
-      <file>$PROJ_DIR$\..\..\framework\fw_debug.c</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\fw_debug.pbi</file>
-    </outputs>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 14 19</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Exe\ysf_stm8_alpha.out</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 19</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 46 28 51 9 10 0 7 50 22 25</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\framework\fw_timer.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 27</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 50</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 42</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 2 31 35 32 12 3 11 45 44 33 40 23 34 21 48 20 38 6</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 34 44 40 3 20 38 35 23 11 6 21 12 48 31 33 45 32 2</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\framework\fw_signal.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 8</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 0</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 13</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 2 35 33 44 12 3 11 34 32 40 23 37 21 48 20 38 6 31</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 37 44 40 3 20 38 35 23 11 6 21 12 48 34 31 33 32 2</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\framework\fw_tick.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 24</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 7</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 39</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 23 21 3 45 48 20 2 33 32 44 40 12 38 35 31 11 6</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 31 44 40 3 20 38 35 23 11 6 21 12 48 33 45 32 2</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\demo\demo.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 26</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 28</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 1</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\framework\fw_event.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 5</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 9</file>
-        </tool>
-        <tool>
-          <name>__cstat</name>
-          <file> 43</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 21 3 44 23 33 34 37 48 20 40 12 38 35 32 11 6 31 2</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 33 44 40 3 20 38 35 23 11 6 21 12 48 34 31 37 32 2</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\framework\fw_queue.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 15</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 10</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 23 48 3 21 20 32 44 40 12 38 35 45 11 6 2</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 45 44 40 3 20 38 35 23 11 6 21 12 48 32 2</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\framework\fw_debug.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 54</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 51</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 12 44 53 2 20 3 17 33 40 31 34 16 21 48 38 6 32 11 35 23 4</file>
-        </tool>
-        <tool>
-          <name>ICCSTM8</name>
-          <file> 32 44 40 3 20 38 35 23 11 6 21 12 48 2 31 33 34 53 17 16 4</file>
-        </tool>
-      </inputs>
-    </file>
-  </configuration>
-  <configuration>
-    <name>Release</name>
-    <outputs/>
-    <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>ILINK</tool>
-    </forcedrebuild>
-  </configuration>
+    <fileVersion>2</fileVersion>
+    <fileChecksum>2600426199</fileChecksum>
+    <configuration>
+        <name>Debug</name>
+        <outputs>
+            <file>$PROJ_DIR$\..\..\framework\fw_core.h</file>
+            <file>$PROJ_DIR$\..\..\demo\demo.c</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_debug.c</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_conf.h</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_debug.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_tick.c</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_signal.c</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_event.h</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_event.c</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_tick.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_queue.o</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_signal.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\demo.__cstat.et</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_tick.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_timer.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_signal.__cstat.et</file>
+            <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+            <file>$PROJ_DIR$\Debug\Exe\ysf_stm8_alpha.out</file>
+            <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_signal.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\ysf_stm8_alpha.pbd</file>
+            <file>$PROJ_DIR$\Debug\List\ysf_stm8_alpha.map</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_queue.pbi</file>
+            <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_event.pbi</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_queue.c</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_signal.o</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_queue.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_event.o</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_timer.c</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_debug.pbi</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdbool.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\demo.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_debug.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_tick.pbi</file>
+            <file>$TOOLKIT_DIR$\lib\dbgstm8smd.a</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+            <file>$TOOLKIT_DIR$\lib\dlstm8smn.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+            <file>$TOOLKIT_DIR$\config\lnkstm8l152c8.icf</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_timer.__cstat.et</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_timer.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_tick.__cstat.et</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_event.__cstat.et</file>
+            <file>$PROJ_DIR$\Debug\Obj\demo.pbi</file>
+            <file>$TOOLKIT_DIR$\lib\dlstm8smn.a</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_timer.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_stream.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_core.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_core.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\fw_stream.pbi</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_core.c</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_stream.c</file>
+            <file>$PROJ_DIR$\..\..\framework\fw_stream.h</file>
+        </outputs>
+        <file>
+            <name>[ROOT_NODE]</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 20 25</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\demo\demo.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 38</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 52</file>
+                </tool>
+                <tool>
+                    <name>__cstat</name>
+                    <file> 13</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_debug.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 39</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 36</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 4 0 45 33 27 50 44 42 19 16 37 21 3 32 14 8 17 43 22 5 15</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 45 16 0 43 27 22 8 32 21 33 14 17 5 37 3 50 4 19 44 42 15</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_tick.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 10</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 40</file>
+                </tool>
+                <tool>
+                    <name>__cstat</name>
+                    <file> 49</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 14 0 45 33 27 50 44 42 19 16 37 21 3 8 31 4 32</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 42 21 33 0 31 45 50 27 8 4 37 3 44 14 19 16 32</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_signal.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 30</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 23</file>
+                </tool>
+                <tool>
+                    <name>__cstat</name>
+                    <file> 18</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 12 0 45 33 27 50 44 42 19 16 37 21 3 17 14 8 4 32</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 32 50 17 21 4 45 27 42 33 14 8 0 37 3 19 44 12 16</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_event.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 34</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 28</file>
+                </tool>
+                <tool>
+                    <name>__cstat</name>
+                    <file> 51</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 8 0 45 33 27 50 44 42 19 16 37 21 3 17 14 12 4 32</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 37 33 0 42 12 3 50 14 17 45 21 27 44 8 4 19 16 32</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Debug\Exe\ysf_stm8_alpha.out</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 25</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 46 38 57 39 34 11 30 55 10 48 53 41</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_queue.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 11</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 26</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 31 0 45 33 27 50 44 42 19 16 37 21 3 4 32</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 42 3 33 37 50 32 4 0 45 21 27 44 31 19 16</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_timer.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 48</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 54</file>
+                </tool>
+                <tool>
+                    <name>__cstat</name>
+                    <file> 47</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 17 0 45 33 27 50 44 42 19 16 37 21 3 14 8 31 4 32</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 32 14 4 37 33 19 42 31 0 8 3 44 17 45 21 27 50 16</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_core.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 57</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 56</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 0 45 33 27 50 44 42 19 16 37 21 3 8 12 17 14 4 32</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 42 45 33 12 21 50 0 8 37 3 27 44 14 17 19 16 4 32</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\framework\fw_stream.c</name>
+            <outputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 55</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 58</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCSTM8</name>
+                    <file> 61 0 45 33 27 50 44 42 19 16 37 21 3</file>
+                </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 19 42 33 45 0 21 44 37 3 27 50 16 61</file>
+                </tool>
+            </inputs>
+        </file>
+    </configuration>
+    <configuration>
+        <name>Release</name>
+        <outputs />
+        <forcedrebuild>
+            <name>[MULTI_TOOL]</name>
+            <tool>ILINK</tool>
+        </forcedrebuild>
+    </configuration>
 </project>
-
-

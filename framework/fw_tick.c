@@ -50,7 +50,7 @@
  * @brief       framework tick
  *******************************************************************************
  */
-static volatile uint32_t Tick = 0;
+static volatile uint32_t FrameworkTick = 0;
 
 /**
  *******************************************************************************
@@ -70,9 +70,9 @@ static volatile uint32_t Tick = 0;
  * @note        None
  *******************************************************************************
  */
-void InitTickComponent( void )
+void Fw_Tick_InitComponent( void )
 {
-	Tick = 0;
+	FrameworkTick = 0;
     
 //	Fw_Queue_Init(FW_TICK_QUEUE, (uint8_t *)&TickBuffer, CalTypeByteSize(TickBuffer));
 }
@@ -85,13 +85,13 @@ void InitTickComponent( void )
  * @note        None
  *******************************************************************************
  */
-void IncTick(void)
+void Fw_Tick_Inc(void)
 {
 //    _ATOM_ACTIVE_BEGIN();
     
-    Tick++;
+    FrameworkTick++;
     
-    PostEvent(FW_TICK_TASK, FW_TICK_EVENT);
+    Fw_Event_Post(FW_TICK_TASK, FW_TICK_EVENT);
     
 //    if(Fw_Queue_PutData(FW_TICK_QUEUE, (uint8_t *)&Tick, CalTypeByteSize(Tick)) == FW_ERR_FAIL)
 //    {
@@ -109,9 +109,9 @@ void IncTick(void)
  * @note        None
  *******************************************************************************
  */
-uint32_t GetTick(void)
+uint32_t Fw_Tick_GetInfo(void)
 {
-	return Tick;
+	return FrameworkTick;
 }
 
 /**
@@ -122,7 +122,7 @@ uint32_t GetTick(void)
  * @note        None
  *******************************************************************************
  */
-uint32_t CalPastTick(uint32_t lastTick, uint32_t nowTick)
+uint32_t Fw_Tick_CalPastTick(uint32_t lastTick, uint32_t nowTick)
 {
     uint32_t calTick;
 
