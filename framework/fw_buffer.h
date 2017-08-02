@@ -87,6 +87,19 @@ struct _Fw_RingBuffer
     uint16_t Len;
 };
 
+typedef struct _Fw_RingBuffer Fw_Fifo_t;
+
+/**
+ *******************************************************************************
+ * @brief       define queue init type
+ *******************************************************************************
+ */
+typedef struct _QueueInitType
+{
+    uint8_t  *Buffer;
+    uint16_t Size;
+}_QueueInitType;
+
 /**
  *******************************************************************************
  * @brief       ring buffer function api

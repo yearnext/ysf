@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\core;..\..\hal\stm32f10x\mal;..\..\hal\stm32f10x\msp;..\..\demo</IncludePath>
+              <IncludePath>..\..\core;..\..\hal\stm32f10x\mal;..\..\hal\stm32f10x\msp;..\..\demo;..\..\framework</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -377,6 +377,16 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>app</GroupName>
+          <Files>
+            <File>
+              <FileName>demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\demo\demo.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>ysf/framework</GroupName>
           <Files>
@@ -463,14 +473,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>app</GroupName>
-          <Files>
-            <File>
-              <FileName>demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\demo\demo.c</FilePath>
-            </File>
-          </Files>
+          <GroupName>ysf/hal/map</GroupName>
         </Group>
       </Groups>
     </Target>

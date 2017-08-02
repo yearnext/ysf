@@ -441,7 +441,7 @@ fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *
  */
 void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
 {
-    _FW_ASSERT(IS_VAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_INVAILD_TASK_ID(taskId));
 
     WriteTaskEventQueue(&TaskBlock.Task[taskId], (void *)(&TaskBlock.Task[taskId]), event);
 }
@@ -458,7 +458,7 @@ void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
  */
 void Fw_Task_PostMessage(uint8_t taskId, uint32_t event, void *message)
 {
-    _FW_ASSERT(IS_VAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_INVAILD_TASK_ID(taskId));
     _FW_ASSERT(IS_PTR_NULL(message));
     
     WriteTaskEventQueue(&TaskBlock.Task[taskId], message, event);

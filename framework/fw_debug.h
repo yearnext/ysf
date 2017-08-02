@@ -16,28 +16,28 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       debug.h                                                         *
- * @author     yearnext                                                        *
- * @version    1.0.0                                                           *
- * @date       2017-01-10                                                      *
- * @brief      debug component header files                                    *
- * @par        work platform                                                   *
- *                 Windows                                                     *
- * @par        compiler                                                        *
- *                 GCC                                                         * 
+ * @file       fw_debug.h
+ * @author     yearnext
+ * @version    1.0.0
+ * @date       2017-01-10
+ * @brief      framework debug head files
+ * @par        paltform
+ *                 Windows
+ * @par        compiler
+ *                 GCC
  *******************************************************************************
- * @note                                                                       *
- * 1.XXXXX                                                                     *
+ * @note
+ * 1.XXXXX
  *******************************************************************************
  */
- 
+
 /**
- * @defgroup debug component
+ * @defgroup framework debug component
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DEBUG_COMPONENT_H__
-#define __DEBUG_COMPONENT_H__
+#ifndef __FRAMEWORK_DEBUG_H__
+#define __FRAMEWORK_DEBUG_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -48,37 +48,34 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
+#include "fw_stream.h"
+#include <stdarg.h>
 
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       framework component config flags
- * @note        1                        enable
- * @note        0                        disable
+ * @brief      define debug component filling mode
  *******************************************************************************
  */
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-#define USE_DEBUG_COMPONENT                                                  (1)
-
+#define USE_DEBUG_COMPONENT_FILLING_MODE                                     (1)
+   
 /**
  *******************************************************************************
- * @brief       user config flags
- * @note        1         enable
- * @note        0         disable
+ * @brief      define hardware interface
  *******************************************************************************
  */
-#else
-#define USE_DEBUG_COMPONENT                                                  (1)
-#endif
- 
-/**
- *******************************************************************************
- * @brief       define assert macros
- *******************************************************************************
- */                                          
-//#define _FW_ASSERT(expr) _ST(if(expr) {Fw_AssertFailed((uint8_t *)__FILE__, __LINE__));})
-#define _FW_ASSERT(expr)
+#define DebugTxConnectHandle                     (NULL)
+#define DebugTxDisconnectHandle                  (NULL)
+#define DebugTxOutputHandle                      (NULL)
 
+#define DebugRxConnectHandle                     (NULL)
+#define DebugRxDisconnectHandle                  (NULL)
+#define DebugRxIntputHandle                      (NULL)
+      
+#define DebugDeviceFiniHandle                    (NULL)
+#define DebugDeviceInitHandle                    (NULL)
+     
+/* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define debug output message type
@@ -91,20 +88,42 @@ enum _DEBUG_MESSAGE_TYPE
 	DEBUG_OUTPUT_NORMAL_MESSAGE,
 };
 
-/* Exported types ------------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
+extern struct Fw_Stream DebugStream;
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define debug function api
+ * @brief      debug component init function
+ *******************************************************************************
+ */  
+extern void Fw_Debug_InitComponent(void);
+
+/**
+ *******************************************************************************
+ * @brief      debug component log message output function
  *******************************************************************************
  */ 
-#if USE_DEBUG_COMPONENT
-extern fw_err_t Fw_Debug_Init(void);
+extern void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE, const char*, ...); 
 
-#endif        
+#define log(str, ...)    Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
+#define log_e(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_ERROR_MESSAGE, str, ##__VA_ARGS__)
+#define log_w(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_WARNING_MESSAGE, str, ##__VA_ARGS__)
+#define log_d(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
 
-/**@} */
+/**
+ *******************************************************************************
+ * @brief      debug component assert failed function
+ *******************************************************************************
+ */ 
+extern void Fw_AssertFailed(uint8_t*, uint32_t);
+
+/**
+ *******************************************************************************
+ * @brief      MACRO
+ *******************************************************************************
+ */                                           
+#define _FW_ASSERT(expr) _ST(if(expr) { (Fw_AssertFailed((uint8_t *)__FILE__, __LINE__)); })
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

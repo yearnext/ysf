@@ -49,26 +49,96 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "core_path.h"
 #include _FW_PATH
+#include "fw_buffer.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-struct Fw_Stream_Opera
+struct Fw_Stream;
+
+/**
+ *******************************************************************************
+ * @brief       stream hardware opera function
+ *******************************************************************************
+ */
+struct _FwStreamOpera
 {
-	void (*Init)(void);
-	void (*Fini)(void);
-
-	void (*Write)(uint8_t *, uint8_t);
-	void (*Read)(uint8_t *, uint8_t);
-
-	uint8_t (*GetTxLen)(void);
-	uint8_t (*GetRxLen)(void);
-
-	void (*GetTxBuffer)(uint8_t *, uint8_t);
-	void (*GetRxBuffer)(uint8_t *, uint8_t);
+	fw_err_t (*Write)(Fw_Fifo_t *, uint8_t *, uint16_t);
+	fw_err_t (*Read)(Fw_Fifo_t *, uint8_t *, uint16_t);
 };
+
+/**
+ *******************************************************************************
+ * @brief       stream hardware device function
+ *******************************************************************************
+ */
+struct _FwStreamDevice
+{
+    fw_err_t (*Init)(struct Fw_Stream *);
+	fw_err_t (*Fini)(struct Fw_Stream *);
+};
+
+/**
+ *******************************************************************************
+ * @brief       stream hardware call back function
+ *******************************************************************************
+ */
+struct _FwStreamCallback
+{
+//    struct Fw_Stream *Stream;
+	fw_err_t (*InOut)(struct Fw_Stream *);
+	fw_err_t (*Connect)(struct Fw_Stream *);
+	fw_err_t (*Disconnect)(struct Fw_Stream *);
+};
+
+/**
+ *******************************************************************************
+ * @brief       framework stream block
+ *******************************************************************************
+ */
+struct Fw_Stream
+{
+    struct _FwStreamOpera *Opera;
+    
+	struct _FwStreamCallback TxCallback;
+	struct _FwStreamCallback RxCallback;
+    struct _FwStreamDevice   Device;
+    
+    Fw_Fifo_t TxFifo;
+    Fw_Fifo_t RxFifo;
+    
+    bool IsTxReady;
+    bool IsRxReady;
+    
+    uint8_t TxLock;
+    uint8_t RxLock;
+    
+//    bool IsOverFlow;
+};
+
+/**
+ *******************************************************************************
+ * @brief       define stream init block type
+ *******************************************************************************
+ */
+typedef struct _FwStreamCallback _StreamCallbackInitType;
+typedef struct _FwStreamDevice _StreamDeviceInitType;
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define stream api
+ *******************************************************************************
+ */
+extern fw_err_t Fw_Stream_Init(struct Fw_Stream *, 
+                               _StreamDeviceInitType *, 
+                               _StreamCallbackInitType *, 
+                               _StreamCallbackInitType *);
+
+extern fw_err_t Fw_Stream_Enable(struct Fw_Stream *stream, 
+                                 _QueueInitType *, 
+                                 _QueueInitType *);
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
@@ -79,4 +149,3 @@ struct Fw_Stream_Opera
 /** @}*/     /** framework stream component */
 
 /**********************************END OF FILE*********************************/
-

@@ -117,7 +117,7 @@ fw_err_t Fw_Timer_Init(void)
  */
 fw_err_t Fw_Timer_Create(struct Fw_Timer *timer, char *str, uint8_t taskId, uint8_t taskEvent, void *taskParam)
 {
-    _FW_ASSERT(IS_PTR_NUL(timer));
+    _FW_ASSERT(IS_PTR_NULL(timer));
     
     timer->String = str;
     timer->TaskId = taskId;
@@ -141,10 +141,10 @@ fw_err_t Fw_Timer_Create(struct Fw_Timer *timer, char *str, uint8_t taskId, uint
  */
 fw_err_t Fw_Timer_Start(struct Fw_Timer *timer, uint32_t tick, int16_t count)
 {
-    _FW_ASSERT(IS_PTR_NUL(timer));
+    _FW_ASSERT(IS_PTR_NULL(timer));
     
     timer->InitTick    = tick;
-    timer->TimeOutTick = tick + Fw_GetTick();
+    timer->TimeOutTick = tick + Fw_Tick_GetInfo();
     timer->Cycle       = count;
     
     Fw_dLinkList_Push((struct Fw_LinkList_Block *)&TimerBlock.LinkList,\
@@ -252,7 +252,7 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
             //< 6. detect timer is active
             if(timer->Cycle == FW_TIMER_CYCLE_MODE || --timer->Cycle)
             {
-                timer->TimeOutTick = timer->InitTick + Fw_GetTick();
+                timer->TimeOutTick = timer->InitTick + Fw_Tick_GetInfo();
             }
             else
             {

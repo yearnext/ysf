@@ -94,7 +94,7 @@ void Fw_Tick_Handle(void)
  * @note        None
  *******************************************************************************
  */
-uint32_t Fw_GetTick(void)
+uint32_t Fw_Tick_GetInfo(void)
 {
     return SystemTick;
 }

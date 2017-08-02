@@ -381,8 +381,8 @@ fw_err_t Fw_Signal_Init(void)
  */
 fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, uint8_t taskId)
 {
-    _FW_ASSERT(IS_PTR_NUL(signal));
-	_FW_ASSERT(IS_PTR_NUL(str));
+    _FW_ASSERT(IS_PTR_NULL(signal));
+	_FW_ASSERT(IS_PTR_NULL(str));
 
 	memset(&SignalBlock, 0, sizeof(struct Fw_Signal));
 	
@@ -406,7 +406,7 @@ fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, uint8_t taskId)
  */
 fw_err_t Fw_Signal_Start(struct Fw_Signal *signal, uint8_t triggerState, uint32_t tick)
 {
-	_FW_ASSERT(IS_PTR_NUL(signal));
+	_FW_ASSERT(IS_PTR_NULL(signal));
 
 	signal->TriggerState = triggerState;
 	
