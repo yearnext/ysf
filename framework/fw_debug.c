@@ -119,7 +119,8 @@ struct Fw_Debug_Block
 	{
 		void *Check;
 		void (*DmaSend)(uint8_t*, uint8_t);
-		void (*IsrSend)(uint8_t);
+		void (*IsrSend)(uint8_t*, uint8_t);
+        void (*SimpleSend)(uint8_t*, uint8_t);
         fw_err_t (*PollSend)(uint8_t);
 	}Device;
 	
@@ -141,7 +142,6 @@ static struct Fw_Debug_Block DebugBlock;
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
 /**
  *******************************************************************************
  * @brief       debug component transfer event handle
@@ -278,70 +278,70 @@ fw_err_t Fw_Debug_Init(void)
  * @note        None
  *******************************************************************************
  */
-__STATIC_INLINE
-uint8_t Fw_Debug_FillHead(struct _BUFFER_BLOCK *pipeLine, uint8_t type)
-{
-	if (IS_PTR_NULL(pipeLine))
-	{
-		return 0;
-	}
+//__STATIC_INLINE
+//uint8_t Fw_Debug_FillHead(struct _BUFFER_BLOCK *pipeLine, uint8_t type)
+//{
+//	if (IS_PTR_NULL(pipeLine))
+//	{
+//		return 0;
+//	}
 
-	pipeLine->Tick = Fw_GetTick();
+//	pipeLine->Tick = Fw_GetTick();
 
-	if(type == DEBUG_OUTPUT_ERROR_MESSAGE)
-	{
-		return (uint8_t)sprintf((char *)&pipeLine->Buffer, "[Error][Tick:%ld]", pipeLine->Tick);
-	}
-	else if(type == DEBUG_OUTPUT_WARNING_MESSAGE)
-	{
-		return (uint8_t)sprintf((char *)&pipeLine->Buffer, "[Warning][Tick:%ld]", pipeLine->Tick);
-	}
-	else
-	{
-		return (uint8_t)sprintf((char *)&pipeLine->Buffer, "[Tick:%ld]", pipeLine->Tick);
-	}
-	
-}
+//	if(type == DEBUG_OUTPUT_ERROR_MESSAGE)
+//	{
+//		return (uint8_t)sprintf((char *)&pipeLine->Buffer, "[Error][Tick:%ld]", pipeLine->Tick);
+//	}
+//	else if(type == DEBUG_OUTPUT_WARNING_MESSAGE)
+//	{
+//		return (uint8_t)sprintf((char *)&pipeLine->Buffer, "[Warning][Tick:%ld]", pipeLine->Tick);
+//	}
+//	else
+//	{
+//		return (uint8_t)sprintf((char *)&pipeLine->Buffer, "[Tick:%ld]", pipeLine->Tick);
+//	}
+//	
+//}
 
-void WriteDebugMessage(uint8_t type, const char *str, ...)
-{
-	struct _BUFFER_BLOCK *buffer = (struct _BUFFER_BLOCK *)Fw_Mem_Alloc(sizeof(struct _BUFFER_BLOCK));
-	uint8_t bufferLen = 0;
-	va_list args;
-	
-	if (IS_PTR_NULL(buffer) || IS_PTR_NULL(str))
-	{
-		return;
-	}
-   
-    //< clear buffer param
-    memset(buffer, 0, sizeof(struct _BUFFER_BLOCK));
-    
-    
-	switch(buffer->State)
-	{
-		//< filling debug info
-		case _INIT_STATE:
-//			va_start(args, cmd);
-			bufferLen  = Fw_Debug_FillHead(buffer, type);
-			bufferLen += vsprintf((char *)&buffer->Buffer[bufferLen], str, args);
-			va_end(args);
-			
-			buffer->Size  = bufferLen;
-			buffer->State = _WAIT_TRANSFER_STATE;
-		//< start transfer	
-		case _WAIT_TRANSFER_STATE:
-			if(DebugBlock.NowChannelState == _CHANNEL_IDLE_STATE)
-			{
-                DebugBlock.NowChannelState = _CHANNEL_BUSY_STATE;
-                
-				Fw_Task_PostEvent(FW_DEBUG_TASK, FW_TRANSFER_START_EVENT);
-			}
-			break;	
-		default:
-			break;
-	}
-}
+//void WriteDebugMessage(uint8_t type, const char *str, ...)
+//{
+//	struct _BUFFER_BLOCK *buffer = (struct _BUFFER_BLOCK *)Fw_Mem_Alloc(sizeof(struct _BUFFER_BLOCK));
+//	uint8_t bufferLen = 0;
+//	va_list args;
+//	
+//	if (IS_PTR_NULL(buffer) || IS_PTR_NULL(str))
+//	{
+//		return;
+//	}
+//   
+//    //< clear buffer param
+//    memset(buffer, 0, sizeof(struct _BUFFER_BLOCK));
+//    
+//    
+//	switch(buffer->State)
+//	{
+//		//< filling debug info
+//		case _INIT_STATE:
+////			va_start(args, cmd);
+//			bufferLen  = Fw_Debug_FillHead(buffer, type);
+//			bufferLen += vsprintf((char *)&buffer->Buffer[bufferLen], str, args);
+//			va_end(args);
+//			
+//			buffer->Size  = bufferLen;
+//			buffer->State = _WAIT_TRANSFER_STATE;
+//		//< start transfer	
+//		case _WAIT_TRANSFER_STATE:
+//			if(DebugBlock.NowChannelState == _CHANNEL_IDLE_STATE)
+//			{
+//                DebugBlock.NowChannelState = _CHANNEL_BUSY_STATE;
+//                
+//				Fw_Task_PostEvent(FW_DEBUG_TASK, FW_TRANSFER_START_EVENT);
+//			}
+//			break;	
+//		default:
+//			break;
+//	}
+//}
 
 #endif
 

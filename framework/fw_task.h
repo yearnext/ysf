@@ -35,6 +35,7 @@
  * @defgroup task component
  * @{
  */
+ 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __TASK_COMPONENT_H__
 #define __TASK_COMPONENT_H__
