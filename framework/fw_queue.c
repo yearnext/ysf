@@ -39,106 +39,79 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fw_queue.h"
 #include "fw_debug.h"
+#include "fw_core.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       framework queue structure
- *******************************************************************************
- */
-#if USE_FRAMEWORK_QUEUE_COMPONENT
-struct fw_queue
-{
-	uint8_t *Buffer;
-	uint8_t Size;
-	uint8_t Head;
-	uint8_t Tail;
-	uint8_t Len;
-}static Queue[FW_QUEUE_MAX];
-#endif
-
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       Macro
+ * @brief       queue write byte function
+ * @param       [in/out]  *queue          queue block
+ * @param       [in/out]  byteData        write data buffer
+ * @return      [in/out]  fw_err_t        return init status
+ * @note        None
  *******************************************************************************
  */
-#define GetFifoCanRead(block)                       ((block).Len)
+__STATIC_INLINE
+void Fw_Queue_WriteByte(struct Fw_Queue *queue, uint8_t byteData)
+{
+    if(queue->Tail >= queue->Size)
+    {
+        queue->Tail = 0;
+    }
+    
+    queue->Buffer[queue->Tail++] = byteData;
+    queue->Len++;
+}
 
 /**
  *******************************************************************************
- * @brief       Macro
+ * @brief       queue read byte function
+ * @param       [in/out]  *queue          queue block
+ * @param       [in/out]  *byteData       read data buffer
+ * @return      [in/out]  fw_err_t        return init status
+ * @note        None
  *******************************************************************************
  */
-#define GetFifoCanWrite(block)                      (((block).Size <= (block).Len) ? (0) : ((block).Size - (block).Len - 1))
-
-/**
- *******************************************************************************
- * @brief       Macro
- *******************************************************************************
- */
-#define PopByteToFifo(block, byteData)              _ST( if((block).Tail >= (block).Size)              \
-														 {									           \
-															 (block).Tail = 0;				           \
-														 } 								               \
-														 	 	 	 	 	 	 	 	 	 	 	   \
-														 (block).Buffer[(block).Tail++] = (byteData);  \
-														 (block).Len++;                                \
-													   )
-
-/**
- *******************************************************************************
- * @brief       Macro
- *******************************************************************************
- */
-#define PushByteFromFifo(block, byteData)           _ST( if((block).Head >= (block).Size)              \
-													     {											   \
-													     	 (block).Head = 0;                         \
-														 }                                             \
-														 	 	 	 	 	 	 	 	 	 	 	   \
-													     (byteData) = (block).Buffer[(block).Head++];  \
-													     (block).Len--;                                \
-                                                       )
+__STATIC_INLINE
+void Fw_Queue_ReadByte(struct Fw_Queue *queue, uint8_t *byteData)
+{
+    if(queue->Head >= queue->Size)
+    {
+        queue->Head = 0;
+    }
+    
+    *byteData = queue->Buffer[queue->Head++];
+    queue->Len--;
+}
 
 /* Exported functions --------------------------------------------------------*/
-#if USE_FRAMEWORK_QUEUE_COMPONENT
 /**
  *******************************************************************************
  * @brief       init queue
- * @param       [in/out]  queueId         queue id
+ * @param       [in/out]  *queue          queue block
  * @param       [in/out]  *queueBuffer    queue buffer
  * @param       [in/out]  queueSize       queue size
  * @return      [in/out]  fw_err_t        return init status
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_Init(uint8_t queueId, uint8_t *queueBuffer, uint8_t queueSize)
+fw_err_t Fw_Queue_Init(struct Fw_Queue *queue, uint8_t *queueBuffer, uint8_t queueSize)
 {
-	//! Param Check
-	if(queueId >= FW_QUEUE_MAX)
-	{
-		return FW_ERR_FAIL;
-	}
-
-	if(IS_PTR_NULL(queueBuffer))
-	{
-		return FW_ERR_FAIL;
-	}
-
-	if(queueSize == 0)
-	{
-		return FW_ERR_FAIL;
-	}
-
-	//! Queue Init
-	Queue[queueId].Buffer = queueBuffer;
-	Queue[queueId].Size   = queueSize;
-	Queue[queueId].Head   = 0;
-	Queue[queueId].Tail   = 0;
-	Queue[queueId].Len    = 0;
+	//< Param Check
+    _FW_ASSERT(IS_PTR_NULL(queueBuffer));
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(queueSize == 0);
+    
+	//< Queue Init
+	queue->Buffer = queueBuffer;
+	queue->Size   = queueSize;
+	queue->Head   = 0;
+	queue->Tail   = 0;
+	queue->Len    = 0;
 
 	return FW_ERR_NONE;
 }
@@ -146,52 +119,87 @@ fw_err_t Fw_Queue_Init(uint8_t queueId, uint8_t *queueBuffer, uint8_t queueSize)
 /**
  *******************************************************************************
  * @brief       queue get len
- * @param       [in/out]  queueId         queue id
+ * @param       [in/out]  *queue          queue block
  * @param       [in/out]  *len            get len *buffer
  * @return      [in/out]  fw_err_t        return get status
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_GetLen(uint8_t queueId, uint8_t *len)
+fw_err_t Fw_Queue_GetLen(struct Fw_Queue *queue, uint8_t *len)
 {
 	//! Param Check
-	if(queueId >= FW_QUEUE_MAX)
-	{
-		return FW_ERR_FAIL;
-	}
-
-	if(IS_PTR_NULL(len))
-	{
-		return FW_ERR_FAIL;
-	}
+    _FW_ASSERT(IS_PTR_NULL(len));
+    _FW_ASSERT(IS_PTR_NULL(queue));
 
 	//! Get Fifo Len
-	*len = Queue[queueId].Len;
+	*len = queue->Len;
 
 	return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
+ * @brief       queue can read data num
+ * @param       [in/out]  *queue          queue block
+ * @return      [in/out]  uint8_t         can read data num
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Queue_CanRead(struct Fw_Queue *queue, uint8_t *getNum)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(getNum));
+    
+    *getNum = queue->Len;
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       queue can write data num
+ * @param       [in/out]  *queue          queue block
+ * @return      [in/out]  uint8_t         can write data num
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Queue_CanWrite(struct Fw_Queue *queue, uint8_t *getNum)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(getNum));
+    
+    if(queue->Size <= queue->Len)
+    {
+        *getNum = 0;
+    }
+    
+    *getNum = queue->Size - queue->Len - 1;
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
  * @brief       put byte to queue
- * @param       [in/out]  queueId         queue id
+ * @param       [in/out]  *queue          queue block
  * @param       [in/out]  putData         put data
  * @return      [in/out]  fw_err_t        return put status
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_PutByte(uint8_t queueId, uint8_t putData)
+fw_err_t Fw_Queue_PutByte(struct Fw_Queue *queue, uint8_t putData)
 {
 	//! Param Check
-	if(queueId >= FW_QUEUE_MAX)
-	{
-		return FW_ERR_FAIL;
-	}
+    _FW_ASSERT(IS_PTR_NULL(queue));
 
+    uint8_t count = 0;
+    
+    Fw_Queue_CanWrite(queue, &count);
+    
 	//! Pop Byte
-	if(GetFifoCanWrite(Queue[queueId]))
+	if(count > 0)
 	{
-		PopByteToFifo(Queue[queueId], putData);
+		Fw_Queue_WriteByte(queue, putData);
 	}
 	else
 	{
@@ -210,33 +218,24 @@ fw_err_t Fw_Queue_PutByte(uint8_t queueId, uint8_t putData)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_PutData(uint8_t queueId, uint8_t *putBuffer, uint8_t putSize)
+fw_err_t Fw_Queue_PutData(struct Fw_Queue *queue, uint8_t *putBuffer, uint8_t putSize)
 {
-	uint8_t *writeBuffer;
-
-	//! Param Check
-	if(queueId >= FW_QUEUE_MAX)
-	{
-		return FW_ERR_FAIL;
-	}
-
-	if(IS_PTR_NULL(putBuffer))
-	{
-		return FW_ERR_FAIL;
-	}
-
-	if(putSize == 0)
-	{
-		return FW_ERR_FAIL;
-	}
-
-	//! Pop Data
-	if(GetFifoCanWrite(Queue[queueId]) >= putSize)
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(putBuffer));
+    _FW_ASSERT(IS_PARAM_ZERO(putSize));
+    
+    uint8_t *writeBuffer;
+    uint8_t count = 0;
+    
+    Fw_Queue_CanWrite(queue, &count);
+	
+    //! Pop Data
+	if(count >= putSize)
 	{
 		while(putSize--)
 		{
 			writeBuffer = putBuffer++;
-			PopByteToFifo(Queue[queueId], *writeBuffer);
+			Fw_Queue_WriteByte(queue, *writeBuffer);
 		}
 	}
 	else
@@ -256,23 +255,19 @@ fw_err_t Fw_Queue_PutData(uint8_t queueId, uint8_t *putBuffer, uint8_t putSize)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_PushByte(uint8_t queueId, uint8_t *pushData)
+fw_err_t Fw_Queue_PushByte(struct Fw_Queue *queue, uint8_t *pushData)
 {
 	//! Param Check
-	if(queueId >= FW_QUEUE_MAX)
-	{
-		return FW_ERR_FAIL;
-	}
-
-	if(IS_PTR_NULL(pushData))
-	{
-		return FW_ERR_FAIL;
-	}
-
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(pushData));
+    
+    uint8_t count = 0;
+    Fw_Queue_CanRead(queue, &count);
+    
 	//! Push Byte
-	if(GetFifoCanRead(Queue[queueId]))
+	if(count > 0)
 	{
-		PushByteFromFifo(Queue[queueId], *pushData);
+		Fw_Queue_ReadByte(queue, pushData);
 	}
 	else
 	{
@@ -292,33 +287,25 @@ fw_err_t Fw_Queue_PushByte(uint8_t queueId, uint8_t *pushData)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_PushData(uint8_t queueId, uint8_t *PushBuffer, uint8_t pushSize)
+fw_err_t Fw_Queue_PushData(struct Fw_Queue *queue, uint8_t *PushBuffer, uint8_t pushSize)
 {
-	uint8_t *readBuffer;
-
 	//! Param Check
-	if(queueId >= FW_QUEUE_MAX)
-	{
-		return FW_ERR_FAIL;
-	}
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(PushBuffer));
+    _FW_ASSERT(IS_PARAM_ZERO(pushSize));
 
-	if(IS_PTR_NULL(PushBuffer))
-	{
-		return FW_ERR_FAIL;
-	}
-
-	if(pushSize == 0)
-	{
-		return FW_ERR_FAIL;
-	}
-
+    uint8_t *readBuffer;    
+    uint8_t count = 0;
+    
+    Fw_Queue_CanRead(queue, &count);
+    
 	//! Push Data
-	if(GetFifoCanRead(Queue[queueId]) >= pushSize)
+	if(count >= pushSize)
 	{
 		while(pushSize--)
 		{
 			readBuffer = PushBuffer++;
-			PushByteFromFifo(Queue[queueId], *readBuffer);
+			Fw_Queue_ReadByte(queue, readBuffer);
 		}
 	}
 	else
@@ -328,7 +315,5 @@ fw_err_t Fw_Queue_PushData(uint8_t queueId, uint8_t *PushBuffer, uint8_t pushSiz
 
 	return FW_ERR_NONE;
 }
-
-#endif
 
 /**********************************END OF FILE*********************************/

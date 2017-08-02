@@ -46,6 +46,28 @@ extern "C"
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       framework queue structure
+ *******************************************************************************
+ */
+struct Fw_Queue
+{
+	uint8_t *Buffer;
+	uint8_t Size;
+	uint8_t Head;
+	uint8_t Tail;
+	uint8_t Len;
+};
+
+typedef struct Fw_Queue Fw_Fifo_t;
+
+typedef struct
+{
+    uint8_t *Buffer;
+    uint8_t Size;
+}_QueueInitType;
+
 /* Exported variables --------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -54,12 +76,17 @@ extern "C"
  * @brief       Queue Interface
  *******************************************************************************
  */
-extern fw_err_t Fw_Queue_Init(uint8_t, uint8_t*, uint8_t);
-extern fw_err_t Fw_Queue_GetLen(uint8_t, uint8_t*);
-extern fw_err_t Fw_Queue_PutByte(uint8_t, uint8_t);
-extern fw_err_t Fw_Queue_PutData(uint8_t, uint8_t*, uint8_t);
-extern fw_err_t Fw_Queue_PushByte(uint8_t, uint8_t*);
-extern fw_err_t Fw_Queue_PushData(uint8_t, uint8_t*, uint8_t);
+extern fw_err_t Fw_Queue_Init(struct Fw_Queue*, uint8_t*, uint8_t);
+extern fw_err_t Fw_Queue_GetLen(struct Fw_Queue*, uint8_t*);
+
+extern fw_err_t Fw_Queue_CanRead(struct Fw_Queue*, uint8_t*);
+extern fw_err_t Fw_Queue_CanWrite(struct Fw_Queue*, uint8_t*);
+
+extern fw_err_t Fw_Queue_PutByte(struct Fw_Queue*, uint8_t);
+extern fw_err_t Fw_Queue_PutData(struct Fw_Queue*, uint8_t*, uint8_t);
+
+extern fw_err_t Fw_Queue_PushByte(struct Fw_Queue*, uint8_t*);
+extern fw_err_t Fw_Queue_PushData(struct Fw_Queue*, uint8_t*, uint8_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

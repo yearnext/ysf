@@ -47,6 +47,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_core.h"
+#include "fw_stream.h"
 #include <stdarg.h>
 
 /* Exported macro ------------------------------------------------------------*/
@@ -56,7 +57,23 @@ extern "C"
  *******************************************************************************
  */
 #define USE_DEBUG_COMPONENT_FILLING_MODE                                     (1)
-    
+   
+/**
+ *******************************************************************************
+ * @brief      define hardware interface
+ *******************************************************************************
+ */
+#define DebugTxConnectHandle                     (NULL)
+#define DebugTxDisconnectHandle                  (NULL)
+#define DebugTxOutputHandle                      (NULL)
+
+#define DebugRxConnectHandle                     (NULL)
+#define DebugRxDisconnectHandle                  (NULL)
+#define DebugRxIntputHandle                      (NULL)
+      
+#define DebugDeviceFiniHandle                    (NULL)
+#define DebugDeviceInitHandle                    (NULL)
+     
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -70,6 +87,9 @@ enum _DEBUG_MESSAGE_TYPE
 	DEBUG_OUTPUT_NORMAL_MESSAGE,
 };
 
+/* Exported variables --------------------------------------------------------*/
+extern struct Fw_Stream DebugStream;
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -80,40 +100,15 @@ extern void Fw_Debug_InitComponent(void);
 
 /**
  *******************************************************************************
- * @brief      login debug compoent device call back
- * @note       please login deivce function to debug component
- *******************************************************************************
- */  
-extern fw_err_t Fw_Debug_RegisterCallback(fw_err_t (*)(uint8_t));
-extern fw_err_t Fw_Debug_RegisterIsrCallback(void (*sendByte)(uint8_t));
-extern fw_err_t Fw_Debug_RegisterDmaCallback(void (*)(uint8_t*, uint8_t));
-
-/**
- *******************************************************************************
- * @brief      debug component device isr handle call back function
- * @note       please add this function in device isr handle or main loop
- *******************************************************************************
- */ 
-extern void Fw_Debug_IsrCallback(void);
-
-/**
- *******************************************************************************
  * @brief      debug component log message output function
  *******************************************************************************
  */ 
-#if USE_DEBUG_COMPONENT_FILLING_MODE
 extern void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE, const char*, ...); 
 
 #define log(str, ...)    Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
 #define log_e(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_ERROR_MESSAGE, str, ##__VA_ARGS__)
 #define log_w(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_WARNING_MESSAGE, str, ##__VA_ARGS__)
 #define log_d(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
-#else 
-extern void log(const char *str, ...);
-extern void log_e(const char *str, ...);
-extern void log_w(const char *str, ...);
-extern void log_d(const char *str, ...);
-#endif
 
 /**
  *******************************************************************************
@@ -136,6 +131,6 @@ extern void Fw_AssertFailed(uint8_t*, uint32_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework debug */
+/** @}*/     /** framework debug component */
 
 /**********************************END OF FILE*********************************/

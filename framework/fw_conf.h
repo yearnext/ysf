@@ -77,13 +77,6 @@ extern "C"
     
 /**
  *******************************************************************************
- * @brief       queue compoent config flag
- *******************************************************************************
- */
-#define USE_FRAMEWORK_QUEUE_COMPONENT                                        (1)
-
-/**
- *******************************************************************************
  * @brief       timer compoent config flag
  *******************************************************************************
  */
@@ -145,31 +138,14 @@ enum define_fw_task
 
 /**
  *******************************************************************************
- * @brief       framework queue config
- *******************************************************************************
- */
-enum define_fw_queue
-{
-    /** framework queue */
-    FW_TICK_QUEUE,
-
-    /** user define begin */
-
-    /** user define end */
-    FW_QUEUE_MAX,
-};
-
-/**
- *******************************************************************************
  * @brief        framework signal config
  *******************************************************************************
  */
 enum define_fw_signal
 {
     /** framework signal */
-    
+    FW_DEMO_SIGNAL,
     /** user define begin */
-    USER_SIGNAL,
 
     /** user define end */
     SIGNAL_MAX,
@@ -185,10 +161,6 @@ enum define_fw_timer
     /** framework timer */
 #if USE_FRAMEWORK_SIGNAL_COMPONENT
     SIGNAL_SCAN_TIMER,
-#endif
-    
-#if USE_FRAMEWORK_DEBUG_COMPONENT
-    FW_DEBUG_TIMER,
 #endif
     
     /** user define begin */
