@@ -118,6 +118,29 @@ fw_err_t Fw_Queue_Init(struct Fw_Queue *queue, uint8_t *queueBuffer, uint8_t que
 
 /**
  *******************************************************************************
+ * @brief       deinit queue
+ * @param       [in/out]  *queue          queue block
+ * @return      [in/out]  fw_err_t        return deinit status
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Queue_Fini(struct Fw_Queue *queue)
+{
+	//< Param Check
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    
+	//< Queue Init
+	queue->Buffer = NULL;
+	queue->Size   = 0;
+	queue->Head   = 0;
+	queue->Tail   = 0;
+	queue->Len    = 0;
+
+	return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
  * @brief       queue get len
  * @param       [in/out]  *queue          queue block
  * @param       [in/out]  *len            get len *buffer

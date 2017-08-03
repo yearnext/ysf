@@ -131,7 +131,7 @@ enum define_fw_task
  	FW_DEBUG_TASK,
     
 	/** user define begin */
-    
+
 	/** user define end */
     FW_TASK_MAX,
 };
@@ -144,8 +144,9 @@ enum define_fw_task
 enum define_fw_signal
 {
     /** framework signal */
-    FW_DEMO_SIGNAL,
-    /** user define begin */
+	FW_DEMO_SIGNAL,
+    
+	/** user define begin */
 
     /** user define end */
     SIGNAL_MAX,

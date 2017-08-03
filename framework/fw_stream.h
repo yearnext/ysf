@@ -56,37 +56,31 @@ struct Fw_Stream;
 
 /**
  *******************************************************************************
- * @brief       stream hardware opera function
+ * @brief       stream memory opera function
  *******************************************************************************
  */
 struct _FwStreamOpera
 {
-	fw_err_t (*Write)(struct Fw_Queue *, uint8_t *, uint8_t);
-	fw_err_t (*Read)(struct Fw_Queue *, uint8_t *, uint8_t);
+    fw_err_t (*Init)(struct Fw_Stream*, uint8_t*, uint8_t);
+    fw_err_t (*Fini)(struct Fw_Stream*);
+    
+    fw_err_t (*GetUseSize)(struct Fw_Stream*, uint8_t*); 
+    fw_err_t (*GetFreeSize)(struct Fw_Stream*, uint8_t*);
+
+    fw_err_t (*Write)(struct Fw_Stream*, uint8_t*, uint8_t);
+    fw_err_t (*Read)(struct Fw_Stream*, uint8_t*, uint8_t);
 };
 
 /**
  *******************************************************************************
- * @brief       stream hardware device function
+ * @brief       stream hardware opera function
  *******************************************************************************
  */
-struct _FwStreamDevice
+struct _Fw_DeviceBlock
 {
-    fw_err_t (*Init)(struct Fw_Stream *);
-	fw_err_t (*Fini)(struct Fw_Stream *);
-};
-
-/**
- *******************************************************************************
- * @brief       stream hardware call back function
- *******************************************************************************
- */
-struct _FwStreamCallback
-{
-//    struct Fw_Stream *Stream;
-	fw_err_t (*InOut)(struct Fw_Stream *);
-	fw_err_t (*Connect)(struct Fw_Stream *);
-	fw_err_t (*Disconnect)(struct Fw_Stream *);
+    void (*InOut)(struct Fw_Stream*);
+    void (*Connect)(struct Fw_Stream*);
+    void (*Disconnect)(struct Fw_Stream*);
 };
 
 /**
@@ -97,21 +91,12 @@ struct _FwStreamCallback
 struct Fw_Stream
 {
     struct _FwStreamOpera *Opera;
+    struct _Fw_DeviceBlock Device;
     
-	struct _FwStreamCallback TxCallback;
-	struct _FwStreamCallback RxCallback;
-    struct _FwStreamDevice   Device;
-    
-    Fw_Fifo_t TxFifo;
-    Fw_Fifo_t RxFifo;
-    
-    bool IsTxReady;
-    bool IsRxReady;
-    
-    uint8_t TxLock;
-    uint8_t RxLock;
-    
-//    bool IsOverFlow;
+    bool IsReady;
+    bool IsWorking;
+    bool IsLock;
+    bool IsOverFlow;
 };
 
 /**
@@ -119,24 +104,36 @@ struct Fw_Stream
  * @brief       define stream init block type
  *******************************************************************************
  */
-typedef struct _FwStreamCallback _StreamCallbackInitType;
-typedef struct _FwStreamDevice _StreamDeviceInitType;
+struct Fw_FifoStream
+{
+    struct Fw_Stream Stream;
+    Fw_Fifo_t Buffer;
+};
 
 /* Exported variables --------------------------------------------------------*/
+extern const struct _FwStreamOpera FifoStreamOpera;
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       define stream api
  *******************************************************************************
  */
-extern fw_err_t Fw_Stream_Init(struct Fw_Stream *, 
-                               _StreamDeviceInitType *, 
-                               _StreamCallbackInitType *, 
-                               _StreamCallbackInitType *);
+extern fw_err_t Fw_Stream_Init(struct Fw_Stream*);
+extern fw_err_t Fw_Stream_Fini(struct Fw_Stream*);
 
-extern fw_err_t Fw_Stream_Enable(struct Fw_Stream *stream, 
-                                 _QueueInitType *, 
-                                 _QueueInitType *);
+extern fw_err_t Fw_Stream_Connent(struct Fw_Stream*);
+extern fw_err_t Fw_Stream_Disconnent(struct Fw_Stream*);
+
+extern fw_err_t Fw_Stream_Read(struct Fw_Stream*, uint8_t*, uint8_t);
+extern fw_err_t Fw_Stream_Write(struct Fw_Stream*, uint8_t*, uint8_t);
+
+extern fw_err_t Fw_FifoStream_Init(struct Fw_Stream*, uint8_t*, uint8_t);
+extern fw_err_t Fw_FifoStream_Fini(struct Fw_Stream*);
+extern fw_err_t Fw_FifoStream_GetUseSize(struct Fw_Stream*, uint8_t*);
+extern fw_err_t Fw_FifoStream_GetFreeSize(struct Fw_Stream*, uint8_t*);
+extern fw_err_t Fw_FifoStream_Write(struct Fw_Stream*, uint8_t*, uint8_t);
+extern fw_err_t Fw_FifoStream_Read(struct Fw_Stream*, uint8_t*, uint8_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

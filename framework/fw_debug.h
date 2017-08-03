@@ -87,8 +87,14 @@ enum _DEBUG_MESSAGE_TYPE
 	DEBUG_OUTPUT_NORMAL_MESSAGE,
 };
 
+struct Fw_DebugBlock
+{
+    struct Fw_FifoStream Tx;
+    struct Fw_FifoStream Rx;
+};
+
 /* Exported variables --------------------------------------------------------*/
-extern struct Fw_Stream DebugStream;
+extern struct Fw_DebugBlock DebugBlock;
 
 /* Exported functions --------------------------------------------------------*/
 /**

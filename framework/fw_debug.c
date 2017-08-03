@@ -69,7 +69,7 @@ static uint8_t BufferCache[FW_DEBUG_BUFFER_SIZE];
 
 /* Exported variables --------------------------------------------------------*/
 #if USE_FRAMEWORK_DEBUG_COMPONENT
-struct Fw_Stream DebugStream;
+struct Fw_DebugBlock DebugBlock;
 #endif
 
 /* Private functions ---------------------------------------------------------*/
@@ -85,32 +85,23 @@ struct Fw_Stream DebugStream;
  */
 void Fw_Debug_InitComponent(void)
 {
-    struct _FwStreamCallback TxCallback;
-	struct _FwStreamCallback RxCallback;
-    struct _FwStreamDevice   Device;
-    _QueueInitType TxFifo;
-    _QueueInitType RxFifo;
+    struct Fw_Stream *stream = NULL;
+
+	memset(&DebugBlock, 0, sizeof(DebugBlock));
+
+    stream = &DebugBlock.Tx.Stream;
+    stream->Opera = (struct _FwStreamOpera *)&FifoStreamOpera;
+    stream->Device.Connect = DebugTxConnectHandle;
+    stream->Device.Disconnect = DebugTxDisconnectHandle;
+    stream->Device.InOut = DebugTxOutputHandle;
+    stream->Opera->Init((struct Fw_Stream *)&DebugBlock.Tx, TxBuffer, sizeof(TxBuffer));    
     
-	memset(&DebugStream, 0, sizeof(DebugStream));
-
-    TxCallback.Connect    = DebugTxConnectHandle;
-    TxCallback.Disconnect = DebugTxDisconnectHandle;
-    TxCallback.InOut      = DebugTxOutputHandle;
-
-    RxCallback.Connect    = DebugRxConnectHandle;
-    RxCallback.Disconnect = DebugRxDisconnectHandle;
-    RxCallback.InOut      = DebugRxIntputHandle;
-
-    Device.Fini = DebugDeviceFiniHandle;
-    Device.Init = DebugDeviceInitHandle;
-    
-    TxFifo.Buffer = TxBuffer;
-    TxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
-    RxFifo.Buffer = RxBuffer;
-    RxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
-        
-    Fw_Stream_Init(&DebugStream, &Device, &TxCallback, &RxCallback);
-    Fw_Stream_Enable(&DebugStream, &TxFifo, &RxFifo);
+    stream = &DebugBlock.Tx.Stream;
+    stream->Opera = (struct _FwStreamOpera *)&FifoStreamOpera;
+    stream->Device.Connect = DebugRxConnectHandle;
+    stream->Device.Disconnect = DebugRxDisconnectHandle;
+    stream->Device.InOut = DebugRxIntputHandle;
+    stream->Opera->Init((struct Fw_Stream *)&DebugBlock.Rx, RxBuffer, sizeof(TxBuffer));   
 }
 
 /**
@@ -163,14 +154,7 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
     len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);
     va_end(args);
     
-    DebugStream.Opera->Write(&DebugStream.TxFifo, BufferCache, len);
-    
-    if(DebugStream.IsTxReady == false)
-    {
-        DebugStream.IsTxReady = true;
-        
-        DebugStream.TxCallback.InOut(&DebugStream);
-    }
+    DebugBlock.Tx.Stream.Opera->Write((struct Fw_Stream *)&DebugBlock.Tx, BufferCache, len);
 }
 
 /**

@@ -66,7 +66,7 @@ typedef struct
 {
     uint8_t *Buffer;
     uint8_t Size;
-}_QueueInitType;
+}_QueueInitType, Fw_Buffer_t;
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -77,6 +77,8 @@ typedef struct
  *******************************************************************************
  */
 extern fw_err_t Fw_Queue_Init(struct Fw_Queue*, uint8_t*, uint8_t);
+extern fw_err_t Fw_Queue_Fini(struct Fw_Queue*);
+
 extern fw_err_t Fw_Queue_GetLen(struct Fw_Queue*, uint8_t*);
 
 extern fw_err_t Fw_Queue_CanRead(struct Fw_Queue*, uint8_t*);
