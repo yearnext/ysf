@@ -46,13 +46,13 @@ extern "C"
 #endif
 
 /* Exported macro ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      common component path
- *******************************************************************************
- */
-#define _COMM_TOOLS_PATH           "../common/comm_tools.h"	
-#define _COMM_TYPE_PATH            "../common/comm_type.h"
+///**
+// *******************************************************************************
+// * @brief      common component path
+// *******************************************************************************
+// */
+//#define _COMM_TOOLS_PATH           "../common/comm_tools.h"	
+//#define _COMM_TYPE_PATH            "../common/comm_type.h"
 
 /**
  *******************************************************************************
@@ -65,9 +65,13 @@ extern "C"
 #define _ICCARM_COMPILER_PATH      "../common/compiler/iccarm/compiler_iccarm.h"
     
 /* Includes ------------------------------------------------------------------*/
-#include _COMM_TOOLS_PATH
-#include _COMM_TYPE_PATH
-#include _COMPILER_PATH
+//#include _COMM_TOOLS_PATH
+//#include _COMM_TYPE_PATH
+//#include _COMPILER_PATH
+
+#include "comm_tools.h"
+#include "comm_type.h"
+#include "../common/compiler/compiler.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

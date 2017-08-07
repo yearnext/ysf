@@ -37,26 +37,39 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>
 #include "fw_stream.h"
 #include "fw_debug.h"
-#include <string.h>
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       fifo stream opera function
+ *******************************************************************************
+ */
+static fw_err_t _FifoStreamOpera_Init(struct Fw_Stream*, void*);
+static fw_err_t _FifoStreamOpera_Fini(struct Fw_Stream*);
+static fw_err_t _FifoStreamOpera_Write(struct Fw_Stream*, uint8_t*, uint8_t);
+static fw_err_t _FifoStreamOpera_Read(struct Fw_Stream*, uint8_t*, uint8_t);
+
 /* Private functions ---------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       framework stream opera block
  *******************************************************************************
  */
-static const struct _FwStreamOpera _Fw_Stream_Opera = 
+const _StreamBufferOperaInitType _StreamFifoOpera = 
 {
-    .Write = Fw_Buffer_Write,
-    .Read  = Fw_Buffer_Read,
+    .Init  = _FifoStreamOpera_Init,
+    .Fini  = _FifoStreamOpera_Fini,
+    
+    .Write = _FifoStreamOpera_Write,
+    .Read  = _FifoStreamOpera_Read,
 };
-     
+  
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -70,232 +83,279 @@ static const struct _FwStreamOpera _Fw_Stream_Opera =
  *******************************************************************************
  */
 fw_err_t Fw_Stream_Init(struct Fw_Stream *stream, 
-                        _StreamDeviceInitType *device, 
-                        _StreamCallbackInitType *txCallback, 
-                        _StreamCallbackInitType *rxCallback)
+                        _StreamBufferOperaInitType *opera, 
+                        _StreamDeviceOperaInitType *device, 
+                        void *param)
 {
     //< detect stream param
     _FW_ASSERT(IS_PTR_NULL(stream));
+    _FW_ASSERT(IS_PTR_NULL(opera));
     _FW_ASSERT(IS_PTR_NULL(device));
-    _FW_ASSERT(IS_PTR_NULL(txCallback));
-    _FW_ASSERT(IS_PTR_NULL(rxCallback));
     
     //< clear stream block
     memset(stream, 0, sizeof(struct Fw_Stream));
-    
-    //< init stream opera
-    stream->Device.Init = device->Init;
-    stream->Device.Fini = device->Fini;
-    
-    //< init stream opera
-    stream->Opera = (struct _FwStreamOpera *)&_Fw_Stream_Opera;
-    
-    //< init tx call back
-    stream->TxCallback.Connect = txCallback->Connect;
-    stream->TxCallback.Disconnect = txCallback->Disconnect;
-    stream->TxCallback.InOut = txCallback->InOut;
-    
-    //< init rx call back
-    stream->RxCallback.Connect = rxCallback->Connect;
-    stream->RxCallback.Disconnect = rxCallback->Disconnect;
-    stream->RxCallback.InOut = rxCallback->InOut;
 
+    //< set stream device opera
+    memcpy(&stream->Device, device, sizeof(stream->Device));
+
+    //< set stream buffer opera
+    stream->Opera = opera;
+    
+    //< init stream buffer
+    if(!IS_PTR_NULL(stream->Opera->Init))
+    {
+        stream->Opera->Init(stream, param);
+    }
+        
+    //< init stream hardware
+    if(!IS_PTR_NULL(stream->Device.Init))
+    {
+        stream->Device.Init(stream);
+    }
+    
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       enable stream block
+ * @brief       deinit stream block
  * @param       [in/out]  *stream         stream block
- * @param       [in/out]  *txBuffer       tx buffer block
- * @param       [in/out]  *rxBuffer       rx buffer block
- * @return      [in/out]  FW_ERR_NONE     enable success
+ * @return      [in/out]  FW_ERR_NONE     deinit finish
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_Enable(struct Fw_Stream *stream, 
-                          _QueueInitType *txBuffer, 
-                          _QueueInitType *rxBuffer)
+fw_err_t Fw_Stream_Fini(struct Fw_Stream *stream)
 {
-    //< detect stream param
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(txBuffer));
-    _FW_ASSERT(IS_PTR_NULL(txBuffer->Buffer));
-    _FW_ASSERT(IS_PARAM_ZERO(txBuffer->Size));
-    _FW_ASSERT(IS_PTR_NULL(rxBuffer));
-    _FW_ASSERT(IS_PTR_NULL(rxBuffer->Buffer));
-    _FW_ASSERT(IS_PARAM_ZERO(rxBuffer->Size));
     
-    //< init fifo
-    Fw_Buffer_Init(&stream->TxFifo, txBuffer->Buffer, txBuffer->Size);
-    Fw_Buffer_Init(&stream->RxFifo, rxBuffer->Buffer, rxBuffer->Size);
+    //< init stream hardware
+    if(!IS_PTR_NULL(stream->Device.Fini))
+    {
+        stream->Device.Fini(stream);
+    }
     
-    //< init common flag
-    stream->IsRxReady = true;
+    //< init stream buffer
+    if(!IS_PTR_NULL(stream->Opera->Fini))
+    {
+        stream->Opera->Fini(stream);
+    }
+    
+    memset(stream, 0, sizeof(struct Fw_Stream));
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       connect stream tx hardware
+ * @param       [in/out]  *stream         stream block
+ * @return      [in/out]  FW_ERR_NONE     connect finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Stream_TxConnect(struct Fw_Stream *stream)
+{
+    _FW_ASSERT(IS_PTR_NULL(stream));
+    
+    stream->IsTxReady = true;
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       disconnect stream tx hardware
+ * @param       [in/out]  *stream         stream block
+ * @return      [in/out]  FW_ERR_NONE     disconnect finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Stream_TxDisconnect(struct Fw_Stream *stream)
+{
+    _FW_ASSERT(IS_PTR_NULL(stream));
+    
     stream->IsTxReady = false;
     
-    //< init stream locked count
-    stream->TxLock = 0;
-    stream->RxLock = 0;
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       connect stream rx hardware
+ * @param       [in/out]  *stream         stream block
+ * @return      [in/out]  FW_ERR_NONE     connect finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Stream_RxConnect(struct Fw_Stream *stream)
+{
+    _FW_ASSERT(IS_PTR_NULL(stream));
     
-    stream->Device.Init(stream);
-    stream->RxCallback.Connect(stream);
-    stream->TxCallback.Disconnect(stream);
+    stream->IsRxReady = true;
     
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       lock stream tx opera
+ * @brief       disconnect stream tx hardware
  * @param       [in/out]  *stream         stream block
- * @return      [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE     disconnect finish
  * @note        None
  *******************************************************************************
  */
-__STATIC_INLINE
-void Fw_Stream_LockTx(struct Fw_Stream *stream)
+fw_err_t Fw_Stream_RxDisconnect(struct Fw_Stream *stream)
 {
-    if(stream->TxLock == 0)
-    {
-        stream->TxCallback.Disconnect(stream);
-        stream->TxLock++;
-    }
-    else if(stream->TxLock < 200)
-    {
-        stream->TxLock++;
-    }
-    else
-    {
-        //< do nothing!
-    }
-}
-
-/**
- *******************************************************************************
- * @brief       unlock stream tx opera
- * @param       [in/out]  *stream         stream block
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-__STATIC_INLINE
-void Fw_Stream_UnlockTx(struct Fw_Stream *stream)
-{
-    if(stream->TxLock > 0)
-    {
-        if(--stream->TxLock == 0)
-        {
-            stream->TxCallback.Connect(stream);
-        }
-    }
-}
-
-/**
- *******************************************************************************
- * @brief       lock stream rx opera
- * @param       [in/out]  *stream         stream block
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-__STATIC_INLINE
-void Fw_Stream_LockRx(struct Fw_Stream *stream)
-{
-    if(stream->RxLock == 0)
-    {
-        stream->RxCallback.Disconnect(stream);
-        stream->RxLock++;
-    }
-    else if(stream->RxLock < 200)
-    {
-        stream->RxLock++;
-    }
-    else
-    {
-        //< do nothing!
-    }
+    _FW_ASSERT(IS_PTR_NULL(stream));
     
-    if(stream->RxLock < 200)
-    {
-        stream->RxLock++;
-    }
-}
-
-/**
- *******************************************************************************
- * @brief       unlock stream rx opera
- * @param       [in/out]  *stream         stream block
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-__STATIC_INLINE
-void Fw_Stream_UnlockRx(struct Fw_Stream *stream)
-{
-    if(stream->RxLock > 0)
-    {
-        if(--stream->RxLock == 0)
-        {
-            stream->RxCallback.Connect(stream);
-        }
-    }
+    stream->IsRxReady = true;
+    
+    return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       write data to stream
- * @param       [in/out]  *stream         stream block
- * @param       [in/out]  *txBuffer       tx buffer
- * @param       [in/out]  *txBufferSize   tx data size
- * @return      [in/out]  void
+ * @param       [in/out]  *stream        stream block
+ * @param       [in/out]  *buffer        buffer
+ * @param       [in/out]  size           buffer size
+ * @return      [in/out]  FW_ERR_NONE    write success
+ * @return      [in/out]  FW_ERR_FAIL    write failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *txBuffer, uint16_t txBufferSize)
+fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(txBuffer));
-    _FW_ASSERT(IS_PARAM_ZERO(txBufferSize));
+    _FW_ASSERT(IS_PTR_NULL(stream->Opera));
+    _FW_ASSERT(IS_PTR_NULL(buffer));
+    _FW_ASSERT(IS_PARAM_ZERO(size));
     
-    Fw_Stream_LockTx(stream);
-    
-    Fw_Buffer_Write(&stream->TxFifo, txBuffer, txBufferSize);
-    
-    //< set tx ready flag
-    if(stream->IsTxReady == false)
+    if(stream->IsTxReady == true)
     {
-        stream->IsTxReady = true;
-        
-        stream->TxCallback.InOut(stream);
+        if(!IS_PTR_NULL(stream->Opera->Write) && !IS_PTR_NULL(stream->Device.Tx_Out))
+        {
+            if(stream->Opera->Write(stream, buffer, size) == FW_ERR_NONE)
+            {
+                stream->Device.Tx_Out(stream);
+            
+                return FW_ERR_NONE;
+            }
+        }
     }
     
-    Fw_Stream_UnlockTx(stream);
-    
-    return FW_ERR_NONE;
+    return FW_ERR_FAIL;
 }
 
 /**
  *******************************************************************************
  * @brief       read data from stream
- * @param       [in/out]  *stream         stream block
- * @param       [in/out]  *rxBuffer       rx buffer
- * @param       [in/out]  *rxBufferSize   rx data size
- * @return      [in/out]  void
+ * @param       [in/out]  *stream        stream block
+ * @param       [in/out]  *buffer        buffer
+ * @param       [in/out]  size           buffer size
+ * @return      [in/out]  FW_ERR_NONE    read success
+ * @return      [in/out]  FW_ERR_FAIL    read failed
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *rxBuffer, uint16_t rxBufferSize)
+fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(rxBuffer));
-    _FW_ASSERT(IS_PARAM_ZERO(rxBufferSize));
+    _FW_ASSERT(IS_PTR_NULL(stream->Opera));
+    _FW_ASSERT(IS_PTR_NULL(buffer));
+    _FW_ASSERT(IS_PARAM_ZERO(size));
     
-    Fw_Stream_LockRx(stream);
-    Fw_Buffer_Write(&stream->RxFifo, rxBuffer, rxBufferSize);
-    Fw_Stream_UnlockRx(stream);
+    if(stream->IsRxReady == true)
+    {
+        if(!IS_PTR_NULL(stream->Opera->Read))
+        {
+            if(stream->Opera->Read(stream, buffer, size) == FW_ERR_NONE)
+            {
+                return FW_ERR_NONE;
+            }
+        }
+    }
     
-    return FW_ERR_NONE;
+    return FW_ERR_FAIL;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init fifo stream buffer
+ * @param       [in/out]  *stream        stream block
+ * @param       [in/out]  *buffer        buffer block
+ * @return      [in/out]  FW_ERR_NONE    init success
+ * @return      [in/out]  FW_ERR_FAIL    init failed
+ * @note        None
+ *******************************************************************************
+ */
+static fw_err_t _FifoStreamOpera_Init(struct Fw_Stream *stream, void *buffer)
+{
+    struct FwFifoStream *fifoStream = (struct FwFifoStream *)stream;
+    _FifoInitType *fifo = (_FifoInitType *)buffer;
+    
+    _FW_ASSERT(IS_PTR_NULL(fifoStream));
+    _FW_ASSERT(IS_PTR_NULL(fifo));
+
+    return Fw_Buffer_Init((struct _Fw_RingBuffer *)&fifoStream->Fifo, fifo->Buffer, fifo->Size);
+}
+
+/**
+ *******************************************************************************
+ * @brief       deinit fifo stream buffer 
+ * @param       [in/out]  *stream        stream block
+ * @return      [in/out]  FW_ERR_NONE    deinit success
+ * @return      [in/out]  FW_ERR_FAIL    deinit failed
+ * @note        None
+ *******************************************************************************
+ */
+static fw_err_t _FifoStreamOpera_Fini(struct Fw_Stream *stream)
+{
+    struct FwFifoStream *fifoStream = (struct FwFifoStream *)stream;
+
+    _FW_ASSERT(IS_PTR_NULL(fifoStream));
+    
+    return Fw_Buffer_Fini((struct _Fw_RingBuffer *)&fifoStream->Fifo);
+}
+
+/**
+ *******************************************************************************
+ * @brief       write data to stream
+ * @param       [in/out]  *stream        stream block
+ * @param       [in/out]  *buffer        buffer
+ * @param       [in/out]  size           buffer size
+ * @return      [in/out]  FW_ERR_NONE    write success
+ * @return      [in/out]  FW_ERR_FAIL    write failed
+ * @note        None
+ *******************************************************************************
+ */
+static fw_err_t _FifoStreamOpera_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+{
+    struct FwFifoStream *fifoStream = (struct FwFifoStream *)stream;
+
+    _FW_ASSERT(IS_PTR_NULL(fifoStream));
+    
+    return Fw_Buffer_Write((struct _Fw_RingBuffer *)&fifoStream->Fifo, buffer, size);
+}
+
+/**
+ *******************************************************************************
+ * @brief       read data from stream
+ * @param       [in/out]  *stream        stream block
+ * @param       [in/out]  *buffer        buffer
+ * @param       [in/out]  size           buffer size
+ * @return      [in/out]  FW_ERR_NONE    read success
+ * @return      [in/out]  FW_ERR_FAIL    read failed
+ * @note        None
+ *******************************************************************************
+ */
+static fw_err_t _FifoStreamOpera_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+{
+    struct FwFifoStream *fifoStream = (struct FwFifoStream *)stream;
+
+    _FW_ASSERT(IS_PTR_NULL(fifoStream));
+    
+    return Fw_Buffer_Read((struct _Fw_RingBuffer *)&fifoStream->Fifo, buffer, size);
 }
 
 /** @}*/     /** framework stream component */

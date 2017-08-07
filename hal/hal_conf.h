@@ -62,7 +62,8 @@ extern "C"
  *******************************************************************************
  */
 #ifdef USE_HAL_DEBUG
-    #define hal_param_check(expr)                      _INLINE_PARAM_CHECK(expr)
+    #include "fw_debug.h"
+    #define hal_param_check(expr)                               _FW_ASSERT(expr)
 #else
     #define hal_param_check(expr)
 #endif

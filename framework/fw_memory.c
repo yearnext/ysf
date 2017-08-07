@@ -37,10 +37,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_MEMORY_COMPONENT_PATH
-#include _FW_BUFFER_COMPONENT_PATH
+#include "fw_memory.h"
 
 #ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
 #include <stdlib.h>

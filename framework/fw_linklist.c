@@ -37,10 +37,8 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_LINK_LIST_COMPONENT_PATH
-#include _FW_DEBUG_COMPONENT_PATH
+#include "fw_linklist.h"
+#include "fw_debug.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/

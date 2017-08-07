@@ -37,10 +37,8 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_BUFFER_COMPONENT_PATH
-#include _FW_DEBUG_COMPONENT_PATH
+#include "fw_buffer.h"
+#include "fw_debug.h"
 
 /* Private define ------------------------------------------------------------*/
 #define HeapMemoryNodeEndAddr                                        ((void *)0)
@@ -69,6 +67,27 @@ fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t r
     
     rb->Buffer = rbBuffer;
     rb->Size   = rbSize;
+    rb->Head   = 0;
+    rb->Tail   = 0;
+    rb->Len    = 0;
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       deinit ring buffer
+ * @param       [in/out]  *rb            ring buff control block
+ * @return      [in/out]  FW_ERR_NONE    deinit success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Buffer_Fini(struct _Fw_RingBuffer *rb)
+{
+    _FW_ASSERT(IS_PTR_NULL(rb));
+    
+    rb->Buffer = NULL;
+    rb->Size   = 0;
     rb->Head   = 0;
     rb->Tail   = 0;
     rb->Len    = 0;

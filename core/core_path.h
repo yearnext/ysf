@@ -46,12 +46,12 @@ extern "C"
 #endif
 
 /* Define path ---------------------------------------------------------------*/
-#define _COMM_PATH                            "../common/comm_path.h"
-#define _FW_PATH                              "../framework/fw_path.h"
-#define _HAL_PATH                             "../hal/hal_path.h"
+//#define _COMM_PATH                            "../common/comm_path.h"
+//#define _FW_PATH                              "../framework/fw_path.h"
+//#define _HAL_PATH                             "../hal/hal_path.h"
     
 /* Includes ------------------------------------------------------------------*/
-#include _COMM_PATH
+#include "comm_path.h"
     
 /* Exported macro ------------------------------------------------------------*/
 

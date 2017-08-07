@@ -38,13 +38,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_TIMER_COMPONENT_PATH
-#include _FW_TASK_COMPONENT_PATH
-#include _FW_TICK_COMPONENT_PATH
-#include _FW_LINK_LIST_COMPONENT_PATH
-#include _FW_DEBUG_COMPONENT_PATH
+#include "fw_timer.h"
+#include "fw_task.h"
+#include "fw_tick.h"
+#include "fw_linklist.h"
+#include "fw_debug.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/

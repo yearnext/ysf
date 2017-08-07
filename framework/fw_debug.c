@@ -41,9 +41,9 @@
 #include "fw_tick.h"
 #include "fw_event.h"
 #include "fw_timer.h"
+#include "fw_stream.h"
 #include <string.h>
 #include <stdio.h>
-#include <stdarg.h>
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -85,32 +85,32 @@ struct Fw_Stream DebugStream;
  */
 void Fw_Debug_InitComponent(void)
 {
-    struct _FwStreamCallback TxCallback;
-	struct _FwStreamCallback RxCallback;
-    struct _FwStreamDevice   Device;
-    _QueueInitType TxFifo;
-    _QueueInitType RxFifo;
-    
-	memset(&DebugStream, 0, sizeof(DebugStream));
+//    struct _FwStreamCallback TxCallback;
+//	struct _FwStreamCallback RxCallback;
+//    struct _FwStreamDevice   Device;
+//    _QueueInitType TxFifo;
+//    _QueueInitType RxFifo;
+//    
+//	memset(&DebugStream, 0, sizeof(DebugStream));
 
-    TxCallback.Connect    = DebugTxConnectHandle;
-    TxCallback.Disconnect = DebugTxDisconnectHandle;
-    TxCallback.InOut      = DebugTxOutputHandle;
+//    TxCallback.Connect    = DebugTxConnectHandle;
+//    TxCallback.Disconnect = DebugTxDisconnectHandle;
+//    TxCallback.InOut      = DebugTxOutputHandle;
 
-    RxCallback.Connect    = DebugRxConnectHandle;
-    RxCallback.Disconnect = DebugRxDisconnectHandle;
-    RxCallback.InOut      = DebugRxIntputHandle;
+//    RxCallback.Connect    = DebugRxConnectHandle;
+//    RxCallback.Disconnect = DebugRxDisconnectHandle;
+//    RxCallback.InOut      = DebugRxIntputHandle;
 
-    Device.Fini = DebugDeviceFiniHandle;
-    Device.Init = DebugDeviceInitHandle;
-    
-    TxFifo.Buffer = TxBuffer;
-    TxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
-    RxFifo.Buffer = RxBuffer;
-    RxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
-        
-    Fw_Stream_Init(&DebugStream, &Device, &TxCallback, &RxCallback);
-    Fw_Stream_Enable(&DebugStream, &TxFifo, &RxFifo);
+//    Device.Fini = DebugDeviceFiniHandle;
+//    Device.Init = DebugDeviceInitHandle;
+//    
+//    TxFifo.Buffer = TxBuffer;
+//    TxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
+//    RxFifo.Buffer = RxBuffer;
+//    RxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
+//        
+//    Fw_Stream_Init(&DebugStream, &Device, &TxCallback, &RxCallback);
+//    Fw_Stream_Enable(&DebugStream, &TxFifo, &RxFifo);
 }
 
 /**
@@ -155,22 +155,22 @@ uint8_t Fw_Debug_FillHeadInfo(uint8_t *buffer, enum _DEBUG_MESSAGE_TYPE type)
  */
 void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
 {
-	uint8_t len = 0;
-    va_list args;
-	
-    va_start(args, str);
-    len = Fw_Debug_FillHeadInfo(BufferCache, type);
-    len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);
-    va_end(args);
-    
-    DebugStream.Opera->Write(&DebugStream.TxFifo, BufferCache, len);
-    
-    if(DebugStream.IsTxReady == false)
-    {
-        DebugStream.IsTxReady = true;
-        
-        DebugStream.TxCallback.InOut(&DebugStream);
-    }
+//	uint8_t len = 0;
+//    va_list args;
+//	
+//    va_start(args, str);
+//    len = Fw_Debug_FillHeadInfo(BufferCache, type);
+//    len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);
+//    va_end(args);
+//    
+//    DebugStream.Opera->Write(&DebugStream.TxFifo, BufferCache, len);
+//    
+//    if(DebugStream.IsTxReady == false)
+//    {
+//        DebugStream.IsTxReady = true;
+//        
+//        DebugStream.TxCallback.InOut(&DebugStream);
+//    }
 }
 
 /**

@@ -46,9 +46,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_LINK_LIST_COMPONENT_PATH
+#include "fw_path.h"
+#include "fw_linklist.h"
     
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -98,104 +97,18 @@ typedef struct _QueueInitType
 {
     uint8_t  *Buffer;
     uint16_t Size;
-}_QueueInitType;
+}_QueueInitType, _FifoInitType;
 
 /**
  *******************************************************************************
  * @brief       ring buffer function api
  *******************************************************************************
  */
-#if USE_BUFFER_COMPONENT
-fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
-fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer*, uint16_t*);
-fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
-fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
-
-/**
- *******************************************************************************
- * @brief        define framework buffer interface
- *******************************************************************************
- */
-#define fw_buffer_init                       InitRingBufferComponent
-#define fw_buffer_write                      WriteRingBuffer
-#define fw_buffer_read                       ReadRingBuffer
-#define fw_buffer_getlen                     GetRingBufferLen
-
-#else
-#define fw_buffer_init(a,b,c)                       
-#define fw_buffer_write(a,b)              
-#define fw_buffer_read(a,b,c)          
-#define fw_buffer_getlen(a,b,c) 
-#endif
-
-/**
- *******************************************************************************
- * @brief       define heap memory block
- *******************************************************************************
- */
-struct HeapMemoryBlock
-{
-__ALIGN_HEAD(8)
-    struct
-    {
-        struct HeapMemoryBlock *Last;
-        struct HeapMemoryBlock *Next;
-        uint32_t               Size;
-        uint8_t                Status;
-    }Management;
-__ALIGN_TAIL(8)  
-    
-    uint8_t data[16];
-};
-
-#define HEAP_MEMORY_ALIGNMENT_SIZE (sizeof(struct HeapMemoryBlock))
-#define HEAP_MEMORY_ALIGNMENT_POS  (5)
-
-/**
- *******************************************************************************
- * @brief       define memory control block
- *******************************************************************************
- */
-//struct HeapControlBlock
-//{
-//    union
-//    {
-//        void                   *Buffer;
-//        struct HeapMemoryBlock *Head; 
-//    };
-//    
-//    uint32_t Size;
-//};
-
-struct _Fw_MemBlock
-{
-    struct _Fw_MemBlock *Last;
-    struct _Fw_MemBlock *Next;
-    uint32_t Size;
-    bool     Status;
-    uint8_t Buffer[];
-};
-
-struct _Fw_MemMgmtBlock
-{
-    struct _Fw_MemBlock *Poll;
-    uint32_t Size;
-    
-    struct _Fw_MemBlock *FreeListHead;
-    struct _Fw_MemBlock *FreeListTail;
-    
-    struct _Fw_MemBlock *UseListHead;
-    struct _Fw_MemBlock *UseListTail;
-};
-
-/**
- *******************************************************************************
- * @brief       memory management function api
- *******************************************************************************
- */
-#if USE_MEMORY_MANAGEMENT_COMPONENT
-
-#endif
+extern fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t Fw_Buffer_Fini(struct _Fw_RingBuffer*);
+extern fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer*, uint16_t*);
+extern fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

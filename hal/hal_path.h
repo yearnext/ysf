@@ -45,43 +45,13 @@ extern "C"
 {
 #endif
 
-/* Define hal component path-------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        common head files path
- *******************************************************************************
- */
-#define _HAL_CORE_PATH                             "../hal/hal.h"
-#define _HAL_CONF_PATH                             "../hal/hal_conf.h"
-#define _HAL_TYPE_PATH                             "../hal/hal_type.h"
-#define _HAL_INTERFACE_PATH                        "../hal/hal_interface.h"
-
-/**
- *******************************************************************************
- * @brief        stm32f10x device head files path
- *******************************************************************************
- */
-#define _HAL_STM32F10X_MAL_PATH                    "../hal/stm32f10x/mal/stm32f1xx.h"
-#define _HAL_STM32F10X_GPIO_PATH                   "../hal/stm32f10x/map/map_gpio.h"
-#define _HAL_STM32F10X_TIMER_PATH                  "../hal/stm32f10x/map/map_timer.h"
-#define _HAL_STM32F10X_USART_PATH                  "../hal/stm32f10x/map/map_usart.h"
-
 /* Includes ------------------------------------------------------------------*/
-#include _HAL_CONF_PATH
-#include _HAL_TYPE_PATH
+#include "hal_conf.h"
+#include "hal_type.h"
 
-/* Define hal component path-------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        hal device head files path
- *******************************************************************************
- */
-#if __TARGET_CHIP__ == USE_MCU_STM32F1xx
-    #define _HAL_MAL_PATH                          _HAL_STM32F10X_MAL_PATH
-    #define _HAL_GPIO_PATH                         _HAL_STM32F10X_GPIO_PATH
-    #define _HAL_TIMER_PATH                        _HAL_STM32F10X_TIMER_PATH
-	#define _HAL_USART_PATH                        _HAL_STM32F10X_USART_PATH
-#endif
+/* Exported macro ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

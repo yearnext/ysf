@@ -47,9 +47,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_TIMER_COMPONENT_PATH
+#include "fw_path.h"
+#include "fw_timer.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**

@@ -67,6 +67,24 @@ extern "C"
 
 typedef _err_t                                           hal_err_t;
     
+struct HalDevice;
+        
+struct HalOpera
+{
+    hal_err_t (*Init)(struct HalDevice*, void*);
+    hal_err_t (*Fini)(struct HalDevice*);
+    
+    hal_err_t (*Write)(struct HalDevice*, void*);
+    hal_err_t (*Read)(struct HalDevice*, void*);
+    
+    hal_err_t (*Control)(struct HalDevice*, uint8_t, void*);
+};
+   
+struct HalDevice
+{
+    struct HalOpera *Opera;
+};
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

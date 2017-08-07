@@ -46,8 +46,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _COMM_TYPE_PATH
+//#include "core_path.h"
+#include "comm_type.h"
     
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/

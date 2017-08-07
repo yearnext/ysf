@@ -47,8 +47,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
+#include "fw_path.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**

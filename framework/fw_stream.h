@@ -47,8 +47,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
+#include "fw_path.h"
 #include "fw_buffer.h"
 
 /* Exported macro ------------------------------------------------------------*/
@@ -60,10 +59,16 @@ struct Fw_Stream;
  * @brief       stream hardware opera function
  *******************************************************************************
  */
-struct _FwStreamOpera
+struct _FwStreamBufferOpera
 {
-	fw_err_t (*Write)(Fw_Fifo_t *, uint8_t *, uint16_t);
-	fw_err_t (*Read)(Fw_Fifo_t *, uint8_t *, uint16_t);
+    fw_err_t (*Init)(struct Fw_Stream*, void *);
+    fw_err_t (*Fini)(struct Fw_Stream*);
+    
+    fw_err_t (*Write)(struct Fw_Stream*, uint8_t*, uint8_t);
+    fw_err_t (*Read)(struct Fw_Stream*, uint8_t*, uint8_t);
+    
+//    uint32_t (*GetFreeSize)(struct Fw_Stream*);
+//    uint32_t (*GetUseSize)(struct Fw_Stream*);
 };
 
 /**
@@ -71,10 +76,18 @@ struct _FwStreamOpera
  * @brief       stream hardware device function
  *******************************************************************************
  */
-struct _FwStreamDevice
+struct _FwStreamDeviceOpera
 {
-    fw_err_t (*Init)(struct Fw_Stream *);
-	fw_err_t (*Fini)(struct Fw_Stream *);
+    void (*Init)(struct Fw_Stream*);
+    void (*Fini)(struct Fw_Stream*);
+    
+    void (*Tx_Out)(struct Fw_Stream*);
+    void (*Tx_Connect)(struct Fw_Stream*);
+    void (*Tx_Disconnect)(struct Fw_Stream*);
+    
+    void (*Rx_In)(struct Fw_Stream*);
+    void (*Rx_Connect)(struct Fw_Stream*);
+    void (*Rx_Disconnect)(struct Fw_Stream*);
 };
 
 /**
@@ -82,37 +95,25 @@ struct _FwStreamDevice
  * @brief       stream hardware call back function
  *******************************************************************************
  */
-struct _FwStreamCallback
+struct Fw_Stream
 {
-//    struct Fw_Stream *Stream;
-	fw_err_t (*InOut)(struct Fw_Stream *);
-	fw_err_t (*Connect)(struct Fw_Stream *);
-	fw_err_t (*Disconnect)(struct Fw_Stream *);
+    struct _FwStreamBufferOpera *Opera;
+    struct _FwStreamDeviceOpera Device;
+
+    bool IsTxReady;
+    bool IsRxReady;
 };
 
 /**
  *******************************************************************************
- * @brief       framework stream block
+ * @brief       define framework fifo stream
  *******************************************************************************
  */
-struct Fw_Stream
+struct FwFifoStream
 {
-    struct _FwStreamOpera *Opera;
+    struct Fw_Stream stream;
     
-	struct _FwStreamCallback TxCallback;
-	struct _FwStreamCallback RxCallback;
-    struct _FwStreamDevice   Device;
-    
-    Fw_Fifo_t TxFifo;
-    Fw_Fifo_t RxFifo;
-    
-    bool IsTxReady;
-    bool IsRxReady;
-    
-    uint8_t TxLock;
-    uint8_t RxLock;
-    
-//    bool IsOverFlow;
+    Fw_Fifo_t Fifo;
 };
 
 /**
@@ -120,24 +121,30 @@ struct Fw_Stream
  * @brief       define stream init block type
  *******************************************************************************
  */
-typedef struct _FwStreamCallback _StreamCallbackInitType;
-typedef struct _FwStreamDevice _StreamDeviceInitType;
+typedef struct _FwStreamBufferOpera _StreamBufferOperaInitType;
+typedef struct _FwStreamDeviceOpera _StreamDeviceOperaInitType;
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define stream api
+ * @brief       define framework stream api
  *******************************************************************************
  */
-extern fw_err_t Fw_Stream_Init(struct Fw_Stream *, 
-                               _StreamDeviceInitType *, 
-                               _StreamCallbackInitType *, 
-                               _StreamCallbackInitType *);
+extern fw_err_t Fw_Stream_Init(struct Fw_Stream *stream, 
+                               _StreamBufferOperaInitType*, 
+                               _StreamDeviceOperaInitType*,
+                               void*);
 
-extern fw_err_t Fw_Stream_Enable(struct Fw_Stream *stream, 
-                                 _QueueInitType *, 
-                                 _QueueInitType *);
+extern fw_err_t Fw_Stream_Fini(struct Fw_Stream*);
+
+extern fw_err_t Fw_Stream_TxConnect(struct Fw_Stream*);
+extern fw_err_t Fw_Stream_TxDisconnect(struct Fw_Stream*);
+extern fw_err_t Fw_Stream_RxConnect(struct Fw_Stream*);
+extern fw_err_t Fw_Stream_RxDisconnect(struct Fw_Stream*);
+
+extern fw_err_t Fw_Stream_Write(struct Fw_Stream*, uint8_t*, uint8_t);
+extern fw_err_t Fw_Stream_Read(struct Fw_Stream*, uint8_t*, uint8_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

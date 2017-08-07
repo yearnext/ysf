@@ -46,12 +46,6 @@ extern "C"
 #endif
     
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_INTERFACE_PATH
-#include _HAL_PATH
-#include _HAL_INTERFACE_PATH
-
 /* Exported macro ------------------------------------------------------------*/ 
 /* Private typedef -----------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/

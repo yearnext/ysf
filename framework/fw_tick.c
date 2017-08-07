@@ -37,10 +37,8 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_TICK_COMPONENT_PATH
-#include _FW_TASK_COMPONENT_PATH
+#include "fw_tick.h"
+#include "fw_task.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
