@@ -319,7 +319,7 @@ typedef enum
  *******************************************************************************
  */
 #if 1
-typedef uint32_t _addr_t;
+typedef uint32_t ptr_t;
 #else
 typedef uint64_t _addr_t;
 #endif

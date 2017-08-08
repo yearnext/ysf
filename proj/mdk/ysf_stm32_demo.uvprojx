@@ -370,7 +370,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\core;..\..\hal\stm32f10x\mal;..\..\hal\stm32f10x\msp;..\..\demo;..\..\framework;..\..\common;..\..\hal;..\..\bsp\stm32f10x\cmsis;..\..\bsp\stm32f10x\inc;..\..\bsp\stm32f10x</IncludePath>
+              <IncludePath>..\..\core;..\..\demo;..\..\framework;..\..\common;..\..\hal;..\..\bsp\stm32f10x\cmsis;..\..\bsp\stm32f10x\inc;..\..\bsp\stm32f10x\map;..\..\bsp\stm32f10x\startup;..\..\bsp\stm32f10x</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -491,6 +491,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>ysf/hal</GroupName>
+          <Files>
+            <File>
+              <FileName>hal_uartstream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\hal_uartstream.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>bsp/startup</GroupName>
           <Files>
             <File>
@@ -517,6 +527,16 @@
               <FileName>map_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\bsp\stm32f10x\map\map_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>map_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\map\map_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>map_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\map\map_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -637,16 +657,6 @@
               <FileName>stm32f10x_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\bsp\stm32f10x\src\stm32f10x_wwdg.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>bsp</GroupName>
-          <Files>
-            <File>
-              <FileName>stm32f10x_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f10x\stm32f10x_it.c</FilePath>
             </File>
           </Files>
         </Group>

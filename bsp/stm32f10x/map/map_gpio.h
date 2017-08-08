@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_gpio.h                                                      *
+ * @file       map_gpio.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-08-07                                                      *
- * @brief      hal gpio component head files                                   *
+ * @brief      mcu application gpio component head files                       *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,13 +32,13 @@
  */
  
 /**
- * @defgroup hal gpio component
+ * @defgroup map gpio component
  * @{
  */
  
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HAL_COMPONENT_H__
-#define __HAL_COMPONENT_H__
+#ifndef __MAP_GPIO_H__
+#define __MAP_GPIO_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -85,30 +85,30 @@ extern "C"
 #define  MCU_PIN_14                                                         (14)
 #define  MCU_PIN_15                                                         (15)
 
+/* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define gpio mode
  *******************************************************************************
  */ 
-/** gpio mode param dir */
-#define GPIO_INPUT                                                        (0x00)
-#define GPIO_LOW_SPEED_OUTPUT                                             (0x01)
-#define GPIO_MEDIUM_SPEED_OUTPUT                                          (0x02)
-#define GPIO_HIGH_SPEED_OUTPUT                                            (0x03)
+enum Define_GPIO_Mode
+{
+	GPIO_INIT_MODE          = 0x04,
+	GPIO_INTPUT_MODE        = 0x00,
+	GPIO_OUTPUT_LS_MODE     = 0x01,
+	GPIO_OUTPUT_MS_MODE     = 0x02,
+	GPIO_OUTPUT_HS_MODE     = 0x03,
+	GPIO_ANALOG_MODE        = 0x00,
+	GPIO_FLOAT_MODE         = 0x04,
+	GPIO_PULL_UP_DOWN_MODE  = 0x08,
+	GPIO_PUSH_PULL_MODE     = 0x00,
+	GPIO_OPEN_DRAIN_MODE    = 0x04,
+	GPIO_AF_PUSH_PULL_MODE  = 0x08,
+	GPIO_AF_OPEN_DRAIN_MODE = 0x0C,
+};
 
-/** gpio mode param mode */
-#define GPIO_INIT_MODE                                                    (0x00)
-#define GPIO_IN_ANALOG_MODE                                               (0x40)
-#define GPIO_IN_FLOAT_MODE                                                (0x44)
-#define GPIO_IN_PULL_DOWN_MODE                                            (0x48)
-#define GPIO_IN_PULL_UP_MODE                                              (0x88)
-#define GPIO_OUT_PUSH_PULL_MODE                                           (0x40)
-#define GPIO_OUT_OPEN_DRAIN_MODE                                          (0x44)
-#define GPIO_AF_OUT_PUSH_PULL_MODE                                        (0x48)
-#define GPIO_AF_OUT_OPEN_DRAIN_MODE                                       (0x4C)
-
-/** gpio mode param */
-#define GPIO_MODE_PARAM(dir, mode)                   ((uint8_t)((dir) | (mode)))
+/** gpio mode param */ 
+#define GPIO_MODE(dir, mode)                         ((uint8_t)((dir) | (mode)))
 
 /**
  *******************************************************************************
@@ -130,40 +130,68 @@ enum Define_GPIO_Cmd
     GPIO_CMD_READ,
 };
 
-/* Exported types ------------------------------------------------------------*/
-struct HalDeviceGPIO
+/**
+ *******************************************************************************
+ * @brief      define gpio device class
+ *******************************************************************************
+ */ 
+struct HalGPIODevice
 {
     uint8_t Port;
     uint8_t Pin;
+	uint8_t IO;
     uint8_t Mode;
 };
 
-struct GPIORWParam
+/**
+ *******************************************************************************
+ * @brief      define gpio rw param
+ *******************************************************************************
+ */ 
+struct MspGPIOParam
 {
     uint8_t Pos;
     uint8_t Num;
     uint16_t RWData;
 };
-    
+
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define gpio api
+ * @brief      define map api
  *******************************************************************************
  */ 
 extern hal_err_t Map_GPIO_Open(uint8_t);
 extern hal_err_t Map_GPIO_Close(uint8_t);
-extern hal_err_t Map_GPIO_Init(uint8_t, uint8_t, uint8_t);
+extern hal_err_t Map_GPIO_Init(uint8_t, uint8_t, uint8_t, uint8_t);
 extern hal_err_t Map_GPIO_Fini(uint8_t, uint8_t);
 extern hal_err_t Map_GPIO_Set(uint8_t, uint8_t);
 extern hal_err_t Map_GPIO_Clear(uint8_t, uint8_t);
-extern hal_err_t Map_GPIO_GetInputStatus(uint8_t, uint8_t, uint16_t*);
+extern hal_err_t Map_GPIO_GetIntputStatus(uint8_t, uint8_t, uint16_t*);
 extern hal_err_t Map_GPIO_GetOutputStatus(uint8_t, uint8_t, uint16_t*);
 extern hal_err_t Map_GPIO_Toggle(uint8_t, uint8_t);
 extern hal_err_t Map_GPIO_Write(uint8_t, uint8_t, uint16_t, uint8_t);
 extern hal_err_t Map_GPIO_Read(uint8_t, uint8_t, uint16_t*, uint8_t);
-extern hal_err_t Map_GPIO_Control(struct HalDeviceGPIO*, uint8_t, void*);
+extern hal_err_t Map_GPIO_Control(struct HalGPIODevice*, uint8_t, void*);
+
+/**
+ *******************************************************************************
+ * @brief      define hal api
+ *******************************************************************************
+ */ 
+extern __INLINE hal_err_t Hal_GPIO_Open(struct HalGPIODevice*);
+extern __INLINE hal_err_t Hal_GPIO_Close(struct HalGPIODevice*);
+extern __INLINE hal_err_t Hal_GPIO_Init(struct HalGPIODevice*);
+extern __INLINE hal_err_t Hal_GPIO_Fini(struct HalGPIODevice*);
+extern __INLINE hal_err_t Hal_GPIO_Set(struct HalGPIODevice*);
+extern __INLINE hal_err_t Hal_GPIO_Clear(struct HalGPIODevice*);
+extern __INLINE hal_err_t Hal_GPIO_GetIntputStatus(struct HalGPIODevice*, uint16_t*);
+extern __INLINE hal_err_t Hal_GPIO_GetOutputStatus(struct HalGPIODevice*, uint16_t*);
+extern __INLINE hal_err_t Hal_GPIO_Toggle(struct HalGPIODevice*);
+extern __INLINE hal_err_t Hal_GPIO_Write(struct HalGPIODevice*, struct MspGPIOParam*);
+extern __INLINE hal_err_t Hal_GPIO_Read(struct HalGPIODevice*, struct MspGPIOParam*);
+extern __INLINE hal_err_t Hal_GPIO_Control(struct HalGPIODevice*, uint8_t, void*);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -172,6 +200,6 @@ extern hal_err_t Map_GPIO_Control(struct HalDeviceGPIO*, uint8_t, void*);
 	
 #endif       /** end include define */
 
-/** @}*/     /** hal component interface  */
+/** @}*/     /** map gpio component */
 
 /**********************************END OF FILE*********************************/

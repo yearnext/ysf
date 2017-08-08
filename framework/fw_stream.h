@@ -111,7 +111,7 @@ struct Fw_Stream
  */
 struct FwFifoStream
 {
-    struct Fw_Stream stream;
+    struct Fw_Stream Stream;
     
     Fw_Fifo_t Fifo;
 };

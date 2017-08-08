@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-08-07                                                      *
- * @brief      mcu gpio component source files                                 *
+ * @brief      mcu gpio application component source files                     *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,14 +32,13 @@
  */
 
 /**
- * @defgroup mcu gpio component
+ * @defgroup map gpio component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "map_gpio.h"
-#include "comm_path.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
@@ -165,15 +164,6 @@ void _config(uint8_t port, uint8_t pin, uint8_t mode)
         _mode_set(&regTemp, offset, mode);
         GPIO->CRL = regTemp;
     }
-    
-    if(mode & GPIO_INIT_IS_HIHG)
-    {
-        _SET_BIT(GPIO->ODR, pin);
-    }
-    else
-    {
-        _CLR_BIT(GPIO->ODR, pin);
-    }
 }
 
 /**
@@ -186,7 +176,7 @@ void _config(uint8_t port, uint8_t pin, uint8_t mode)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _set( uint8_t port, uint8_t pin )
+void _set(uint8_t port, uint8_t pin)
 {
     GPIO_TypeDef *GPIO = STM32F1XX_PORT_ADDR(port);
     _SET_BIT(GPIO->BSRR, pin);
@@ -202,7 +192,7 @@ void _set( uint8_t port, uint8_t pin )
  *******************************************************************************
  */
 __STATIC_INLINE
-void _clr( uint8_t port, uint8_t pin )
+void _clr(uint8_t port, uint8_t pin)
 {
     GPIO_TypeDef *GPIO = STM32F1XX_PORT_ADDR(port);
     _SET_BIT(GPIO->BRR, pin);
@@ -219,7 +209,7 @@ void _clr( uint8_t port, uint8_t pin )
  *******************************************************************************
  */
 __STATIC_INLINE
-uint16_t _get_input(uint8_t port, uint8_t pin)
+uint16_t _get_intput(uint8_t port, uint8_t pin)
 {
     GPIO_TypeDef *GPIO = STM32F1XX_PORT_ADDR(port);
 
@@ -276,6 +266,20 @@ hal_err_t Map_GPIO_Open(uint8_t port)
 
 /**
  *******************************************************************************
+ * @brief       enable gpio
+ * @param       [in/out]  *dev                    gpio block
+ * @return      [in/out]  HAL_ERR_NONE            enable success
+ * @return      [in/out]  HAL_ERR_FAIL            enable failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Open(struct HalGPIODevice *dev)
+{
+    return Map_GPIO_Open(dev->Port);
+}
+
+/**
+ *******************************************************************************
  * @brief       disable gpio
  * @param       [in/out]  port                    gpio port
  * @return      [in/out]  HAL_ERR_NONE            disable success
@@ -294,24 +298,55 @@ hal_err_t Map_GPIO_Close(uint8_t port)
 
 /**
  *******************************************************************************
+ * @brief       disable gpio
+ * @param       [in/out]  *dev                    gpio block
+ * @return      [in/out]  HAL_ERR_NONE            disable success
+ * @return      [in/out]  HAL_ERR_FAIL            disable failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Close(struct HalGPIODevice *dev)
+{
+    return Map_GPIO_Close(dev->Port);
+}
+
+/**
+ *******************************************************************************
  * @brief       gpio init
  * @param       [in/out]  port                    gpio port
  * @param       [in/out]  pin                     gpio pin
- * @param       [in/out]  mode                    config mode
+ * @param       [in/out]  io                      config io mode
+ * @param       [in/out]  mode                    config gpio mode
  * @return      [in/out]  HAL_ERR_NONE            init success
  * @return      [in/out]  HAL_ERR_FAIL            init failed
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t mode)
+hal_err_t Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t io,uint8_t mode)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
     hal_assert(IS_PIN_MODE_INVAILD(mode))
-    
-    _config(port, pin, mode);
+
+	uint8_t setMode = io | setMode;
+	
+    _config(port, pin, setMode);
     
     return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init gpio
+ * @param       [in/out]  *dev                    gpio block
+ * @return      [in/out]  HAL_ERR_NONE            init success
+ * @return      [in/out]  HAL_ERR_FAIL            init failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Init(struct HalGPIODevice *dev)
+{
+    return Map_GPIO_Init(dev->Port, dev->Pin, dev->IO, dev->Mode);
 }
 
 /**
@@ -336,6 +371,20 @@ hal_err_t Map_GPIO_Fini(uint8_t port, uint8_t pin)
 
 /**
  *******************************************************************************
+ * @brief       deinit gpio
+ * @param       [in/out]  *dev                    gpio block
+ * @return      [in/out]  HAL_ERR_NONE            deinit success
+ * @return      [in/out]  HAL_ERR_FAIL            deinit failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Fini(struct HalGPIODevice *dev)
+{
+    return Map_GPIO_Fini(dev->Port, dev->Pin);
+}
+
+/**
+ *******************************************************************************
  * @brief       set gpio
  * @param       [in/out]  port                    gpio port
  * @param       [in/out]  pin                     gpio pin
@@ -352,6 +401,20 @@ hal_err_t Map_GPIO_Set(uint8_t port, uint8_t pin)
     _set(port, pin);
     
     return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       set gpio pin
+ * @param       [in/out]  *dev                    gpio block
+ * @return      [in/out]  HAL_ERR_NONE            set success
+ * @return      [in/out]  HAL_ERR_FAIL            set failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Set(struct HalGPIODevice *dev)
+{
+    return Map_GPIO_Set(dev->Port, dev->Pin);
 }
 
 /**
@@ -376,6 +439,20 @@ hal_err_t Map_GPIO_Clear(uint8_t port, uint8_t pin)
 
 /**
  *******************************************************************************
+ * @brief       clear gpio pin
+ * @param       [in/out]  *dev                    gpio block
+ * @return      [in/out]  HAL_ERR_NONE            clear success
+ * @return      [in/out]  HAL_ERR_FAIL            clear failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Clear(struct HalGPIODevice *dev)
+{
+    return Map_GPIO_Clear(dev->Port, dev->Pin);
+}
+
+/**
+ *******************************************************************************
  * @brief       get gpio input status
  * @param       [in/out]  port                    gpio port
  * @param       [in/out]  pin                     gpio pin
@@ -385,14 +462,29 @@ hal_err_t Map_GPIO_Clear(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_GPIO_GetInputStatus(uint8_t port, uint8_t pin, uint16_t *status)
+hal_err_t Map_GPIO_GetIntputStatus(uint8_t port, uint8_t pin, uint16_t *status)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
     
-    *status = _get_input(port, pin);
+    *status = _get_intput(port, pin);
     
     return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       get gpio pin intput status
+ * @param       [in/out]  *dev                    gpio block
+ * @param       [in/out]  *status                 gpio status
+ * @return      [in/out]  HAL_ERR_NONE            get success
+ * @return      [in/out]  HAL_ERR_FAIL            get failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_GetIntputStatus(struct HalGPIODevice *dev, uint16_t *status)
+{
+    return Map_GPIO_GetIntputStatus(dev->Port, dev->Pin, status);
 }
 
 /**
@@ -401,8 +493,8 @@ hal_err_t Map_GPIO_GetInputStatus(uint8_t port, uint8_t pin, uint16_t *status)
  * @param       [in/out]  port                    gpio port
  * @param       [in/out]  pin                     gpio pin
  * @param       [in/out]  *status                 gpio output status
- * @return      [in/out]  HAL_ERR_NONE            success
- * @return      [in/out]  HAL_ERR_FAIL            fail
+ * @return      [in/out]  HAL_ERR_NONE            get success
+ * @return      [in/out]  HAL_ERR_FAIL            get fail
  * @note        None
  *******************************************************************************
  */
@@ -418,11 +510,26 @@ hal_err_t Map_GPIO_GetOutputStatus(uint8_t port, uint8_t pin, uint16_t *status)
 
 /**
  *******************************************************************************
+ * @brief       get gpio pin output status
+ * @param       [in/out]  *dev                    gpio block
+ * @param       [in/out]  *status                 gpio status
+ * @return      [in/out]  HAL_ERR_NONE            get success
+ * @return      [in/out]  HAL_ERR_FAIL            get failed
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_GetOutputStatus(struct HalGPIODevice *dev, uint16_t *status)
+{
+    return Map_GPIO_GetOutputStatus(dev->Port, dev->Pin, status);
+}
+
+/**
+ *******************************************************************************
  * @brief       gpio output toggle
  * @param       [in/out]  port                    gpio port
  * @param       [in/out]  pin                     gpio pin
- * @return      [in/out]  HAL_ERR_NONE            success
- * @return      [in/out]  HAL_ERR_FAIL            fail
+ * @return      [in/out]  HAL_ERR_NONE            get success
+ * @return      [in/out]  HAL_ERR_FAIL            get fail
  * @note        None
  *******************************************************************************
  */
@@ -441,6 +548,20 @@ hal_err_t Map_GPIO_Toggle(uint8_t port, uint8_t pin)
     }
     
     return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       gpio output toggle
+ * @param       [in/out]  *dev                    gpio block
+ * @return      [in/out]  HAL_ERR_NONE            set success
+ * @return      [in/out]  HAL_ERR_FAIL            set fail
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Toggle(struct HalGPIODevice *dev)
+{
+    return Map_GPIO_Toggle(dev->Port, dev->Pin);
 }
 
 /**
@@ -486,6 +607,21 @@ hal_err_t Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num
 
 /**
  *******************************************************************************
+ * @brief       write gpio port data
+ * @param       [in/out]  *dev                    gpio block
+ * @param       [in/out]  *param                  set param
+ * @return      [in/out]  HAL_ERR_NONE            set success
+ * @return      [in/out]  HAL_ERR_FAIL            set fail
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Write(struct HalGPIODevice *dev, struct MspGPIOParam *param)
+{
+    return Map_GPIO_Write(dev->Port, param->Pos, param->RWData, param->Num);
+}
+
+/**
+ *******************************************************************************
  * @brief       read gpio port data
  * @param       [in/out]  port                    gpio port
  * @param       [in/out]  pos                     gpio pin pos
@@ -523,15 +659,31 @@ hal_err_t Map_GPIO_Read(uint8_t port, uint8_t pos, uint16_t *rdData, uint8_t num
 
 /**
  *******************************************************************************
- * @brief       gpio output toggle
- * @param       [in/out]  port                    gpio port
- * @param       [in/out]  pin                     gpio pin
- * @return      [in/out]  HAL_ERR_NONE            success
- * @return      [in/out]  HAL_ERR_FAIL            fail
+ * @brief       read gpio port data
+ * @param       [in/out]  *dev                    gpio block
+ * @param       [in/out]  *param                  read param
+ * @return      [in/out]  HAL_ERR_NONE            read success
+ * @return      [in/out]  HAL_ERR_FAIL            read fail
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Read(struct HalGPIODevice *dev, struct MspGPIOParam *param)
+{
+    return Map_GPIO_Read(dev->Port, param->Pos, &param->RWData, param->Num);
+}
+
+/**
+ *******************************************************************************
+ * @brief       gpio control
+ * @param       [in/out]  *dev                    gpio device block
+ * @param       [in/out]  cmd                     set gpio cmd
+ * @param       [in/out]  *param                  set param
+ * @return      [in/out]  HAL_ERR_NONE            set success
+ * @return      [in/out]  HAL_ERR_FAIL            set fail
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_GPIO_Control(struct HalDeviceGPIO *port, uint8_t cmd, void *param)
+hal_err_t Map_GPIO_Control(struct HalGPIODevice *port, uint8_t cmd, void *param)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(param));
@@ -572,7 +724,7 @@ hal_err_t Map_GPIO_Control(struct HalDeviceGPIO *port, uint8_t cmd, void *param)
         case GPIO_CMD_GET_INPUT:
         {
             uint16_t *status = (uint16_t *)param;
-            *status = _get_input(port->Port, port->Pin);
+            *status = _get_intput(port->Port, port->Pin);
             break;
         }
         case GPIO_CMD_GET_OUTPUT:
@@ -595,13 +747,13 @@ hal_err_t Map_GPIO_Control(struct HalDeviceGPIO *port, uint8_t cmd, void *param)
         }
         case GPIO_CMD_WRITE:
         {
-            struct GPIORWParam *WrParam = (struct GPIORWParam *)param;
+            struct MspGPIOParam *WrParam = (struct MspGPIOParam *)param;
             Map_GPIO_Write(port->Port, WrParam->Pos, WrParam->RWData, WrParam->Num);
             break;
         }
         case GPIO_CMD_READ:
         {
-            struct GPIORWParam *RdParam = (struct GPIORWParam *)param;
+            struct MspGPIOParam *RdParam = (struct MspGPIOParam *)param;
             Map_GPIO_Read(port->Port, RdParam->Pos, &RdParam->RWData, RdParam->Num);
             break;
         }
@@ -612,6 +764,23 @@ hal_err_t Map_GPIO_Control(struct HalDeviceGPIO *port, uint8_t cmd, void *param)
     return HAL_ERR_NONE;
 }
 
-/** @}*/     /** mcu interface */
+/**
+ *******************************************************************************
+ * @brief       gpio control
+ * @param       [in/out]  *dev                    gpio device block
+ * @param       [in/out]  cmd                     set gpio cmd
+ * @param       [in/out]  *param                  set param
+ * @return      [in/out]  HAL_ERR_NONE            set success
+ * @return      [in/out]  HAL_ERR_FAIL            set fail
+ * @note        This function type is inline
+ *******************************************************************************
+ */
+__INLINE hal_err_t Hal_GPIO_Control(struct HalGPIODevice *dev, uint8_t cmd, void *param)
+{
+    return Map_GPIO_Control(dev, cmd, param);
+}
+
+/** @}*/     /** map gpio component */
 
 /**********************************END OF FILE*********************************/
+
