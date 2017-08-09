@@ -114,6 +114,17 @@ extern "C"
  * @brief        debug framework task queue size
  *******************************************************************************
  */
+#define FW_TASK_MAX                                                          (8)
+
+#if (FW_TASK_MAX % 8) != 0
+#error Framework Task Max Num Config Error, At Line !
+#endif
+
+/**
+ *******************************************************************************
+ * @brief        debug framework task queue size
+ *******************************************************************************
+ */
 #define FW_TASK_QUEUE_SIZE                                     (2*FW_TASK_MAX+1)
 
 /**

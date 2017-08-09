@@ -49,8 +49,8 @@
  * @brief       check param
  *******************************************************************************
  */
-#define IS_INVAILD_TASK_ID(id)                             ((id) >= FW_TASK_MAX)
-#define IS_INVAILD_TASK_QUEUE_INDEX(index)       ((index) >= FW_TASK_QUEUE_SIZE)
+#define IS_TASK_PRIORITY_INVAILD(id)                       ((id) >= FW_TASK_MAX)
+#define IS_TASK_QUEUE_INDEX_INVAILD(index)       ((index) >= FW_TASK_QUEUE_SIZE)
 
 /**
  *******************************************************************************
@@ -74,46 +74,34 @@
  * @brief       framework task event block
  *******************************************************************************
  */
-struct _Fw_Task_Event
+struct Fw_Task_Event
 {
-    //< management component
-    struct _Fw_Task_Event *Next;
+    struct
+    {
+        struct Fw_Task_Event *Next;
+    }LinkList;
     
-    //< call back param
     void *Param;
     
-    //< trigger event
     uint32_t Event;
+    
+    struct Fw_Task *Task;
 };
 
 /**
  *******************************************************************************
- * @brief       framework task block
+ * @brief       framework task management block
  *******************************************************************************
  */
-struct _Fw_Task_Block
+struct Fw_TaskMgr
 {
-    //< task name
-    char *Name;
-
-    //< user data
-    void *UserData;
-    
-    //< task event queue
-    struct _Fw_Task_Event_Queue
+    struct
     {
-        //< event queue management component
-        struct _Fw_Task_Event *Head;
-        struct _Fw_Task_Event *Tail;
-        
-        uint8_t Num;
-    }EventQueue;
+        struct Fw_Task_Event *Head;
+        struct Fw_Task_Event *Tail;
+    }LinkList;
     
-    //< task id
-    uint8_t TaskId;
-    
-    //< task handle
-    struct _Fw_Task_Handle Handle;
+    uint8_t Num;
 };
 
 /* Private variables ---------------------------------------------------------*/
@@ -126,15 +114,12 @@ struct _Fw_Task_Block
 struct
 {
     //< task block
-    struct _Fw_Task_Block Task[FW_TASK_MAX];
-    
-//    uint8_t TaskReadyTab[CalUseMemorySize(FW_TASK_MAX)];
-//    uint32_t TaskReadyGroup;
-    
+    struct Fw_TaskMgr TaskMgrBlock[FW_TASK_MAX];
+        
     //< task queue
     struct
     {
-        struct _Fw_Task_Event Event[FW_TASK_QUEUE_SIZE];
+        struct Fw_Task_Event Event[FW_TASK_QUEUE_SIZE];
         
         uint8_t FreeSpaceTab[CalUseMemorySize(FW_TASK_QUEUE_SIZE)];
         uint32_t FreeSpaceGroup;
@@ -185,7 +170,7 @@ const uint8_t EventQueueBitMap[] =
  * @note        None
  *******************************************************************************
  */
-static void EmptyTaskHandle(void)
+static void Fw_EmptyTask_Handle(void)
 {
 }
 
@@ -197,24 +182,14 @@ static void EmptyTaskHandle(void)
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_Init(void)
+void Fw_Task_InitComponent(void)
 {
-    uint8_t i;
-    
     //< init task data
     memset(&TaskBlock, 0, sizeof(TaskBlock));
     
     //< init event queue
     memset(&TaskBlock.Queue.FreeSpaceTab, 0xFF, sizeof(TaskBlock.Queue.FreeSpaceTab));
     memset(&TaskBlock.Queue.FreeSpaceGroup, 0xFF, sizeof(TaskBlock.Queue.FreeSpaceGroup));
-    
-    //< init task handle 
-    for(i=0; i<FW_TASK_MAX; i++)
-    {
-        TaskBlock.Task[i].Handle.Type   = FW_SIMPLE_TASK;
-        TaskBlock.Task[i].Handle.Simple = EmptyTaskHandle;
-        TaskBlock.Task[i].TaskId        = i;
-    }
 }
 
 /**
@@ -228,19 +203,16 @@ void Fw_Task_Init(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Task_Create(uint8_t taskId, char *str, void *handle, enum _Fw_Task_Type type)
+fw_err_t Fw_Task_Init(struct Fw_Task *task, char *str, uint8_t priority, void *handle, enum _Fw_Task_Type type)
 {
     _FW_ASSERT(IS_PTR_NULL(str));
     _FW_ASSERT(IS_PTR_NULL(handle));
-    _FW_ASSERT(IS_INVAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_TASK_PRIORITY_INVAILD(priority));
 
-    struct _Fw_Task_Block *nowTask     = &TaskBlock.Task[taskId];
-    struct _Fw_Task_Handle *taskHandle = &TaskBlock.Task[taskId].Handle;
-
-    taskHandle->Check = handle;
-    taskHandle->Type  = type;
-    
-    nowTask->Name = str;
+    task->Handle.Config = handle;
+    task->Handle.Type   = type;
+    task->Str           = str;
+    task->Priority      = priority;
     
     return FW_ERR_NONE;
 }
@@ -294,7 +266,7 @@ void SetBitMap(uint8_t offset, uint8_t *tab, uint32_t *group)
  *******************************************************************************
  */
 __STATIC_INLINE
-struct _Fw_Task_Event *EventAlloc(void)
+struct Fw_Task_Event *EventAlloc(void)
 {
     uint8_t x = EventQueueBitMap[TaskBlock.Queue.FreeSpaceGroup];
     uint8_t y = EventQueueBitMap[TaskBlock.Queue.FreeSpaceTab[x]];
@@ -318,10 +290,10 @@ struct _Fw_Task_Event *EventAlloc(void)
  *******************************************************************************
  */
 __STATIC_INLINE
-void EventFree(struct _Fw_Task_Event *event)
+void EventFree(struct Fw_Task_Event *event)
 {
     uint32_t offset = (uint32_t)event - (uint32_t)&TaskBlock.Queue.Event;
-    offset = offset / sizeof(struct _Fw_Task_Event);
+    offset = offset / sizeof(struct Fw_Task_Event);
     
     ClrEvenrQueueUseFlag(offset, (uint8_t *)&TaskBlock.Queue.FreeSpaceTab, &TaskBlock.Queue.FreeSpaceGroup);
 }
@@ -337,34 +309,26 @@ void EventFree(struct _Fw_Task_Event *event)
  *******************************************************************************
  */
 __STATIC_INLINE
-void WriteTaskEventQueue(struct _Fw_Task_Block *task, void *message, uint32_t event)
+void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
 {
     //< 1. check param
-    struct _Fw_Task_Event *nowNode = EventAlloc();
-    struct _Fw_Task_Event_Queue *queue;
+    struct Fw_Task_Event *nowNode = EventAlloc();
+    struct Fw_TaskMgr *queue;
     
-    _FW_ASSERT(IS_PTR_NULL(task));
     _FW_ASSERT(IS_PTR_NULL(nowNode));
+    _FW_ASSERT(IS_TASK_PRIORITY_INVAILD(task->Priority));
     
     //< 2. init queue
-    queue = &task->EventQueue;
+    queue = &TaskBlock.TaskMgrBlock[task->Priority];
     
     //< 3. update event info
     nowNode->Event = event;
     nowNode->Param = message;
+    nowNode->Task  = task;
     
     //< 4. add event to queue
-//    if(queue->Head == NULL && queue->Tail == NULL)
-//    {
-//        queue->Tail = nowNode;
-//        queue->Head = nowNode;
-//    }   
-//    else
-//    {
-//        queue->Tail->Next = nowNode;
-//        queue->Tail       = nowNode;
-//    }
-    p_PushLinkListNode(queue, nowNode);
+    Fw_sLinkList_Push((struct Fw_sLinkList_Block *)&queue->LinkList,
+                      (struct Fw_sLinkList*)&nowNode->LinkList);
     
     //< 5. inc task wait handle event num
     if(queue->Num < 255)
@@ -383,33 +347,19 @@ void WriteTaskEventQueue(struct _Fw_Task_Block *task, void *message, uint32_t ev
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *event)
+fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event *event)
 {
     //< 1. check task is vaild
-    _FW_ASSERT(IS_PTR_NULL(task));
+    _FW_ASSERT(IS_TASK_PRIORITY_INVAILD(priority));
 
     //< 2. check queue is vaild
-    struct _Fw_Task_Event_Queue *queue = &task->EventQueue;
-    
-    _FW_ASSERT(IS_PTR_NULL(queue->Head));
-    _FW_ASSERT(IS_PTR_NULL(queue->Tail));
+    struct Fw_TaskMgr *queue = &TaskBlock.TaskMgrBlock[priority];
     
     //< 3. get event
-    struct _Fw_Task_Event *getEvent = NULL;
+    struct Fw_Task_Event *getEvent = NULL;
     
-//    if(queue->Head == queue->Tail)
-//    {
-//        getEvent = queue->Head;
-//        
-//        queue->Head = NULL;
-//        queue->Tail = NULL;
-//    }
-//    else
-//    {
-//        getEvent = queue->Head;
-//        queue->Head = getEvent->Next;
-//    }
-    p_PopLinkListNode(queue, getEvent);
+    Fw_sLinkList_Pop((struct Fw_sLinkList_Block *)&queue->LinkList,
+                     (struct Fw_sLinkList**)&getEvent->LinkList);
     
     //< 4. clear event count
     if(queue->Num > 0)
@@ -420,9 +370,9 @@ fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *
     //< 5. write to buffer
     event->Event = getEvent->Event;
     event->Param = getEvent->Param;
+    event->Task  = getEvent->Task;
     
     //< 6. free memory
-    getEvent->Next = NULL;
     EventFree(getEvent);
     
     return FW_ERR_NONE;
@@ -437,11 +387,11 @@ fw_err_t ReadTaskEventQueue(struct _Fw_Task_Block *task, struct _Fw_Task_Event *
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
+void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
 {
-    _FW_ASSERT(IS_INVAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_PTR_NULL(task));
 
-    WriteTaskEventQueue(&TaskBlock.Task[taskId], (void *)(&TaskBlock.Task[taskId]), event);
+    WriteTaskEventQueue(task, event, NULL);
 }
 
 /**
@@ -454,12 +404,12 @@ void Fw_Task_PostEvent(uint8_t taskId, uint32_t event)
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_PostMessage(uint8_t taskId, uint32_t event, void *message)
+void Fw_Task_PostMessage(struct Fw_Task *task, uint32_t event, void *message)
 {
-    _FW_ASSERT(IS_INVAILD_TASK_ID(taskId));
+    _FW_ASSERT(IS_PTR_NULL(task));
     _FW_ASSERT(IS_PTR_NULL(message));
     
-    WriteTaskEventQueue(&TaskBlock.Task[taskId], message, event);
+    WriteTaskEventQueue(task, event, message);
 }
 
 
@@ -473,9 +423,9 @@ void Fw_Task_PostMessage(uint8_t taskId, uint32_t event, void *message)
  *******************************************************************************
  */
 __STATIC_INLINE
-bool SleepTaskHandle(uint8_t taskId)
+bool Fw_SleepTask_Handle(uint8_t priority)
 {
-    if(taskId >= FW_TASK_MAX)
+    if(priority >= FW_TASK_MAX)
     {
         if(TaskBlock.FreeCount < TaskBlock.SetFreeCount)
         {
@@ -505,30 +455,21 @@ bool SleepTaskHandle(uint8_t taskId)
  *******************************************************************************
  */
 __STATIC_INLINE
-void TaskHandle(struct _Fw_Task_Block *task)
+void EventHandle(struct Fw_Task_Event *event)
 {
-    struct _Fw_Task_Event event;
-
-    if(ReadTaskEventQueue(task, &event) == FW_ERR_FAIL)
+    switch(event->Task->Handle.Type)
     {
-        task->EventQueue.Num = 0;
-        
-        return;
-    }
-    
-    switch(task->Handle.Type)
-    {
-        case FW_SIMPLE_TASK:
-            task->Handle.Simple();
+        case FW_SIMPLE_TYPE_TASK:
+            event->Task->Handle.Simple();
             break;
-        case FW_CALL_BACK_TASK:
-            task->Handle.CallBack(event.Param);
+        case FW_CALL_BACK_TYPE_TASK:
+            event->Task->Handle.CallBack(event->Param);
             break;
-        case FW_EVENT_HANDLE_TASK:
-            task->Handle.Event(event.Event);
+        case FW_EVENT_HANDLE_TYPE_TASK:
+            event->Task->Handle.Event(event->Event);
             break;
-        case FW_MESSAGE_HANDLE_TASK:
-            task->Handle.Message(event.Param, event.Event);
+        case FW_MESSAGE_HANDLE_TYPE_TASK:
+            event->Task->Handle.Message(event->Event, event->Param);
             break;
         default:
             break;
@@ -546,26 +487,33 @@ void TaskHandle(struct _Fw_Task_Block *task)
 void Fw_Task_Dispatch(void)
 {
     uint8_t i;
-    struct _Fw_Task_Block *task = NULL;
+    struct Fw_Task_Event *event = NULL;
 
     //< 1. find highest task
     for(i=0; i<FW_TASK_MAX; i++)
     {
-        if(TaskBlock.Task[i].EventQueue.Num > 0)
+        if(TaskBlock.TaskMgrBlock[i].Num > 0)
         {
-            task = &TaskBlock.Task[i];
+            ReadTaskEventQueue(i, event);
             break;
         }
     }
     
     //< 2. check task status
-    if(SleepTaskHandle(i) == true)
+    if(Fw_SleepTask_Handle(i) == true)
     {
         return;
     }
     
-    //< 3. task handle
-    TaskHandle(task);
+    //< 3. event handle
+    if(IS_PTR_NULL(event))
+    {
+        Fw_EmptyTask_Handle();
+    }
+    else
+    {
+        EventHandle(event);
+    }
 }
 
 #endif

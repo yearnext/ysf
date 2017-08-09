@@ -65,6 +65,7 @@ extern "C"
 #define FW_ERR_IO                                        (_ERR_IO)
 #define FW_ERR_BUG                                       (_ERR_BUG)
 #define FW_ERR_UNKNOW                                    (_ERR_UNKNOW)
+#define FW_ERR_OVERFLOW                                  (_ERR_OVERFLOW)
 
 typedef _err_t                                           fw_err_t;
     

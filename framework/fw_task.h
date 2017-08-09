@@ -77,7 +77,7 @@ extern "C"
  * @brief       task handle block
  *******************************************************************************
  */
-struct _Fw_Task_Handle
+struct Fw_Task_Handle
 {
     //< task handle
     union
@@ -85,19 +85,34 @@ struct _Fw_Task_Handle
         void (*Simple)(void);
         fw_err_t (*CallBack)(void*);
         fw_err_t (*Event)(uint16_t);
-        fw_err_t (*Message)(void*, uint32_t);
+        fw_err_t (*Message)(uint32_t, void*);
         
         void *Check;
+        void *Config;
     };
     
     //< task handle type
     enum _Fw_Task_Type
     {
-        FW_SIMPLE_TASK,
-        FW_CALL_BACK_TASK,
-        FW_EVENT_HANDLE_TASK,
-        FW_MESSAGE_HANDLE_TASK,
+        FW_SIMPLE_TYPE_TASK,
+        FW_CALL_BACK_TYPE_TASK,
+        FW_EVENT_HANDLE_TYPE_TASK,
+        FW_MESSAGE_HANDLE_TYPE_TASK,
     }Type;
+};
+
+/**
+ *******************************************************************************
+ * @brief       framework task block
+ *******************************************************************************
+ */
+struct Fw_Task
+{
+    char *Str;
+
+    struct Fw_Task_Handle Handle;
+    
+    uint8_t Priority;
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -108,10 +123,10 @@ struct _Fw_Task_Handle
  *******************************************************************************
  */
 #if USE_TASK_COMPONENT
-extern void Fw_Task_Init(void);
-extern fw_err_t Fw_Task_Create(uint8_t, char*, void*, enum _Fw_Task_Type);
-extern void Fw_Task_PostEvent(uint8_t, uint32_t);
-extern void Fw_Task_PostMessage(uint8_t, uint32_t, void*);
+extern void Fw_Task_InitComponent(void);
+extern fw_err_t Fw_Task_Init(struct Fw_Task*, char*, uint8_t, void*, enum _Fw_Task_Type);
+extern void Fw_Task_PostEvent(struct Fw_Task*, uint32_t);
+extern void Fw_Task_PostMessage(struct Fw_Task*, uint32_t, void*);
 extern void Fw_Task_Dispatch(void);
 #endif
 

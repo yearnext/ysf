@@ -51,6 +51,8 @@ extern "C"
 #include "fw_buffer.h"
 
 /* Exported macro ------------------------------------------------------------*/
+#define BLOCK_STREAM_BUFFER_SIZE                                           (128)
+
 /* Exported types ------------------------------------------------------------*/
 struct Fw_Stream;
 
@@ -98,7 +100,7 @@ struct _FwStreamDeviceOpera
 struct Fw_Stream
 {
     struct _FwStreamBufferOpera *Opera;
-    struct _FwStreamDeviceOpera Device;
+    struct _FwStreamDeviceOpera *Device;
 
     bool IsTxReady;
     bool IsRxReady;
@@ -109,11 +111,43 @@ struct Fw_Stream
  * @brief       define framework fifo stream
  *******************************************************************************
  */
-struct FwFifoStream
+struct Fw_FifoStream
 {
     struct Fw_Stream Stream;
     
     Fw_Fifo_t Fifo;
+    
+    void (*Callback)(void*);
+    void *Param;
+};
+
+/**
+ *******************************************************************************
+ * @brief       define framework fifo stream
+ *******************************************************************************
+ */
+struct Fw_BlockStreamBuffer
+{
+	struct
+	{
+		struct Fw_BlockStreamBuffer *Next;
+	}LinkList;
+
+	struct Fw_Queue Queue;
+};
+
+struct Fw_BlockStream
+{
+    struct Fw_Stream Stream;
+    
+    struct
+    {
+        struct Fw_BlockStreamBuffer *Head;
+        struct Fw_BlockStreamBuffer *Tail;
+    }LinkList;
+    
+    void (*Callback)(void*);
+    void *Param;
 };
 
 /**
@@ -125,6 +159,14 @@ typedef struct _FwStreamBufferOpera _StreamBufferOperaInitType;
 typedef struct _FwStreamDeviceOpera _StreamDeviceOperaInitType;
 
 /* Exported variables --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define stream opera
+ *******************************************************************************
+ */
+extern const _StreamBufferOperaInitType _StreamFifoOpera;
+extern const _StreamBufferOperaInitType _StreamBlockOpera;
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************

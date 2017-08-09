@@ -135,16 +135,17 @@ typedef enum FW_SIGNAL_STATE
  */
 struct Fw_Signal
 {
-    char             *String;
+    char             *Str;
     
     uint8_t          (*Scan)(void);
+    
+    struct Fw_Task   *Task;
     
     Fw_Signal_State  State;
     
     uint8_t          Filter;
     uint8_t          Value;
-    
-    uint8_t          TaskId;
+
     uint8_t          TriggerState;
     
     struct Fw_Timer  Timer;
@@ -159,7 +160,7 @@ struct Fw_Signal
  */
 #if USE_SIGNAL_COMPONENT
 extern fw_err_t Fw_Signal_Init(void);
-extern fw_err_t Fw_Signal_Create(struct Fw_Signal*, char*, uint8_t);
+extern fw_err_t Fw_Signal_Create(struct Fw_Signal*, char*, struct Fw_Task*);
 extern fw_err_t Fw_Signal_Start(struct Fw_Signal*, uint8_t, uint32_t);
 extern uint8_t Fw_Signal_GetNum(void);
 #endif

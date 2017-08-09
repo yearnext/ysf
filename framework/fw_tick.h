@@ -75,7 +75,7 @@ extern "C"
  * @brief       define tick param
  *******************************************************************************
  */
-#define TICK_PERIOD                                             CORE_TICK_PERIOD
+#define TICK_PERIOD                                               FW_TICK_PERIOD
 #define TICK_VALUE_MAX                                                UINT32_MAX
 
 /* Exported types ------------------------------------------------------------*/

@@ -43,6 +43,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_path.h"
+#include "fw_tick.h"
     
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -71,7 +72,7 @@ extern "C"
  * @brief       timer tick config
  *******************************************************************************
  */
-#define CAL_SET_TIME(time)                             ((time)/CORE_TICK_PERIOD)
+#define CAL_SET_TIME(time)                                  ((time)/TICK_PERIOD)
 
 /**
  *******************************************************************************
@@ -96,13 +97,16 @@ struct Fw_Timer
     
     char              *String;
 
+    void              (*Callback)(void*);
+    void              *CallbackParam;
+
+    struct Fw_Task    *Task;
+	void              *TaskParam;
+    uint32_t           TaskEvent;
+    
     uint32_t          InitTick;
     uint32_t          TimeOutTick;
     int16_t           Cycle;
-    
-    uint8_t           TaskId;
-    uint8_t           TaskEvent;
-	void              *TaskParam;
 };
 
 /* Exported constants --------------------------------------------------------*/
@@ -113,10 +117,12 @@ struct Fw_Timer
  *******************************************************************************
  */
 #if USE_TIMER_COMPONENT           
-extern fw_err_t Fw_Timer_Init(void);
-extern fw_err_t Fw_Timer_Create(struct Fw_Timer *, char *, uint8_t, uint8_t, void*);
-extern fw_err_t Fw_Timer_Start(struct Fw_Timer *, uint32_t, int16_t);
-extern fw_err_t Fw_Timer_Stop(struct Fw_Timer *);
+extern fw_err_t Fw_Timer_InitComponent(void);
+extern fw_err_t Fw_Timer_Init(struct Fw_Timer*, char*);
+extern fw_err_t Fw_Timer_SetEvent(struct Fw_Timer*, struct Fw_Task*, uint8_t, void*);
+extern fw_err_t Fw_Timer_SetCallback(struct Fw_Timer*, void (*)(void*), void*);
+extern fw_err_t Fw_Timer_Start(struct Fw_Timer*, uint32_t, int16_t);
+extern fw_err_t Fw_Timer_Stop(struct Fw_Timer*);
 extern fw_err_t Fw_Timer_Poll(void *);
 #endif
 

@@ -339,6 +339,128 @@ fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList *node)
 
 /**
  *******************************************************************************
+ * @brief       add node to single link list
+ * @param       [in/out]  *block       single block
+ * @param       [in/out]  *node        add node
+ * @return      [in/out]  FW_ERR_FAIL  add failed
+ * @return      [in/out]  FW_ERR_NONE  add success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block *block, struct Fw_sLinkList *node)
+{
+    _FW_ASSERT(IS_PTR_NULL(node));
+    _FW_ASSERT(IS_PTR_NULL(block));
+    
+    node->Next = NULL;                                                       
+                                                                               
+    if(block->Head == NULL && block->Tail == NULL)                         
+    {                                                                          
+        block->Tail = node;                                                  
+        block->Head = node;                                                  
+    }                                                                          
+    else                                                                       
+    {                                                                          
+        block->Tail->Next = node;                                            
+        block->Tail       = node;                                            
+    }  
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       delete node to single link list
+ * @param       [in/out]  *block       single block
+ * @param       [in/out]  **node       delete node
+ * @return      [in/out]  FW_ERR_FAIL  delete failed
+ * @return      [in/out]  FW_ERR_NONE  delete success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block *block, struct Fw_sLinkList **node)
+{
+    _FW_ASSERT(IS_PTR_NULL(node));
+    _FW_ASSERT(IS_PTR_NULL(block));
+    
+    *node = block->Head; 
+    
+    if(block->Head == block->Tail)                                         
+    {                                                                                                               
+        block->Tail = NULL;                                                  
+        block->Head = NULL;                                                  
+    }                                                                          
+    else                                                                       
+    {                                                                                                                     
+        block->Head = block->Head->Next;                                          
+    }                                                                          
+                                                                               
+    ((struct Fw_sLinkList *)(*node))->Next = NULL;                                                       
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       remove node to single link list
+ * @param       [in/out]  *block       single block
+ * @param       [in/out]  **node       remove node
+ * @return      [in/out]  FW_ERR_FAIL  remove failed
+ * @return      [in/out]  FW_ERR_NONE  remove success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_sLinkList_Remove(struct Fw_sLinkList_Block *block, struct Fw_sLinkList *node)
+{
+    _FW_ASSERT(IS_PTR_NULL(node));
+    _FW_ASSERT(IS_PTR_NULL(block));
+    
+    struct Fw_sLinkList *nowNode = block->Head;
+    struct Fw_sLinkList *lastNode = block->Tail;
+
+    while(1)
+    {
+        if(IS_PTR_NULL(nowNode))
+        {
+            return FW_ERR_FAIL;
+        }
+        
+        if(nowNode == node)
+        {
+            lastNode->Next = nowNode->Next;
+            node->Next = NULL;
+            
+            break;
+        }
+        
+        lastNode = nowNode;
+        nowNode = nowNode->Next;
+    }
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       check link list is empty
+ * @param       [in/out]  *block       link list management block address
+ * @return      [in/out]  true         the link list is empty
+ * @return      [in/out]  false        the link list is not empty
+ * @note        application in fifo link list
+ *******************************************************************************
+ */
+__INLINE bool Fw_sLinkList_IsEmpty(struct Fw_sLinkList_Block *block)
+{
+	if(block->Head == block->Tail && block->Head == NULL)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ *******************************************************************************
  * @brief       Init double link list
  * @param       [in/out]  *node        node address
  * @return      [in/out]  FW_ERR_FAIL  init failed
@@ -366,7 +488,7 @@ fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList *node)
  * @note        application in fifo link list
  *******************************************************************************
  */
-fw_err_t Fw_dLinkList_Push(struct Fw_LinkList_Block *block, struct Fw_dLinkList *node)
+fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block *block, struct Fw_dLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(block));
     _FW_ASSERT(IS_PTR_NULL(node));
@@ -401,7 +523,7 @@ fw_err_t Fw_dLinkList_Push(struct Fw_LinkList_Block *block, struct Fw_dLinkList 
  * @note        application in fifo link list
  *******************************************************************************
  */
-fw_err_t Fw_dLinkList_Pop(struct Fw_LinkList_Block *block, struct Fw_dLinkList **node)
+fw_err_t Fw_dLinkList_Pop(struct Fw_dLinkList_Block *block, struct Fw_dLinkList **node)
 {
     _FW_ASSERT(IS_PTR_NULL(block));
     _FW_ASSERT(IS_PTR_NULL(*node));
@@ -438,7 +560,7 @@ fw_err_t Fw_dLinkList_Pop(struct Fw_LinkList_Block *block, struct Fw_dLinkList *
  * @note        application in fifo link list
  *******************************************************************************
  */
-fw_err_t Fw_dLinkList_Remove(struct Fw_LinkList_Block *block, struct Fw_dLinkList *node)
+fw_err_t Fw_dLinkList_Remove(struct Fw_dLinkList_Block *block, struct Fw_dLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(block));
     _FW_ASSERT(IS_PTR_NULL(node));
@@ -489,6 +611,25 @@ fw_err_t Fw_dLinkList_Remove(struct Fw_LinkList_Block *block, struct Fw_dLinkLis
     }        
       
     return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       check link list is empty
+ * @param       [in/out]  *block       link list management block address
+ * @return      [in/out]  true         the link list is empty
+ * @return      [in/out]  false        the link list is not empty
+ * @note        application in fifo link list
+ *******************************************************************************
+ */
+__INLINE bool Fw_dLinkList_IsEmpty(struct Fw_dLinkList_Block *block)
+{
+	if(block->Head == block->Tail && block->Head == NULL)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 #endif

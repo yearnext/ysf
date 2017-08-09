@@ -65,7 +65,7 @@
  *******************************************************************************
  */
 #define SIGNAL_STATE_HANDLE(signal)                                            \
-    _ST(Fw_Task_PostMessage((signal)->TaskId,                                  \
+    _ST(Fw_Task_PostMessage((signal)->Task,                                    \
                             FW_SIGNAL_HANDLE_EVENT,                            \
                             (void *)(signal));)
 
@@ -83,6 +83,7 @@ struct Fw_Signal_Block
 };
 
 static struct Fw_Signal_Block SignalBlock;
+static struct Fw_Task Fw_Signal_Task;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -360,7 +361,7 @@ fw_err_t Fw_Signal_Init(void)
 {    
 	SignalBlock.Num = 0;
 
-	Fw_Task_Create(FW_SIGNAL_TASK, "Framework Signal Handle Task", (void *)Fw_Signal_Task_Handle, FW_CALL_BACK_TASK);
+	Fw_Task_Init(&Fw_Signal_Task, "Framework Signal Handle Task", 1, (void *)Fw_Signal_Task_Handle, FW_CALL_BACK_TYPE_TASK);
 	
     return FW_ERR_NONE;
 }
@@ -377,15 +378,16 @@ fw_err_t Fw_Signal_Init(void)
  * @note        NONE
  *******************************************************************************
  */
-fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, uint8_t taskId)
+fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, struct Fw_Task *task)
 {
     _FW_ASSERT(IS_PTR_NULL(signal));
 	_FW_ASSERT(IS_PTR_NULL(str));
-
+    _FW_ASSERT(IS_PTR_NULL(task));
+    
 	memset(&SignalBlock, 0, sizeof(struct Fw_Signal));
 	
-    signal->String = str;
-    signal->TaskId = taskId;
+    signal->Str  = str;
+    signal->Task = task;
 
 	SignalBlock.Num++;
 	
@@ -408,7 +410,8 @@ fw_err_t Fw_Signal_Start(struct Fw_Signal *signal, uint8_t triggerState, uint32_
 
 	signal->TriggerState = triggerState;
 	
-	Fw_Timer_Create(&signal->Timer, signal->String, FW_SIGNAL_TASK, FW_EVENT_NONE, (void *)signal);
+	Fw_Timer_Init(&signal->Timer, signal->Str);
+    Fw_Timer_SetCallback(&signal->Timer, Fw_Signal_Task_Handle, (void *)signal);
 	Fw_Timer_Start(&signal->Timer, tick, FW_TIMER_CYCLE_MODE);
 
 	return FW_ERR_NONE;

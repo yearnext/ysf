@@ -383,6 +383,14 @@ __INLINE hal_err_t Hal_Uart_Fini(struct HalUartDevice *dev)
     return Map_Uart_Fini(dev->Port);
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable uart tx
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_TxConnect(struct HalUartDevice *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -394,6 +402,14 @@ hal_err_t Hal_Uart_TxConnect(struct HalUartDevice *dev)
 	return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable uart tx
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_TxDisconnect(struct HalUartDevice *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -405,6 +421,14 @@ hal_err_t Hal_Uart_TxDisconnect(struct HalUartDevice *dev)
 	return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       enable uart rx
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_RxConnect(struct HalUartDevice *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -416,6 +440,14 @@ hal_err_t Hal_Uart_RxConnect(struct HalUartDevice *dev)
 	return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       disable uart rx
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_RxDisconnect(struct HalUartDevice *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -427,6 +459,14 @@ hal_err_t Hal_Uart_RxDisconnect(struct HalUartDevice *dev)
 	return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       get tx status
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_GetTxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -437,6 +477,14 @@ hal_err_t Hal_Uart_GetTxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
 	return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       clear tx flag
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_ClrTxCompletFlag(struct HalUartDevice *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -446,7 +494,14 @@ hal_err_t Hal_Uart_ClrTxCompletFlag(struct HalUartDevice *dev)
 	return HAL_ERR_NONE;
 }
 
-
+/**
+ *******************************************************************************
+ * @brief       get rx status
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_GetRxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -457,6 +512,14 @@ hal_err_t Hal_Uart_GetRxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
 	return HAL_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       clear uart rx status
+ * @param       [in/out]  *dev            device block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
 hal_err_t Hal_Uart_ClrRxCompletFlag(struct HalUartDevice *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
@@ -465,8 +528,6 @@ hal_err_t Hal_Uart_ClrRxCompletFlag(struct HalUartDevice *dev)
 
 	return HAL_ERR_NONE;
 }
-
-
 
 /**
  *******************************************************************************

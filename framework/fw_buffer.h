@@ -74,10 +74,10 @@ extern "C"
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define buffer type
+ * @brief       define framework buffer type
  *******************************************************************************
  */
-struct _Fw_RingBuffer
+struct Fw_RingBuffer
 {
     uint8_t  *Buffer;
     uint16_t Head;
@@ -86,29 +86,57 @@ struct _Fw_RingBuffer
     uint16_t Len;
 };
 
-typedef struct _Fw_RingBuffer Fw_Fifo_t;
+typedef struct Fw_RingBuffer Fw_Fifo_t;
 
 /**
  *******************************************************************************
  * @brief       define queue init type
  *******************************************************************************
  */
-typedef struct _QueueInitType
+typedef struct
 {
     uint8_t  *Buffer;
     uint16_t Size;
-}_QueueInitType, _FifoInitType;
+}_FifoInitType;
 
+
+/**
+ *******************************************************************************
+ * @brief       define framework queue type
+ *******************************************************************************
+ */
+struct Fw_Queue
+{
+    uint8_t  *Buffer;
+    uint16_t Tail;
+	uint16_t Head;
+    uint16_t Len;
+};
+
+/* Exported variables --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       ring buffer function api
  *******************************************************************************
  */
-extern fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t Fw_Buffer_Fini(struct _Fw_RingBuffer*);
-extern fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer*, uint16_t*);
-extern fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t Fw_Buffer_Init(struct Fw_RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t Fw_Buffer_Fini(struct Fw_RingBuffer*);
+extern fw_err_t Fw_Buffer_GetLen(struct Fw_RingBuffer*, uint16_t*);
+extern fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer*, uint8_t*, uint16_t);
+extern fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer*, uint8_t*, uint16_t);
+
+/**
+ *******************************************************************************
+ * @brief       queue function api
+ *******************************************************************************
+ */
+extern fw_err_t Fw_Queue_Init(struct Fw_Queue*, uint8_t*, uint16_t);
+extern fw_err_t Fw_Queue_Fini(struct Fw_Queue*);
+extern fw_err_t Fw_Queue_Write(struct Fw_Queue*, uint8_t*, uint16_t);
+extern fw_err_t Fw_Queue_Read(struct Fw_Queue*, uint8_t*, uint16_t);
+extern __INLINE fw_err_t Fw_Queue_GetFreeSize(struct Fw_Queue*, uint8_t*);
+extern __INLINE fw_err_t Fw_Queue_GetUseSize(struct Fw_Queue*, uint8_t*);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

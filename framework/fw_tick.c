@@ -39,6 +39,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fw_tick.h"
 #include "fw_task.h"
+#include "fw_timer.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +51,7 @@
  */
 #if USE_TICK_COMPONENT
 static volatile uint32_t SystemTick = 0;
+static struct Fw_Task Fw_Tick_Task;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -67,6 +69,8 @@ static volatile uint32_t SystemTick = 0;
 void Fw_Tick_Init(void)
 {
     SystemTick = 0;
+    
+    Fw_Task_Init(&Fw_Tick_Task, "Framework Tick Task", 0, Fw_Timer_Poll, FW_CALL_BACK_TYPE_TASK);
 }
 
 /**
@@ -81,7 +85,7 @@ void Fw_Tick_Handle(void)
 {
     SystemTick++;
     
-    Fw_Task_PostMessage(FW_TICK_TASK, FW_TICK_EVENT, (void *)&SystemTick);
+    Fw_Task_PostMessage(&Fw_Tick_Task, FW_TICK_EVENT, (void *)&SystemTick);
 }
 
 /**

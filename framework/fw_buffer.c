@@ -39,6 +39,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fw_buffer.h"
 #include "fw_debug.h"
+#include <string.h>
 
 /* Private define ------------------------------------------------------------*/
 #define HeapMemoryNodeEndAddr                                        ((void *)0)
@@ -59,7 +60,7 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize)
+fw_err_t Fw_Buffer_Init(struct Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(rbBuffer));
@@ -82,7 +83,7 @@ fw_err_t Fw_Buffer_Init(struct _Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t r
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Fini(struct _Fw_RingBuffer *rb)
+fw_err_t Fw_Buffer_Fini(struct Fw_RingBuffer *rb)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     
@@ -104,7 +105,7 @@ fw_err_t Fw_Buffer_Fini(struct _Fw_RingBuffer *rb)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer *rb, uint16_t *getSize)
+fw_err_t Fw_Buffer_GetLen(struct Fw_RingBuffer *rb, uint16_t *getSize)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(getSize));
@@ -123,7 +124,7 @@ fw_err_t Fw_Buffer_GetLen(struct _Fw_RingBuffer *rb, uint16_t *getSize)
  *******************************************************************************
  */
 __STATIC_INLINE 
-uint16_t RingBufferCanRead(struct _Fw_RingBuffer *rb)
+uint16_t RingBufferCanRead(struct Fw_RingBuffer *rb)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
 
@@ -139,7 +140,7 @@ uint16_t RingBufferCanRead(struct _Fw_RingBuffer *rb)
  *******************************************************************************
  */
 __STATIC_INLINE 
-uint16_t RingBufferCanWrite(struct _Fw_RingBuffer *rb)
+uint16_t RingBufferCanWrite(struct Fw_RingBuffer *rb)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     
@@ -157,7 +158,7 @@ uint16_t RingBufferCanWrite(struct _Fw_RingBuffer *rb)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
+fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(writeBuffer));
@@ -194,7 +195,7 @@ fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16
         return FW_ERR_NONE;
     }
 
-    return FW_ERR_FAIL;
+    return FW_ERR_OVERFLOW;
 }
 
 /**
@@ -208,7 +209,7 @@ fw_err_t Fw_Buffer_Write(struct _Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
+fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(readBuffer));
@@ -247,6 +248,137 @@ fw_err_t Fw_Buffer_Read(struct _Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t
 
     return FW_ERR_FAIL;
 }
+
+/**
+ *******************************************************************************
+ * @brief       init queue
+ * @param       [in/out]  *queue             queue block
+ * @param       [in/out]  *buffer            buffer
+ * @param       [in/out]  len                buffer size
+ * @return      [in/out]  FW_ERR_NONE        init success
+ * @return      [in/out]  FW_ERR_FAIL        init failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Queue_Init(struct Fw_Queue *queue, uint8_t *buffer, uint16_t len)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(buffer));
+    _FW_ASSERT(len == 0); 
+    
+    queue->Buffer = buffer;
+	queue->Len    = len;
+	queue->Head   = 0;
+    queue->Tail   = 0;
+	
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       deinit queue
+ * @param       [in/out]  *queue             queue block
+ * @return      [in/out]  FW_ERR_NONE        deinit success
+ * @return      [in/out]  FW_ERR_FAIL        deinit failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Queue_Fini(struct Fw_Queue *queue)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+
+    queue->Buffer = NULL;
+	queue->Len    = 0;
+	queue->Head   = 0;
+    queue->Tail   = 0;
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       write data to data queue
+ * @param       [in/out]  *queue             queue block
+ * @param       [in/out]  *buffer            buffer
+ * @param       [in/out]  len                buffer size
+ * @return      [in/out]  FW_ERR_NONE        write success
+ * @return      [in/out]  FW_ERR_FAIL        write failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Queue_Write(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(buffer));
+    _FW_ASSERT(size == 0); 
+
+	uint16_t freeSize = queue->Len - queue->Tail;
+	uint8_t *queueBuffer = &queue->Buffer[queue->Tail];
+	
+	if(size > freeSize)
+	{
+		return FW_ERR_OVERFLOW;
+	}
+	
+	memcpy(queueBuffer, buffer, size);
+
+	queue->Tail += freeSize;
+
+	return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       read data from data queue
+ * @param       [in/out]  *queue             queue block
+ * @param       [in/out]  *buffer            buffer
+ * @param       [in/out]  len                buffer size
+ * @return      [in/out]  FW_ERR_NONE        read success
+ * @return      [in/out]  FW_ERR_FAIL        read failed
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Queue_Read(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(buffer));
+    _FW_ASSERT(size == 0); 
+
+	uint16_t useSize = queue->Tail - queue->Head;
+	uint8_t *queueBuffer = &queue->Buffer[queue->Head];
+	
+	if(size > useSize)
+	{
+		return FW_ERR_FAIL;
+	}
+	
+	memcpy(buffer, queueBuffer, size);
+
+	queue->Head += useSize;
+
+	return FW_ERR_NONE;
+}
+
+__INLINE fw_err_t Fw_Queue_GetFreeSize(struct Fw_Queue *queue, uint8_t *num)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(num));
+
+	*num = queue->Len - queue->Tail;
+
+	return FW_ERR_NONE;
+}
+
+__INLINE fw_err_t Fw_Queue_GetUseSize(struct Fw_Queue *queue, uint8_t *num)
+{
+    _FW_ASSERT(IS_PTR_NULL(queue));
+    _FW_ASSERT(IS_PTR_NULL(num));
+
+	*num = queue->Tail - queue->Head;
+
+	return FW_ERR_NONE;
+}
+
 #endif
 
 /** @}*/     /** framework buffer component */

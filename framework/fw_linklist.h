@@ -89,13 +89,19 @@ struct Fw_sLinkList
     uint8_t             UserData[];
 };
 
+struct Fw_sLinkList_Block
+{
+    struct Fw_sLinkList *Head;
+    struct Fw_sLinkList *Tail;
+};
+
 struct Fw_dLinkList
 {
     struct Fw_dLinkList *Next;
     struct Fw_dLinkList *Last;
 };
 
-struct Fw_LinkList_Block
+struct Fw_dLinkList_Block
 {
     struct Fw_dLinkList *Head;
     struct Fw_dLinkList *Tail;
@@ -109,6 +115,11 @@ struct Fw_LinkList_Block
  *******************************************************************************
  */
 #if USE_SINGLE_LIST_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       the old api
+ *******************************************************************************
+ */
 extern bool SingleListWalk(void**, bool (*)(void**, void**, void**), void**, void**);
 extern bool SingleListModuleAdd(void**, void**, void**);
 extern bool SingleListModuleDel(void**, void**, void**);
@@ -120,11 +131,27 @@ extern fw_err_t AddNodeToSingleList(void**, void**);
 extern fw_err_t DelNodeFromSingleList(void**, void**);
 extern fw_err_t IsInSingleList(void**, void**);
 
+/**
+ *******************************************************************************
+ * @brief       the new api apply single link list
+ *******************************************************************************
+ */
 extern fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList*);
+extern fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block*, struct Fw_sLinkList*);
+extern fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block*, struct Fw_sLinkList**);
+extern fw_err_t Fw_sLinkList_Remove(struct Fw_sLinkList_Block*, struct Fw_sLinkList*);
+
+/**
+ *******************************************************************************
+ * @brief       the new api apply double link list
+ *******************************************************************************
+ */
 extern fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList*);
-extern fw_err_t Fw_dLinkList_Push(struct Fw_LinkList_Block*, struct Fw_dLinkList*);
-extern fw_err_t Fw_dLinkList_Pop(struct Fw_LinkList_Block*, struct Fw_dLinkList**);
-extern fw_err_t Fw_dLinkList_Remove(struct Fw_LinkList_Block*, struct Fw_dLinkList*);
+extern fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block*, struct Fw_dLinkList*);
+extern fw_err_t Fw_dLinkList_Pop(struct Fw_dLinkList_Block*, struct Fw_dLinkList**);
+extern fw_err_t Fw_dLinkList_Remove(struct Fw_dLinkList_Block*, struct Fw_dLinkList*);
+extern __INLINE bool Fw_sLinkList_IsEmpty(struct Fw_sLinkList_Block *block);
+extern __INLINE bool Fw_dLinkList_IsEmpty(struct Fw_dLinkList_Block *block);
 
 #endif
 

@@ -70,6 +70,7 @@ typedef enum
     
     _ERR_BUG,
     _ERR_UNKNOW,
+    _ERR_OVERFLOW,
 }_err_t;
 
 #ifdef __cplusplus

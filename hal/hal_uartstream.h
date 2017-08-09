@@ -50,16 +50,22 @@ extern "C"
 /* Exported types ------------------------------------------------------------*/
 struct Fw_UartStream
 {
-    struct FwFifoStream Stream;
+    struct Fw_FifoStream TxStream;
+    struct Fw_FifoStream RxStream;
     struct HalUartDevice Device;
     struct Fw_Timer Timer;
-    
-    uint8_t State;
-	uint8_t TaskId;
+
+    enum
+    {
+        UART_STREAM_INIT_STATE,
+        UART_STREAM_SEND_STATE,
+        UART_STREAM_SLEEP_STATE,
+        UART_STREAM_COMPLET_STATE,
+    }State;
 };
     
 /* Exported constants --------------------------------------------------------*/
-extern const struct _FwStreamDeviceOpera *UartStreamDevice;
+extern const struct _FwStreamDeviceOpera UartStreamDevice;
 
 /* Exported functions --------------------------------------------------------*/
 

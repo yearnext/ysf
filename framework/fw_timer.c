@@ -93,36 +93,73 @@ struct Fw_Timer_Block
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Timer_Init(void)
+fw_err_t Fw_Timer_InitComponent(void)
 {
     memset(&TimerBlock, 0, sizeof(TimerBlock));
-    
-    Fw_Task_Create(FW_TICK_TASK, "Framework Timer Task", (void *)Fw_Timer_Poll, FW_CALL_BACK_TASK);
     
     return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       create timer function
+ * @brief       init timer function
  * @param       [in/out]  *timer         timer block
  * @param       [in/out]  *str           timer name
+ * @return      [in/out]  FW_ERR_NONE    create success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Timer_Init(struct Fw_Timer *timer, char *str)
+{
+    _FW_ASSERT(IS_PTR_NULL(timer));
+    
+    Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,
+                        (struct Fw_dLinkList*)&timer->LinkList);
+    
+    memset(timer, 0, sizeof(timer));
+    
+    timer->String = str;
+	
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       set timer event
+ * @param       [in/out]  *timer         timer block
  * @param       [in/out]  taskiId        post task id
  * @param       [in/out]  taskEvent      post task event
  * @return      [in/out]  FW_ERR_NONE    create success
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Timer_Create(struct Fw_Timer *timer, char *str, uint8_t taskId, uint8_t taskEvent, void *taskParam)
+fw_err_t Fw_Timer_SetEvent(struct Fw_Timer *timer, struct Fw_Task *task, uint8_t taskEvent, void *taskParam)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     
-    timer->String = str;
-    timer->TaskId = taskId;
+    timer->Task      = task;
     timer->TaskEvent = taskEvent;
     timer->TaskParam = taskParam;
-	
-    Fw_dLinkList_Init((struct Fw_dLinkList*)&timer->LinkList);
+
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       set timer call back
+ * @param       [in/out]  *timer         timer block
+ * @param       [in/out]  taskiId        post task id
+ * @param       [in/out]  taskEvent      post task event
+ * @return      [in/out]  FW_ERR_NONE    create success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Timer_SetCallback(struct Fw_Timer *timer, void (*callback)(void*), void *callbackParam)
+{
+    _FW_ASSERT(IS_PTR_NULL(timer));
+    
+    timer->CallbackParam = callbackParam;
+	timer->Callback      = callback;
     
     return FW_ERR_NONE;
 }
@@ -145,7 +182,7 @@ fw_err_t Fw_Timer_Start(struct Fw_Timer *timer, uint32_t tick, int16_t count)
     timer->TimeOutTick = tick + Fw_Tick_GetInfo();
     timer->Cycle       = count;
     
-    Fw_dLinkList_Push((struct Fw_LinkList_Block *)&TimerBlock.LinkList,\
+    Fw_dLinkList_Push((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,\
                       (struct Fw_dLinkList*)&timer->LinkList);
 
     TimerBlock.Num++;
@@ -165,10 +202,10 @@ fw_err_t Fw_Timer_Stop(struct Fw_Timer *timer)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     
-    Fw_dLinkList_Remove((struct Fw_LinkList_Block *)&TimerBlock.LinkList, \
+    Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList, \
                         (struct Fw_dLinkList*)&timer->LinkList);
     
-    timer->Cycle = 0;
+    memset(timer, 0, sizeof(struct Fw_Timer));
     
     TimerBlock.Num--;
     
@@ -243,11 +280,8 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
         
         //< 4. detect timer is trigger
         if(timer->TimeOutTick <= tick)
-        {
-            //< 5. post event to task
-			Fw_Task_PostMessage(timer->TaskId, timer->TaskEvent, timer->TaskParam);
-			
-            //< 6. detect timer is active
+        {			
+            //< 5. detect timer is active
             if(timer->Cycle == FW_TIMER_CYCLE_MODE || --timer->Cycle)
             {
                 timer->TimeOutTick = timer->InitTick + Fw_Tick_GetInfo();
@@ -256,9 +290,24 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
             {
                 TimerDelete(timer);
             }
+            
+            //< 6. called call back function
+            if(!IS_PTR_NULL(timer->Callback))
+            {
+                timer->Callback(timer->CallbackParam);
+            }
+            
+            //< 7. post event to task
+            if(!IS_PTR_NULL(timer->Task))
+            {
+                Fw_Task_PostMessage(timer->Task, timer->TaskEvent, timer->TaskParam);
+            }
+            
+            //< 8. clear timer block
+            memset(timer, 0, sizeof(struct Fw_Timer));
         }
         
-        //< 7. poll timer link list
+        //< 9. poll timer link list
         timer = timer->LinkList.Next;
     }
     
