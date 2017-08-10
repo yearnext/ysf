@@ -72,7 +72,14 @@ extern "C"
  * @note        0                       disable
  *******************************************************************************
  */
-#define USE_FRAMEWORK_COMPONENT_LIBRARY                                      (1)
+#define USE_FRAMEWORK_COMPONENT_LIBRARY                                      (0)
+
+/**
+ *******************************************************************************
+ * @brief       use std library
+ *******************************************************************************
+ */
+#define USE_STD_LIBRARY
 
 /**
  *******************************************************************************
@@ -80,19 +87,17 @@ extern "C"
  *******************************************************************************
  */
 #if USE_FRAMEWORK_COMPONENT_LIBRARY
-#define USE_FRAMEWORK_DEBUG                                       
-#define USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT             
-
+#define USE_FRAMEWORK_DEBUG                                                  
 #define USE_FRAMEWORK_BUFFER_COMPONENT 
-#define USE_FRAMEWORK_DEBUG_COMPONENT
-#define USE_FRAMEWORK_EVENT_COMPONENT     
+#define USE_FRAMEWORK_DEBUG_COMPONENT    
 #define USE_FRAMEWORK_LINK_LIST_COMPONENT           
 #define USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT          
 #define USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT                               
 #define USE_FRAMEWORK_TICK_COMPONENT                                      
 #define USE_FRAMEWORK_TIMER_COMPONENT                                      
 #define USE_FRAMEWORK_TASK_COMPONENT                                         
-#define USE_FRAMEWORK_PT_COMPONENT                                          
+#define USE_FRAMEWORK_PT_COMPONENT     
+#define USE_FRAMEWORK_STREAM_COMPONENT
 #endif
 
 /**

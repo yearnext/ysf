@@ -59,7 +59,7 @@ extern "C"
  */
 #ifdef USE_FRAMEWORK_BUFFER_COMPONENT
     #define USE_BUFFER_COMPONENT                                             (1)
-  
+
 /**
  *******************************************************************************
  * @brief       user config flags

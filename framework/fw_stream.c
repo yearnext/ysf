@@ -40,17 +40,28 @@
 #include <string.h>
 #include "fw_stream.h"
 #include "fw_debug.h"
+#include "fw_task.h"
 #include "fw_memory.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       stream task management block
+ *******************************************************************************
+ */
+#if USE_STREAM_COMPONENT
+static struct Fw_Task StreamTask;
+#endif
+
 /* Exported variables --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       fifo stream opera function
  *******************************************************************************
  */
+#if USE_STREAM_COMPONENT
 static fw_err_t _FifoStreamOpera_Init(struct Fw_Stream*, void*);
 static fw_err_t _FifoStreamOpera_Fini(struct Fw_Stream*);
 static fw_err_t _FifoStreamOpera_Write(struct Fw_Stream*, uint8_t*, uint8_t);
@@ -61,13 +72,12 @@ static fw_err_t _BlockStreamOpera_Fini(struct Fw_Stream*);
 static fw_err_t _BlockStreamOpera_Write(struct Fw_Stream*, uint8_t*, uint8_t);
 static fw_err_t _BlockStreamOpera_Read(struct Fw_Stream*, uint8_t*, uint8_t);
 
-/* Private functions ---------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       framework stream opera block
  *******************************************************************************
  */
-const _StreamBufferOperaInitType _StreamFifoOpera = 
+const _StreamBufferOperaInitType StreamFifoOpera = 
 {
     .Init  = _FifoStreamOpera_Init,
     .Fini  = _FifoStreamOpera_Fini,
@@ -76,7 +86,7 @@ const _StreamBufferOperaInitType _StreamFifoOpera =
     .Read  = _FifoStreamOpera_Read,
 };
   
-const _StreamBufferOperaInitType _StreamBlockOpera = 
+const _StreamBufferOperaInitType StreamBlockOpera = 
 {
     .Init  = _BlockStreamOpera_Init,
     .Fini  = _BlockStreamOpera_Fini,
@@ -84,8 +94,68 @@ const _StreamBufferOperaInitType _StreamBlockOpera =
     .Write = _BlockStreamOpera_Write,
     .Read  = _BlockStreamOpera_Read,
 };
+#endif
 
+/* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_STREAM_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       stream task handle
+ * @param       [in/out]  event           trigger event
+ * @param       [in/out]  *param          param
+ * @return      [in/out]  FW_ERR_NONE     init finish
+ * @note        None
+ *******************************************************************************
+ */
+static fw_err_t Fw_StreamTask_Handle(uint32_t event, void *param)
+{
+    _FW_ASSERT(IS_PTR_NULL(param));
+    
+    struct Fw_Stream *stream = (struct Fw_Stream *)param;
+    
+    if(!IS_PTR_NULL(stream->Callback))
+    {
+        stream->Callback(event, param);
+    }
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init stream component
+ * @param       [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE     init finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Stream_InitComponent(void)
+{
+    Fw_Task_Init(&StreamTask, 
+                 "Framework Stream Task", 
+                 1, 
+                 (void *)Fw_StreamTask_Handle,
+                 FW_MESSAGE_HANDLE_TYPE_TASK);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       post rec purse event
+ * @param       [in/out]  void
+ * @return      [in/out]  FW_ERR_NONE     init finish
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Stream_PostRxEvent(struct Fw_Stream *stream)
+{
+    Fw_Task_PostMessage(&StreamTask, FW_STREAM_RX_EVENT, (void *)stream);
+    
+    return FW_ERR_NONE;
+}
+
 /**
  *******************************************************************************
  * @brief       init stream block
@@ -99,8 +169,9 @@ const _StreamBufferOperaInitType _StreamBlockOpera =
  */
 fw_err_t Fw_Stream_Init(struct Fw_Stream *stream, 
                         _StreamBufferOperaInitType *opera, 
-                        _StreamDeviceOperaInitType *device, 
-                        void *param)
+                        _StreamDeviceOperaInitType *device,
+                        void *param, 
+                        void (*Callback)(uint8_t, void*))
 {
     //< detect stream param
     _FW_ASSERT(IS_PTR_NULL(stream));
@@ -116,18 +187,21 @@ fw_err_t Fw_Stream_Init(struct Fw_Stream *stream,
     //< set stream buffer opera
     stream->Opera = opera;
     
-    //< init stream buffer
+    //< set srteam call back
+    stream->Callback = Callback;
+    
+    //< init memory
     if(!IS_PTR_NULL(stream->Opera->Init))
     {
         stream->Opera->Init(stream, param);
     }
-        
-    //< init stream hardware
+    
+    //< init hardware
     if(!IS_PTR_NULL(stream->Device->Init))
     {
         stream->Device->Init(stream);
     }
-    
+
     return FW_ERR_NONE;
 }
 
@@ -174,6 +248,11 @@ fw_err_t Fw_Stream_TxConnect(struct Fw_Stream *stream)
     
     stream->IsTxReady = true;
     
+    if(!IS_PTR_NULL(stream->Device->Tx_Connect))
+    {
+        stream->Device->Tx_Connect(stream);
+    }
+    
     return FW_ERR_NONE;
 }
 
@@ -190,6 +269,11 @@ fw_err_t Fw_Stream_TxDisconnect(struct Fw_Stream *stream)
     _FW_ASSERT(IS_PTR_NULL(stream));
     
     stream->IsTxReady = false;
+    
+    if(!IS_PTR_NULL(stream->Device->Tx_Disconnect))
+    {
+        stream->Device->Tx_Disconnect(stream);
+    }
     
     return FW_ERR_NONE;
 }
@@ -208,6 +292,11 @@ fw_err_t Fw_Stream_RxConnect(struct Fw_Stream *stream)
     
     stream->IsRxReady = true;
     
+    if(!IS_PTR_NULL(stream->Device->Rx_Connect))
+    {
+        stream->Device->Rx_Connect(stream);
+    }
+    
     return FW_ERR_NONE;
 }
 
@@ -224,6 +313,11 @@ fw_err_t Fw_Stream_RxDisconnect(struct Fw_Stream *stream)
     _FW_ASSERT(IS_PTR_NULL(stream));
     
     stream->IsRxReady = true;
+    
+    if(!IS_PTR_NULL(stream->Device->Rx_Disconnect))
+    {
+        stream->Device->Rx_Disconnect(stream);
+    }
     
     return FW_ERR_NONE;
 }
@@ -544,6 +638,7 @@ static fw_err_t _BlockStreamOpera_Read(struct Fw_Stream *stream, uint8_t *buffer
 	
     return FW_ERR_NONE;
 }
+#endif
 
 /** @}*/     /** framework stream component */
 

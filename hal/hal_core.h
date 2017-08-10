@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_path.h                                                      *
+ * @file       hal_core.h                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-03-07                                                      *
- * @brief      hal path head files                                             *
+ * @brief      hal core interface path head files                              *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup path
+ * @defgroup hal core interface
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HAL_PATH_H__
-#define __HAL_PATH_H__
+#ifndef __HAL_CORE_H__
+#define __HAL_CORE_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -49,6 +49,18 @@ extern "C"
 #include "hal_conf.h"
 #include "hal_type.h"
 
+#ifdef USE_MCU_GPIO_COMPONENT
+#include "map_gpio.h"
+#endif
+    
+#ifdef USE_MCU_TIMER_COMPONENT
+#include "map_timer.h"
+#endif
+    
+#ifdef USE_MCU_USRT_COMPONENT
+#include "map_uart.h"
+#endif
+    
 /* Exported macro ------------------------------------------------------------*/ 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

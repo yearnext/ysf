@@ -39,9 +39,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fw_debug.h"
 #include "fw_tick.h"
-#include "fw_event.h"
 #include "fw_timer.h"
 #include "fw_stream.h"
+#include "hal_uartstream.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -65,13 +65,28 @@
 static uint8_t TxBuffer[FW_DEBUG_BUFFER_SIZE];
 static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
 static uint8_t BufferCache[FW_DEBUG_BUFFER_SIZE];
+
+static struct Fw_UartStream DebugStream = 
+{
+    .Device.Port = MCU_UART_1,
+    .Device.Baud = 115200,
+    .Device.Parity = MCU_UART_PARTY_NONE,
+    .Device.StopBits = MCU_UART_STOP_BITS_1,
+    .Device.WordLen = MCU_UART_WORD_LEN_8B,
+
+    .Device.IsEnableRx = false,
+    .Device.IsEnableTx = false,
+    
+    .Device.RxCallback.Callback = Hal_UartStream_Receive,
+    .Device.RxCallback.Param    = (void *)&DebugStream,
+
+    .Device.TxCallback.Callback = Hal_UartStream_Send,
+    .Device.TxCallback.Param    = (void *)&DebugStream,
+};
+
 #endif
 
 /* Exported variables --------------------------------------------------------*/
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-struct Fw_Stream DebugStream;
-#endif
-
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
@@ -85,32 +100,29 @@ struct Fw_Stream DebugStream;
  */
 void Fw_Debug_InitComponent(void)
 {
-//    struct _FwStreamCallback TxCallback;
-//	struct _FwStreamCallback RxCallback;
-//    struct _FwStreamDevice   Device;
-//    _QueueInitType TxFifo;
-//    _QueueInitType RxFifo;
-//    
-//	memset(&DebugStream, 0, sizeof(DebugStream));
-
-//    TxCallback.Connect    = DebugTxConnectHandle;
-//    TxCallback.Disconnect = DebugTxDisconnectHandle;
-//    TxCallback.InOut      = DebugTxOutputHandle;
-
-//    RxCallback.Connect    = DebugRxConnectHandle;
-//    RxCallback.Disconnect = DebugRxDisconnectHandle;
-//    RxCallback.InOut      = DebugRxIntputHandle;
-
-//    Device.Fini = DebugDeviceFiniHandle;
-//    Device.Init = DebugDeviceInitHandle;
-//    
-//    TxFifo.Buffer = TxBuffer;
-//    TxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
-//    RxFifo.Buffer = RxBuffer;
-//    RxFifo.Size   = FW_DEBUG_BUFFER_SIZE;
-//        
-//    Fw_Stream_Init(&DebugStream, &Device, &TxCallback, &RxCallback);
-//    Fw_Stream_Enable(&DebugStream, &TxFifo, &RxFifo);
+    //< init fifo
+    _FifoInitType TxFifo = {TxBuffer, FW_DEBUG_BUFFER_SIZE};
+    _FifoInitType RxFifo = {RxBuffer, FW_DEBUG_BUFFER_SIZE};
+    
+    //< init tx stream
+    Fw_Stream_Init((struct Fw_Stream *)&DebugStream.TxStream, 
+                   (struct _FwStreamBufferOpera *)&StreamFifoOpera, 
+                   (struct _FwStreamDeviceOpera *)&UartStreamDeviceOpera, 
+                   (void *)&TxFifo, 
+                   NULL);
+    
+    Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.TxStream);
+    Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.TxStream);
+    
+    //< init rx stream
+    Fw_Stream_Init((struct Fw_Stream *)&DebugStream.RxStream, 
+                   (struct _FwStreamBufferOpera *)&StreamFifoOpera, 
+                   (struct _FwStreamDeviceOpera *)&UartStreamDeviceOpera, 
+                   (void *)&RxFifo, 
+                   NULL);
+    
+    Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.RxStream);
+    Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.RxStream);
 }
 
 /**
@@ -155,22 +167,15 @@ uint8_t Fw_Debug_FillHeadInfo(uint8_t *buffer, enum _DEBUG_MESSAGE_TYPE type)
  */
 void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
 {
-//	uint8_t len = 0;
-//    va_list args;
-//	
-//    va_start(args, str);
-//    len = Fw_Debug_FillHeadInfo(BufferCache, type);
-//    len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);
-//    va_end(args);
-//    
-//    DebugStream.Opera->Write(&DebugStream.TxFifo, BufferCache, len);
-//    
-//    if(DebugStream.IsTxReady == false)
-//    {
-//        DebugStream.IsTxReady = true;
-//        
-//        DebugStream.TxCallback.InOut(&DebugStream);
-//    }
+	uint8_t len = 0;
+    va_list args;
+	
+    va_start(args, str);
+    len = Fw_Debug_FillHeadInfo(BufferCache, type);
+    len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);
+    va_end(args);
+    
+    Fw_Stream_Write((struct Fw_Stream *)&DebugStream.TxStream, BufferCache, len);
 }
 
 /**

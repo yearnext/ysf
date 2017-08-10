@@ -79,6 +79,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_GPIO_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable gpio
@@ -257,8 +258,7 @@ uint16_t _get_output(uint8_t port, uint8_t pin)
 hal_err_t Map_GPIO_Open(uint8_t port)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
-
-    _close(port);
+//    _close(port);
     _open(port);
     
     return HAL_ERR_NONE;
@@ -328,7 +328,7 @@ hal_err_t Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t io,uint8_t mode)
     hal_assert(IS_PIN_NUM_INVAILD(pin));
     hal_assert(IS_PIN_MODE_INVAILD(mode))
 
-	uint8_t setMode = io | setMode;
+	uint8_t setMode = io | mode;
 	
     _config(port, pin, setMode);
     
@@ -779,6 +779,8 @@ __INLINE hal_err_t Hal_GPIO_Control(struct HalGPIODevice *dev, uint8_t cmd, void
 {
     return Map_GPIO_Control(dev, cmd, param);
 }
+
+#endif
 
 /** @}*/     /** map gpio component */
 

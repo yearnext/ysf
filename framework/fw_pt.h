@@ -46,10 +46,9 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_TIMER_COMPONENT_PATH
-#include _FW_MEMORY_COMPONENT_PATH
+#include "fw_path.h"
+#include "fw_timer.h"
+#include "fw_task.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -79,35 +78,21 @@ extern "C"
  *******************************************************************************
  */ 
 #define _PT_THREAD(func_name)     fw_err_t func_name(void *ptTask, uint16_t evt)
-    
-/**
- *******************************************************************************
- * @brief      protothreads handler function type
- *******************************************************************************
- */ 
-#define _PT_THREAD_NAME          fw_err_t (*pt_thread)(void*, uint16_t)
        
-/**
- *******************************************************************************
- * @brief      protothreads deinit functon
- *******************************************************************************
- */    
-#define _pt_deinit()            (pt->State = 0)
-
 /**
  *******************************************************************************
  * @brief      protothreads begin functon
  *******************************************************************************
  */                              
-#define _pt_begin()              struct ProtoThreads *pt = (struct ProtoThreads*)ptTask;                     \
-                                                                                                             \
-                                 if(pt->UseStatus == false)                                                  \
-                                 {                                                                           \
-                                     return FW_ERR_NONE;                                                     \
-                                 }                                                                           \
-                                                                                                             \
-                                 switch(pt->State)                                                           \
-                                 {                                                                           \
+#define _pt_begin()              struct Fw_ProtoThread *pt = (struct Fw_ProtoThread *)ptTask; \
+                                                                                              \
+                                 if(pt->UseStatus == false)                                   \
+                                 {                                                            \
+                                     return FW_ERR_NONE;                                      \
+                                 }                                                            \
+                                                                                              \
+                                 switch(pt->State)                                            \
+                                 {                                                            \
                                     case 0:
 
 /**
@@ -122,46 +107,26 @@ extern "C"
  * @brief      protothreads wait functon
  *******************************************************************************
  */
-#define _pt_wait(state)          do                                                                          \
-                                 {                                                                           \
-                                     _pt_entry();                                                            \
-                                     if( !(state) )                                                          \
-                                     {                                                                       \
-                                        return FW_ERR_NOT_READY;                                             \
-                                     }                                                                       \
-                                 }while(0)
+#define _pt_wait(state) _ST(_pt_entry(); if(!(state)) {return FW_ERR_NOT_READY;})
 
 /**
  *******************************************************************************
  * @brief      protothreads wait functon
  *******************************************************************************
  */                                 
-#define _pt_wfe(state)           do                                                                          \
-                                 {                                                                           \
-                                     _pt_entry();                                                            \
-                                     if( (state) )                                                           \
-                                     {                                                                       \
-                                        return FW_ERR_NOT_READY;                                             \
-                                     }                                                                       \
-                                 }while(0)
-                                 
+#define _pt_wfe(state) _ST(_pt_entry(); if(state) {return FW_ERR_NOT_READY;})
+                               
 /**
  *******************************************************************************
  * @brief      protothreads delay functon
  *******************************************************************************
  */
-#if defined(USE_TIMER_COMPONENT) && USE_TIMER_COMPONENT
-#define _pt_delay(tick)         do                                                                                \
-                                {                                                                                 \
-                                    InitMessageHandleTimerModule(&pt->Timer, pt->Thread, ptTask, FW_EVENT_DELAY); \
-                                    StartTimerModule(&pt->Timer, CAL_SET_TIME(tick), 1);                          \
-                                    evt = FW_EVENT_NONE;                                                          \
-                                    _pt_wait(evt == FW_EVENT_DELAY);                                              \
+#define _pt_delay(tick)         do                                                      \
+                                {                                                       \
+                                    Fw_Timer_Start(&pt->Timer, CAL_SET_TIME(tick), 1);  \
+                                    evt = FW_EVENT_NONE;                                \
+                                    _pt_wait(evt == FW_EVENT_DELAY);                    \
                                 }while(0)                        
-#else
-#define _pt_delay(tick)                            
-#endif
-                                
 /**
  *******************************************************************************
  * @brief      protothreads exit functon
@@ -182,57 +147,44 @@ extern "C"
  * @brief      protothreads type
  *******************************************************************************
  */
-struct ProtoThreads
+struct Fw_ProtoThread
 {
     fw_err_t (*Thread)(void*, uint16_t);
-
-//    struct TimerBlock Timer;
     
-    uint16_t State;
-    bool     UseStatus;
+    char      *Str;
+    
+    struct Fw_Timer Timer;
+    struct Fw_Task  Task;
+    
+    uint16_t        State;
+    
+    bool            UseStatus;
 };
 
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define pt api
+ * @brief        define framework protothreads api
  *******************************************************************************
  */
-#if defined(USE_PT_COMPONENT) && USE_PT_COMPONENT
-//extern fw_err_t _pt_init(struct ProtoThreads*, _PT_THREAD_NAME);
-//extern fw_err_t _pt_arm(struct TaskBlock*, struct ProtoThreads*);
-//extern fw_err_t _pt_disarm(struct ProtoThreads*);
+extern fw_err_t Fw_PT_Init(struct Fw_ProtoThread* /*pt*/, char* /*str*/, 
+                           void* /*ptThread*/, uint8_t /*priority*/);
+extern fw_err_t Fw_PT_Fini(struct Fw_ProtoThread* /*pt*/);
+extern fw_err_t Fw_PT_Open(struct Fw_ProtoThread* /*pt*/);
+extern fw_err_t Fw_PT_Close(struct Fw_ProtoThread* /*pt*/);
 
 /**
  *******************************************************************************
  * @brief        define framework protothreads interface
  *******************************************************************************
  */
-#define fw_pt_init                           _pt_init
-#define fw_pt_deinit                         _pt_deinit
-#define fw_pt_arm                            _pt_arm
-#define fw_pt_disarm                         _pt_disarm
-#define fw_pt_begin                          _pt_begin
-#define fw_pt_entry                          _pt_entry
-#define fw_pt_wait                           _pt_wait
-#define fw_pt_wfe                            _pt_wfe
-#define fw_pt_delay                          _pt_delay
-#define fw_pt_exit                           _pt_exit
-#define fw_pt_end                            _pt_end
-
-#else
-#define fw_pt_init
-#define fw_pt_deinit
-#define fw_pt_arm
-#define fw_pt_disarm
-#define fw_pt_begin
-#define fw_pt_entry
-#define fw_pt_wait
-#define fw_pt_wfe
-#define fw_pt_delay
-#define fw_pt_exit
-#define fw_pt_end 
-#endif
+#define Fw_PT_Begin()                                                _pt_begin()
+#define Fw_PT_Entry()                                                _pt_entry()
+#define Fw_PT_Wait(n)                                                _pt_wait(n)
+#define Fw_PT_WFE(n)                                                  _pt_wfe(n)
+#define Fw_PT_Delay(n)                                           _pt_delay(tick)
+#define Fw_PT_Exit()                                                  _pt_exit()
+#define Fw_PT_End()                                                    _pt_end()
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -241,6 +193,6 @@ struct ProtoThreads
 	
 #endif       /** end include define */
 
-/** @}*/     /** pt component */
+/** @}*/     /** framework pt component */
 
 /**********************************END OF FILE*********************************/

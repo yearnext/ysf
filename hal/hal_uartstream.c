@@ -38,6 +38,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_uartstream.h"
+#include "fw_debug.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
@@ -48,15 +49,14 @@
  */
 static void Hal_UartStream_Init(struct Fw_Stream*);
 static void Hal_UartStream_Fini(struct Fw_Stream*);   
+static void Hal_UartStream_TxOut(struct Fw_Stream*);
 static void Hal_UartStream_TxConnect(struct Fw_Stream*);
 static void Hal_UartStream_TxDisconnect(struct Fw_Stream*);
 static void Hal_UartStream_RxConnect(struct Fw_Stream*);
 static void Hal_UartStream_RxDisconnect(struct Fw_Stream*);
-static void Hal_UartStream_TxOut(struct Fw_Stream*);
 static void Hal_UartStream_RxIn(struct Fw_Stream*);
-static void Hal_UartStream_Send(void*);
 
-const struct _FwStreamDeviceOpera UartStreamDevice = 
+const struct _FwStreamDeviceOpera UartStreamDeviceOpera = 
 {
     .Init          = Hal_UartStream_Init,
     .Fini          = Hal_UartStream_Fini,
@@ -76,6 +76,37 @@ const struct _FwStreamDeviceOpera UartStreamDevice =
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
+ * @brief       init uart stream tx param
+ * @param       [in/out]  *param          uart stream block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+void _Tx_Init(struct Fw_UartStream *uartStream)
+{
+    Hal_Uart_ClrTxCompletFlag(&uartStream->Device);
+    Fw_Timer_Stop(&uartStream->Timer); 
+    uartStream->State = UART_STREAM_SEND_STATE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       init uart stream tx param
+ * @param       [in/out]  *param          uart stream block
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
+static void Hal_UartStream_TxInit(void *param)
+{
+    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
+
+    _Tx_Init(uartStream);
+}
+
+/**
+ *******************************************************************************
  * @brief       init uart stream hardware
  * @param       [in/out]  *stream         uart stream block
  * @return      [in/out]  HAL_ERR_NONE    set finish
@@ -88,7 +119,7 @@ static void Hal_UartStream_Init(struct Fw_Stream *stream)
 
     //< init timeout call back
 	Fw_Timer_Init(&uartStream->Timer, "Stream Timeout Timer");
-    Fw_Timer_SetCallback(&uartStream->Timer, Hal_UartStream_Send, (void *)uartStream);
+    Fw_Timer_SetCallback(&uartStream->Timer, Hal_UartStream_TxInit, (void *)uartStream);
     
     //< init hardware
     Hal_Uart_Open(&uartStream->Device);
@@ -208,25 +239,32 @@ static void Hal_UartStream_RxIn(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_Send(void *param)
+void Hal_UartStream_Send(void *param)
 {
+    _FW_ASSERT(IS_PTR_NULL(param));
+    
     struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
+    struct Fw_FifoStream *txStream = &uartStream->TxStream;
+    struct _FwStreamBufferOpera *opera = txStream->Stream.Opera;
+    
+    if(txStream->Stream.IsRxReady == false)
+    {
+        return;
+    }
     
     switch(uartStream->State)
     {
         case UART_STREAM_INIT_STATE:
         {
         _UART_STREAM_INIT_FLOW:
-            Hal_Uart_ClrTxCompletFlag(&uartStream->Device);
-            Fw_Timer_Stop(&uartStream->Timer);
-            uartStream->State = UART_STREAM_SEND_STATE;
+            _Tx_Init(uartStream);
 //            break;
         }
         case UART_STREAM_SEND_STATE:
         {
             uint8_t sendData;
-            
-            if(uartStream->TxStream.Stream.Opera->Read((struct Fw_Stream *)&uartStream->TxStream, &sendData, 1) == FW_ERR_NONE)
+ 
+            if(opera->Read((struct Fw_Stream *)&txStream, &sendData, 1) == FW_ERR_NONE)
            	{
            		Hal_Uart_SendData(&uartStream->Device, sendData);
 				Fw_Timer_Start(&uartStream->Timer, CAL_SET_TIME(10), 1);
@@ -234,17 +272,56 @@ static void Hal_UartStream_Send(void *param)
             }
             else
             {
+                struct HalCallback *Tx = &uartStream->Device.TxCallback;
+                
+                if(!IS_PTR_NULL(Tx->Callback))
+                {
+                    Tx->Callback(Tx->Param);
+                }
+                
 				uartStream->State = UART_STREAM_INIT_STATE;
             }
             break;
         }
         case UART_STREAM_COMPLET_STATE:
         {
-            goto _UART_STREAM_INIT_FLOW;
+            uint8_t flag = 0;
+            Hal_Uart_GetTxCompletFlag(&uartStream->Device, &flag);
+            
+            if(flag)
+            {
+                goto _UART_STREAM_INIT_FLOW;
+            }
 //            break;
         }
         default:
             break;
+    }
+}
+
+/**
+ *******************************************************************************
+ * @brief       uart stream receive data
+ * @param       [in/out]  *stream         uart stream block
+ * @param       [in/out]  recData         receive data
+ * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @note        None
+ *******************************************************************************
+ */
+void Hal_UartStream_Receive(void *param, uint8_t recData)
+{
+    _FW_ASSERT(IS_PTR_NULL(param));
+    
+    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
+    struct Fw_FifoStream *rxStream = &uartStream->RxStream;
+    struct _FwStreamBufferOpera *opera = rxStream->Stream.Opera;
+    
+    if(rxStream->Stream.IsTxReady == true)
+    {
+        if (opera->Write((struct Fw_Stream *)&rxStream, &recData, 1) == FW_ERR_NONE)
+        {
+            Fw_Stream_PostRxEvent((struct Fw_Stream *)param);
+        }
     }
 }
 

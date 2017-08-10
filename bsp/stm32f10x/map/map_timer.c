@@ -42,6 +42,7 @@
 #include "comm_path.h"
 
 /* Private constants ---------------------------------------------------------*/
+#if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       define timer register
@@ -71,6 +72,7 @@ static const IRQn_Type TimerIrqn[] =
  *******************************************************************************
  */
 static struct HalCallback TimerUpCallback[_dimof(Timer)];
+#endif
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -82,6 +84,7 @@ static struct HalCallback TimerUpCallback[_dimof(Timer)];
 
 /* Private typedef -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable timer
@@ -94,7 +97,11 @@ hal_err_t Map_Timer_Open(uint8_t port)
 {
     hal_assert(IS_TIMER_PORT_INVAILD(port));
     
-	if (port == 1)
+    if (port == 0)
+    {
+        //< open tick timer clock
+    }
+	else if (port == 1)
 	{
 		RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
 	}	  
@@ -698,6 +705,7 @@ void TIM8_UP_IRQHandler(void)
 
 	Timer[8]->SR &= ~0x01;
 }
+#endif
 
 /** @}*/     /** map timer component */
 

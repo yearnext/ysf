@@ -32,11 +32,11 @@
                 </option>
                 <option>
                     <name>Input description</name>
-                    <state>Automatic choice of formatter, without multibyte support.</state>
+                    <state>Automatic choice of formatter.</state>
                 </option>
                 <option>
                     <name>Output description</name>
-                    <state>Automatic choice of formatter, without multibyte support.</state>
+                    <state>Automatic choice of formatter.</state>
                 </option>
                 <option>
                     <name>GOutputBinary</name>
@@ -62,7 +62,7 @@
                 </option>
                 <option>
                     <name>OGProductVersion</name>
-                    <state>7.80.4.12487</state>
+                    <state>7.80.2.11970</state>
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
@@ -121,7 +121,7 @@
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OGUseCmsisDspLib</name>
@@ -207,7 +207,8 @@
                 <debug>1</debug>
                 <option>
                     <name>CCDefines</name>
-                    <state></state>
+                    <state>STM32F10X_HD</state>
+                    <state>USE_STDPERIPH_DRIVER</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -332,9 +333,16 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\..\demo</state>
+                    <state>$PROJ_DIR$\..\..\bsp\stm32f10x\cmsis</state>
+                    <state>$PROJ_DIR$\..\..\bsp\stm32f10x\inc</state>
+                    <state>$PROJ_DIR$\..\..\bsp\stm32f10x\map</state>
+                    <state>$PROJ_DIR$\..\..\bsp\stm32f10x\startup</state>
+                    <state>$PROJ_DIR$\..\..\bsp\stm32f10x</state>
+                    <state>$PROJ_DIR$\..\..\common</state>
                     <state>$PROJ_DIR$\..\..\core</state>
-                    <state>$PROJ_DIR$\..\..\hal\stm32f10x\msp</state>
+                    <state>$PROJ_DIR$\..\..\demo</state>
+                    <state>$PROJ_DIR$\..\..\framework</state>
+                    <state>$PROJ_DIR$\..\..\hal</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -350,7 +358,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -359,7 +367,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -1074,7 +1082,7 @@
                 </option>
                 <option>
                     <name>OGProductVersion</name>
-                    <state>7.80.4.12487</state>
+                    <state>7.80.2.11970</state>
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
@@ -2024,13 +2032,241 @@
         </settings>
     </configuration>
     <group>
-        <name>app</name>
+        <name>bsp</name>
+        <group>
+            <name>isr</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\stm32f10x_it.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\stm32f10x_it.h</name>
+            </file>
+        </group>
+        <group>
+            <name>map</name>
+            <group>
+                <name>gpio</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f10x\map\map_gpio.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f10x\map\map_gpio.h</name>
+                </file>
+            </group>
+            <group>
+                <name>timer</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f10x\map\map_timer.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f10x\map\map_timer.h</name>
+                </file>
+            </group>
+            <group>
+                <name>uart</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f10x\map\map_uart.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f10x\map\map_uart.h</name>
+                </file>
+            </group>
+        </group>
+        <group>
+            <name>msp</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\misc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_adc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_bkp.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_can.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_cec.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_crc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_dac.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_dbgmcu.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_dma.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_exti.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_flash.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_fsmc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_gpio.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_i2c.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_iwdg.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_pwr.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_rcc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_rtc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_sdio.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_spi.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_tim.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_usart.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\src\stm32f10x_wwdg.c</name>
+            </file>
+        </group>
+        <group>
+            <name>startup</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\startup\iar\startup_stm32f10x_hd.s</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\cmsis\stm32f10x.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\stm32f10x_conf.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\cmsis\system_stm32f10x.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\bsp\stm32f10x\cmsis\system_stm32f10x.h</name>
+            </file>
+        </group>
+    </group>
+    <group>
+        <name>demo</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\demo\app_conf.h</name>
+        </file>
         <file>
             <name>$PROJ_DIR$\..\..\demo\demo.c</name>
         </file>
     </group>
     <group>
         <name>framework</name>
+        <group>
+            <name>buffer</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_buffer.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_buffer.h</name>
+            </file>
+        </group>
+        <group>
+            <name>common</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\common\comm_path.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\common\comm_tools.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\common\comm_type.h</name>
+            </file>
+        </group>
+        <group>
+            <name>compiler</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\common\compiler\compiler.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\common\compiler\iccarm\compiler_iccarm.h</name>
+            </file>
+        </group>
+        <group>
+            <name>core</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_core.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_core.h</name>
+            </file>
+        </group>
+        <group>
+            <name>debug</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_debug.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_debug.h</name>
+            </file>
+        </group>
+        <group>
+            <name>linklist</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_linklist.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_linklist.h</name>
+            </file>
+        </group>
+        <group>
+            <name>memory</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_memory.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_memory.h</name>
+            </file>
+        </group>
+        <group>
+            <name>protothreads</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_pt.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_pt.h</name>
+            </file>
+        </group>
+        <group>
+            <name>signal</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_signal.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_signal.h</name>
+            </file>
+        </group>
+        <group>
+            <name>stream</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_stream.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_stream.h</name>
+            </file>
+        </group>
         <group>
             <name>task</name>
             <file>
@@ -2040,128 +2276,47 @@
                 <name>$PROJ_DIR$\..\..\framework\fw_task.h</name>
             </file>
         </group>
-        <file>
-            <name>$PROJ_DIR$\..\..\framework\fw_conf.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\framework\fw_path.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\framework\fw_type.h</name>
-        </file>
+        <group>
+            <name>tick</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_tick.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_tick.h</name>
+            </file>
+        </group>
+        <group>
+            <name>timer</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_timer.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_timer.h</name>
+            </file>
+        </group>
     </group>
     <group>
         <name>hal</name>
         <group>
-            <name>stm32f1xx</name>
-            <group>
-                <name>mal</name>
-                <group>
-                    <name>cmsis</name>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\arm_common_tables.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\arm_const_structs.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\arm_math.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_armcc.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_armcc_V6.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_gcc.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\cmsis_os.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm0.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm0plus.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm3.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm4.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cm7.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cmFunc.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cmInstr.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_cmSimd.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_sc000.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\core_sc300.h</name>
-                    </file>
-                </group>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f100xb.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f100xe.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101x6.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101xb.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101xe.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f101xg.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f102x6.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f102xb.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103x6.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103xb.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103xe.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f103xg.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f105xc.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f107xc.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\stm32f1xx.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\system_stm32f1xx.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\hal\stm32f10x\mal\system_stm32f1xx.h</name>
-                </file>
-            </group>
+            <name>core</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_conf.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_path.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_type.h</name>
+            </file>
+        </group>
+        <group>
+            <name>uart stream</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_uartstream.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_uartstream.h</name>
+            </file>
         </group>
     </group>
 </project>

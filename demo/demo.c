@@ -37,11 +37,13 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_interface.h"
+#include "fw_core.h"
+#include "hal_core.h"
+#include "map_uart.h"
 
-///* Private define ------------------------------------------------------------*/                                                        
-///* Private typedef -----------------------------------------------------------*/
-///* Private variables ---------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private typedef -----------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 ///**
 // *******************************************************************************
 // * @brief       device port define
@@ -53,21 +55,21 @@
 //    .Pin  = MCU_PIN_13,
 //    .Mode = GPIO_MODE_PARAM(GPIO_LOW_SPEED_OUTPUT, GPIO_OUT_PUSH_PULL_MODE),
 //};
-
+//
 //static struct Hal_GPIO_Block Led2 = 
 //{
 //    .Port = MCU_PORT_G,
 //    .Pin  = MCU_PIN_14,
 //    .Mode = GPIO_MODE_PARAM(GPIO_LOW_SPEED_OUTPUT, GPIO_OUT_PUSH_PULL_MODE),
 //};
-
+//
 //static struct Hal_GPIO_Block Key1 = 
 //{
 //    .Port = MCU_PORT_E,
 //    .Pin  = MCU_PIN_0,
 //    .Mode = GPIO_MODE_PARAM(GPIO_INPUT, GPIO_IN_PULL_UP_MODE),
 //};
-
+//
 //static struct Hal_GPIO_Block Key2 = 
 //{
 //    .Port = MCU_PORT_C,
@@ -291,11 +293,7 @@
  */
 int main( void )
 {   
-//    fw_core_init();
-    
-//    user_init();
-    
-//    fw_core_start();
+    Hal_Uart_Test_Init();
     
     return 0;
 }

@@ -48,10 +48,16 @@ extern "C"
     
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define uart stream
+ *******************************************************************************
+ */
 struct Fw_UartStream
 {
     struct Fw_FifoStream TxStream;
     struct Fw_FifoStream RxStream;
+    
     struct HalUartDevice Device;
     struct Fw_Timer Timer;
 
@@ -65,9 +71,21 @@ struct Fw_UartStream
 };
     
 /* Exported constants --------------------------------------------------------*/
-extern const struct _FwStreamDeviceOpera UartStreamDevice;
+/**
+ *******************************************************************************
+ * @brief       define stream opera
+ *******************************************************************************
+ */
+extern const struct _FwStreamDeviceOpera UartStreamDeviceOpera;
 
 /* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       hal uart stream apis
+ *******************************************************************************
+ */
+extern void Hal_UartStream_Send(void*);
+extern void Hal_UartStream_Receive(void*, uint8_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

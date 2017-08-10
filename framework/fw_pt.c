@@ -20,7 +20,7 @@
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-02-21                                                      *
- * @brief      protothreads component source files                             *
+ * @brief      framework protothreads component source files                   *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,16 +32,12 @@
  */
  
 /**
- * @defgroup protothreaads component
+ * @defgroup framework protothreaads component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_PT_COMPONENT_PATH
-#include _FW_TASK_COMPONENT_PATH
-#include _FW_DEBUG_COMPONENT_PATH
+#include "fw_path.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -53,21 +49,51 @@
 /**
  *******************************************************************************
  * @brief       init protothreads
- * @param       [in/out]  *pt                       protothreads block
- * @param       [in/out]  pt_thread                 protothreads function
- * @return      [in/out]  FW_ERR_INVAILD_PTR       enable failed
- * @return      [in/out]  FW_ERR_NONE              enable success
+ * @param       [in/out]  *pt                      protothreads block
+ * @param       [in/out]  *str                     protothreads string
+ * @param       [in/out]  *pt_thread               protothreads function handle
+ * @param       [in/out]  priority                 task priority
+ * @return      [in/out]  FW_ERR_INVAILD_PTR       init failed
+ * @return      [in/out]  FW_ERR_NONE              init success
  * @note        None
  *******************************************************************************
  */
-fw_err_t _pt_init(struct ProtoThreads *pt, _PT_THREAD_NAME)
+fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, void *ptThread, uint8_t priority)
 {
-    fw_assert(IS_PTR_NULL(pt));
-    fw_assert(IS_PTR_NULL(pt_thread));
+    _FW_ASSERT(IS_PTR_NULL(pt));
+    _FW_ASSERT(IS_PTR_NULL(str));
+    _FW_ASSERT(IS_PTR_NULL(pt_thread));
 
     pt->State     = 0;
+    pt->Str       = str;
     pt->Thread    = pt_thread;
-    pt->UseStatus = true;
+    pt->UseStatus = false;
+
+    Fw_Task_Init(&pt->Task, str, priority, ptThread, FW_PT_THREAD_TYPE_TASK);     
+
+    Fw_Timer_Init(&pt->Timer, str);
+    Fw_Timer_SetEvent(&pt->Timer, &pt->Task, FW_DELAY_EVENT, (void *)pt);
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       deinit protothreads
+ * @param       [in/out]  *pt                       protothreads block
+ * @return      [in/out]  FW_ERR_FAIL               deinit failed
+ * @return      [in/out]  FW_ERR_NONE               deinit success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_PT_Fini(struct Fw_ProtoThread *pt)
+{
+    _FW_ASSERT(IS_PTR_NULL(pt));
+
+    pt->State     = 0;
+    pt->Str       = NULL;
+    pt->Thread    = NULL;
+    pt->UseStatus = false;
 
     return FW_ERR_NONE;
 }
@@ -75,19 +101,19 @@ fw_err_t _pt_init(struct ProtoThreads *pt, _PT_THREAD_NAME)
 /**
  *******************************************************************************
  * @brief       enable protothreads
- * @param       [in/out]  *task                     task block
- * @param       [in/out]  *pt                       protothreads block
- * @param       [in/out]  pt_thread                 protothreads function
- * @return      [in/out]  FW_ERR_INVAILD_PTR       enable failed
- * @return      [in/out]  FW_ERR_NONE              enable success
+ * @param       [in/out]  *pt                       protothreads  block
+ * @return      [in/out]  FW_ERR_FAIL               enable failed
+ * @return      [in/out]  FW_ERR_NONE               enable success
  * @note        None
  *******************************************************************************
  */
-fw_err_t _pt_arm(struct TaskBlock *task, struct ProtoThreads *pt)
+fw_err_t Fw_PT_Open(struct Fw_ProtoThread *pt)
 {
-    fw_assert(IS_PTR_NULL(pt));
-    
-    fw_task_msg_create(task, pt->Thread, pt, FW_EVENT_NONE);
+    _FW_ASSERT(IS_PTR_NULL(pt));
+    _FW_ASSERT(IS_PTR_NULL(pt->Thread));
+
+    pt->UseStatus = true;
+    pt->Thread(pt, FW_INIT_EVENT);
     
     return FW_ERR_NONE;
 }
@@ -95,22 +121,25 @@ fw_err_t _pt_arm(struct TaskBlock *task, struct ProtoThreads *pt)
 /**
  *******************************************************************************
  * @brief       disable protothreads
- * @param       [in/out]  *pt                       protothreads block
- * @return      [in/out]  FW_ERR_INVAILD_PTR       disable failed
+ * @param       [in/out]  *pt                      protothreads block
+ * @return      [in/out]  FW_ERR_FAIL              disable failed
  * @return      [in/out]  FW_ERR_NONE              disable success
  * @note        None
  *******************************************************************************
  */
-fw_err_t _pt_disarm(struct ProtoThreads *pt)
+fw_err_t Fw_PT_Close(struct Fw_ProtoThread *pt)
 {
-    fw_assert(IS_PTR_NULL(pt));
-
+    _FW_ASSERT(IS_PTR_NULL(pt));
+    _FW_ASSERT(IS_PTR_NULL(pt->Thread));
+    
+    pt->Thread(pt, FW_FINI_EVENT);
     pt->UseStatus = false;
     
     return FW_ERR_NONE;
 }
+
 #endif
 
-/** @}*/     /** protothreads component  */
+/** @}*/     /** frameowrk protothreads component  */
 
 /**********************************END OF FILE*********************************/

@@ -56,22 +56,6 @@ extern "C"
  */
 #define USE_DEBUG_COMPONENT_FILLING_MODE                                     (1)
    
-/**
- *******************************************************************************
- * @brief      define hardware interface
- *******************************************************************************
- */
-#define DebugTxConnectHandle                     (NULL)
-#define DebugTxDisconnectHandle                  (NULL)
-#define DebugTxOutputHandle                      (NULL)
-
-#define DebugRxConnectHandle                     (NULL)
-#define DebugRxDisconnectHandle                  (NULL)
-#define DebugRxIntputHandle                      (NULL)
-      
-#define DebugDeviceFiniHandle                    (NULL)
-#define DebugDeviceInitHandle                    (NULL)
-     
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -86,8 +70,6 @@ enum _DEBUG_MESSAGE_TYPE
 };
 
 /* Exported variables --------------------------------------------------------*/
-extern struct Fw_Stream DebugStream;
-
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -119,8 +101,12 @@ extern void Fw_AssertFailed(uint8_t*, uint32_t);
  *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
- */                                           
+ */    
+#ifdef USE_FRAMEWORK_DEBUG
 #define _FW_ASSERT(expr) _ST(if(expr) { (Fw_AssertFailed((uint8_t *)__FILE__, __LINE__)); })
+#else
+#define _FW_ASSERT(expr)
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

@@ -44,7 +44,12 @@
 extern "C"
 {
 #endif
-
+    
+/* Includes ------------------------------------------------------------------*/
+//#include _FW_TYPE_PATH
+//#include _FW_CONF_PATH
+#include "fw_type.h"
+#include "fw_conf.h"
 
 /* Exported macro ------------------------------------------------------------*/
 ///**
@@ -71,13 +76,6 @@ extern "C"
 //#define _FW_TIMER_COMPONENT_PATH              "../framework/fw_timer.h"
 //#define _FW_TASK_COMPONENT_PATH               "../framework/fw_task.h"
 //#define _FW_PT_COMPONENT_PATH                 "../framework/fw_pt.h"
-
-
-/* Includes ------------------------------------------------------------------*/
-//#include _FW_TYPE_PATH
-//#include _FW_CONF_PATH
-#include "fw_type.h"
-#include "fw_conf.h"
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

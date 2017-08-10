@@ -86,6 +86,7 @@ struct Fw_Task_Handle
         fw_err_t (*CallBack)(void*);
         fw_err_t (*Event)(uint16_t);
         fw_err_t (*Message)(uint32_t, void*);
+        fw_err_t (*PT_Thread)(void*, uint16_t);
         
         void *Check;
         void *Config;
@@ -98,6 +99,7 @@ struct Fw_Task_Handle
         FW_CALL_BACK_TYPE_TASK,
         FW_EVENT_HANDLE_TYPE_TASK,
         FW_MESSAGE_HANDLE_TYPE_TASK,
+        FW_PT_THREAD_TYPE_TASK,
     }Type;
 };
 

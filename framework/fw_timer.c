@@ -43,6 +43,7 @@
 #include "fw_tick.h"
 #include "fw_linklist.h"
 #include "fw_debug.h"
+#include "fw_memory.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
@@ -102,6 +103,20 @@ fw_err_t Fw_Timer_InitComponent(void)
 
 /**
  *******************************************************************************
+ * @brief       create timer function
+ * @param       [in/out]  void
+ * @return      [in/out]  NO NULL     create success
+ * @return      [in/out]  NULL        create failed
+ * @note        None
+ *******************************************************************************
+ */
+struct Fw_Timer *Fw_Timer_Create(void)
+{
+    return Fw_Mem_Alloc(_sizeof(struct Fw_Timer));
+}
+
+/**
+ *******************************************************************************
  * @brief       init timer function
  * @param       [in/out]  *timer         timer block
  * @param       [in/out]  *str           timer name
@@ -120,6 +135,23 @@ fw_err_t Fw_Timer_Init(struct Fw_Timer *timer, char *str)
     
     timer->String = str;
 	
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       deinit timer function
+ * @param       [in/out]  *timer         timer block
+ * @return      [in/out]  FW_ERR_NONE    deinit success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Timer_Fini(struct Fw_Timer *timer)
+{
+    _FW_ASSERT(IS_PTR_NULL(timer));
+    
+    memset(timer, 0, sizeof(struct Fw_Timer));
+    
     return FW_ERR_NONE;
 }
 

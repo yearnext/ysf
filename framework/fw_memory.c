@@ -39,7 +39,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fw_memory.h"
 
-#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
+#ifdef USE_STD_LIBRARY
 #include <stdlib.h>
 #endif
 
@@ -83,7 +83,7 @@
  * @note        None
  *******************************************************************************
  */
-void Fw_Mem_Init(void)
+void Fw_Mem_InitComponent(void)
 {
 //#if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
 //    InitHeapMemory(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);

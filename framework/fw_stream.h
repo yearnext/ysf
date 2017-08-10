@@ -51,6 +51,32 @@ extern "C"
 #include "fw_buffer.h"
 
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
+ *******************************************************************************
+ */
+#ifdef USE_FRAMEWORK_STREAM_COMPONENT
+#define USE_STREAM_COMPONENT                                                 (1)
+
+/**
+ *******************************************************************************
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
+ *******************************************************************************
+ */
+#else
+#define USE_STREAM_COMPONENT                                                 (1)
+#endif
+   
+/**
+ *******************************************************************************
+ * @brief       define stream block size
+ *******************************************************************************
+ */
 #define BLOCK_STREAM_BUFFER_SIZE                                           (128)
 
 /* Exported types ------------------------------------------------------------*/
@@ -102,6 +128,8 @@ struct Fw_Stream
     struct _FwStreamBufferOpera *Opera;
     struct _FwStreamDeviceOpera *Device;
 
+    void (*Callback)(uint8_t, void*);
+
     bool IsTxReady;
     bool IsRxReady;
 };
@@ -116,9 +144,6 @@ struct Fw_FifoStream
     struct Fw_Stream Stream;
     
     Fw_Fifo_t Fifo;
-    
-    void (*Callback)(void*);
-    void *Param;
 };
 
 /**
@@ -145,9 +170,6 @@ struct Fw_BlockStream
         struct Fw_BlockStreamBuffer *Head;
         struct Fw_BlockStreamBuffer *Tail;
     }LinkList;
-    
-    void (*Callback)(void*);
-    void *Param;
 };
 
 /**
@@ -164,8 +186,10 @@ typedef struct _FwStreamDeviceOpera _StreamDeviceOperaInitType;
  * @brief       define stream opera
  *******************************************************************************
  */
-extern const _StreamBufferOperaInitType _StreamFifoOpera;
-extern const _StreamBufferOperaInitType _StreamBlockOpera;
+#if USE_STREAM_COMPONENT
+extern const _StreamBufferOperaInitType StreamFifoOpera;
+extern const _StreamBufferOperaInitType StreamBlockOpera;
+#endif
 
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -173,10 +197,13 @@ extern const _StreamBufferOperaInitType _StreamBlockOpera;
  * @brief       define framework stream api
  *******************************************************************************
  */
+#if USE_STREAM_COMPONENT
+extern fw_err_t Fw_Stream_InitComponent(void);
+
 extern fw_err_t Fw_Stream_Init(struct Fw_Stream *stream, 
                                _StreamBufferOperaInitType*, 
                                _StreamDeviceOperaInitType*,
-                               void*);
+                               void *, void (*)(uint8_t, void*));
 
 extern fw_err_t Fw_Stream_Fini(struct Fw_Stream*);
 
@@ -187,6 +214,9 @@ extern fw_err_t Fw_Stream_RxDisconnect(struct Fw_Stream*);
 
 extern fw_err_t Fw_Stream_Write(struct Fw_Stream*, uint8_t*, uint8_t);
 extern fw_err_t Fw_Stream_Read(struct Fw_Stream*, uint8_t*, uint8_t);
+
+extern fw_err_t Fw_Stream_PostRxEvent(struct Fw_Stream*);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

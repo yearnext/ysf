@@ -102,8 +102,7 @@ typedef struct
  *******************************************************************************
  */
 #if USE_TICK_COMPONENT
-extern void     Fw_Tick_Init(void);
-extern void     Fw_Tick_Handle(void);
+extern void     Fw_Tick_InitComponent(void);
 extern uint32_t Fw_Tick_GetInfo(void);
 extern uint32_t Fw_GetPastTick(uint32_t, uint32_t);        
 #endif

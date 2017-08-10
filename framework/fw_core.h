@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_interface.h                                                  *
+ * @file       fw_core.h                                                       *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-04-13                                                      *
- * @brief      framework interface head files                                  *
+ * @brief      framework core head files                                       *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,12 +32,12 @@
  */
 
 /**
- * @defgroup framework interface
+ * @defgroup framework core interface
  * @{
  */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_INTERFACE_H__
-#define __FRAMEWORK_INTERFACE_H__
+#ifndef __FRAMEWORK_CORE_H__
+#define __FRAMEWORK_CORE_H__
 
 /* Add c++ compatibility -----------------------------------------------------*/
 #ifdef __cplusplus
@@ -46,98 +46,60 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/ 
-#include "core_path.h"
-#include _FW_PATH    
-#include _FW_BUFFER_COMPONENT_PATH
-#include _FW_DEBUG_COMPONENT_PATH
-#include _FW_EVENT_COMPONENT_PATH
-#include _FW_LINK_LIST_COMPONENT_PATH 
-#include _FW_MEMORY_COMPONENT_PATH
-#include _FW_SIGNAL_COMPONENT_PATH
-#include _FW_TICK_COMPONENT_PATH
-#include _FW_TIMER_COMPONENT_PATH
-#include _FW_TASK_COMPONENT_PATH
-#include _FW_PT_COMPONENT_PATH
-
+#include "fw_type.h"
+#include "fw_conf.h"
+    
 /* Exported macro ------------------------------------------------------------*/ 
-/**
- *******************************************************************************
- * @brief        define framework compiler function
- *******************************************************************************
- */
-#define fw_enter_critical()                  __ENTER_CRITICAL()
-#define fw_exit_critical()                   __EXIT_CRITICAL()
-    
-/**
- *******************************************************************************
- * @brief        define framework core interface
- *******************************************************************************
- */
-#define fw_core_init                         Framework.Init
-#define fw_core_start                        Framework.Start
-
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        define Framework interface
- *******************************************************************************
- */
-struct FrameworkInterface
-{
-    char *Version;
-    
-    void (*Init)(void);
-    void (*Start)(void);
-    
-//#if USE_BUFFER_COMPONENT
-//    RingBufferComponentInterface RingBuffer;
-//#endif
-
-//#if USE_MEMORY_MANAGEMENT_COMPONENT
-//    MemoryManagementComponentInterface MemoryManagement;
-//#endif
-
-//#if USE_DEBUG_COMPONENT
-//    DebugComponentInterface Debug;
-//#endif
-    
-//#if USE_EVENT_COMPONENT
-//    EventComponentInterface Event;
-//#endif
-
-//#if USE_SINGLE_LIST_COMPONENT
-//    SingleListComponentInterface SingleLinkList;
-//#endif
-
-//#if USE_MEMORY_COMPONENT
-//    MemoryComponentInterface Memory;
-//#endif
-    
-//#if USE_SIGNAL_COMPONENT
-//    SignalComponentInterface Signal;
-//#endif   
-
-//#if USE_TICK_COMPONENT
-//    TickComponentInterface Tick;
-//#endif
-
-//#if USE_TIMER_COMPONENT
-//TimerComponentInterface Timer;
-//#endif
-
-//#if USE_TASK_COMPONENT
-//    TaskComponentInterface Task;
-//#endif
-};
-
 /* Exported variables --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief        core interface
- *******************************************************************************
- */
-extern const struct FrameworkInterface Framework;
-
+#if USE_FRAMEWORK_COMPONENT_LIBRARY
+#ifdef USE_FRAMEWORK_BUFFER_COMPONENT
+#include "fw_buffer.h"
+#endif
+        
+#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+#include "fw_debug.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_LINK_LIST_COMPONENT 
+#include "fw_linklist.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT 
+#include "fw_memory.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT 
+#include "fw_signal.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_TICK_COMPONENT 
+#include "fw_tick.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_TIMER_COMPONENT  
+#include "fw_timer.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_TASK_COMPONENT 
+#include "fw_task.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_PT_COMPONENT 
+#include "fw_pt.h"
+#endif
+    
+#ifdef USE_FRAMEWORK_STREAM_COMPONENT 
+#include "fw_stream.h"
+#endif
+    
+#else
+#warning Please Enable Framework Component Library!
+#endif
+    
+/* Exported functions --------------------------------------------------------*/
+extern void App_User_Init(void);
+    
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
@@ -145,6 +107,6 @@ extern const struct FrameworkInterface Framework;
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework interface  */
+/** @}*/     /** framework core interface  */
 
 /**********************************END OF FILE*********************************/

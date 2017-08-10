@@ -118,7 +118,9 @@ struct Fw_Timer
  */
 #if USE_TIMER_COMPONENT           
 extern fw_err_t Fw_Timer_InitComponent(void);
+extern struct Fw_Timer *Fw_Timer_Create(void);
 extern fw_err_t Fw_Timer_Init(struct Fw_Timer*, char*);
+extern fw_err_t Fw_Timer_Fini(struct Fw_Timer*);
 extern fw_err_t Fw_Timer_SetEvent(struct Fw_Timer*, struct Fw_Task*, uint8_t, void*);
 extern fw_err_t Fw_Timer_SetCallback(struct Fw_Timer*, void (*)(void*), void*);
 extern fw_err_t Fw_Timer_Start(struct Fw_Timer*, uint32_t, int16_t);

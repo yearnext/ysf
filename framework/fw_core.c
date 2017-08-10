@@ -16,100 +16,127 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_event.c                                                      *
+ * @file       fw_core.c                                                       * 
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-01-10                                                      *
- * @brief      event component source files                                    *
+ * @date       2017-04-13                                                      *
+ * @brief      framework core interface source files                           *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
  *                 GCC                                                         * 
  *******************************************************************************
  * @note                                                                       *
- * 1.XXXXX                                                                     *
+ * 1.XXXXX                  						                           *
  *******************************************************************************
  */
- 
+
 /**
- * @defgroup event component
+ * @defgroup framework core interface
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
-#include _FW_PATH
-#include _FW_EVENT_COMPONENT_PATH
-#include _FW_BUFFER_COMPONENT_PATH
-#include _FW_DEBUG_COMPONENT_PATH
+#include "fw_core.h"
 
+/* Private functions ---------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       event component auto config
- *******************************************************************************
- */
-#if USE_EVENT_COMPONENT
-static uint16_t            EventQueue[FW_EVENT_MAX];
-static struct fw_buffer_t EventControlBlock;
-#endif
-
-/* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_EVENT_COMPONENT
 /**
  *******************************************************************************
- * @brief       event component init
+ * @brief       application init
  * @param       [in/out]  void
- * @return      [in/out]  FW_ERR_NONE       init finish
- * @return      [in/out]  FW_ERR_FAIL       init failed
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-fw_err_t InitEventComponent(void)
+__WEAK void App_User_Init(void)
 {
-    InitRingBufferComponent(&EventControlBlock, EventQueue, CalTypeByteSize(EventQueue));
     
-	return FW_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       write event to event queue
- * @param       [in/out]  event             write events
- * @return      [in/out]  FW_ERR_NONE      write success
- * @return      [in/out]  FW_ERR_FAIL      write failed
+ * @brief       init core
+ * @param       [in/out]  void
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-fw_err_t PostEvent(uint16_t event)
-{
-    WriteRingBuffer(&EventControlBlock, &event, CalTypeByteSize(event));
+void Fw_Core_Init(void)
+{   
+    __ATOM_ACTIVE_BEGIN();
+#ifdef USE_FRAMEWORK_TASK_COMPONENT 
+    Fw_Task_InitComponent();
+#endif
     
-	return FW_ERR_NONE;
+#ifdef USE_FRAMEWORK_TICK_COMPONENT 
+    Fw_Tick_InitComponent();
+#endif
+    
+#ifdef USE_FRAMEWORK_TIMER_COMPONENT  
+    Fw_Timer_InitComponent();
+#endif
+
+#ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT 
+    Fw_Mem_InitComponent();
+#endif
+
+#ifdef USE_FRAMEWORK_STREAM_COMPONENT 
+    Fw_Stream_InitComponent();
+#endif
+    
+#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+    Fw_Debug_InitComponent();
+#endif
+    
+    App_User_Init();
+    
+    __ATOM_ACTIVE_END();
 }
 
 /**
  *******************************************************************************
- * @brief       read events from event queue
- * @param       [in/out]  *event            read events
- * @return      [in/out]  FW_ERR_NONE      read success
- * @return      [in/out]  FW_ERR_FAIL      read failed
+ * @brief       start core
+ * @param       [in/out]  void
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-fw_err_t GetEvent(uint16_t *event)
+void Fw_Core_Start(void)
 {
-    ReadRingBuffer(&EventControlBlock, event, CalTypeByteSize(uint16_t));
-	
-    return FW_ERR_NONE;
+    for(;;)
+    {
+#ifdef USE_FRAMEWORK_TASK_COMPONENT
+        Fw_Task_Dispatch();
+#endif
+    }
+}
+
+#if USE_FRAMEWORK_COMPONENT_LIBRARY
+/**
+ *******************************************************************************
+ * @brief       main function
+ * @param       [in/out]  void
+ * @return      [in/out]  int     never return
+ * @note        None
+ *******************************************************************************
+ */
+int main(void)
+{
+    Fw_Core_Init();
+
+    Fw_Core_Start();
+    
+    return 0;
 }
 
 #endif
 
-/** @}*/     /** event component  */
+/** @}*/     /** framework core interface */
 
 /**********************************END OF FILE*********************************/

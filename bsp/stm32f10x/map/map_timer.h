@@ -47,9 +47,30 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_path.h"
+#include "hal_core.h"
     
 /* Exported macro ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
+ *******************************************************************************
+ */
+#ifdef USE_MCU_TIMER_COMPONENT
+    #define USE_TIMER_COMPONENT                                              (1)
+  
+/**
+ *******************************************************************************
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
+ *******************************************************************************
+ */
+#else
+    #define USE_TIMER_COMPONENT                                              (1)
+#endif
+    
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -121,6 +142,7 @@ struct HalTimerDevice
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief      define map api
@@ -144,6 +166,7 @@ extern __INLINE hal_err_t Hal_Timer_Init(struct HalTimerDevice*);
 extern __INLINE hal_err_t Hal_Timer_SetUpCallback(struct HalTimerDevice*);
 extern __INLINE hal_err_t Hal_Timer_Start(struct HalTimerDevice*);
 extern __INLINE hal_err_t Hal_Timer_Stop(struct HalTimerDevice*);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

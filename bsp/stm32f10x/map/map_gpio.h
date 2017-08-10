@@ -47,9 +47,30 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_path.h"
+#include "hal_core.h"
     
 /* Exported macro ------------------------------------------------------------*/ 
+/**
+ *******************************************************************************
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
+ *******************************************************************************
+ */
+#ifdef USE_MCU_GPIO_COMPONENT
+    #define USE_GPIO_COMPONENT                                               (1)
+  
+/**
+ *******************************************************************************
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
+ *******************************************************************************
+ */
+#else
+    #define USE_GPIO_COMPONENT                                               (1)
+#endif
+    
 /**
  *******************************************************************************
  * @brief      define gpio port
@@ -94,10 +115,10 @@ extern "C"
 enum Define_GPIO_Mode
 {
 	GPIO_INIT_MODE          = 0x04,
-	GPIO_INTPUT_MODE        = 0x00,
-	GPIO_OUTPUT_LS_MODE     = 0x01,
-	GPIO_OUTPUT_MS_MODE     = 0x02,
-	GPIO_OUTPUT_HS_MODE     = 0x03,
+	GPIO_INTPUT             = 0x00,
+	GPIO_LS_OUTPUT          = 0x01,
+	GPIO_MS_OUTPUT          = 0x02,
+	GPIO_HS_OUTPUT          = 0x03,
 	GPIO_ANALOG_MODE        = 0x00,
 	GPIO_FLOAT_MODE         = 0x04,
 	GPIO_PULL_UP_DOWN_MODE  = 0x08,
@@ -157,6 +178,7 @@ struct MspGPIOParam
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_GPIO_COMPONENT
 /**
  *******************************************************************************
  * @brief      define map api
@@ -192,6 +214,7 @@ extern __INLINE hal_err_t Hal_GPIO_Toggle(struct HalGPIODevice*);
 extern __INLINE hal_err_t Hal_GPIO_Write(struct HalGPIODevice*, struct MspGPIOParam*);
 extern __INLINE hal_err_t Hal_GPIO_Read(struct HalGPIODevice*, struct MspGPIOParam*);
 extern __INLINE hal_err_t Hal_GPIO_Control(struct HalGPIODevice*, uint8_t, void*);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
