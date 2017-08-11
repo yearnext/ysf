@@ -3,6 +3,8 @@ del *.d /s
 del *.crf /s
 del *.sct /s
 del *.dep /s
+del *.dni /s
+del *.dnx /s
 del *.bak /s
 del *.htm /s
 del *.map /s
@@ -14,7 +16,13 @@ del *.axf /s
 del *.lnp /s
 del *.lst /s
 del *.sim /s
+del *.scr /s
 del *.iex /s
 del *.pbd /s
+del *.reggroups /s
+del *.wsdt /s
+del *.crun /s
+del *.dbgdt /s
+del *.ps1 /s
 del *.__i /s
 del *.browse /s
