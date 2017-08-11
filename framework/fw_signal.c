@@ -357,7 +357,7 @@ static void Fw_Signal_Task_Handle(void *param)
  * @note        NONE
  *******************************************************************************
  */
-fw_err_t Fw_Signal_Init(void)
+fw_err_t Fw_Signal_InitComponent(void)
 {    
 	SignalBlock.Num = 0;
 
@@ -378,7 +378,7 @@ fw_err_t Fw_Signal_Init(void)
  * @note        NONE
  *******************************************************************************
  */
-fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, struct Fw_Task *task)
+fw_err_t Fw_Signal_Init(struct Fw_Signal *signal, char *str, struct Fw_Task *task, uint8_t (*scan)(void))
 {
     _FW_ASSERT(IS_PTR_NULL(signal));
 	_FW_ASSERT(IS_PTR_NULL(str));
@@ -388,7 +388,8 @@ fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, struct Fw_Task *t
 	
     signal->Str  = str;
     signal->Task = task;
-
+    signal->Scan = scan;
+    
 	SignalBlock.Num++;
 	
     return FW_ERR_NONE;
@@ -404,7 +405,7 @@ fw_err_t Fw_Signal_Create(struct Fw_Signal *signal, char *str, struct Fw_Task *t
  * @note        NONE
  *******************************************************************************
  */
-fw_err_t Fw_Signal_Start(struct Fw_Signal *signal, uint8_t triggerState, uint32_t tick)
+fw_err_t Fw_Signal_Open(struct Fw_Signal *signal, uint8_t triggerState, uint32_t tick)
 {
 	_FW_ASSERT(IS_PTR_NULL(signal));
 

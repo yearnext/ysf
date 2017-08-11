@@ -140,6 +140,7 @@ struct Fw_Signal
     uint8_t          (*Scan)(void);
     
     struct Fw_Task   *Task;
+    struct Fw_Timer  Timer;
     
     Fw_Signal_State  State;
     
@@ -147,8 +148,6 @@ struct Fw_Signal
     uint8_t          Value;
 
     uint8_t          TriggerState;
-    
-    struct Fw_Timer  Timer;
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -159,9 +158,9 @@ struct Fw_Signal
  *******************************************************************************
  */
 #if USE_SIGNAL_COMPONENT
-extern fw_err_t Fw_Signal_Init(void);
-extern fw_err_t Fw_Signal_Create(struct Fw_Signal*, char*, struct Fw_Task*);
-extern fw_err_t Fw_Signal_Start(struct Fw_Signal*, uint8_t, uint32_t);
+extern fw_err_t Fw_Signal_InitComponent(void);
+extern fw_err_t Fw_Signal_Init(struct Fw_Signal*, char*, struct Fw_Task*, uint8_t (*)(void));
+extern fw_err_t Fw_Signal_Open(struct Fw_Signal*, uint8_t, uint32_t);
 extern uint8_t Fw_Signal_GetNum(void);
 #endif
 

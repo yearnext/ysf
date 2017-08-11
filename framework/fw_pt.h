@@ -78,7 +78,9 @@ extern "C"
  *******************************************************************************
  */ 
 #define _PT_THREAD(func_name)     fw_err_t func_name(void *ptTask, uint16_t evt)
-       
+
+typedef fw_err_t (*pt_thread)(void*, uint16_t);
+
 /**
  *******************************************************************************
  * @brief      protothreads begin functon
@@ -88,6 +90,13 @@ extern "C"
                                                                                               \
                                  if(pt->UseStatus == false)                                   \
                                  {                                                            \
+                                     return FW_ERR_NONE;                                      \
+                                 }                                                            \
+                                                                                              \
+                                 if(evt == FW_FINI_EVENT)                                     \
+                                 {                                                            \
+                                     pt->State = 0;                                           \
+                                                                                              \
                                      return FW_ERR_NONE;                                      \
                                  }                                                            \
                                                                                               \
@@ -125,7 +134,7 @@ extern "C"
                                 {                                                       \
                                     Fw_Timer_Start(&pt->Timer, CAL_SET_TIME(tick), 1);  \
                                     evt = FW_EVENT_NONE;                                \
-                                    _pt_wait(evt == FW_EVENT_DELAY);                    \
+                                    _pt_wait(evt == FW_DELAY_EVENT);                    \
                                 }while(0)                        
 /**
  *******************************************************************************
@@ -182,7 +191,7 @@ extern fw_err_t Fw_PT_Close(struct Fw_ProtoThread* /*pt*/);
 #define Fw_PT_Entry()                                                _pt_entry()
 #define Fw_PT_Wait(n)                                                _pt_wait(n)
 #define Fw_PT_WFE(n)                                                  _pt_wfe(n)
-#define Fw_PT_Delay(n)                                           _pt_delay(tick)
+#define Fw_PT_Delay(n)                                              _pt_delay(n)
 #define Fw_PT_Exit()                                                  _pt_exit()
 #define Fw_PT_End()                                                    _pt_end()
 

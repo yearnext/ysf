@@ -84,6 +84,14 @@ extern const struct _FwStreamDeviceOpera UartStreamDeviceOpera;
  * @brief       hal uart stream apis
  *******************************************************************************
  */
+extern void Hal_UartStream_Init(void *param);
+extern void Hal_UartStream_Fini(void *param);
+extern void Hal_UartStream_TxConnect(void *param);
+extern void Hal_UartStream_TxDisconnect(void *param);
+extern void Hal_UartStream_RxConnect(void *param);
+extern void Hal_UartStream_RxDisconnect(void *param);
+extern void Hal_UartStream_TxOut(void *param);
+extern void Hal_UartStream_RxIn(void *param);
 extern void Hal_UartStream_Send(void*);
 extern void Hal_UartStream_Receive(void*, uint8_t);
 

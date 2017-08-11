@@ -74,14 +74,8 @@ static struct Fw_UartStream DebugStream =
     .Device.StopBits = MCU_UART_STOP_BITS_1,
     .Device.WordLen = MCU_UART_WORD_LEN_8B,
 
-    .Device.IsEnableRx = false,
-    .Device.IsEnableTx = false,
-    
-    .Device.RxCallback.Callback = Hal_UartStream_Receive,
-    .Device.RxCallback.Param    = (void *)&DebugStream,
-
-    .Device.TxCallback.Callback = Hal_UartStream_Send,
-    .Device.TxCallback.Param    = (void *)&DebugStream,
+    .Device.RxConfig = MCU_UART_DISABLE_RX,
+    .Device.TxConfig = MCU_UART_DISABLE_TX,
 };
 
 #endif
@@ -103,24 +97,46 @@ void Fw_Debug_InitComponent(void)
     //< init fifo
     _FifoInitType TxFifo = {TxBuffer, FW_DEBUG_BUFFER_SIZE};
     _FifoInitType RxFifo = {RxBuffer, FW_DEBUG_BUFFER_SIZE};
+
+    DebugStream.TxStream.Stream.Tx.Param = (void*)&DebugStream,
+    DebugStream.TxStream.Stream.Tx.InOut = NULL,
+    DebugStream.TxStream.Stream.Tx.Connect = NULL,
+    DebugStream.TxStream.Stream.Tx.Disconnect = NULL,
+	DebugStream.TxStream.Stream.Rx.Param  = (void*)&DebugStream,
+    DebugStream.TxStream.Stream.Rx.InOut = Hal_UartStream_TxOut,
+    DebugStream.TxStream.Stream.Rx.Connect = Hal_UartStream_TxConnect,
+    DebugStream.TxStream.Stream.Rx.Disconnect = Hal_UartStream_TxDisconnect,
+
+	DebugStream.RxStream.Stream.Tx.Param = (void*)&DebugStream,
+    DebugStream.RxStream.Stream.Tx.InOut = NULL,
+    DebugStream.RxStream.Stream.Tx.Connect = Hal_UartStream_RxConnect,
+    DebugStream.RxStream.Stream.Tx.Disconnect = Hal_UartStream_RxDisconnect,
+	DebugStream.RxStream.Stream.Rx.Param = (void*)&DebugStream,
+    DebugStream.RxStream.Stream.Rx.InOut = NULL,
+    DebugStream.RxStream.Stream.Rx.Connect = NULL,
+    DebugStream.RxStream.Stream.Rx.Disconnect = NULL,
+    
+    DebugStream.Device.RxCallback.Callback = Hal_UartStream_Receive,
+    DebugStream.Device.RxCallback.Param    = (void *)&DebugStream,
+
+    DebugStream.Device.TxCallback.Callback = Hal_UartStream_Send,
+    DebugStream.Device.TxCallback.Param    = (void *)&DebugStream,
     
     //< init tx stream
     Fw_Stream_Init((struct Fw_Stream *)&DebugStream.TxStream, 
                    (struct _FwStreamBufferOpera *)&StreamFifoOpera, 
-                   (struct _FwStreamDeviceOpera *)&UartStreamDeviceOpera, 
-                   (void *)&TxFifo, 
-                   NULL);
-    
-    Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.TxStream);
-    Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.TxStream);
-    
+                   (void *)&TxFifo);
+
     //< init rx stream
     Fw_Stream_Init((struct Fw_Stream *)&DebugStream.RxStream, 
-                   (struct _FwStreamBufferOpera *)&StreamFifoOpera, 
-                   (struct _FwStreamDeviceOpera *)&UartStreamDeviceOpera, 
-                   (void *)&RxFifo, 
-                   NULL);
+                   (struct _FwStreamBufferOpera *)&StreamFifoOpera,  
+                   (void *)&RxFifo);
     
+    Hal_UartStream_Init(&DebugStream.Device);
+                   
+    Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.TxStream);
+    Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.TxStream);
+                   
     Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.RxStream);
     Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.RxStream);
 }

@@ -419,14 +419,17 @@ hal_err_t Map_Uart_Init(uint8_t port, struct HalUartDevice *dev)
         USART_InitStructure.USART_Parity = USART_Parity_Odd;
     }
     
+    //< init uart mode
+    USART_InitStructure.USART_Mode = 0;
+    
     //< set uart tx state
-    if(dev->IsEnableTx == true)
+    if(dev->TxConfig != MCU_UART_DISABLE_TX)
     {
         USART_InitStructure.USART_Mode    = USART_Mode_Tx;
     }
     
     //< set uart rx state
-    if(dev->IsEnableRx == true)
+    if(dev->RxConfig == MCU_UART_DISABLE_RX)
     {
         USART_InitStructure.USART_Mode   |= USART_Mode_Rx;
     }
@@ -444,12 +447,18 @@ hal_err_t Map_Uart_Init(uint8_t port, struct HalUartDevice *dev)
     USART_DeInit(Uart[port]);
     USART_Init(Uart[port], &USART_InitStructure);
     
-    USART_ClearITPendingBit(Uart[port], USART_IT_TC);
-    USART_ITConfig(Uart[port], USART_IT_TC, ENABLE);
+    if(dev->TxConfig == MCU_UART_ENABLE_TX_ISR)
+    {
+        USART_ClearITPendingBit(Uart[port], USART_IT_TC);
+        USART_ITConfig(Uart[port], USART_IT_TC, ENABLE);
+    }
     
-    USART_ClearITPendingBit(Uart[port], USART_IT_RXNE);
-    USART_ITConfig(Uart[port], USART_IT_RXNE, ENABLE);
-    	
+    if(dev->RxConfig == MCU_UART_ENABLE_RX_ISR)
+    {
+        USART_ClearITPendingBit(Uart[port], USART_IT_RXNE);
+        USART_ITConfig(Uart[port], USART_IT_RXNE, ENABLE);
+    }
+	
     NVIC_InitStructure.NVIC_IRQChannel = UartIrqn[port];
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -604,7 +613,7 @@ hal_err_t Hal_Uart_TxConnect(struct HalUartDevice *dev)
 	Uart[dev->Port]->SR  &= ~0x40;
 	Uart[dev->Port]->CR1 |= 0x40;
 
-    dev->IsEnableTx       = true;
+    dev->TxConfig         = MCU_UART_ENABLE_TX_ISR;
     
 	return HAL_ERR_NONE;
 }
@@ -625,7 +634,7 @@ hal_err_t Hal_Uart_TxDisconnect(struct HalUartDevice *dev)
 	Uart[dev->Port]->CR1 &= ~0x40;
 	Uart[dev->Port]->SR  &= ~0x40;
     
-    dev->IsEnableTx       = false;
+    dev->TxConfig         = MCU_UART_DISABLE_TX;
 
 	return HAL_ERR_NONE;
 }
@@ -646,7 +655,7 @@ hal_err_t Hal_Uart_RxConnect(struct HalUartDevice *dev)
 	Uart[dev->Port]->SR  &= ~0x20;
 	Uart[dev->Port]->CR1 |= 0x20;
     
-    dev->IsEnableRx       = true;
+    dev->RxConfig         = MCU_UART_ENABLE_RX_ISR;
 
 	return HAL_ERR_NONE;
 }
@@ -667,7 +676,7 @@ hal_err_t Hal_Uart_RxDisconnect(struct HalUartDevice *dev)
 	Uart[dev->Port]->CR1 &= ~0x20;
 	Uart[dev->Port]->SR  &= ~0x20;
     
-    dev->IsEnableRx       = false;
+    dev->RxConfig         = MCU_UART_DISABLE_RX;
 
 	return HAL_ERR_NONE;
 }
@@ -963,7 +972,7 @@ void USART3_IRQHandler(void)
 //    }
 //}
 
-void Hal_Uart_Test_Init(void)
+void Hal_Uart_Test(void)
 {
     struct HalUartDevice uart = 
     {
@@ -973,8 +982,8 @@ void Hal_Uart_Test_Init(void)
         .StopBits = MCU_UART_STOP_BITS_1,
         .WordLen = MCU_UART_WORD_LEN_8B,
 
-        .IsEnableRx = true,
-        .IsEnableTx = true,
+        .RxConfig = MCU_UART_ENABLE_RX,
+        .TxConfig = MCU_UART_ENABLE_TX,
     };
     
     uint16_t i;

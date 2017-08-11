@@ -122,6 +122,17 @@ enum Define_Uart_Parity
     MCU_UART_PARTY_ODD,
 };
 
+enum Define_Uart_Work_State
+{
+    MCU_UART_DISABLE_TX = 0,
+    MCU_UART_ENABLE_TX = 1,
+    MCU_UART_ENABLE_TX_ISR = 2,
+    
+    MCU_UART_DISABLE_RX = 0,
+    MCU_UART_ENABLE_RX = 1,
+    MCU_UART_ENABLE_RX_ISR = 2,
+};
+
 /**
  *******************************************************************************
  * @brief      define map deivce uart structure
@@ -136,8 +147,8 @@ struct HalUartDevice
     uint8_t StopBits;
     uint8_t Parity;
     
-    bool    IsEnableTx;
-    bool    IsEnableRx;
+    uint8_t TxConfig;
+    uint8_t RxConfig;
 
     uint32_t Baud;
     
@@ -194,7 +205,7 @@ extern hal_err_t Hal_Uart_ClrRxCompletFlag(struct HalUartDevice*);
  * @brief      define test api
  *******************************************************************************
  */ 
-extern void Hal_Uart_Test_Init(void);
+extern void Hal_Uart_Test(void);
 
 #endif
 

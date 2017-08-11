@@ -44,258 +44,240 @@
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-///**
-// *******************************************************************************
-// * @brief       device port define
-// *******************************************************************************
-// */  
-//static struct Hal_GPIO_Block Led1 = 
-//{
-//    .Port = MCU_PORT_D,
-//    .Pin  = MCU_PIN_13,
-//    .Mode = GPIO_MODE_PARAM(GPIO_LOW_SPEED_OUTPUT, GPIO_OUT_PUSH_PULL_MODE),
-//};
-//
-//static struct Hal_GPIO_Block Led2 = 
-//{
-//    .Port = MCU_PORT_G,
-//    .Pin  = MCU_PIN_14,
-//    .Mode = GPIO_MODE_PARAM(GPIO_LOW_SPEED_OUTPUT, GPIO_OUT_PUSH_PULL_MODE),
-//};
-//
-//static struct Hal_GPIO_Block Key1 = 
-//{
-//    .Port = MCU_PORT_E,
-//    .Pin  = MCU_PIN_0,
-//    .Mode = GPIO_MODE_PARAM(GPIO_INPUT, GPIO_IN_PULL_UP_MODE),
-//};
-//
-//static struct Hal_GPIO_Block Key2 = 
-//{
-//    .Port = MCU_PORT_C,
-//    .Pin  = MCU_PIN_13,
-//    .Mode = GPIO_MODE_PARAM(GPIO_INPUT, GPIO_IN_PULL_UP_MODE),
-//};
+/**
+ *******************************************************************************
+ * @brief       device port define
+ *******************************************************************************
+ */  
+static struct HalGPIODevice Led1 = 
+{
+    .Port = MCU_PORT_D,
+    .Pin  = MCU_PIN_13,
+    .IO   = GPIO_HS_OUTPUT,
+    .Mode = GPIO_PUSH_PULL_MODE,
+};
 
-///**
-// *******************************************************************************
-// * @brief       timer variable define
-// *******************************************************************************
-// */ 
-//static struct TimerBlock   led1Timer;
-//static struct ProtoThreads Led2Threads;
+static struct HalGPIODevice Led2 = 
+{
+    .Port = MCU_PORT_G,
+    .Pin  = MCU_PIN_14,
+    .IO   = GPIO_HS_OUTPUT,
+    .Mode = GPIO_PUSH_PULL_MODE,
+};
 
-///**
-// *******************************************************************************
-// * @brief       signal variable define
-// *******************************************************************************
-// */
-//static struct SignalBlock KeySignal1;
-//static struct SignalBlock KeySignal2;
+static struct HalGPIODevice Key1 = 
+{
+    .Port = MCU_PORT_E,
+    .Pin  = MCU_PIN_0,
+    .IO   = GPIO_INTPUT,
+    .Mode = GPIO_PULL_UP_DOWN_MODE,
+};
 
-///* Exported variables --------------------------------------------------------*/
-///* Private functions ---------------------------------------------------------*/
-///* Exported functions --------------------------------------------------------*/
-///**
-// *******************************************************************************
-// * @brief       led1 blink function
-// *******************************************************************************
-// */
-//static fw_err_t led1_blink_handler(void)
-//{   
-//    Hal.GPIO.Output.Toggle(Led1.Port, Led1.Pin);
-//    
-//    return FW_ERR_NONE;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       led2 blink function
-// *******************************************************************************
-// */
-//static _PT_THREAD(bsp_led2_blink)
-//{
-//    fw_pt_begin();
-//    
-//    while(1)
-//    {
-//        Hal.GPIO.Output.Toggle(Led2.Port, Led2.Pin);
-//        
-//        fw_pt_delay(250); 
-//    }
-//    
-//    fw_pt_end();
-//}
-
-///**
-// *******************************************************************************
-// * @brief       led application function
-// *******************************************************************************
-// */
-//static void app_led1_init(void)
-//{
-//    Framework.Timer.Init.Simple(&led1Timer, led1_blink_handler);
-//    Framework.Timer.Start(&led1Timer, CAL_SET_TIME(1000), TIMER_CYCLE_MODE);
-//}
-
-//static void app_led1_deinit(void)
-//{
-//    Framework.Timer.Stop(&led1Timer);
-//    Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
-//}
-
-//static void app_led2_init(void)
-//{
-//    fw_pt_init(&Led2Threads, bsp_led2_blink);
-//    fw_pt_arm(NULL, &Led2Threads);
-//}
-
-//static void app_led2_deinit(void)
-//{
-//    fw_pt_disarm(&Led2Threads);
-//    Hal.GPIO.Output.Clr(Led2.Port, Led2.Pin);
-//}
-
-///**
-// *******************************************************************************
-// * @brief       key1 scan function
-// *******************************************************************************
-// */
-//static uint8_t key1_scan(void)
-//{
-//    uint8_t status;
-//    
-//    Hal.GPIO.Input.Get(Key1.Port, Key1.Pin, &status);
-//    
-//    return !status;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       key2 scan function
-// *******************************************************************************
-// */
-//static uint8_t key2_scan(void)
-//{
-//    uint8_t status;
-//    
-//    Hal.GPIO.Input.Get(Key2.Port, Key2.Pin, &status);
-//    
-//    return !status;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       key1 handler function
-// *******************************************************************************
-// */
-//static fw_err_t key1_handler(uint16_t status)
-//{
-//    switch(status)
-//    {
-//        case SIGNAL_STATUS_PRESS_EDGE:
-//            app_led1_deinit();
-//            app_led2_deinit();
-//            break;
-//        case SIGNAL_STATUS_PRESS:
-//            Hal.GPIO.Output.Clr(Led1.Port, Led1.Pin);
-//            Hal.GPIO.Output.Clr(Led2.Port, Led2.Pin);
-//            break;
-//        case SIGNAL_STATUS_RELEASE_EDGE:
-//            app_led1_init();
-//            app_led2_init();
-//            break;
-//        default:
-//            break;
-//    }
-//    
-//    return FW_ERR_NONE;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       key2 handler function
-// *******************************************************************************
-// */
-//static fw_err_t key2_handler(uint16_t status)
-//{
-//    switch(status)
-//    {
-//        case SIGNAL_STATUS_PRESS_EDGE:
-//            app_led1_deinit();
-//            app_led2_deinit();
-//            break;
-//        case SIGNAL_STATUS_PRESS:
-//            Hal.GPIO.Output.Set(Led1.Port, Led1.Pin);
-//            Hal.GPIO.Output.Set(Led2.Port, Led2.Pin);
-//            break;
-//        case SIGNAL_STATUS_RELEASE_EDGE:
-//            app_led1_init();
-//            app_led2_init();
-//            break;
-//        default:
-//            break;
-//    }
-//    
-//    return FW_ERR_NONE;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       device led init function
-// *******************************************************************************
-// */
-//static void bsp_led_init( void )
-//{
-//    Hal.GPIO.Open(Led1.Port);
-//    Hal.GPIO.Init(Led1.Port, Led1.Pin, Led1.Mode);
-
-//    Hal.GPIO.Open(Led2.Port);
-//    Hal.GPIO.Init(Led2.Port, Led2.Pin, Led2.Mode);
-//}
-
-///**
-// *******************************************************************************
-// * @brief       device key init function
-// *******************************************************************************
-// */
-//static void bsp_key_init(void)
-//{
-//    Hal.GPIO.Open(Key1.Port);
-//    Hal.GPIO.Init(Key1.Port, Key1.Pin, Key1.Mode);
-//    Framework.Signal.Start(&KeySignal1, key1_scan, key1_handler);
-//    
-//    Hal.GPIO.Open(Key2.Port);
-//    Hal.GPIO.Init(Key2.Port, Key2.Pin, Key2.Mode);
-//    Framework.Signal.Start(&KeySignal2, key2_scan, key2_handler);
-//}
-
-///**
-// *******************************************************************************
-// * @brief       user init function
-// *******************************************************************************
-// */
-//static fw_err_t user_init( void )
-//{
-//    bsp_led_init();
-//    bsp_key_init();
-//    
-//    app_led1_init();
-//    app_led2_init();
-
-//    return FW_ERR_NONE;
-//}
+static struct HalGPIODevice Key2 = 
+{
+    .Port = MCU_PORT_C,
+    .Pin  = MCU_PIN_13,
+    .IO   = GPIO_INTPUT,
+    .Mode = GPIO_PULL_UP_DOWN_MODE,
+};
 
 /**
  *******************************************************************************
- * @brief       main function
+ * @brief       timer variable define
+ *******************************************************************************
+ */ 
+static struct Fw_Task        Led1Task;
+static struct Fw_Timer       Led1Timer;
+
+static struct Fw_ProtoThread Led2Task;
+
+static struct Fw_Task        KeyTask;
+
+/**
+ *******************************************************************************
+ * @brief       signal variable define
  *******************************************************************************
  */
-int main( void )
-{   
-    Hal_Uart_Test_Init();
+static struct Fw_Signal Key1Signal;
+static struct Fw_Signal Key2Signal;
+
+/* Exported variables --------------------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       led1 blink function
+ *******************************************************************************
+ */
+void Led1_Task_Handle(uint32_t event, void *param);
+
+void App_Led1_Init(void)
+{
+    Hal_GPIO_Open(&Led1);
+    Hal_GPIO_Init(&Led1);
     
-    return 0;
+    Fw_Task_Init(&Led1Task, "Led1 Task", 1, (void *)Led1_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
+    
+    Fw_Timer_Init(&Led1Timer, "Led1 Timer");
+    Fw_Timer_SetEvent(&Led1Timer, &Led1Task, LED_BLINK_EVENT, (void *)&Led1);
+    Fw_Timer_Start(&Led1Timer, 1000, -1);
+}
+
+void Led1_Task_Handle(uint32_t event, void *param)
+{
+    struct HalGPIODevice *drv = (struct HalGPIODevice *)param;
+    
+    switch(event)
+    {
+        case LED_ON_EVENT:
+            Hal_GPIO_Set(drv);
+            break;
+        case LED_OFF_EVENT:
+            Hal_GPIO_Clear(drv);
+            break;
+        case LED_BLINK_EVENT:
+            Hal_GPIO_Toggle(drv);
+            break;
+        default:
+            break;
+    }
+}
+
+/**
+ *******************************************************************************
+ * @brief       led2 blink function
+ *******************************************************************************
+ */
+_PT_THREAD(Led2_Task_Handle);
+
+void App_Led2_Init(void)
+{
+    Hal_GPIO_Open(&Led2);
+    Hal_GPIO_Init(&Led2);
+
+    Fw_PT_Init(&Led2Task, "Led2 Task", Led2_Task_Handle, 1);
+    Fw_PT_Open(&Led2Task);
+}
+
+_PT_THREAD(Led2_Task_Handle)
+{
+    Fw_PT_Begin();
+    
+    while(1)
+    {
+        Hal_GPIO_Toggle(&Led2);
+        
+        Fw_PT_Delay(500); 
+    }
+    
+    Fw_PT_End();
+}
+
+/**
+ *******************************************************************************
+ * @brief       key scan function
+ *******************************************************************************
+ */
+uint8_t Key1_Scan_Function(void)
+{
+    uint16_t status = 0;
+    
+    Hal_GPIO_GetIntputStatus(&Key1, &status);
+    
+    return (status) ? (DEMO_KEY1_SIGNAL) : (0);
+}
+
+uint8_t Key2_Scan_Function(void)
+{
+    uint16_t status = 0;
+    
+    Hal_GPIO_GetIntputStatus(&Key2, &status);
+    
+    return (status) ? (DEMO_KEY2_SIGNAL) : (0);
+}
+
+/**
+ *******************************************************************************
+ * @brief       key init function
+ *******************************************************************************
+ */
+void App_Key1_Init(void)
+{
+    Hal_GPIO_Open(&Key1);
+    Hal_GPIO_Init(&Key1);
+    
+    Fw_Signal_Init(&Key1Signal, "Key1 Signal", &KeyTask, Key1_Scan_Function);
+    Fw_Signal_Open(&Key1Signal, REG_RELEASE_EDGE_STATE, 50);
+}
+
+void App_Key2_Init(void)
+{
+    Hal_GPIO_Open(&Key2);
+    Hal_GPIO_Init(&Key2);
+    
+    Fw_Signal_Init(&Key2Signal, "Key2 Signal", &KeyTask, Key2_Scan_Function);
+    Fw_Signal_Open(&Key2Signal, REG_RELEASE_EDGE_STATE, 50);
+}
+
+void App_KeyTask_Handle(uint32_t event, void *param);
+void App_KeyTask_Init(void)
+{
+    Fw_Task_Init(&Led1Task, "Key Task", 1, (void *)App_KeyTask_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
+}
+
+/**
+ *******************************************************************************
+ * @brief       key handle function
+ *******************************************************************************
+ */
+void App_KeyTask_Handle(uint32_t event, void *param)
+{
+    switch(event)
+    {
+        //< signal event handle
+        case FW_SIGNAL_HANDLE_EVENT:
+        {
+            struct Fw_Signal *signal = (struct Fw_Signal *)param;
+            
+            //< key handle
+            switch(signal->Value)
+            {
+                case DEMO_KEY1_SIGNAL:
+                    if(signal->State == SIGNAL_RELEASE_EDGE_STATE)
+                    {
+                        
+                    }
+                    break;
+                case DEMO_KEY2_SIGNAL:
+                    if(signal->State == SIGNAL_RELEASE_EDGE_STATE)
+                    {
+                        
+                    }
+                    break;
+                default:
+                    break;
+            }
+            
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+/**
+ *******************************************************************************
+ * @brief       user init function
+ *******************************************************************************
+ */
+void App_User_Init(void)
+{
+    App_Led1_Init();
+    App_Led2_Init();
+    
+    App_KeyTask_Init();
+    App_Key1_Init();
+    App_Key2_Init();
 }
 
 /** @}*/     /* key control demo  */

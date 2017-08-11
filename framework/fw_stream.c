@@ -169,26 +169,18 @@ fw_err_t Fw_Stream_PostRxEvent(struct Fw_Stream *stream)
  */
 fw_err_t Fw_Stream_Init(struct Fw_Stream *stream, 
                         _StreamBufferOperaInitType *opera, 
-                        _StreamDeviceOperaInitType *device,
-                        void *param, 
-                        void (*Callback)(uint8_t, void*))
+                        void *param)
 {
     //< detect stream param
     _FW_ASSERT(IS_PTR_NULL(stream));
     _FW_ASSERT(IS_PTR_NULL(opera));
-    _FW_ASSERT(IS_PTR_NULL(device));
     
-    //< clear stream block
-    memset(stream, 0, sizeof(struct Fw_Stream));
-
-    //< set stream device opera
-    stream->Device = device;
+    //< init stream block
+    stream->IsRxReady = false;
+	stream->IsTxReady = false;
 
     //< set stream buffer opera
     stream->Opera = opera;
-    
-    //< set srteam call back
-    stream->Callback = Callback;
     
     //< init memory
     if(!IS_PTR_NULL(stream->Opera->Init))
@@ -196,12 +188,6 @@ fw_err_t Fw_Stream_Init(struct Fw_Stream *stream,
         stream->Opera->Init(stream, param);
     }
     
-    //< init hardware
-    if(!IS_PTR_NULL(stream->Device->Init))
-    {
-        stream->Device->Init(stream);
-    }
-
     return FW_ERR_NONE;
 }
 
@@ -216,13 +202,17 @@ fw_err_t Fw_Stream_Init(struct Fw_Stream *stream,
 fw_err_t Fw_Stream_Fini(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
-    
-    //< init stream hardware
-    if(!IS_PTR_NULL(stream->Device->Fini))
-    {
-        stream->Device->Fini(stream);
-    }
-    
+
+	if(stream->IsRxReady)
+	{
+		stream->Rx.Disconnect(stream->Rx.Param);
+	}
+
+	if(stream->IsTxReady)
+	{
+		stream->Tx.Disconnect(stream->Tx.Param);
+	}
+	
     //< init stream buffer
     if(!IS_PTR_NULL(stream->Opera->Fini))
     {
@@ -245,13 +235,16 @@ fw_err_t Fw_Stream_Fini(struct Fw_Stream *stream)
 fw_err_t Fw_Stream_TxConnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
-    
-    stream->IsTxReady = true;
-    
-    if(!IS_PTR_NULL(stream->Device->Tx_Connect))
-    {
-        stream->Device->Tx_Connect(stream);
-    }
+
+	if(stream->IsTxReady == false)
+	{
+		if(!IS_PTR_NULL(stream->Tx.Connect))
+		{
+			stream->Tx.Connect(stream);
+		}
+
+		stream->IsTxReady = true;
+	}
     
     return FW_ERR_NONE;
 }
@@ -268,12 +261,16 @@ fw_err_t Fw_Stream_TxDisconnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
     
-    stream->IsTxReady = false;
-    
-    if(!IS_PTR_NULL(stream->Device->Tx_Disconnect))
-    {
-        stream->Device->Tx_Disconnect(stream);
-    }
+	if(stream->IsTxReady == true)
+	{
+		if(!IS_PTR_NULL(stream->Tx.Disconnect))
+		{
+			stream->Tx.Disconnect(stream);
+		}
+
+		stream->IsTxReady = false;
+	}
+
     
     return FW_ERR_NONE;
 }
@@ -290,12 +287,15 @@ fw_err_t Fw_Stream_RxConnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
     
-    stream->IsRxReady = true;
-    
-    if(!IS_PTR_NULL(stream->Device->Rx_Connect))
-    {
-        stream->Device->Rx_Connect(stream);
-    }
+	if(stream->IsRxReady == false)
+	{
+		if(!IS_PTR_NULL(stream->Rx.Connect))
+		{
+			stream->Rx.Connect(stream);
+		}
+
+		stream->IsRxReady = true;
+	}
     
     return FW_ERR_NONE;
 }
@@ -312,12 +312,15 @@ fw_err_t Fw_Stream_RxDisconnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
     
-    stream->IsRxReady = true;
-    
-    if(!IS_PTR_NULL(stream->Device->Rx_Disconnect))
-    {
-        stream->Device->Rx_Disconnect(stream);
-    }
+	if(stream->IsRxReady == true)
+	{
+		if(!IS_PTR_NULL(stream->Rx.Disconnect))
+		{
+			stream->Rx.Disconnect(stream);
+		}
+
+		stream->IsRxReady = false;
+	}
     
     return FW_ERR_NONE;
 }
@@ -342,11 +345,11 @@ fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size
     
     if(stream->IsTxReady == true)
     {
-        if(!IS_PTR_NULL(stream->Opera->Write) && !IS_PTR_NULL(stream->Device->Tx_Out))
+        if(!IS_PTR_NULL(stream->Opera->Write) && !IS_PTR_NULL(stream->Tx.InOut))
         {
             if(stream->Opera->Write(stream, buffer, size) == FW_ERR_NONE)
             {
-                stream->Device->Tx_Out(stream);
+                stream->Tx.InOut(stream);
             
                 return FW_ERR_NONE;
             }
@@ -378,10 +381,7 @@ fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
     {
         if(!IS_PTR_NULL(stream->Opera->Read))
         {
-            if(stream->Opera->Read(stream, buffer, size) == FW_ERR_NONE)
-            {
-                return FW_ERR_NONE;
-            }
+            return stream->Opera->Read(stream, buffer, size);
         }
     }
     

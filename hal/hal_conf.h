@@ -140,7 +140,33 @@ extern "C"
 /* STM8S config --------------------------------------------------------------*/
 #elif __TARGET_CHIP__ == USE_MCU_STM8S
 #define STM8S003
-    
+
+/**
+ *******************************************************************************
+ * @brief define mcu clock freq
+ *******************************************************************************
+ */
+#define MCU_CLOCK_FREQ                                              (16000000UL) 
+#define MCU_HSE_FREQ                                                 (8000000UL) 
+
+/**
+ *******************************************************************************
+ * @brief define mcu sram constants
+ *******************************************************************************
+ */
+#define MCU_SRAM_SIZE                                                        (1)
+#define MCU_SRAM_HEAD_ADDR                                            (0x03FFUL)
+#define MCU_SRAM_END_ADDR            (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
+
+/**
+ *******************************************************************************
+ * @brief invaild define
+ *******************************************************************************
+ */
+#else
+	#error "The __TARGET_CHIP__ is not support type!"
+#endif
+
 /**
  *******************************************************************************
  * @brief define hal component config flags 
@@ -161,33 +187,6 @@ extern "C"
 #define USE_MCU_GPIO_COMPONENT
 #define USE_MCU_TIMER_COMPONENT
 #define USE_MCU_UART_COMPONENT
-#endif
-
-/**
- *******************************************************************************
- * @brief define mcu clock freq
- *******************************************************************************
- */
-
-#define MCU_CLOCK_FREQ                                              (16000000UL) 
-#define MCU_HSE_FREQ                                                 (8000000UL) 
-
-/**
- *******************************************************************************
- * @brief define mcu sram constants
- *******************************************************************************
- */
-#define MCU_SRAM_SIZE                                                        (1)
-#define MCU_SRAM_HEAD_ADDR                                            (0x03FFUL)
-#define MCU_SRAM_END_ADDR            (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
-
-/**
- *******************************************************************************
- * @brief invaild define
- *******************************************************************************
- */
-#else
-	#error "The __TARGET_CHIP__ is not support type!"
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

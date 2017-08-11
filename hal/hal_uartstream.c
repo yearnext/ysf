@@ -42,34 +42,6 @@
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       uart stream drive function
- *******************************************************************************
- */
-static void Hal_UartStream_Init(struct Fw_Stream*);
-static void Hal_UartStream_Fini(struct Fw_Stream*);   
-static void Hal_UartStream_TxOut(struct Fw_Stream*);
-static void Hal_UartStream_TxConnect(struct Fw_Stream*);
-static void Hal_UartStream_TxDisconnect(struct Fw_Stream*);
-static void Hal_UartStream_RxConnect(struct Fw_Stream*);
-static void Hal_UartStream_RxDisconnect(struct Fw_Stream*);
-static void Hal_UartStream_RxIn(struct Fw_Stream*);
-
-const struct _FwStreamDeviceOpera UartStreamDeviceOpera = 
-{
-    .Init          = Hal_UartStream_Init,
-    .Fini          = Hal_UartStream_Fini,
-    
-    .Tx_Out        = Hal_UartStream_TxOut,
-    .Tx_Connect    = Hal_UartStream_TxConnect,
-    .Tx_Disconnect = Hal_UartStream_TxDisconnect,
-    
-    .Rx_In         = Hal_UartStream_RxIn,
-    .Rx_Connect    = Hal_UartStream_RxConnect, 
-    .Rx_Disconnect = Hal_UartStream_RxDisconnect,
-};
-
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -98,7 +70,7 @@ void _Tx_Init(struct Fw_UartStream *uartStream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_TxInit(void *param)
+void Hal_UartStream_TxInit(void *param)
 {
     struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
 
@@ -113,9 +85,9 @@ static void Hal_UartStream_TxInit(void *param)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_Init(struct Fw_Stream *stream)
+void Hal_UartStream_Init(void *param)
 {
-	struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
+	struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
 
     //< init timeout call back
 	Fw_Timer_Init(&uartStream->Timer, "Stream Timeout Timer");
@@ -134,9 +106,9 @@ static void Hal_UartStream_Init(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_Fini(struct Fw_Stream *stream)
+void Hal_UartStream_Fini(void *param)
 {
-	struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
+	struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
 
 	Hal_Uart_Fini(&uartStream->Device);
 }
@@ -149,9 +121,9 @@ static void Hal_UartStream_Fini(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_TxConnect(struct Fw_Stream *stream)
+void Hal_UartStream_TxConnect(void *param)
 {
-    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
+    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
     
     Hal_Uart_TxConnect(&uartStream->Device);
 }
@@ -164,9 +136,9 @@ static void Hal_UartStream_TxConnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_TxDisconnect(struct Fw_Stream *stream)
+void Hal_UartStream_TxDisconnect(void *param)
 {
-    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
+    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
     
     Hal_Uart_TxDisconnect(&uartStream->Device);
 }
@@ -179,9 +151,9 @@ static void Hal_UartStream_TxDisconnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_RxConnect(struct Fw_Stream *stream)
+void Hal_UartStream_RxConnect(void *param)
 {
-    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
+    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
     
     Hal_Uart_RxConnect(&uartStream->Device);
 }
@@ -194,9 +166,9 @@ static void Hal_UartStream_RxConnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_RxDisconnect(struct Fw_Stream *stream)
+void Hal_UartStream_RxDisconnect(void *param)
 {
-    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
+    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)param;
     
     Hal_Uart_RxDisconnect(&uartStream->Device);
 }
@@ -209,13 +181,9 @@ static void Hal_UartStream_RxDisconnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_TxOut(struct Fw_Stream *stream)
+void Hal_UartStream_TxOut(void *param)
 {
-    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
-    
-    uartStream->State = UART_STREAM_INIT_STATE;
-    
-    Hal_UartStream_Send((void *)stream);
+    Hal_UartStream_Send(param);
 }
 
 /**
@@ -226,7 +194,7 @@ static void Hal_UartStream_TxOut(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static void Hal_UartStream_RxIn(struct Fw_Stream *stream)
+void Hal_UartStream_RxIn(void *param)
 {
 //    struct Fw_UartStream *uartStream = (struct Fw_UartStream *)stream;
 }

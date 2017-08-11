@@ -106,16 +106,10 @@ struct _FwStreamBufferOpera
  */
 struct _FwStreamDeviceOpera
 {
-    void (*Init)(struct Fw_Stream*);
-    void (*Fini)(struct Fw_Stream*);
-    
-    void (*Tx_Out)(struct Fw_Stream*);
-    void (*Tx_Connect)(struct Fw_Stream*);
-    void (*Tx_Disconnect)(struct Fw_Stream*);
-    
-    void (*Rx_In)(struct Fw_Stream*);
-    void (*Rx_Connect)(struct Fw_Stream*);
-    void (*Rx_Disconnect)(struct Fw_Stream*);
+    void *Param;
+    void (*InOut)(void*);
+    void (*Connect)(void*);
+    void (*Disconnect)(void*);
 };
 
 /**
@@ -125,11 +119,17 @@ struct _FwStreamDeviceOpera
  */
 struct Fw_Stream
 {
+    //< memory opera component
     struct _FwStreamBufferOpera *Opera;
-    struct _FwStreamDeviceOpera *Device;
+    
+    //< common port opera 
+    struct _FwStreamDeviceOpera Tx;
+    struct _FwStreamDeviceOpera Rx;
 
+    //< common tx/rx handle
     void (*Callback)(uint8_t, void*);
 
+    //< tx/rx status
     bool IsTxReady;
     bool IsRxReady;
 };
@@ -200,10 +200,7 @@ extern const _StreamBufferOperaInitType StreamBlockOpera;
 #if USE_STREAM_COMPONENT
 extern fw_err_t Fw_Stream_InitComponent(void);
 
-extern fw_err_t Fw_Stream_Init(struct Fw_Stream *stream, 
-                               _StreamBufferOperaInitType*, 
-                               _StreamDeviceOperaInitType*,
-                               void *, void (*)(uint8_t, void*));
+extern fw_err_t Fw_Stream_Init(struct Fw_Stream*, _StreamBufferOperaInitType*, void*);
 
 extern fw_err_t Fw_Stream_Fini(struct Fw_Stream*);
 

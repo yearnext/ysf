@@ -37,7 +37,8 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "fw_path.h"
+#include "fw_pt.h"
+#include "fw_debug.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -62,11 +63,11 @@ fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, void *ptThread, uint8_
 {
     _FW_ASSERT(IS_PTR_NULL(pt));
     _FW_ASSERT(IS_PTR_NULL(str));
-    _FW_ASSERT(IS_PTR_NULL(pt_thread));
+    _FW_ASSERT(IS_PTR_NULL(ptThread));
 
     pt->State     = 0;
     pt->Str       = str;
-    pt->Thread    = pt_thread;
+    pt->Thread    = (pt_thread)ptThread;
     pt->UseStatus = false;
 
     Fw_Task_Init(&pt->Task, str, priority, ptThread, FW_PT_THREAD_TYPE_TASK);     

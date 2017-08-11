@@ -72,7 +72,7 @@ extern "C"
  * @note        0                       disable
  *******************************************************************************
  */
-#define USE_FRAMEWORK_COMPONENT_LIBRARY                                      (0)
+#define USE_FRAMEWORK_COMPONENT_LIBRARY                                      (1)
 
 /**
  *******************************************************************************

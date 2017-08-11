@@ -48,7 +48,7 @@
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       application init
+ * @brief       user application init
  * @param       [in/out]  void
  * @return      [in/out]  void
  * @note        None

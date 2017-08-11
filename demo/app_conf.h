@@ -72,11 +72,31 @@ enum Define_Event
     FW_TRANSFER_WAIT_EVNET,
     FW_TRANSFER_COMPLET_EVENT,
     FW_SIGNAL_HANDLE_EVENT,
-    
+
     /** define user task begin */
-	
+    LED_ON_EVENT,
+    LED_OFF_EVENT,
+    LED_BLINK_EVENT,
+    
     /** define user task end */
     FW_EVENT_MAX,
+};
+
+/**
+ *******************************************************************************
+ * @brief      define signal id
+ *******************************************************************************
+ */
+enum Define_Signal_Id
+{
+    FW_INIT_SIGNAL = 0,
+    
+    /** define user task begin */
+    DEMO_KEY1_SIGNAL,
+    DEMO_KEY2_SIGNAL,
+    
+    /** define user task end */
+    FW_SIGNAL_MAX,
 };
 
 /* Exported types ------------------------------------------------------------*/
