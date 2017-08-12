@@ -46,7 +46,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "core_path.h"
+#include "comm_path.h"
 #include _COMPILER_PATH
 
 /* Exported types ------------------------------------------------------------*/

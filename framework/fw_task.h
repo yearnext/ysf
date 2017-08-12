@@ -115,6 +115,8 @@ struct Fw_Task
     struct Fw_Task_Handle Handle;
     
     uint8_t Priority;
+    
+    uint8_t Status;
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -130,6 +132,8 @@ extern fw_err_t Fw_Task_Init(struct Fw_Task*, char*, uint8_t, void*, enum _Fw_Ta
 extern void Fw_Task_PostEvent(struct Fw_Task*, uint32_t);
 extern void Fw_Task_PostMessage(struct Fw_Task*, uint32_t, void*);
 extern void Fw_Task_Dispatch(void);
+extern void Fw_Task_Enable(struct Fw_Task*);
+extern void Fw_Task_Disable(struct Fw_Task*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

@@ -177,7 +177,7 @@ struct Fw_ProtoThread
  *******************************************************************************
  */
 extern fw_err_t Fw_PT_Init(struct Fw_ProtoThread* /*pt*/, char* /*str*/, 
-                           void* /*ptThread*/, uint8_t /*priority*/);
+                           pt_thread /*ptThread*/, uint8_t /*priority*/);
 extern fw_err_t Fw_PT_Fini(struct Fw_ProtoThread* /*pt*/);
 extern fw_err_t Fw_PT_Open(struct Fw_ProtoThread* /*pt*/);
 extern fw_err_t Fw_PT_Close(struct Fw_ProtoThread* /*pt*/);

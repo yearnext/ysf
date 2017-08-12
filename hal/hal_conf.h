@@ -35,6 +35,7 @@
  * @defgroup hal config
  * @{
  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_CONF_H__
 #define __HAL_CONF_H__
@@ -46,15 +47,13 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/    
-#include "core_conf.h"
-    
 /* Exported types ------------------------------------------------------------*/   
 /**
  *******************************************************************************
  * @brief       define hal version
  *******************************************************************************
  */
-#define _HAL_VERSION                              "HAL_ALPHA_0.0.1_201704132135"
+#define _HAL_VERSION                    "HAL_ALPHA_0.0.1_201704132135"##__DATA__
  
 /**
  *******************************************************************************
@@ -116,9 +115,12 @@ extern "C"
  * @note STM32F107xC STM32F107RB, STM32F107VB, STM32F107RC, STM32F107VC
  *******************************************************************************
  */
-
 #define STM32F103xE
 //#define USE_HAL_DRIVER
+//#define USE_FULL_LL_DRIVER
+
+//#define STM32F10X_HD
+//#define USE_STDPERIPH_DRIVER
 
 /**
  *******************************************************************************
@@ -184,9 +186,9 @@ extern "C"
 #if USE_FRAMEWORK_HAL_LIBRARY
 #define USE_HAL_DEBUG
     
-#define USE_MCU_GPIO_COMPONENT
-#define USE_MCU_TIMER_COMPONENT
-#define USE_MCU_UART_COMPONENT
+#define USE_HAL_GPIO_COMPONENT
+#define USE_HAL_TIMER_COMPONENT
+#define USE_HAL_UART_COMPONENT
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

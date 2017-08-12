@@ -35,6 +35,7 @@
  * @defgroup hal type
  * @{
  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_TYPE_H__
 #define __HAL_TYPE_H__
@@ -55,36 +56,18 @@ extern "C"
  * @brief      define hal error type
  *******************************************************************************
  */
-#define HAL_ERR_NONE                                    (_ERR_NONE)
-#define HAL_ERR_FAIL                                    (_ERR_FAIL)
-#define HAL_ERR_NOT_READY                               (_ERR_NOT_READY)
-#define HAL_ERR_NOT_SUPPORT                             (_ERR_NOT_SUPPORT)
-#define HAL_ERR_INVAILD_PTR                             (_ERR_INVAILD_PTR)
-#define HAL_ERR_INVAILD_PARAM                           (_ERR_INVAILD_PARAM)
-#define HAL_ERR_IO                                      (_ERR_IO)
-#define HAL_ERR_BUG                                     (_ERR_BUG)
-#define HAL_ERR_UNKNOW                                  (_ERR_UNKNOW)
+#define HAL_ERR_NONE                                                 (_ERR_NONE)
+#define HAL_ERR_FAIL                                                 (_ERR_FAIL)
+#define HAL_ERR_NOT_READY                                       (_ERR_NOT_READY)
+#define HAL_ERR_NOT_SUPPORT                                   (_ERR_NOT_SUPPORT)
+#define HAL_ERR_INVAILD_PTR                                   (_ERR_INVAILD_PTR)
+#define HAL_ERR_INVAILD_PARAM                               (_ERR_INVAILD_PARAM)
+#define HAL_ERR_IO                                                     (_ERR_IO)
+#define HAL_ERR_BUG                                                   (_ERR_BUG)
+#define HAL_ERR_UNKNOW                                             (_ERR_UNKNOW)
 
-typedef _err_t                                           hal_err_t;
+typedef _err_t                                                        hal_err_t;
     
-struct HalDevice;
-        
-struct HalOpera
-{
-    hal_err_t (*Init)(struct HalDevice*, void*);
-    hal_err_t (*Fini)(struct HalDevice*);
-    
-    hal_err_t (*Write)(struct HalDevice*, void*);
-    hal_err_t (*Read)(struct HalDevice*, void*);
-    
-    hal_err_t (*Control)(struct HalDevice*, uint8_t, void*);
-};
-   
-struct HalDevice
-{
-    struct HalOpera *Opera;
-};
-
 /**
  *******************************************************************************
  * @brief      define hal isr call back
@@ -95,7 +78,6 @@ struct HalCallback
 	void (*Callback)(void*);
 	void *Param;
 };
-
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

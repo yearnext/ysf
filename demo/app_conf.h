@@ -52,34 +52,11 @@ extern "C"
  * @brief      define framework event
  *******************************************************************************
  */
-enum Define_Event
+enum Define_Application_Event
 {
-    /** define framework event */
-    FW_EVENT_NONE,
-    FW_TICK_EVENT,
-    FW_SIGNAL_EVENT,
-    FW_DELAY_EVENT,
-    FW_BEGIN_EVENT,
-    FW_END_EVENT,
-    FW_FLOW_EVENT,
-    FW_TIMEOUT_EVENT,
-    FW_INIT_EVENT,
-    FW_FINI_EVENT,
-    FW_STREAM_TX_EVENT,
-    FW_STREAM_RX_EVENT,
-    FW_TRANSFER_START_EVENT,
-    FW_TRANSFER_EVENT,
-    FW_TRANSFER_WAIT_EVNET,
-    FW_TRANSFER_COMPLET_EVENT,
-    FW_SIGNAL_HANDLE_EVENT,
-
-    /** define user task begin */
     LED_ON_EVENT,
     LED_OFF_EVENT,
     LED_BLINK_EVENT,
-    
-    /** define user task end */
-    FW_EVENT_MAX,
 };
 
 /**

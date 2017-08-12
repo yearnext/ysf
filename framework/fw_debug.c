@@ -197,6 +197,11 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
     Fw_Stream_Write((struct Fw_Stream *)&DebugStream.TxStream, BufferCache, len);
 }
 
+void Fw_Debug_PutMcuInfo(void)
+{
+    log("Framework Version: %s \r\n", _FRAMEWORK_VERSION);
+}
+
 /**
  *******************************************************************************
  * @brief       assert failed function

@@ -46,11 +46,36 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-//#include "core_path.h"
-#include "comm_type.h"
+#include "comm_path.h"
     
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define framework event
+ *******************************************************************************
+ */
+enum Define_Framework_Event
+{
+    FW_EVENT_NONE,
+    FW_TICK_EVENT,
+    FW_SIGNAL_EVENT,
+    FW_DELAY_EVENT,
+    FW_BEGIN_EVENT,
+    FW_END_EVENT,
+    FW_FLOW_EVENT,
+    FW_TIMEOUT_EVENT,
+    FW_INIT_EVENT,
+    FW_FINI_EVENT,
+    FW_STREAM_TX_EVENT,
+    FW_STREAM_RX_EVENT,
+    FW_TRANSFER_START_EVENT,
+    FW_TRANSFER_EVENT,
+    FW_TRANSFER_WAIT_EVNET,
+    FW_TRANSFER_COMPLET_EVENT,
+    FW_SIGNAL_HANDLE_EVENT,
+};
+
 /**
  *******************************************************************************
  * @brief      define framework error type

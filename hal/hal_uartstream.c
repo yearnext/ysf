@@ -32,9 +32,9 @@
  */
  
 /**
-* @defgroup hal uart stream component
-* @{
-*/
+ * @defgroup hal uart stream component
+ * @{
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_uartstream.h"

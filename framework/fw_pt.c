@@ -59,7 +59,7 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, void *ptThread, uint8_t priority)
+fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, pt_thread ptThread, uint8_t priority)
 {
     _FW_ASSERT(IS_PTR_NULL(pt));
     _FW_ASSERT(IS_PTR_NULL(str));
@@ -67,10 +67,10 @@ fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, void *ptThread, uint8_
 
     pt->State     = 0;
     pt->Str       = str;
-    pt->Thread    = (pt_thread)ptThread;
+    pt->Thread    = ptThread;
     pt->UseStatus = false;
 
-    Fw_Task_Init(&pt->Task, str, priority, ptThread, FW_PT_THREAD_TYPE_TASK);     
+    Fw_Task_Init(&pt->Task, str, priority, (void *)ptThread, FW_PT_THREAD_TYPE_TASK);     
 
     Fw_Timer_Init(&pt->Timer, str);
     Fw_Timer_SetEvent(&pt->Timer, &pt->Task, FW_DELAY_EVENT, (void *)pt);

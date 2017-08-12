@@ -46,8 +46,6 @@ extern "C"
 #endif
     
 /* Includes ------------------------------------------------------------------*/
-//#include _FW_TYPE_PATH
-//#include _FW_CONF_PATH
 #include "fw_type.h"
 #include "fw_conf.h"
 

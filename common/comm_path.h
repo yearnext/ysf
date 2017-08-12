@@ -65,13 +65,9 @@ extern "C"
 #define _ICCARM_COMPILER_PATH      "../common/compiler/iccarm/compiler_iccarm.h"
     
 /* Includes ------------------------------------------------------------------*/
-//#include _COMM_TOOLS_PATH
-//#include _COMM_TYPE_PATH
-//#include _COMPILER_PATH
-
 #include "comm_tools.h"
 #include "comm_type.h"
-#include "../common/compiler/compiler.h"
+#include _COMPILER_PATH
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

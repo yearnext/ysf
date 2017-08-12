@@ -213,6 +213,7 @@ fw_err_t Fw_Task_Init(struct Fw_Task *task, char *str, uint8_t priority, void *h
     task->Handle.Type   = type;
     task->Str           = str;
     task->Priority      = priority;
+    task->Status        = 1;
     
     return FW_ERR_NONE;
 }
@@ -391,7 +392,10 @@ void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
 {
     _FW_ASSERT(IS_PTR_NULL(task));
 
-    WriteTaskEventQueue(task, event, NULL);
+    if(task->Status == 0)
+    {
+        WriteTaskEventQueue(task, event, NULL);
+    }
 }
 
 /**
@@ -407,9 +411,11 @@ void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
 void Fw_Task_PostMessage(struct Fw_Task *task, uint32_t event, void *message)
 {
     _FW_ASSERT(IS_PTR_NULL(task));
-    _FW_ASSERT(IS_PTR_NULL(message));
     
-    WriteTaskEventQueue(task, event, message);
+    if(task->Status)
+    {
+        WriteTaskEventQueue(task, event, message);
+    }
 }
 
 
@@ -478,7 +484,7 @@ void EventHandle(struct Fw_Task_Event *event)
 
 /**
  *******************************************************************************
- * @brief       tsak component dispatch function
+ * @brief       task component dispatch function
  * @param       [in/out]  void
  * @return      [in/out]  void
  * @note        None
@@ -506,7 +512,7 @@ void Fw_Task_Dispatch(void)
     }
     
     //< 3. event handle
-    if(IS_PTR_NULL(event))
+    if(IS_PTR_NULL(event) && event->Task->Status == 0)
     {
         Fw_EmptyTask_Handle();
     }
@@ -514,6 +520,36 @@ void Fw_Task_Dispatch(void)
     {
         EventHandle(event);
     }
+}
+
+/**
+ *******************************************************************************
+ * @brief       start task dispatch
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+void Fw_Task_Enable(struct Fw_Task *task)
+{
+    _FW_ASSERT(IS_PTR_NULL(task));
+    
+    task->Status = 1;
+}
+
+/**
+ *******************************************************************************
+ * @brief       stop task dispatch
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+void Fw_Task_Disable(struct Fw_Task *task)
+{
+    _FW_ASSERT(IS_PTR_NULL(task));
+    
+    task->Status = 0;
 }
 
 #endif

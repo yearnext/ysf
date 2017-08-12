@@ -35,6 +35,7 @@
  * @defgroup hal core interface
  * @{
  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_CORE_H__
 #define __HAL_CORE_H__
@@ -49,15 +50,15 @@ extern "C"
 #include "hal_conf.h"
 #include "hal_type.h"
 
-#ifdef USE_MCU_GPIO_COMPONENT
+#ifdef USE_HAL_GPIO_COMPONENT
 #include "map_gpio.h"
 #endif
     
-#ifdef USE_MCU_TIMER_COMPONENT
+#ifdef USE_HAL_TIMER_COMPONENT
 #include "map_timer.h"
 #endif
     
-#ifdef USE_MCU_USRT_COMPONENT
+#ifdef USE_HAL_USRT_COMPONENT
 #include "map_uart.h"
 #endif
     

@@ -71,7 +71,7 @@ static void Fw_Tick_Handle(void *param);
  */
 void Fw_Tick_InitComponent(void)
 {
-    struct HalTimerDevice tickTimer;
+    struct Hal_Timer_Device tickTimer;
     
     SystemTick = 0;
     

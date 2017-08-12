@@ -79,21 +79,6 @@ extern "C"
 #define TICK_VALUE_MAX                                                UINT32_MAX
 
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define tick function interface
- *******************************************************************************
- */
-#if USE_TICK_COMPONENT
-typedef struct
-{
-    void     (*Init)(void);
-    void     (*Inc)(void);
-    uint32_t (*Read)(void);
-    uint32_t (*Cal)(void);
-}TickComponentInterface;
-#endif
-
 /* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
