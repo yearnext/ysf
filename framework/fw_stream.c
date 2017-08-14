@@ -345,11 +345,11 @@ fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size
     
     if(stream->IsTxReady == true)
     {
-        if(!IS_PTR_NULL(stream->Opera->Write) && !IS_PTR_NULL(stream->Tx.InOut))
+        if(!IS_PTR_NULL(stream->Opera->Write) && !IS_PTR_NULL(stream->Rx.InOut))
         {
             if(stream->Opera->Write(stream, buffer, size) == FW_ERR_NONE)
             {
-                stream->Tx.InOut(stream);
+                stream->Rx.InOut(stream);
             
                 return FW_ERR_NONE;
             }

@@ -181,7 +181,7 @@ hal_err_t Map_Timer_Open(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Open(struct HalTimerDevice *dev)
+__INLINE hal_err_t Hal_Timer_Open(struct Hal_Timer_Device *dev)
 {
     return Map_Timer_Open(dev->Port);
 }
@@ -295,7 +295,7 @@ hal_err_t Map_Timer_Close(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Close(struct HalTimerDevice *dev)
+__INLINE hal_err_t Hal_Timer_Close(struct Hal_Timer_Device *dev)
 {
     return Map_Timer_Close(dev->Port);
 }
@@ -309,7 +309,7 @@ __INLINE hal_err_t Hal_Timer_Close(struct HalTimerDevice *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTickMode_Init(struct TimerTimeModeConfig *param)
+void _TimerTickMode_Init(struct Hal_Timer_Param *param)
 {
 	uint32_t tick = MCU_CLOCK_FREQ/8000;
 
@@ -337,7 +337,7 @@ void _TimerTickMode_Init(struct TimerTimeModeConfig *param)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTimeMode_Init(uint8_t port, struct TimerTimeModeConfig *param)
+void _TimerTimeMode_Init(uint8_t port, struct Hal_Timer_Param *param)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -382,10 +382,10 @@ hal_err_t Map_Timer_Init(uint8_t port, uint8_t mode, void *param)
 	switch(mode)
 	{
 		case TIMER_TICK_MODE:
-			_TimerTickMode_Init((struct TimerTimeModeConfig*)param);
+			_TimerTickMode_Init((struct Hal_Timer_Param*)param);
 			break;
 		case TIMER_TIME_MODE:
-			_TimerTimeMode_Init(port, (struct TimerTimeModeConfig*)param);
+			_TimerTimeMode_Init(port, (struct Hal_Timer_Param*)param);
 			break;
 		case TIMER_PWM_OUTPUT_MODE:
 			return HAL_ERR_FAIL;
@@ -408,9 +408,9 @@ hal_err_t Map_Timer_Init(uint8_t port, uint8_t mode, void *param)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Init(struct HalTimerDevice *dev)
+__INLINE hal_err_t Hal_Timer_Init(struct Hal_Timer_Device *dev)
 {
-    struct TimerTimeModeConfig config;
+    struct Hal_Timer_Param config;
     
     config.Period            = dev->Period;
     config.Prescaler         = dev->Prescaler;
@@ -448,7 +448,7 @@ hal_err_t Map_Timer_SetUpCallback(uint8_t port, void (*callback)(void*), void *p
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_SetUpCallback(struct HalTimerDevice *dev)
+__INLINE hal_err_t Hal_Timer_SetUpCallback(struct Hal_Timer_Device *dev)
 {
     return Map_Timer_SetUpCallback(dev->Port, 
                                    dev->Callback.Callback, 
@@ -487,7 +487,7 @@ hal_err_t Map_Timer_Start(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Start(struct HalTimerDevice *dev)
+__INLINE hal_err_t Hal_Timer_Start(struct Hal_Timer_Device *dev)
 {
     return Map_Timer_Start(dev->Port);
 }
@@ -524,7 +524,7 @@ hal_err_t Map_Timer_Stop(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Stop(struct HalTimerDevice *dev)
+__INLINE hal_err_t Hal_Timer_Stop(struct Hal_Timer_Device *dev)
 {
     return Map_Timer_Stop(dev->Port);
 }

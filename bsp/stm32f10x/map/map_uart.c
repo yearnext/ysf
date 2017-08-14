@@ -139,7 +139,7 @@ hal_err_t Map_Uart_Open(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Uart_Open(struct HalUartDevice *dev)
+__INLINE hal_err_t Hal_Uart_Open(struct Hal_Uart_Device *dev)
 {
     hal_assert(IS_PTR_NULL(dev));
     
@@ -195,7 +195,7 @@ hal_err_t Map_Uart_Close(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Uart_Close(struct HalUartDevice *dev)
+__INLINE hal_err_t Hal_Uart_Close(struct Hal_Uart_Device *dev)
 {
     hal_assert(IS_PTR_NULL(dev));
     
@@ -211,7 +211,7 @@ __INLINE hal_err_t Hal_Uart_Close(struct HalUartDevice *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_Port_Switch(struct HalUartDevice *dev)
+void _Uart_Port_Switch(struct Hal_Uart_Device *dev)
 {
     switch (dev->Port)
     {
@@ -266,10 +266,10 @@ void _Uart_Port_Switch(struct HalUartDevice *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_GPIO_Init(struct HalUartDevice *dev)
+void _Uart_GPIO_Init(struct Hal_Uart_Device *dev)
 {
-    struct HalGPIODevice TxPort;
-    struct HalGPIODevice RxPort;
+    struct Hal_GPIO_Device TxPort;
+    struct Hal_GPIO_Device RxPort;
     
     TxPort.IO = GPIO_HS_OUTPUT;
     TxPort.Mode = GPIO_AF_PUSH_PULL_MODE;
@@ -363,7 +363,7 @@ void _Uart_GPIO_Init(struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_Init(uint8_t port, struct HalUartDevice *dev)
+hal_err_t Map_Uart_Init(uint8_t port, struct Hal_Uart_Device *dev)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     hal_assert(IS_PTR_NULL(config));
@@ -477,7 +477,7 @@ hal_err_t Map_Uart_Init(uint8_t port, struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Uart_Init(struct HalUartDevice *dev)
+__INLINE hal_err_t Hal_Uart_Init(struct Hal_Uart_Device *dev)
 {
     hal_assert(IS_PTR_NULL(dev));
         
@@ -514,7 +514,7 @@ hal_err_t Map_Uart_SetTxCallback(uint8_t port, void (*callback)(void*), void *pa
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_SetTxCallback(struct HalUartDevice *dev, void (*callback)(void*), void *param)
+hal_err_t Hal_Uart_SetTxCallback(struct Hal_Uart_Device *dev, void (*callback)(void*), void *param)
 {
     hal_assert(IS_PTR_NULL(dev));
     
@@ -555,7 +555,7 @@ hal_err_t Map_Uart_SetRxCallback(uint8_t port, void (*callback)(void*, uint8_t),
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_SetRxCallback(struct HalUartDevice *dev, void (*callback)(void*, uint8_t), void *param)
+hal_err_t Hal_Uart_SetRxCallback(struct Hal_Uart_Device *dev, void (*callback)(void*, uint8_t), void *param)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
@@ -590,7 +590,7 @@ hal_err_t Map_Uart_Fini(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Uart_Fini(struct HalUartDevice *dev)
+__INLINE hal_err_t Hal_Uart_Fini(struct Hal_Uart_Device *dev)
 {
     hal_assert(IS_PTR_NULL(dev));
     
@@ -605,7 +605,7 @@ __INLINE hal_err_t Hal_Uart_Fini(struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_TxConnect(struct HalUartDevice *dev)
+hal_err_t Hal_Uart_TxConnect(struct Hal_Uart_Device *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
 
@@ -626,7 +626,7 @@ hal_err_t Hal_Uart_TxConnect(struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_TxDisconnect(struct HalUartDevice *dev)
+hal_err_t Hal_Uart_TxDisconnect(struct Hal_Uart_Device *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
 
@@ -647,7 +647,7 @@ hal_err_t Hal_Uart_TxDisconnect(struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_RxConnect(struct HalUartDevice *dev)
+hal_err_t Hal_Uart_RxConnect(struct Hal_Uart_Device *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
 
@@ -668,7 +668,7 @@ hal_err_t Hal_Uart_RxConnect(struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_RxDisconnect(struct HalUartDevice *dev)
+hal_err_t Hal_Uart_RxDisconnect(struct Hal_Uart_Device *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
 
@@ -689,7 +689,7 @@ hal_err_t Hal_Uart_RxDisconnect(struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_GetTxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
+hal_err_t Hal_Uart_GetTxCompletFlag(struct Hal_Uart_Device *dev, uint8_t *flag)
 {
 	hal_assert(IS_PTR_NULL(dev));
 	hal_assert(IS_PTR_NULL(flag));
@@ -707,7 +707,7 @@ hal_err_t Hal_Uart_GetTxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_ClrTxCompletFlag(struct HalUartDevice *dev)
+hal_err_t Hal_Uart_ClrTxCompletFlag(struct Hal_Uart_Device *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
 
@@ -724,7 +724,7 @@ hal_err_t Hal_Uart_ClrTxCompletFlag(struct HalUartDevice *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_GetRxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
+hal_err_t Hal_Uart_GetRxCompletFlag(struct Hal_Uart_Device *dev, uint8_t *flag)
 {
 	hal_assert(IS_PTR_NULL(dev));
 	hal_assert(IS_PTR_NULL(flag));
@@ -742,7 +742,7 @@ hal_err_t Hal_Uart_GetRxCompletFlag(struct HalUartDevice *dev, uint8_t *flag)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_ClrRxCompletFlag(struct HalUartDevice *dev)
+hal_err_t Hal_Uart_ClrRxCompletFlag(struct Hal_Uart_Device *dev)
 {
 	hal_assert(IS_PTR_NULL(dev));
 
@@ -778,7 +778,7 @@ hal_err_t Map_Uart_SendData(uint8_t port, uint8_t sendData)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_SendData(struct HalUartDevice *dev, uint8_t sendData)
+hal_err_t Hal_Uart_SendData(struct Hal_Uart_Device *dev, uint8_t sendData)
 {
     hal_assert(IS_PTR_NULL(dev));
     
@@ -815,7 +815,7 @@ hal_err_t Map_Uart_ReceiveData(uint8_t port, uint8_t *sendData)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Hal_Uart_ReceiveData(struct HalUartDevice *dev, uint8_t *sendData)
+hal_err_t Hal_Uart_ReceiveData(struct Hal_Uart_Device *dev, uint8_t *sendData)
 {
     hal_assert(IS_PTR_NULL(dev));
     hal_assert(IS_PTR_NULL(sendData));
@@ -974,7 +974,7 @@ void USART3_IRQHandler(void)
 
 void Hal_Uart_Test(void)
 {
-    struct HalUartDevice uart = 
+    struct Hal_Uart_Device uart = 
     {
         .Port = MCU_UART_2,
         .Baud = 115200,

@@ -273,7 +273,7 @@ hal_err_t Map_GPIO_Open(uint8_t port)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Open(struct HalGPIODevice *dev)
+__INLINE hal_err_t Hal_GPIO_Open(struct Hal_GPIO_Device *dev)
 {
     return Map_GPIO_Open(dev->Port);
 }
@@ -305,7 +305,7 @@ hal_err_t Map_GPIO_Close(uint8_t port)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Close(struct HalGPIODevice *dev)
+__INLINE hal_err_t Hal_GPIO_Close(struct Hal_GPIO_Device *dev)
 {
     return Map_GPIO_Close(dev->Port);
 }
@@ -344,7 +344,7 @@ hal_err_t Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t io,uint8_t mode)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Init(struct HalGPIODevice *dev)
+__INLINE hal_err_t Hal_GPIO_Init(struct Hal_GPIO_Device *dev)
 {
     return Map_GPIO_Init(dev->Port, dev->Pin, dev->IO, dev->Mode);
 }
@@ -378,7 +378,7 @@ hal_err_t Map_GPIO_Fini(uint8_t port, uint8_t pin)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Fini(struct HalGPIODevice *dev)
+__INLINE hal_err_t Hal_GPIO_Fini(struct Hal_GPIO_Device *dev)
 {
     return Map_GPIO_Fini(dev->Port, dev->Pin);
 }
@@ -412,7 +412,7 @@ hal_err_t Map_GPIO_Set(uint8_t port, uint8_t pin)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Set(struct HalGPIODevice *dev)
+__INLINE hal_err_t Hal_GPIO_Set(struct Hal_GPIO_Device *dev)
 {
     return Map_GPIO_Set(dev->Port, dev->Pin);
 }
@@ -446,7 +446,7 @@ hal_err_t Map_GPIO_Clear(uint8_t port, uint8_t pin)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Clear(struct HalGPIODevice *dev)
+__INLINE hal_err_t Hal_GPIO_Clear(struct Hal_GPIO_Device *dev)
 {
     return Map_GPIO_Clear(dev->Port, dev->Pin);
 }
@@ -482,7 +482,7 @@ hal_err_t Map_GPIO_GetIntputStatus(uint8_t port, uint8_t pin, uint16_t *status)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_GetIntputStatus(struct HalGPIODevice *dev, uint16_t *status)
+__INLINE hal_err_t Hal_GPIO_GetIntputStatus(struct Hal_GPIO_Device *dev, uint16_t *status)
 {
     return Map_GPIO_GetIntputStatus(dev->Port, dev->Pin, status);
 }
@@ -518,7 +518,7 @@ hal_err_t Map_GPIO_GetOutputStatus(uint8_t port, uint8_t pin, uint16_t *status)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_GetOutputStatus(struct HalGPIODevice *dev, uint16_t *status)
+__INLINE hal_err_t Hal_GPIO_GetOutputStatus(struct Hal_GPIO_Device *dev, uint16_t *status)
 {
     return Map_GPIO_GetOutputStatus(dev->Port, dev->Pin, status);
 }
@@ -559,7 +559,7 @@ hal_err_t Map_GPIO_Toggle(uint8_t port, uint8_t pin)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Toggle(struct HalGPIODevice *dev)
+__INLINE hal_err_t Hal_GPIO_Toggle(struct Hal_GPIO_Device *dev)
 {
     return Map_GPIO_Toggle(dev->Port, dev->Pin);
 }
@@ -615,7 +615,7 @@ hal_err_t Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Write(struct HalGPIODevice *dev, struct MspGPIOParam *param)
+__INLINE hal_err_t Hal_GPIO_Write(struct Hal_GPIO_Device *dev, struct Hal_GPIO_Param *param)
 {
     return Map_GPIO_Write(dev->Port, param->Pos, param->RWData, param->Num);
 }
@@ -667,7 +667,7 @@ hal_err_t Map_GPIO_Read(uint8_t port, uint8_t pos, uint16_t *rdData, uint8_t num
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Read(struct HalGPIODevice *dev, struct MspGPIOParam *param)
+__INLINE hal_err_t Hal_GPIO_Read(struct Hal_GPIO_Device *dev, struct Hal_GPIO_Param *param)
 {
     return Map_GPIO_Read(dev->Port, param->Pos, &param->RWData, param->Num);
 }
@@ -683,7 +683,7 @@ __INLINE hal_err_t Hal_GPIO_Read(struct HalGPIODevice *dev, struct MspGPIOParam 
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_GPIO_Control(struct HalGPIODevice *port, uint8_t cmd, void *param)
+hal_err_t Map_GPIO_Control(struct Hal_GPIO_Device *port, uint8_t cmd, void *param)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(param));
@@ -747,13 +747,13 @@ hal_err_t Map_GPIO_Control(struct HalGPIODevice *port, uint8_t cmd, void *param)
         }
         case GPIO_CMD_WRITE:
         {
-            struct MspGPIOParam *WrParam = (struct MspGPIOParam *)param;
+            struct Hal_GPIO_Param *WrParam = (struct Hal_GPIO_Param *)param;
             Map_GPIO_Write(port->Port, WrParam->Pos, WrParam->RWData, WrParam->Num);
             break;
         }
         case GPIO_CMD_READ:
         {
-            struct MspGPIOParam *RdParam = (struct MspGPIOParam *)param;
+            struct Hal_GPIO_Param *RdParam = (struct Hal_GPIO_Param *)param;
             Map_GPIO_Read(port->Port, RdParam->Pos, &RdParam->RWData, RdParam->Num);
             break;
         }
@@ -775,7 +775,7 @@ hal_err_t Map_GPIO_Control(struct HalGPIODevice *port, uint8_t cmd, void *param)
  * @note        This function type is inline
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_GPIO_Control(struct HalGPIODevice *dev, uint8_t cmd, void *param)
+__INLINE hal_err_t Hal_GPIO_Control(struct Hal_GPIO_Device *dev, uint8_t cmd, void *param)
 {
     return Map_GPIO_Control(dev, cmd, param);
 }

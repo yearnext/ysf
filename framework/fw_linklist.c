@@ -564,9 +564,12 @@ fw_err_t Fw_dLinkList_Remove(struct Fw_dLinkList_Block *block, struct Fw_dLinkLi
 {
     _FW_ASSERT(IS_PTR_NULL(block));
     _FW_ASSERT(IS_PTR_NULL(node));
-    _FW_ASSERT(IS_PTR_NULL(block->Head));
-    _FW_ASSERT(IS_PTR_NULL(block->Tail));
     
+    if(IS_PTR_NULL(block->Head) || IS_PTR_NULL(block->Tail))
+    {
+        return FW_ERR_FAIL;
+    }
+
     struct Fw_dLinkList *ptr = block->Head;
     
     //< is link list head

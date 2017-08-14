@@ -56,7 +56,7 @@ extern "C"
  * @brief      define framework version
  *******************************************************************************
  */
-#define _FRAMEWORK_VERSION                    "FRAMEWORK_ALPHA_0.0.3_"##__DATA__
+#define _FRAMEWORK_VERSION                               "FRAMEWORK_ALPHA_0.0.3"
 
     /**
  *******************************************************************************

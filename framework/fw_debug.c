@@ -110,7 +110,7 @@ static struct Fw_UartStream DebugStream =
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+#if USE_DEBUG_COMPONENT
 /**
  *******************************************************************************
  * @brief       debug component init
@@ -197,9 +197,17 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
     Fw_Stream_Write((struct Fw_Stream *)&DebugStream.TxStream, BufferCache, len);
 }
 
+/**
+ *******************************************************************************
+ * @brief       debug put mcu info
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
 void Fw_Debug_PutMcuInfo(void)
 {
-    log("Framework Version: %s \r\n", _FRAMEWORK_VERSION);
+    log("Framework Version: %s_%s_%s \r\n", _FRAMEWORK_VERSION, __DATE__, __TIME__);
 }
 
 /**

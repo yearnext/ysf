@@ -215,6 +215,8 @@ fw_err_t Fw_Task_Init(struct Fw_Task *task, char *str, uint8_t priority, void *h
     task->Priority      = priority;
     task->Status        = 1;
     
+    log("%s Create Success! \r\n", str);
+    
     return FW_ERR_NONE;
 }
 

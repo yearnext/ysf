@@ -47,99 +47,10 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_core.h"
+#include "hal_timer.h"
     
 /* Exported macro ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       framework component config flags
- * @note        1                        enable
- * @note        0                        disable
- *******************************************************************************
- */
-#ifdef USE_MCU_TIMER_COMPONENT
-    #define USE_TIMER_COMPONENT                                              (1)
-  
-/**
- *******************************************************************************
- * @brief       user config flags
- * @note        1         enable
- * @note        0         disable
- *******************************************************************************
- */
-#else
-    #define USE_TIMER_COMPONENT                                              (1)
-#endif
-    
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      define mcu timer id
- *******************************************************************************
- */ 
-enum Define_Timer_ID
-{
-    MCU_TICK_TIMER = 0,
-    MCU_TIMER_1,
-    MCU_TIMER_2,
-    MCU_TIMER_3,
-    MCU_TIMER_4,
-    MCU_TIMER_5,
-    MCU_TIMER_6,
-    MCU_TIMER_7,
-    MCU_TIMER_8,
-    MCU_TIMER_9,
-    MCU_TIMER_10,
-    MCU_TIMER_11,
-    MCU_TIMER_12,
-    MCU_TIMER_13,
-    MCU_TIMER_14,
-    MCU_TIMER_15,
-    MCU_TIMER_16,
-    MCU_TIMER_17,
-};
-
-/**
- *******************************************************************************
- * @brief      define timer mode
- *******************************************************************************
- */ 
-enum Define_Timer_Mode
-{
-	TIMER_TICK_MODE,
-	TIMER_TIME_MODE,
-	TIMER_PWM_OUTPUT_MODE,
-	TIMER_PWM_INTPUT_MODE,
-};
-
-/**
- *******************************************************************************
- * @brief      define set timer time mode param structure
- *******************************************************************************
- */ 
-struct TimerTimeModeConfig
-{
-	uint16_t Period;
-	uint16_t Prescaler;
-	struct HalCallback Callback;
-};
-
-/**
- *******************************************************************************
- * @brief      define map deivce timer structure
- *******************************************************************************
- */ 
-struct HalTimerDevice
-{
-    struct HalCallback Callback;
-    
-    uint16_t Period;
-	uint16_t Prescaler;
-
-    uint8_t Port;
-    uint8_t SetMode;
-};
-
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_TIMER_COMPONENT
@@ -160,12 +71,12 @@ extern hal_err_t Map_Timer_Stop(uint8_t);
  * @brief      define hal api
  *******************************************************************************
  */ 
-extern __INLINE hal_err_t Hal_Timer_Open(struct HalTimerDevice*);
-extern __INLINE hal_err_t Hal_Timer_Close(struct HalTimerDevice*);
-extern __INLINE hal_err_t Hal_Timer_Init(struct HalTimerDevice*);
-extern __INLINE hal_err_t Hal_Timer_SetUpCallback(struct HalTimerDevice*);
-extern __INLINE hal_err_t Hal_Timer_Start(struct HalTimerDevice*);
-extern __INLINE hal_err_t Hal_Timer_Stop(struct HalTimerDevice*);
+extern __INLINE hal_err_t Hal_Timer_Open(struct Hal_Timer_Device*);
+extern __INLINE hal_err_t Hal_Timer_Close(struct Hal_Timer_Device*);
+extern __INLINE hal_err_t Hal_Timer_Init(struct Hal_Timer_Device*);
+extern __INLINE hal_err_t Hal_Timer_SetUpCallback(struct Hal_Timer_Device*);
+extern __INLINE hal_err_t Hal_Timer_Start(struct Hal_Timer_Device*);
+extern __INLINE hal_err_t Hal_Timer_Stop(struct Hal_Timer_Device*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

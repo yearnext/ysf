@@ -70,6 +70,12 @@ __WEAK void App_User_Init(void)
 void Fw_Core_Init(void)
 {   
     __ATOM_ACTIVE_BEGIN();
+    
+#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+    Fw_Debug_InitComponent();
+    Fw_Debug_PutMcuInfo();
+#endif
+    
 #ifdef USE_FRAMEWORK_TASK_COMPONENT 
     Fw_Task_InitComponent();
 #endif
@@ -89,11 +95,7 @@ void Fw_Core_Init(void)
 #ifdef USE_FRAMEWORK_STREAM_COMPONENT 
     Fw_Stream_InitComponent();
 #endif
-    
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-    Fw_Debug_InitComponent();
-#endif
-    
+
     App_User_Init();
     
     __ATOM_ACTIVE_END();

@@ -47,120 +47,10 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_core.h"
+#include "hal_uart.h"
     
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       framework component config flags
- * @note        1                        enable
- * @note        0                        disable
- *******************************************************************************
- */
-#ifdef USE_MCU_UART_COMPONENT
-    #define USE_UART_COMPONENT                                               (1)
-  
-/**
- *******************************************************************************
- * @brief       user config flags
- * @note        1         enable
- * @note        0         disable
- *******************************************************************************
- */
-#else
-    #define USE_UART_COMPONENT                                               (1)
-#endif
-    
-/**
- *******************************************************************************
- * @brief      define hal uart id
- *******************************************************************************
- */ 
-enum Define_Uart_ID
-{
-    MCU_UART_1 = 0,
-    MCU_UART_2,
-    MCU_UART_3,
-    MCU_UART_4,
-    MCU_UART_5,
-};
-  
-/**
- *******************************************************************************
- * @brief      define hal uart wordlen
- *******************************************************************************
- */ 
-enum Define_Uart_WordLen
-{
-    MCU_UART_WORD_LEN_8B = 0,
-    MCU_UART_WOED_LEN_9B,
-};
-
-/**
- *******************************************************************************
- * @brief      define hal uart stop bits
- *******************************************************************************
- */ 
-enum Define_Uart_StopBits
-{
-    MCU_UART_STOP_BITS_0_5 = 0,
-    MCU_UART_STOP_BITS_1,
-    MCU_UART_STOP_BITS_1_5,
-    MCU_UART_STOP_BITS_2,
-};
-
-/**
- *******************************************************************************
- * @brief      define hal uart parity
- *******************************************************************************
- */ 
-enum Define_Uart_Parity
-{
-    MCU_UART_PARTY_NONE = 0,
-    MCU_UART_PARTY_EVEN,
-    MCU_UART_PARTY_ODD,
-};
-
-enum Define_Uart_Work_State
-{
-    MCU_UART_DISABLE_TX = 0,
-    MCU_UART_ENABLE_TX = 1,
-    MCU_UART_ENABLE_TX_ISR = 2,
-    
-    MCU_UART_DISABLE_RX = 0,
-    MCU_UART_ENABLE_RX = 1,
-    MCU_UART_ENABLE_RX_ISR = 2,
-};
-
-/**
- *******************************************************************************
- * @brief      define map deivce uart structure
- *******************************************************************************
- */ 
-struct HalUartDevice
-{
-    uint8_t Port;
-    uint8_t Group;
-    
-    uint8_t WordLen;
-    uint8_t StopBits;
-    uint8_t Parity;
-    
-    uint8_t TxConfig;
-    uint8_t RxConfig;
-
-    uint32_t Baud;
-    
-    struct HalCallback TxCallback;
-    
-    struct 
-    {
-        void (*Callback)(void*, uint8_t);
-        void *Param;
-    }RxCallback;
-};
-
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #if USE_UART_COMPONENT
@@ -171,7 +61,7 @@ struct HalUartDevice
  */ 
 extern hal_err_t Map_Uart_Open(uint8_t);
 extern hal_err_t Map_Uart_Close(uint8_t);
-extern hal_err_t Map_Uart_Init(uint8_t, struct HalUartDevice*);
+extern hal_err_t Map_Uart_Init(uint8_t, struct Hal_Uart_Device*);
 extern hal_err_t Map_Uart_SetTxCallback(uint8_t, void (*)(void*), void*);
 extern hal_err_t Map_Uart_SetRxCallback(uint8_t, void (*)(void*, uint8_t), void*);
 extern hal_err_t Map_Uart_Fini(uint8_t);
@@ -183,22 +73,22 @@ extern hal_err_t Map_Uart_ReceiveData(uint8_t, uint8_t*);
  * @brief      define hal api
  *******************************************************************************
  */ 
-extern __INLINE hal_err_t Hal_Uart_Open(struct HalUartDevice*);
-extern __INLINE hal_err_t Hal_Uart_Close(struct HalUartDevice*);
-extern __INLINE hal_err_t Hal_Uart_Init(struct HalUartDevice*);
-extern hal_err_t Hal_Uart_SetTxCallback(struct HalUartDevice*, void (*)(void*), void*);
-extern hal_err_t Hal_Uart_SetRxCallback(struct HalUartDevice*, void (*)(void*, uint8_t), void*);
-extern __INLINE hal_err_t Hal_Uart_Fini(struct HalUartDevice*);
-extern hal_err_t Hal_Uart_SendData(struct HalUartDevice*, uint8_t);
-extern hal_err_t Hal_Uart_ReceiveData(struct HalUartDevice*, uint8_t*);
-extern hal_err_t Hal_Uart_TxConnect(struct HalUartDevice*);
-extern hal_err_t Hal_Uart_TxDisconnect(struct HalUartDevice*);
-extern hal_err_t Hal_Uart_RxConnect(struct HalUartDevice*);
-extern hal_err_t Hal_Uart_RxDisconnect(struct HalUartDevice*);
-extern hal_err_t Hal_Uart_GetTxCompletFlag(struct HalUartDevice*, uint8_t*);
-extern hal_err_t Hal_Uart_ClrTxCompletFlag(struct HalUartDevice*);
-extern hal_err_t Hal_Uart_GetRxCompletFlag(struct HalUartDevice*, uint8_t*);
-extern hal_err_t Hal_Uart_ClrRxCompletFlag(struct HalUartDevice*);
+extern __INLINE hal_err_t Hal_Uart_Open(struct Hal_Uart_Device*);
+extern __INLINE hal_err_t Hal_Uart_Close(struct Hal_Uart_Device*);
+extern __INLINE hal_err_t Hal_Uart_Init(struct Hal_Uart_Device*);
+extern hal_err_t Hal_Uart_SetTxCallback(struct Hal_Uart_Device*, void (*)(void*), void*);
+extern hal_err_t Hal_Uart_SetRxCallback(struct Hal_Uart_Device*, void (*)(void*, uint8_t), void*);
+extern __INLINE hal_err_t Hal_Uart_Fini(struct Hal_Uart_Device*);
+extern hal_err_t Hal_Uart_SendData(struct Hal_Uart_Device*, uint8_t);
+extern hal_err_t Hal_Uart_ReceiveData(struct Hal_Uart_Device*, uint8_t*);
+extern hal_err_t Hal_Uart_TxConnect(struct Hal_Uart_Device*);
+extern hal_err_t Hal_Uart_TxDisconnect(struct Hal_Uart_Device*);
+extern hal_err_t Hal_Uart_RxConnect(struct Hal_Uart_Device*);
+extern hal_err_t Hal_Uart_RxDisconnect(struct Hal_Uart_Device*);
+extern hal_err_t Hal_Uart_GetTxCompletFlag(struct Hal_Uart_Device*, uint8_t*);
+extern hal_err_t Hal_Uart_ClrTxCompletFlag(struct Hal_Uart_Device*);
+extern hal_err_t Hal_Uart_GetRxCompletFlag(struct Hal_Uart_Device*, uint8_t*);
+extern hal_err_t Hal_Uart_ClrRxCompletFlag(struct Hal_Uart_Device*);
 
 /**
  *******************************************************************************

@@ -51,6 +51,27 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /**
  *******************************************************************************
+ * @brief       framework component config flags
+ * @note        1                        enable
+ * @note        0                        disable
+ *******************************************************************************
+ */
+#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+#define USE_DEBUG_COMPONENT                                                  (1)
+
+/**
+ *******************************************************************************
+ * @brief       user config flags
+ * @note        1         enable
+ * @note        0         disable
+ *******************************************************************************
+ */
+#else
+#define USE_DEBUG_COMPONENT                                                 (1)
+#endif
+
+/**
+ *******************************************************************************
  * @brief      define debug component filling mode
  *******************************************************************************
  */
@@ -85,10 +106,17 @@ extern void Fw_Debug_InitComponent(void);
  */ 
 extern void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE, const char*, ...); 
 
+#if USE_DEBUG_COMPONENT
 #define log(str, ...)    Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
 #define log_e(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_ERROR_MESSAGE, str, ##__VA_ARGS__)
 #define log_w(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_WARNING_MESSAGE, str, ##__VA_ARGS__)
 #define log_d(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
+#else
+#define log(str, ...)
+#define log_e(str, ...)
+#define log_w(str, ...)
+#define log_d(str, ...)
+#endif
 
 /**
  *******************************************************************************
@@ -99,10 +127,17 @@ extern void Fw_AssertFailed(uint8_t*, uint32_t);
 
 /**
  *******************************************************************************
+ * @brief      debug component put init message
+ *******************************************************************************
+ */ 
+extern void Fw_Debug_PutMcuInfo(void);
+
+/**
+ *******************************************************************************
  * @brief      MACRO
  *******************************************************************************
  */    
-#ifdef USE_FRAMEWORK_DEBUG
+#if USE_DEBUG_COMPONENT
 #define _FW_ASSERT(expr) _ST(if(expr) { (Fw_AssertFailed((uint8_t *)__FILE__, __LINE__)); })
 #else
 #define _FW_ASSERT(expr)
