@@ -239,7 +239,10 @@ fw_err_t Fw_Timer_Stop(struct Fw_Timer *timer)
     
     memset(timer, 0, sizeof(struct Fw_Timer));
     
-    TimerBlock.Num--;
+    if(TimerBlock.Num > 0)
+    {
+        TimerBlock.Num--;
+    }
     
     return FW_ERR_NONE;
 }

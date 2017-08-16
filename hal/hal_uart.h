@@ -142,7 +142,7 @@ enum Define_Uart_Transfer_Direction
  *******************************************************************************
  * @brief      define map deivce uart structure
  *******************************************************************************
- */ 
+ */
 struct Hal_Uart_Device
 {
     uint8_t Port;
@@ -159,7 +159,7 @@ struct Hal_Uart_Device
     
     uint32_t Baud;
     
-    struct HalCallback TxCallback;
+    struct Hal_Callback TxCallback;
     
     struct 
     {

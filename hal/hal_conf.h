@@ -116,7 +116,7 @@ extern "C"
  *******************************************************************************
  */
 #define STM32F103xE
-//#define USE_HAL_DRIVER
+#define USE_HAL_DRIVER
 //#define USE_FULL_LL_DRIVER
 
 //#define STM32F10X_HD
@@ -180,7 +180,7 @@ extern "C"
 
 /**
  *******************************************************************************
- * @brief hal component config <user config in>
+ * @brief hal component config <user config>
  *******************************************************************************
  */
 #if USE_FRAMEWORK_HAL_LIBRARY

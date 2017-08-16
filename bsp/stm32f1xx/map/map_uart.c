@@ -56,7 +56,25 @@
  */ 
 static USART_TypeDef * const Uart[] = 
 {
-    USART1, USART2, USART3, UART4, UART5,
+#ifdef USART1
+    USART1, 
+#endif
+    
+#ifdef USART2
+    USART2, 
+#endif
+    
+#ifdef USART3
+    USART3, 
+#endif
+    
+#ifdef UART4
+    UART4, 
+#endif
+    
+#ifdef UART5
+    UART5,
+#endif
 };
 
 /**
@@ -75,7 +93,7 @@ static const IRQn_Type UartIrqn[] =
  * @brief       define uart tx isr call back
  *******************************************************************************
  */
-static struct HalCallback UartTxCallback[_dimof(Uart)];
+static struct Hal_Callback UartTxCallback[_dimof(Uart)];
 
 /**
  *******************************************************************************
@@ -104,14 +122,14 @@ static struct
  *******************************************************************************
  * @brief       enable uart
  * @param       [in/out]  port            uart id
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_Open(uint8_t port)
+void Map_Uart_Open(uint8_t port)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
-    
+
     if (port == MCU_UART_1)
     {
         LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1);
@@ -132,55 +150,21 @@ hal_err_t Map_Uart_Open(uint8_t port)
     { 
         LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_UART5);
     }
-    
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       enable uart
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Uart_Open(struct Hal_Uart_Device *dev)
-{
-    hal_assert(IS_PTR_NULL(dev));
-    
-	return Map_Uart_Open(dev->Port);
 }
 
 /**
  *******************************************************************************
  * @brief       disable uart
  * @param       [in/out]  port            uart id
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_Close(uint8_t port)
+void Map_Uart_Close(uint8_t port)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
     LL_USART_DeInit(Uart[port]);
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       disable uart
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Uart_Close(struct Hal_Uart_Device *dev)
-{
-    hal_assert(IS_PTR_NULL(dev));
-    
-	return Map_Uart_Close(dev->Port);
 }
 
 /**
@@ -246,15 +230,15 @@ void _Uart_Port_Switch(struct Hal_Uart_Device *dev)
 __STATIC_INLINE
 void _Uart_GPIO_Init(struct Hal_Uart_Device *dev)
 {
-    struct Hal_GPIO_Device TxPort;
-    struct Hal_GPIO_Device RxPort;
+    Map_GPIO_InitType TxPort;
+    Map_GPIO_InitType RxPort;
     
-    TxPort.IO = GPIO_HS_OUTPUT;
+    TxPort.Dir = GPIO_DIR_HS_OUTPUT;
     TxPort.Mode = GPIO_AF_PUSH_PULL_MODE;
 
-    RxPort.IO = GPIO_HS_OUTPUT;
+    RxPort.Dir = GPIO_DIR_INTPUT;
     RxPort.Mode = GPIO_PULL_UP_DOWN_MODE;
-                    
+    
     switch (dev->Port)
     {
         case MCU_UART_1:
@@ -323,11 +307,11 @@ void _Uart_GPIO_Init(struct Hal_Uart_Device *dev)
             break;
     }
     
-    Hal_GPIO_Open(&TxPort);
-    Hal_GPIO_Init(&TxPort);
+    Map_GPIO_Open(TxPort.Port);
+    Map_GPIO_Init(TxPort.Port, TxPort.Pin, TxPort.Dir, TxPort.Mode);
     
-    Hal_GPIO_Open(&RxPort);
-    Hal_GPIO_Init(&RxPort);
+    Map_GPIO_Open(RxPort.Port);
+    Map_GPIO_Init(RxPort.Port, RxPort.Pin, RxPort.Dir, RxPort.Mode);
     
     _Uart_Port_Switch(dev);
 }
@@ -341,7 +325,7 @@ void _Uart_GPIO_Init(struct Hal_Uart_Device *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_Init(uint8_t port, struct Hal_Uart_Device *dev)
+void Map_Uart_Init(uint8_t port, void *param)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     hal_assert(IS_PTR_NULL(config));
@@ -440,23 +424,6 @@ hal_err_t Map_Uart_Init(uint8_t port, struct Hal_Uart_Device *dev)
     NVIC_SetPriority(UartIrqn[port], dev->Priority);  
     
     LL_USART_Enable(Uart[port]);
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       init uart
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Uart_Init(struct Hal_Uart_Device *dev)
-{
-    hal_assert(IS_PTR_NULL(dev));
-        
-    return Map_Uart_Init(dev->Port, dev);
 }
 
 /**
@@ -469,34 +436,12 @@ __INLINE hal_err_t Hal_Uart_Init(struct Hal_Uart_Device *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
+void Map_Uart_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
     UartTxCallback[port].Callback = callback;
     UartTxCallback[port].Param = param;
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       set uart tx call back
- * @param       [in/out]  *dev            device block
- * @param       [in/out]  *callback       call back function
- * @param       [in/out]  *param          call back param
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_SetTxCallback(struct Hal_Uart_Device *dev, void (*callback)(void*), void *param)
-{
-    hal_assert(IS_PTR_NULL(dev));
-    
-    UartTxCallback[dev->Port].Callback = callback;
-    UartTxCallback[dev->Port].Param = param;
-    
-    return HAL_ERR_NONE;
 }
 
 /**
@@ -509,35 +454,12 @@ hal_err_t Hal_Uart_SetTxCallback(struct Hal_Uart_Device *dev, void (*callback)(v
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_SetRxCallback(uint8_t port, void (*callback)(void*, uint8_t), void *param)
+void Map_Uart_SetRxCallback(uint8_t port, void (*callback)(void*, uint8_t), void *param)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
     UartRxCallback[port].Callback = callback;
     UartRxCallback[port].Param = param;
-    
-    return HAL_ERR_NONE;
-}
-
-
-/**
- *******************************************************************************
- * @brief       set uart rx call back
- * @param       [in/out]  port            uart id
- * @param       [in/out]  *callback       call back function
- * @param       [in/out]  *param          call back param
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_SetRxCallback(struct Hal_Uart_Device *dev, void (*callback)(void*, uint8_t), void *param)
-{
-    hal_assert(IS_UART_PORT_INVAILD(port));
-    
-    UartRxCallback[dev->Port].Callback = callback;
-    UartRxCallback[dev->Port].Param = param;
-    
-    return HAL_ERR_NONE;
 }
 
 /**
@@ -548,182 +470,11 @@ hal_err_t Hal_Uart_SetRxCallback(struct Hal_Uart_Device *dev, void (*callback)(v
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_Fini(uint8_t port)
+void Map_Uart_Fini(uint8_t port)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
     LL_USART_DeInit(Uart[port]);
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       deinit uart
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Uart_Fini(struct Hal_Uart_Device *dev)
-{
-    hal_assert(IS_PTR_NULL(dev));
-    
-    return Map_Uart_Fini(dev->Port);
-}
-
-/**
- *******************************************************************************
- * @brief       enable uart tx
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_TxConnect(struct Hal_Uart_Device *dev)
-{
-	hal_assert(IS_PTR_NULL(dev));
-
-	Uart[dev->Port]->CR1 |= 0x08;
-	Uart[dev->Port]->SR  &= ~0x40;
-	Uart[dev->Port]->CR1 |= 0x40;
-
-    dev->TxConfig         = MCU_UART_ENABLE_TX_ISR;
-    
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       disable uart tx
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_TxDisconnect(struct Hal_Uart_Device *dev)
-{
-	hal_assert(IS_PTR_NULL(dev));
-
-	Uart[dev->Port]->CR1 &= ~0x08;
-	Uart[dev->Port]->CR1 &= ~0x40;
-	Uart[dev->Port]->SR  &= ~0x40;
-    
-    dev->TxConfig         = MCU_UART_DISABLE_TX;
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       enable uart rx
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_RxConnect(struct Hal_Uart_Device *dev)
-{
-	hal_assert(IS_PTR_NULL(dev));
-
-	Uart[dev->Port]->CR1 |= 0x04;
-	Uart[dev->Port]->SR  &= ~0x20;
-	Uart[dev->Port]->CR1 |= 0x20;
-    
-    dev->RxConfig         = MCU_UART_ENABLE_RX_ISR;
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       disable uart rx
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_RxDisconnect(struct Hal_Uart_Device *dev)
-{
-	hal_assert(IS_PTR_NULL(dev));
-
-	Uart[dev->Port]->CR1 &= ~0x04;
-	Uart[dev->Port]->CR1 &= ~0x20;
-	Uart[dev->Port]->SR  &= ~0x20;
-    
-    dev->RxConfig         = MCU_UART_DISABLE_RX;
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       get tx status
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_GetTxCompletFlag(struct Hal_Uart_Device *dev, uint8_t *flag)
-{
-	hal_assert(IS_PTR_NULL(dev));
-	hal_assert(IS_PTR_NULL(flag));
-
-	*flag = (Uart[dev->Port]->SR & 0x40) ? (1) : (0);
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       clear tx flag
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_ClrTxCompletFlag(struct Hal_Uart_Device *dev)
-{
-	hal_assert(IS_PTR_NULL(dev));
-
-	Uart[dev->Port]->SR &= ~0x40;
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       get rx status
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_GetRxCompletFlag(struct Hal_Uart_Device *dev, uint8_t *flag)
-{
-	hal_assert(IS_PTR_NULL(dev));
-	hal_assert(IS_PTR_NULL(flag));
-
-	*flag = (Uart[dev->Port]->SR & 0x20) ? (1) : (0);
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       clear uart rx status
- * @param       [in/out]  *dev            device block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_ClrRxCompletFlag(struct Hal_Uart_Device *dev)
-{
-	hal_assert(IS_PTR_NULL(dev));
-
-	Uart[dev->Port]->SR &= ~0x20;
-
-	return HAL_ERR_NONE;
 }
 
 /**
@@ -735,31 +486,11 @@ hal_err_t Hal_Uart_ClrRxCompletFlag(struct Hal_Uart_Device *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_SendData(uint8_t port, uint8_t sendData)
+void Map_Uart_SendData(uint8_t port, uint8_t sendData)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
     Uart[port]->DR = sendData;
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       send data
- * @param       [in/out]  *dev            device block
- * @param       [in/out]  sendData        send data
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_SendData(struct Hal_Uart_Device *dev, uint8_t sendData)
-{
-    hal_assert(IS_PTR_NULL(dev));
-    
-    Uart[dev->Port]->DR = sendData;
-    
-    return HAL_ERR_NONE;
 }
 
 /**
@@ -771,34 +502,14 @@ hal_err_t Hal_Uart_SendData(struct Hal_Uart_Device *dev, uint8_t sendData)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Uart_ReceiveData(uint8_t port, uint8_t *sendData)
+uint8_t Map_Uart_ReceiveData(uint8_t port)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     hal_assert(IS_PTR_NULL(sendData));
     
-    *sendData = Uart[port]->DR;
-    
-    return HAL_ERR_NONE;
+    return (uint8_t)Uart[port]->DR;
 }
 
-/**
- *******************************************************************************
- * @brief       receive data
- * @param       [in/out]  *dev            device block
- * @param       [in/out]  *sendData       receive data            
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-hal_err_t Hal_Uart_ReceiveData(struct Hal_Uart_Device *dev, uint8_t *sendData)
-{
-    hal_assert(IS_PTR_NULL(dev));
-    hal_assert(IS_PTR_NULL(sendData));
-    
-    *sendData = Uart[dev->Port]->DR;
-    
-    return HAL_ERR_NONE;
-}
 
 /**
  *******************************************************************************
@@ -971,16 +682,15 @@ void Hal_Uart_Test(void)
         .Priority = 0x02,
     };
     
-//    uint16_t i;
+    uint16_t i;
 
-    Hal_Uart_Open(&uart);
-    Hal_Uart_Init(&uart);
-    
-    Hal_Uart_SendData(&uart, 0xFF);
-    
+//    Hal_Uart_Open(&uart);
+//    Hal_Uart_Init(&uart);
+
     while(1)
     {
-//        for(i=0; i<100; i++);
+        for(i=0; i<100; i++);
+//        Hal_Uart_SendData(&uart, 0xFF);
     }
 }
 

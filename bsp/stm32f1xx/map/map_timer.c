@@ -49,6 +49,26 @@
 #if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
+ * @brief      define map api
+ *******************************************************************************
+ */ 
+#if USE_GPIO_COMPONENT
+static const struct Map_Timer_Opera _timer_ops = 
+{
+    .Open = Map_Timer_Open,
+    .Close = Map_Timer_Close, 
+    
+    .Init = Map_Timer_Init,
+    .Fini = Map_Timer_Fini,
+    .SetUpCallback = Map_Timer_SetUpCallback,
+    
+    .Start = Map_Timer_Start,
+    .Stop = Map_Timer_Stop,
+};
+#endif
+
+/**
+ *******************************************************************************
  * @brief       define timer register
  *******************************************************************************
  */
@@ -132,7 +152,7 @@ static TIM_TypeDef * const Timer[] =
  */
 static const IRQn_Type TimerIrqn[] = 
 {
-    NULL,
+	SysTick_IRQn,
     
 #ifdef TIM1
     TIM1_UP_IRQn, 
@@ -203,14 +223,13 @@ static const IRQn_Type TimerIrqn[] =
 #endif
 };
 
-
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       define timer time mode call back
  *******************************************************************************
  */
-static struct HalCallback TimerUpCallback[_dimof(Timer)];
+static struct Hal_Callback TimerUpCallback[_dimof(Timer)];
 #endif
 
 /* Private define ------------------------------------------------------------*/
@@ -219,7 +238,7 @@ static struct HalCallback TimerUpCallback[_dimof(Timer)];
  * @brief       define timer assert macro
  *******************************************************************************
  */
-#define IS_TIMER_PORT_INVAILD(n) ((n) >= _dimof(Timer))
+#define IS_TIMER_PORT_INVAILD(n)                          ((n) >= _dimof(Timer))
 
 /* Private typedef -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -228,11 +247,11 @@ static struct HalCallback TimerUpCallback[_dimof(Timer)];
  *******************************************************************************
  * @brief       enable timer
  * @param       [in/out]  port            timer id
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Open(uint8_t port)
+void Map_Timer_Open(uint8_t port)
 {
     if (port == 0)
     {
@@ -304,14 +323,14 @@ hal_err_t Map_Timer_Open(uint8_t port)
 #ifdef TIM10
 	else if (port == 10)
 	{	   
-        LL_APB2_GRP1_EnableClockLL_APB2_GRP1_PERIPH_TIM10);
+        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM10);
 	}  
 #endif
     
 #if TIM11
 	else if (port == 11) 
 	{	  
-        LL_APB2_GRP1_EnableClockLL_APB2_GRP1_PERIPH_TIM11);
+        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM11);
 	}  
 #endif
 
@@ -339,21 +358,21 @@ hal_err_t Map_Timer_Open(uint8_t port)
 #ifdef TIM15
 	else if (port == 15)
 	{
-        LL_APB2_GRP1_EnableClockLL_APB2_GRP1_PERIPH_TIM15);
+        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM15);
 	} 
 #endif
     
 #ifdef TIM16
 	else if (port == 16)
 	{
-        LL_APB2_GRP1_EnableClockLL_APB2_GRP1_PERIPH_TIM16);
+        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM16);
 	} 
 #endif
     
 #ifdef TIM17
 	else if(port == 17)
 	{
-        LL_APB2_GRP1_EnableClockLL_APB2_GRP1_PERIPH_TIM17);
+        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM17);
 	}
 #endif
     
@@ -361,65 +380,159 @@ hal_err_t Map_Timer_Open(uint8_t port)
     {
         //< do nothing
     }
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       enable timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_Open(struct Hal_Timer_Device *dev)
-{
-    return Map_Timer_Open(dev->Port);
 }
 
 /**
  *******************************************************************************
  * @brief       disable timer
  * @param       [in/out]  port            timer id
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Close(uint8_t port)
+void Map_Timer_Close(uint8_t port)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 
-    LL_TIM_DeInit(Timer[port]);
-        
-	return HAL_ERR_NONE;
-}
+    if (port == 0)
+    {
+        //< open tick timer clock
+    }
+#ifdef TIM1
+	else if (port == 1)
+	{
+        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM1);
+	}	  
+#endif 
+    
+#ifdef TIM2
+	else if (port == 2)
+	{
+        LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM2);
+	}
+#endif
+    
+#ifdef TIM3
+	else if (port == 3)
+	{
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM3);
+	}
+#endif
+    
+#ifdef TIM4
+	else if (port == 4)
+	{
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM4);
+	} 
+#endif
+    
+#ifdef TIM5
+	else if (port == 5)
+	{
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM5);
+	} 
+#endif
+    
+#ifdef TIM6
+	else if (port == 6)
+	{
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM6);
+	} 
+#endif
+    
+#ifdef TIM7
+	else if (port == 7)
+	{
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM7);
+	} 
+#endif
+    
+#ifdef TIM8
+	else if (port == 8)
+	{
+        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM8);
+	}
+#endif
+    
+#ifdef TIM9
+	else if (port == 9)
+	{	   
+        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM9);
+	 }	
+#endif
+    
+#ifdef TIM10
+	else if (port == 10)
+	{	   
+        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM10);
+	}  
+#endif
+    
+#if TIM11
+	else if (port == 11) 
+	{	  
+        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM11);
+	}  
+#endif
 
-/**
- *******************************************************************************
- * @brief       disable timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_Close(struct Hal_Timer_Device *dev)
-{
-    hal_assert(IS_PTR_NULL(dev));
-        
-    return Map_Timer_Close(dev->Port);
+#ifdef TIM12    
+	else if (port == 12)
+	{	   
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM12);
+	}  
+#endif
+    
+#ifdef TIM13
+	else if (port == 13) 
+	{		
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM13);;
+	}
+#endif
+    
+#ifdef TIM14
+	else if (port == 14) 
+	{		
+		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM14);
+	}		
+#endif
+    
+#ifdef TIM15
+	else if (port == 15)
+	{
+        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM15);
+	} 
+#endif
+    
+#ifdef TIM16
+	else if (port == 16)
+	{
+        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM16);
+	} 
+#endif
+    
+#ifdef TIM17
+	else if(port == 17)
+	{
+        LL_APB1_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM17);
+	}
+#endif
+    
+    else
+    {
+        //< do nothing
+    }
 }
 
 /**
  *******************************************************************************
  * @brief       init tick time mode
  * @param       [in/out]  *param          set timer param
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        This function type is static inline
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTickMode_Init(struct Hal_Timer_Param *param)
+void _TimerTickMode_Init(struct Hal_Timer_Config *param)
 {
 	uint32_t tick = MCU_CLOCK_FREQ/8000;
 
@@ -442,12 +555,12 @@ void _TimerTickMode_Init(struct Hal_Timer_Param *param)
  * @brief       init timer time mode
  * @param       [in/out]  port            timer id
  * @param       [in/out]  *param          set timer param
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        This function type is static inline
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTimeMode_Init(uint8_t port, struct Hal_Timer_Param *param)
+void _TimerTimeMode_Init(uint8_t port, struct Hal_Timer_Config *param)
 {
 	LL_TIM_InitTypeDef LL_TIM_InitStructure;
 
@@ -477,54 +590,47 @@ void _TimerTimeMode_Init(uint8_t port, struct Hal_Timer_Param *param)
  * @param       [in/out]  port            timer id
  * @param       [in/out]  mode            set timer mode
  * @param       [in/out]  *param          set timer param
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Init(uint8_t port, uint8_t mode, void *param)
+void Map_Timer_Init(uint8_t port, void *param)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 	hal_assert(IS_PTR_NULL(param));
-
-	switch(mode)
+    
+    struct Hal_Timer_Config *config = (struct Hal_Timer_Config *)param;
+	
+    switch(config->Mode)
 	{
 		case TIMER_TICK_MODE:
-			_TimerTickMode_Init((struct Hal_Timer_Param*)param);
+			_TimerTickMode_Init(config);
 			break;
 		case TIMER_TIME_MODE:
-			_TimerTimeMode_Init(port, (struct Hal_Timer_Param*)param);
+			_TimerTimeMode_Init(port, config);
 			break;
 		case TIMER_PWM_OUTPUT_MODE:
-			return HAL_ERR_FAIL;
-//			break;
+			break;
 		case TIMER_PWM_INTPUT_MODE:
-			return HAL_ERR_FAIL;
-//			break;
+			break;
 		default:
             break;
 	}
-	
-	return HAL_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       init timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
+ * @brief       timer deinit
+ * @param       [in/out]  port            timer id
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Init(struct Hal_Timer_Device *dev)
+void Map_Timer_Fini(uint8_t port)
 {
-    struct Hal_Timer_Param config;
+    hal_assert(IS_TIMER_PORT_INVAILD(port));
     
-    config.Period            = dev->Period;
-    config.Prescaler         = dev->Prescaler;
-    config.Callback.Callback = dev->Callback.Callback;
-    config.Callback.Param    = dev->Callback.Param;
-    
-    return Map_Timer_Init(dev->Port, dev->SetMode, (void *)&config);
+    LL_TIM_DeInit(Timer[port]);
 }
 
 /**
@@ -533,44 +639,27 @@ __INLINE hal_err_t Hal_Timer_Init(struct Hal_Timer_Device *dev)
  * @param       [in/out]  port            timer id
  * @param       [in/out]  callback        call back function
  * @param       [in/out]  *param          call back function param
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_SetUpCallback(uint8_t port, void (*callback)(void*), void *param)
+void Map_Timer_SetUpCallback(uint8_t port, void (*callback)(void*), void *param)
 {
     hal_assert(IS_TIMER_PORT_INVAILD(port));
     
     TimerUpCallback[port].Callback = callback;
 	TimerUpCallback[port].Param    = param;
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       init timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_SetUpCallback(struct Hal_Timer_Device *dev)
-{
-    return Map_Timer_SetUpCallback(dev->Port, 
-                                   dev->Callback.Callback, 
-                                   dev->Callback.Param);
 }
 
 /**
  *******************************************************************************
  * @brief       start timer function
  * @param       [in/out]  port            timer id
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Start(uint8_t port)
+void Map_Timer_Start(uint8_t port)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 
@@ -582,32 +671,17 @@ hal_err_t Map_Timer_Start(uint8_t port)
 	{
 		SysTick->CTRL |= 0x01;
 	}
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       start timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_Start(struct Hal_Timer_Device *dev)
-{
-    return Map_Timer_Start(dev->Port);
 }
 
 /**
  *******************************************************************************
  * @brief       stop timer function
  * @param       [in/out]  port            timer id
- * @return      [in/out]  HAL_ERR_NONE    set finish
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Stop(uint8_t port)
+void Map_Timer_Stop(uint8_t port)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 
@@ -619,22 +693,23 @@ hal_err_t Map_Timer_Stop(uint8_t port)
 	{
 		SysTick->CTRL &= ~0x01;
 	}
-
-	return HAL_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       stop timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
+ * @brief       mcu timer api register
+ * @param       [in/out]  **ops                   timer opera
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Stop(struct Hal_Timer_Device *dev)
+void Map_Timer_API_Register(void **ops)
 {
-    return Map_Timer_Stop(dev->Port);
+    hal_assert(IS_PTR_NULL(ops));
+    
+    *ops = (void *)&_timer_ops;
 }
+
 /**
  *******************************************************************************
  * @brief       tick timer isr handle

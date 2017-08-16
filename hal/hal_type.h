@@ -73,11 +73,28 @@ typedef _err_t                                                        hal_err_t;
  * @brief      define hal isr call back
  *******************************************************************************
  */ 
-struct HalCallback
+struct Hal_Callback
 {
 	void (*Callback)(void*);
 	void *Param;
 };
+
+struct Hal_GPIO_Device;
+struct Hal_Timer_Device;
+
+enum
+{
+    HAL_DEVICE_GPIO,
+    HAL_DEVICE_TIMER,
+};
+
+typedef struct
+{
+    void *Device;
+    
+    uint8_t DeviceType;
+    
+}Hal_Device_t;
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

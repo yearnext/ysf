@@ -65,6 +65,7 @@
 static uint8_t TxBuffer[FW_DEBUG_BUFFER_SIZE];
 static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
 static uint8_t BufferCache[FW_DEBUG_BUFFER_SIZE];
+static bool StreamInitFlag = false;
 
 static struct Fw_UartStream DebugStream = 
 {
@@ -135,13 +136,15 @@ void Fw_Debug_InitComponent(void)
                    (struct _FwStreamBufferOpera *)&StreamFifoOpera,  
                    (void *)&RxFifo);
     
-    Hal_UartStream_Init(&DebugStream.Device);
+    Hal_UartStream_Init(&DebugStream);
                    
     Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.TxStream);
     Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.TxStream);
                    
     Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.RxStream);
     Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.RxStream);
+    
+    StreamInitFlag = true;
 }
 
 /**
@@ -189,6 +192,11 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
 	uint8_t len = 0;
     va_list args;
 	
+    if(StreamInitFlag == false)
+    {
+        return;
+    }
+    
     va_start(args, str);
     len = Fw_Debug_FillHeadInfo(BufferCache, type);
     len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);

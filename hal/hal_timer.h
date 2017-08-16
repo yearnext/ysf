@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_timer.h                                                      *
+ * @file       hal_timer.h                                                     *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-08-07                                                      *
- * @brief      hal timer component head files                                   *
+ * @brief      hal timer component head files                                  *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -57,7 +57,7 @@ extern "C"
  * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_MCU_TIMER_COMPONENT
+#ifdef USE_HAL_TIMER_COMPONENT
     #define USE_TIMER_COMPONENT                                              (1)
   
 /**
@@ -77,7 +77,7 @@ extern "C"
  * @brief      define mcu timer id
  *******************************************************************************
  */ 
-enum Define_Timer_ID
+enum
 {
     MCU_TICK_TIMER = 0,
     MCU_TIMER_1,
@@ -104,7 +104,7 @@ enum Define_Timer_ID
  * @brief      define timer mode
  *******************************************************************************
  */ 
-enum Define_Timer_Mode
+enum
 {
 	TIMER_TICK_MODE,
 	TIMER_TIME_MODE,
@@ -117,15 +117,12 @@ enum Define_Timer_Mode
  * @brief      define map deivce timer structure
  *******************************************************************************
  */ 
+struct Hal_Timer_Opera;
 struct Hal_Timer_Device
 {
-    struct HalCallback Callback;
-    
-    uint16_t Period;
-	uint16_t Prescaler;
-
     uint8_t Port;
-    uint8_t SetMode;
+
+    struct Hal_Timer_Opera *Opera;
 };
   
 /**
@@ -133,15 +130,72 @@ struct Hal_Timer_Device
  * @brief      define set timer time mode param structure
  *******************************************************************************
  */ 
-struct Hal_Timer_Param
+struct Hal_Timer_Config
 {
+    uint8_t Priority;
+    uint8_t Mode;
 	uint16_t Period;
 	uint16_t Prescaler;
-    uint8_t Priority;
-	struct HalCallback Callback;
+
+	struct Hal_Callback Callback;
+};
+
+/**
+ *******************************************************************************
+ * @brief      define mcu application pack timer opera interface
+ *******************************************************************************
+ */ 
+struct Map_Timer_Opera
+{
+    void (*Open)(uint8_t);
+    void (*Close)(uint8_t);
+    
+    void (*Init)(uint8_t, void*);
+    void (*Fini)(uint8_t);
+    
+    void (*SetUpCallback)(uint8_t, void (*)(void*), void*);
+    
+    void (*Start)(uint8_t);
+    void (*Stop)(uint8_t);
+};
+
+/**
+ *******************************************************************************
+ * @brief      define timer opera interface
+ *******************************************************************************
+ */ 
+struct Hal_Timer_Opera
+{
+    void (*Open)(Hal_Device_t*);
+    void (*Close)(Hal_Device_t*);
+    
+    void (*Init)(Hal_Device_t*, void*);
+    void (*Fini)(Hal_Device_t*);
+    
+    void (*SetUpCallback)(Hal_Device_t*, void*);
+    
+    void (*Start)(Hal_Device_t*);
+    void (*Stop)(Hal_Device_t*);
 };
 
 /* Exported constants --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define hal timer interface
+ *******************************************************************************
+ */
+#if USE_TIMER_COMPONENT
+extern void Hal_Timer_Module_Register(void);
+extern void Hal_Timer_Open(Hal_Device_t*);
+extern void Hal_Timer_Close(Hal_Device_t*);
+extern void Hal_Timer_Init(Hal_Device_t*, void*);
+extern void Hal_Timer_Fini(Hal_Device_t*);
+extern void Hal_Timer_SetUpCallback(Hal_Device_t*, void*);
+extern void Hal_Timer_Start(Hal_Device_t*);
+extern void Hal_Timer_Stop(Hal_Device_t*);
+#endif
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
@@ -149,6 +203,6 @@ struct Hal_Timer_Param
 	
 #endif       /** end include define */
 
-/** @}*/     /** hal component interface  */
+/** @}*/     /** hal timer interface  */
 
 /**********************************END OF FILE*********************************/

@@ -72,21 +72,23 @@ static void Fw_Tick_Handle(void *param);
 void Fw_Tick_InitComponent(void)
 {
     struct Hal_Timer_Device tickTimer;
-    
+    struct Hal_Timer_Config config;
+
     SystemTick = 0;
     
     Fw_Task_Init(&Fw_Tick_Task, "Framework Tick Task", 0, (void *)Fw_Timer_Poll, FW_CALL_BACK_TYPE_TASK);
     
-    tickTimer.Callback.Callback = Fw_Tick_Handle;
-    tickTimer.Callback.Param = NULL;
-    tickTimer.Period = 1;
     tickTimer.Port = MCU_TICK_TIMER;
-    tickTimer.Prescaler = 1;
-    tickTimer.SetMode = TIMER_TICK_MODE;
-      
-    Hal_Timer_Open(&tickTimer);
-    Hal_Timer_Init(&tickTimer);
-    Hal_Timer_Start(&tickTimer);
+    
+    config.Callback.Callback = Fw_Tick_Handle;
+    config.Callback.Param = NULL;
+    config.Mode = TIMER_TICK_MODE;
+    config.Period = 1;
+    config.Prescaler = 1;
+    config.Priority = 1;
+
+    Hal_Timer_Init((Hal_Device_t *)&tickTimer, (void *)&config);
+    Hal_Timer_Start((Hal_Device_t *)&tickTimer);
 }
 
 /**

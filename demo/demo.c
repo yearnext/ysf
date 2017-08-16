@@ -53,7 +53,7 @@ static struct Hal_GPIO_Device Led1 =
 {
     .Port = MCU_PORT_D,
     .Pin  = MCU_PIN_13,
-    .IO   = GPIO_HS_OUTPUT,
+    .IO   = GPIO_DIR_HS_OUTPUT,
     .Mode = GPIO_PUSH_PULL_MODE,
 };
 
@@ -61,7 +61,7 @@ static struct Hal_GPIO_Device Led2 =
 {
     .Port = MCU_PORT_G,
     .Pin  = MCU_PIN_14,
-    .IO   = GPIO_HS_OUTPUT,
+    .IO   = GPIO_DIR_HS_OUTPUT,
     .Mode = GPIO_PUSH_PULL_MODE,
 };
 
@@ -69,7 +69,7 @@ static struct Hal_GPIO_Device Key1 =
 {
     .Port = MCU_PORT_E,
     .Pin  = MCU_PIN_0,
-    .IO   = GPIO_INTPUT,
+    .IO   = GPIO_DIR_INTPUT,
     .Mode = GPIO_PULL_UP_DOWN_MODE,
 };
 
@@ -77,7 +77,7 @@ static struct Hal_GPIO_Device Key2 =
 {
     .Port = MCU_PORT_C,
     .Pin  = MCU_PIN_13,
-    .IO   = GPIO_INTPUT,
+    .IO   = GPIO_DIR_INTPUT,
     .Mode = GPIO_PULL_UP_DOWN_MODE,
 };
 
