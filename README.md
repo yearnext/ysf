@@ -1,4 +1,5 @@
 # ysf——yearnext software framework
+[![Build Status](https://travis-ci.org/yearnext/ysf.svg?branch=master)](https://travis-ci.org/yearnext/ysf)
 ## 框架简介
 ysf是一个基于事件驱动的单片机编程框架。
 
