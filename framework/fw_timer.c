@@ -110,7 +110,7 @@ fw_err_t Fw_Timer_InitComponent(void)
  * @note        None
  *******************************************************************************
  */
-struct Fw_Timer *Fw_Timer_Create(void)
+__INLINE struct Fw_Timer *Fw_Timer_Create(void)
 {
     return Fw_Mem_Alloc(_sizeof(struct Fw_Timer));
 }
@@ -149,7 +149,10 @@ fw_err_t Fw_Timer_Init(struct Fw_Timer *timer, char *str)
 fw_err_t Fw_Timer_Fini(struct Fw_Timer *timer)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
-    
+
+    Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,
+                    (struct Fw_dLinkList*)&timer->LinkList);
+        
     memset(timer, 0, sizeof(struct Fw_Timer));
     
     return FW_ERR_NONE;
@@ -165,7 +168,7 @@ fw_err_t Fw_Timer_Fini(struct Fw_Timer *timer)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Timer_SetEvent(struct Fw_Timer *timer, struct Fw_Task *task, uint8_t taskEvent, void *taskParam)
+__INLINE fw_err_t Fw_Timer_SetEvent(struct Fw_Timer *timer, struct Fw_Task *task, uint8_t taskEvent, void *taskParam)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     
@@ -186,7 +189,7 @@ fw_err_t Fw_Timer_SetEvent(struct Fw_Timer *timer, struct Fw_Task *task, uint8_t
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Timer_SetCallback(struct Fw_Timer *timer, void (*callback)(void*), void *callbackParam)
+__INLINE fw_err_t Fw_Timer_SetCallback(struct Fw_Timer *timer, void (*callback)(void*), void *callbackParam)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     

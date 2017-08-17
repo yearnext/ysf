@@ -53,7 +53,6 @@ extern "C"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_UART_COMPONENT
 /**
  *******************************************************************************
  * @brief      define map api
@@ -67,28 +66,14 @@ extern void Map_Uart_SetTxCallback(uint8_t, void (*)(void*), void*);
 extern void Map_Uart_SetRxCallback(uint8_t, void (*)(void*, uint8_t), void*);
 extern void Map_Uart_SendData(uint8_t, uint8_t);
 extern uint8_t Map_Uart_ReceiveData(uint8_t);
+extern void Map_Uart_TxConnect(uint8_t);
+extern void Map_Uart_TxDisconnect(uint8_t);
+extern void Map_Uart_RxConnect(uint8_t);
+extern void Map_Uart_RxDisconnect(uint8_t);
+extern bool Map_Uart_IsTxComplet(uint8_t);
+extern bool Map_Uart_IsRxComplet(uint8_t);
 
-///**
-// *******************************************************************************
-// * @brief      define hal api
-// *******************************************************************************
-// */ 
-//extern __INLINE hal_err_t Hal_Uart_Open(struct Hal_Uart_Device*);
-//extern __INLINE hal_err_t Hal_Uart_Close(struct Hal_Uart_Device*);
-//extern __INLINE hal_err_t Hal_Uart_Init(struct Hal_Uart_Device*);
-//extern hal_err_t Hal_Uart_SetTxCallback(struct Hal_Uart_Device*, void (*)(void*), void*);
-//extern hal_err_t Hal_Uart_SetRxCallback(struct Hal_Uart_Device*, void (*)(void*, uint8_t), void*);
-//extern __INLINE hal_err_t Hal_Uart_Fini(struct Hal_Uart_Device*);
-//extern hal_err_t Hal_Uart_SendData(struct Hal_Uart_Device*, uint8_t);
-//extern hal_err_t Hal_Uart_ReceiveData(struct Hal_Uart_Device*, uint8_t*);
-//extern hal_err_t Hal_Uart_TxConnect(struct Hal_Uart_Device*);
-//extern hal_err_t Hal_Uart_TxDisconnect(struct Hal_Uart_Device*);
-//extern hal_err_t Hal_Uart_RxConnect(struct Hal_Uart_Device*);
-//extern hal_err_t Hal_Uart_RxDisconnect(struct Hal_Uart_Device*);
-//extern hal_err_t Hal_Uart_GetTxCompletFlag(struct Hal_Uart_Device*, uint8_t*);
-//extern hal_err_t Hal_Uart_ClrTxCompletFlag(struct Hal_Uart_Device*);
-//extern hal_err_t Hal_Uart_GetRxCompletFlag(struct Hal_Uart_Device*, uint8_t*);
-//extern hal_err_t Hal_Uart_ClrRxCompletFlag(struct Hal_Uart_Device*);
+extern void Map_Uart_API_Register(void**);
 
 /**
  *******************************************************************************
@@ -96,8 +81,6 @@ extern uint8_t Map_Uart_ReceiveData(uint8_t);
  *******************************************************************************
  */ 
 extern void Hal_Uart_Test(void);
-
-#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

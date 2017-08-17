@@ -124,7 +124,7 @@ struct Hal_Timer_Device
 
     struct Hal_Timer_Opera *Opera;
 };
-  
+
 /**
  *******************************************************************************
  * @brief      define set timer time mode param structure
@@ -166,16 +166,16 @@ struct Map_Timer_Opera
  */ 
 struct Hal_Timer_Opera
 {
-    void (*Open)(Hal_Device_t*);
-    void (*Close)(Hal_Device_t*);
+    void (*Open)(struct Hal_Timer_Device*);
+    void (*Close)(struct Hal_Timer_Device*);
     
-    void (*Init)(Hal_Device_t*, void*);
-    void (*Fini)(Hal_Device_t*);
+    void (*Init)(struct Hal_Timer_Device*, void*);
+    void (*Fini)(struct Hal_Timer_Device*);
     
-    void (*SetUpCallback)(Hal_Device_t*, void*);
+    void (*SetUpCallback)(struct Hal_Timer_Device*, void*);
     
-    void (*Start)(Hal_Device_t*);
-    void (*Stop)(Hal_Device_t*);
+    void (*Start)(struct Hal_Timer_Device*);
+    void (*Stop)(struct Hal_Timer_Device*);
 };
 
 /* Exported constants --------------------------------------------------------*/
@@ -186,14 +186,14 @@ struct Hal_Timer_Opera
  *******************************************************************************
  */
 #if USE_TIMER_COMPONENT
-extern void Hal_Timer_Module_Register(void);
-extern void Hal_Timer_Open(Hal_Device_t*);
-extern void Hal_Timer_Close(Hal_Device_t*);
-extern void Hal_Timer_Init(Hal_Device_t*, void*);
-extern void Hal_Timer_Fini(Hal_Device_t*);
-extern void Hal_Timer_SetUpCallback(Hal_Device_t*, void*);
-extern void Hal_Timer_Start(Hal_Device_t*);
-extern void Hal_Timer_Stop(Hal_Device_t*);
+extern __INLINE void Hal_Timer_Module_Register(void);
+extern __INLINE void Hal_Timer_Open(struct Hal_Timer_Device*);
+extern __INLINE void Hal_Timer_Close(struct Hal_Timer_Device*);
+extern __INLINE void Hal_Timer_Init(struct Hal_Timer_Device*, void*);
+extern __INLINE void Hal_Timer_Fini(struct Hal_Timer_Device*);
+extern __INLINE void Hal_Timer_SetUpCallback(struct Hal_Timer_Device*, void*);
+extern __INLINE void Hal_Timer_Start(struct Hal_Timer_Device*);
+extern __INLINE void Hal_Timer_Stop(struct Hal_Timer_Device*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

@@ -97,7 +97,7 @@ typedef struct
 {
     uint8_t  *Buffer;
     uint16_t Size;
-}_FifoInitType;
+}Fw_Fifo_InitType;
 
 
 /**

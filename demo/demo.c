@@ -53,7 +53,7 @@ static struct Hal_GPIO_Device Led1 =
 {
     .Port = MCU_PORT_D,
     .Pin  = MCU_PIN_13,
-    .IO   = GPIO_DIR_HS_OUTPUT,
+    .Dir  = GPIO_DIR_HS_OUTPUT,
     .Mode = GPIO_PUSH_PULL_MODE,
 };
 
@@ -61,7 +61,7 @@ static struct Hal_GPIO_Device Led2 =
 {
     .Port = MCU_PORT_G,
     .Pin  = MCU_PIN_14,
-    .IO   = GPIO_DIR_HS_OUTPUT,
+    .Dir  = GPIO_DIR_HS_OUTPUT,
     .Mode = GPIO_PUSH_PULL_MODE,
 };
 
@@ -69,7 +69,7 @@ static struct Hal_GPIO_Device Key1 =
 {
     .Port = MCU_PORT_E,
     .Pin  = MCU_PIN_0,
-    .IO   = GPIO_DIR_INTPUT,
+    .Dir  = GPIO_DIR_INTPUT,
     .Mode = GPIO_PULL_UP_DOWN_MODE,
 };
 
@@ -77,7 +77,7 @@ static struct Hal_GPIO_Device Key2 =
 {
     .Port = MCU_PORT_C,
     .Pin  = MCU_PIN_13,
-    .IO   = GPIO_DIR_INTPUT,
+    .Dir  = GPIO_DIR_INTPUT,
     .Mode = GPIO_PULL_UP_DOWN_MODE,
 };
 
@@ -113,8 +113,7 @@ void Led1_Task_Handle(uint32_t event, void *param);
 
 void App_Led1_Init(void)
 {
-    Hal_GPIO_Open(&Led1);
-    Hal_GPIO_Init(&Led1);
+    Hal_GPIO_Init(&Led1, NULL);
     
     Fw_Task_Init(&Led1Task, "Led1 Task", 1, (void *)Led1_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
     
@@ -133,7 +132,7 @@ void Led1_Task_Handle(uint32_t event, void *param)
             Hal_GPIO_Set(drv);
             break;
         case LED_OFF_EVENT:
-            Hal_GPIO_Clear(drv);
+            Hal_GPIO_Clr(drv);
             break;
         case LED_BLINK_EVENT:
             Hal_GPIO_Toggle(drv);
@@ -152,8 +151,7 @@ _PT_THREAD(Led2_Task_Handle);
 
 void App_Led2_Init(void)
 {
-    Hal_GPIO_Open(&Led2);
-    Hal_GPIO_Init(&Led2);
+    Hal_GPIO_Init(&Led2, NULL);
 
     Fw_PT_Init(&Led2Task, "Led2 Task", Led2_Task_Handle, 1);
     Fw_PT_Open(&Led2Task);
@@ -180,20 +178,12 @@ _PT_THREAD(Led2_Task_Handle)
  */
 uint8_t Key1_Scan_Function(void)
 {
-    uint16_t status = 0;
-    
-    Hal_GPIO_GetIntputStatus(&Key1, &status);
-    
-    return (status) ? (DEMO_KEY1_SIGNAL) : (0);
+    return (Hal_GPIO_GetIntputStatus(&Key1) == true) ? (DEMO_KEY1_SIGNAL) : (0);
 }
 
 uint8_t Key2_Scan_Function(void)
 {
-    uint16_t status = 0;
-    
-    Hal_GPIO_GetIntputStatus(&Key2, &status);
-    
-    return (status) ? (DEMO_KEY2_SIGNAL) : (0);
+    return (Hal_GPIO_GetIntputStatus(&Key2) == true) ? (DEMO_KEY2_SIGNAL) : (0);
 }
 
 /**
@@ -203,8 +193,7 @@ uint8_t Key2_Scan_Function(void)
  */
 void App_Key1_Init(void)
 {
-    Hal_GPIO_Open(&Key1);
-    Hal_GPIO_Init(&Key1);
+    Hal_GPIO_Init(&Key1, NULL);
     
     Fw_Signal_Init(&Key1Signal, "Key1 Signal", &KeyTask, Key1_Scan_Function);
     Fw_Signal_Open(&Key1Signal, REG_RELEASE_EDGE_STATE, 50);
@@ -212,8 +201,7 @@ void App_Key1_Init(void)
 
 void App_Key2_Init(void)
 {
-    Hal_GPIO_Open(&Key2);
-    Hal_GPIO_Init(&Key2);
+    Hal_GPIO_Init(&Key2, NULL);
     
     Fw_Signal_Init(&Key2Signal, "Key2 Signal", &KeyTask, Key2_Scan_Function);
     Fw_Signal_Open(&Key2Signal, REG_RELEASE_EDGE_STATE, 50);

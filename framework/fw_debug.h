@@ -120,17 +120,17 @@ extern void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE, const char*, ...);
 
 /**
  *******************************************************************************
- * @brief      debug component assert failed function
- *******************************************************************************
- */ 
-extern void Fw_AssertFailed(uint8_t*, uint32_t);
-
-/**
- *******************************************************************************
  * @brief      debug component put init message
  *******************************************************************************
  */ 
-extern void Fw_Debug_PutMcuInfo(void);
+extern __INLINE void Fw_Debug_PutMcuInfo(void);
+
+/**
+ *******************************************************************************
+ * @brief      debug component assert failed function
+ *******************************************************************************
+ */ 
+extern __INLINE void Fw_AssertFailed(uint8_t*, uint32_t);
 
 /**
  *******************************************************************************

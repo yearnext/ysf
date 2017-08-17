@@ -57,7 +57,7 @@ extern "C"
  * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_MCU_UART_COMPONENT
+#ifdef USE_HAL_UART_COMPONENT
     #define USE_UART_COMPONENT                                               (1)
   
 /**
@@ -77,7 +77,7 @@ extern "C"
  * @brief      define hal uart id
  *******************************************************************************
  */ 
-enum Define_Uart_ID
+enum
 {
     MCU_UART_1 = 0,
     MCU_UART_2,
@@ -91,7 +91,7 @@ enum Define_Uart_ID
  * @brief      define hal uart wordlen
  *******************************************************************************
  */ 
-enum Define_Uart_WordLen
+enum
 {
     MCU_UART_WORD_LEN_8B = 0,
     MCU_UART_WOED_LEN_9B,
@@ -102,7 +102,7 @@ enum Define_Uart_WordLen
  * @brief      define hal uart stop bits
  *******************************************************************************
  */ 
-enum Define_Uart_StopBits
+enum
 {
     MCU_UART_STOP_BITS_0_5 = 0,
     MCU_UART_STOP_BITS_1,
@@ -115,7 +115,7 @@ enum Define_Uart_StopBits
  * @brief      define hal uart parity
  *******************************************************************************
  */ 
-enum Define_Uart_Parity
+enum
 {
     MCU_UART_PARTY_NONE = 0,
     MCU_UART_PARTY_EVEN,
@@ -127,7 +127,7 @@ enum Define_Uart_Parity
  * @brief      define hal uart Transfer Direction
  *******************************************************************************
  */ 
-enum Define_Uart_Transfer_Direction
+enum
 {
     MCU_UART_DISABLE_TX = 0,
     MCU_UART_ENABLE_TX = 1,
@@ -143,7 +143,20 @@ enum Define_Uart_Transfer_Direction
  * @brief      define map deivce uart structure
  *******************************************************************************
  */
+struct Hal_Uart_Opera;
 struct Hal_Uart_Device
+{
+    uint8_t Port;
+    
+    struct Hal_Uart_Opera *Opera;
+};
+
+/**
+ *******************************************************************************
+ * @brief      define hal uart config structure
+ *******************************************************************************
+ */
+struct Hal_Uart_Config
 {
     uint8_t Port;
     uint8_t Group;
@@ -168,7 +181,82 @@ struct Hal_Uart_Device
     }RxCallback;
 };
 
+/**
+ *******************************************************************************
+ * @brief      define hal uart opera api
+ *******************************************************************************
+ */
+struct Hal_Uart_Opera
+{
+    void (*Open)(struct Hal_Uart_Device*);
+    void (*Close)(struct Hal_Uart_Device*);
+    
+    void (*Init)(struct Hal_Uart_Device*, void*);
+    void (*Fini)(struct Hal_Uart_Device*);
+    
+    void (*SetTxCallback)(struct Hal_Uart_Device*, void*);
+    void (*SetRxCallback)(struct Hal_Uart_Device*, void*);
+
+    void (*Send)(struct Hal_Uart_Device*, uint8_t);
+    uint8_t (*Receive)(struct Hal_Uart_Device*);
+    
+    void (*TxConnect)(struct Hal_Uart_Device*);
+    void (*TxDisconnect)(struct Hal_Uart_Device*);
+    
+    void (*RxConnect)(struct Hal_Uart_Device*);
+    void (*RxDisconnect)(struct Hal_Uart_Device*);
+    
+    bool (*IsTxComplet)(struct Hal_Uart_Device*);
+    bool (*IsRxComplet)(struct Hal_Uart_Device*);
+};
+
+/**
+ *******************************************************************************
+ * @brief      define mcu application pack opera api
+ *******************************************************************************
+ */
+struct Map_Uart_Opera
+{
+    void (*Open)(uint8_t);
+    void (*Close)(uint8_t);
+    
+    void (*Init)(uint8_t, void*);
+    void (*Fini)(uint8_t);
+    
+    void (*SetTxCallback)(uint8_t, void (*)(void*), void*);
+    void (*SetRxCallback)(uint8_t, void (*)(void*, uint8_t), void*);
+
+    void (*Send)(uint8_t, uint8_t);
+    uint8_t (*Receive)(uint8_t);
+    
+    void (*TxConnect)(uint8_t);
+    void (*TxDisconnect)(uint8_t);
+    
+    void (*RxConnect)(uint8_t);
+    void (*RxDisconnect)(uint8_t);
+    
+    bool (*IsTxComplet)(uint8_t);
+    bool (*IsRxComplet)(uint8_t);
+};
+
 /* Exported constants --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
+extern __INLINE void Hal_Uart_Module_Register(void);
+extern __INLINE void Hal_Uart_Open(struct Hal_Uart_Device*);
+extern __INLINE void Hal_Uart_Close(struct Hal_Uart_Device*);
+extern __INLINE void Hal_Uart_Init(struct Hal_Uart_Device*, void*);
+extern __INLINE void Hal_Uart_Fini(struct Hal_Uart_Device*);
+extern __INLINE void Hal_Uart_Send(struct Hal_Uart_Device*, uint8_t);
+extern __INLINE uint8_t Hal_Uart_Receive(struct Hal_Uart_Device*);
+extern __INLINE void Hal_Uart_SetTxCallback(struct Hal_Uart_Device*, void*);
+extern __INLINE void Hal_Uart_SetRxCallback(struct Hal_Uart_Device*, void*);
+extern __INLINE void Hal_Uart_TxConnect(struct Hal_Uart_Device*);
+extern __INLINE void Hal_Uart_TxDisconnect(struct Hal_Uart_Device*);
+extern __INLINE void Hal_Uart_RxConnect(struct Hal_Uart_Device*);
+extern __INLINE void Hal_Uart_RxDisconnect(struct Hal_Uart_Device*);
+extern __INLINE bool Hal_Uart_IsTxComplet(struct Hal_Uart_Device*);
+extern __INLINE bool Hal_Uart_IsRxComplet(struct Hal_Uart_Device*);
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

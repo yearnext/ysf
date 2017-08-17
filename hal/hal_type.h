@@ -96,6 +96,20 @@ typedef struct
     
 }Hal_Device_t;
 
+struct Hal_Device_Common_Opera
+{
+    void (*Open)(Hal_Device_t*);
+    void (*Close)(Hal_Device_t*);
+    
+    void (*Init)(Hal_Device_t*, void*);
+    void (*Fini)(Hal_Device_t*);
+    
+    hal_err_t (*Write)(Hal_Device_t*, uint8_t*, uint8_t);
+    hal_err_t (*Read)(Hal_Device_t*, uint8_t*, uint8_t);
+    
+    void (*Control)(Hal_Device_t*, uint8_t, void*);
+};
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

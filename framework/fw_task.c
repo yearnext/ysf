@@ -203,7 +203,7 @@ void Fw_Task_InitComponent(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Task_Init(struct Fw_Task *task, char *str, uint8_t priority, void *handle, enum _Fw_Task_Type type)
+__INLINE fw_err_t Fw_Task_Init(struct Fw_Task *task, char *str, uint8_t priority, void *handle, enum _Fw_Task_Type type)
 {
     _FW_ASSERT(IS_PTR_NULL(str));
     _FW_ASSERT(IS_PTR_NULL(handle));
@@ -390,7 +390,7 @@ fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event *event)
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
+__INLINE void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
 {
     _FW_ASSERT(IS_PTR_NULL(task));
 
@@ -410,7 +410,7 @@ void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_PostMessage(struct Fw_Task *task, uint32_t event, void *message)
+__INLINE void Fw_Task_PostMessage(struct Fw_Task *task, uint32_t event, void *message)
 {
     _FW_ASSERT(IS_PTR_NULL(task));
     
@@ -532,7 +532,7 @@ void Fw_Task_Dispatch(void)
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_Enable(struct Fw_Task *task)
+__INLINE void Fw_Task_Enable(struct Fw_Task *task)
 {
     _FW_ASSERT(IS_PTR_NULL(task));
     
@@ -547,7 +547,7 @@ void Fw_Task_Enable(struct Fw_Task *task)
  * @note        None
  *******************************************************************************
  */
-void Fw_Task_Disable(struct Fw_Task *task)
+__INLINE void Fw_Task_Disable(struct Fw_Task *task)
 {
     _FW_ASSERT(IS_PTR_NULL(task));
     

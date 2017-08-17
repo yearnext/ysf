@@ -40,8 +40,7 @@
 #include "fw_debug.h"
 #include "fw_tick.h"
 #include "fw_timer.h"
-#include "fw_stream.h"
-#include "hal_uartstream.h"
+#include "fw_uartstream.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -62,50 +61,10 @@
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-static uint8_t TxBuffer[FW_DEBUG_BUFFER_SIZE];
-static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
 static uint8_t BufferCache[FW_DEBUG_BUFFER_SIZE];
 static bool StreamInitFlag = false;
 
-static struct Fw_UartStream DebugStream = 
-{
-    //< config hardware param
-    .Device.Port = MCU_UART_1,
-    .Device.Baud = 115200,
-    .Device.Parity = MCU_UART_PARTY_NONE,
-    .Device.StopBits = MCU_UART_STOP_BITS_1,
-    .Device.WordLen = MCU_UART_WORD_LEN_8B,
-
-    .Device.RxConfig = MCU_UART_DISABLE_RX,
-    .Device.TxConfig = MCU_UART_DISABLE_TX,
-    
-    .Device.RxCallback.Callback = Hal_UartStream_Receive,
-    .Device.RxCallback.Param    = (void *)&DebugStream,
-
-    .Device.TxCallback.Callback = Hal_UartStream_Send,
-    .Device.TxCallback.Param    = (void *)&DebugStream,
-        
-    //< init tx stream
-    .TxStream.Stream.Tx.Param = (void*)&DebugStream,
-    .TxStream.Stream.Tx.InOut = NULL,
-    .TxStream.Stream.Tx.Connect = NULL,
-    .TxStream.Stream.Tx.Disconnect = NULL,
-	.TxStream.Stream.Rx.Param  = (void*)&DebugStream,
-    .TxStream.Stream.Rx.InOut = Hal_UartStream_TxOut,
-    .TxStream.Stream.Rx.Connect = Hal_UartStream_TxConnect,
-    .TxStream.Stream.Rx.Disconnect = Hal_UartStream_TxDisconnect,
-
-    //< init rx stream
-	.RxStream.Stream.Tx.Param = (void*)&DebugStream,
-    .RxStream.Stream.Tx.InOut = NULL,
-    .RxStream.Stream.Tx.Connect = Hal_UartStream_RxConnect,
-    .RxStream.Stream.Tx.Disconnect = Hal_UartStream_RxDisconnect,
-	.RxStream.Stream.Rx.Param = (void*)&DebugStream,
-    .RxStream.Stream.Rx.InOut = NULL,
-    .RxStream.Stream.Rx.Connect = NULL,
-    .RxStream.Stream.Rx.Disconnect = NULL,
-};
-
+static struct Fw_UartStream DebugStream;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -122,28 +81,68 @@ static struct Fw_UartStream DebugStream =
  */
 void Fw_Debug_InitComponent(void)
 {
-    //< init fifo
-    _FifoInitType TxFifo = {TxBuffer, FW_DEBUG_BUFFER_SIZE};
-    _FifoInitType RxFifo = {RxBuffer, FW_DEBUG_BUFFER_SIZE};
+    struct Fw_UartStream_Config config;
     
-    //< init tx stream
-    Fw_Stream_Init((struct Fw_Stream *)&DebugStream.TxStream, 
-                   (struct _FwStreamBufferOpera *)&StreamFifoOpera, 
-                   (void *)&TxFifo);
+    static uint8_t TxBuffer[FW_DEBUG_BUFFER_SIZE];
+    static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
+    
+    Fw_Fifo_t TxFifo = {TxBuffer, FW_DEBUG_BUFFER_SIZE};
+    Fw_Fifo_t RxFifo = {RxBuffer, FW_DEBUG_BUFFER_SIZE};
+    
+    //< uart stream hardware param init
+    config.Device.Port = MCU_UART_1;
+    config.Device.Group = 0;
+    config.Device.Baud = 115200;
+    config.Device.WordLen = MCU_UART_WORD_LEN_8B;
+    config.Device.Priority = MCU_UART_PARTY_NONE;
+    config.Device.StopBits = MCU_UART_STOP_BITS_1;
+    config.Device.TxConfig = MCU_UART_ENABLE_TX_ISR;
+    config.Device.RxConfig = MCU_UART_ENABLE_RX_ISR;
+    config.Device.Parity = 1;
 
-    //< init rx stream
-    Fw_Stream_Init((struct Fw_Stream *)&DebugStream.RxStream, 
-                   (struct _FwStreamBufferOpera *)&StreamFifoOpera,  
-                   (void *)&RxFifo);
+    //< uart stream hardware call back config
+    config.Device.RxCallback.Callback = Fw_UartStream_Receive;
+    config.Device.RxCallback.Param = (void *)&DebugStream;
+        
+    config.Device.TxCallback.Callback = Fw_UartStream_Send;
+    config.Device.TxCallback.Param = (void *)&DebugStream;
     
-    Hal_UartStream_Init(&DebugStream);
-                   
-    Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.TxStream);
-    Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.TxStream);
-                   
-    Fw_Stream_TxConnect((struct Fw_Stream *)&DebugStream.RxStream);
-    Fw_Stream_RxConnect((struct Fw_Stream *)&DebugStream.RxStream);
-    
+    //< uart stream tx pipe config
+    config.Tx.Buffer = (void *)&TxFifo;
+    config.Tx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera;
+    config.Tx.Callback = NULL;
+        
+    config.Tx.Rx.Connect = Fw_UartStream_TxConnect;
+    config.Tx.Rx.Disconnect = Fw_UartStream_TxDisconnect;
+    config.Tx.Rx.InOut = Fw_UartStream_TxOut;
+    config.Tx.Rx.IsReady = true;
+    config.Tx.Rx.Param = (void *)&DebugStream;
+        
+    config.Tx.Tx.Connect = NULL;
+    config.Tx.Tx.Disconnect = NULL;
+    config.Tx.Tx.InOut = NULL;
+    config.Tx.Tx.IsReady = true;
+    config.Tx.Tx.Param = (void *)&DebugStream;
+        
+    //< uart stream tx pipe config
+    config.Rx.Buffer = (void *)&RxFifo;
+    config.Rx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera;
+    config.Rx.Callback = NULL;
+        
+    config.Rx.Rx.Connect = NULL;
+    config.Rx.Rx.Disconnect = NULL;
+    config.Rx.Rx.InOut = NULL;
+    config.Rx.Rx.IsReady = true;
+    config.Rx.Rx.Param = (void *)&DebugStream;
+        
+    config.Rx.Tx.Connect = Fw_UartStream_RxConnect;
+    config.Rx.Tx.Disconnect = Fw_UartStream_RxDisconnect;
+    config.Rx.Tx.InOut = Fw_UartStream_RxIn;
+    config.Rx.Tx.IsReady = true;
+    config.Rx.Tx.Param = (void *)&DebugStream;
+
+    Fw_UartStream_Init(&DebugStream, (void *)&config);
+
     StreamInitFlag = true;
 }
 
@@ -202,7 +201,7 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
     len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);
     va_end(args);
     
-    Fw_Stream_Write((struct Fw_Stream *)&DebugStream.TxStream, BufferCache, len);
+    Fw_Stream_Write(&DebugStream.Tx, BufferCache, len);
 }
 
 /**
@@ -213,7 +212,7 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
  * @note        None
  *******************************************************************************
  */
-void Fw_Debug_PutMcuInfo(void)
+__INLINE void Fw_Debug_PutMcuInfo(void)
 {
     log("Framework Version: %s_%s_%s \r\n", _FRAMEWORK_VERSION, __DATE__, __TIME__);
 }
@@ -227,7 +226,7 @@ void Fw_Debug_PutMcuInfo(void)
  * @note        None
  *******************************************************************************
  */
-void Fw_AssertFailed(uint8_t *file, uint32_t line)
+__INLINE void Fw_AssertFailed(uint8_t *file, uint32_t line)
 {
     log_e("Assert Failed At %s, %ld! \n", file, line);
 }

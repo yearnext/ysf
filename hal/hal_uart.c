@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_gpio.c                                                      *
+ * @file       hal_uart.c                                                      *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-08-07                                                      *
- * @brief      hal gpio component source files                                 *
+ * @date       2017-08-17                                                      *
+ * @brief      hal uart component source files                                 *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,47 +32,50 @@
  */
 
 /**
- * @defgroup hal gpio component
+ * @defgroup hal uart component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "hal_gpio.h"
-#include "map_gpio.h"
+#include "hal_uart.h"
+#include "map_uart.h"
 
 /* Exported constants --------------------------------------------------------*/
-#if USE_GPIO_COMPONENT
+#if USE_UART_COMPONENT
 /**
  *******************************************************************************
  * @brief      define mcu application pack gpio opera interface
  *******************************************************************************
  */ 
-static struct Map_GPIO_Opera *_gpio_ops = NULL;
+static struct Map_Uart_Opera *_uart_ops = NULL;
 
 /**
  *******************************************************************************
  * @brief      define gpio opera interface
  *******************************************************************************
  */ 
-static const struct Hal_GPIO_Opera gpio_ops = 
+static const struct Hal_Uart_Opera uart_ops = 
 {
-    .Open = Hal_GPIO_Open,
-    .Close = Hal_GPIO_Close,
+    .Open = Hal_Uart_Open,
+    .Close = Hal_Uart_Close,
     
-    .Init = Hal_GPIO_Init,
-    .Fini = Hal_GPIO_Fini,
-    
-    .Set = Hal_GPIO_Set,
-    .Clr = Hal_GPIO_Clr,
-    .Toggle = Hal_GPIO_Toggle,
+    .Init = Hal_Uart_Init,
+    .Fini = Hal_Uart_Fini,
 
-    .GetIntput = Hal_GPIO_GetIntputStatus,
-    .GetOutput = Hal_GPIO_GetOutputStatus,
-        
-    .Write = Hal_GPIO_Write,
-    .Read = Hal_GPIO_Read,
+    .SetTxCallback = Hal_Uart_SetTxCallback,
+    .SetRxCallback = Hal_Uart_SetRxCallback,
     
-    .Control = Hal_GPIO_Control,
+    .Send = Hal_Uart_Send,
+    .Receive = Hal_Uart_Receive,
+    
+    .TxConnect = Hal_Uart_TxConnect,
+    .TxDisconnect = Hal_Uart_TxDisconnect,
+    
+    .RxConnect = Hal_Uart_RxConnect,
+    .RxDisconnect = Hal_Uart_RxDisconnect,
+    
+    .IsTxComplet = Hal_Uart_IsTxComplet,
+    .IsRxComplet = Hal_Uart_IsRxComplet,
 };
 #endif
 
@@ -81,18 +84,18 @@ static const struct Hal_GPIO_Opera gpio_ops =
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_GPIO_COMPONENT
+#if USE_UART_COMPONENT
 /**
  *******************************************************************************
- * @brief       register hal gpio module
+ * @brief       register hal uart module
  * @param       [in/out]  void
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-void Hal_GPIO_Module_Register(void)
+void Hal_Uart_Module_Register(void)
 {
-    Map_GPIO_API_Register((void **)&_gpio_ops);
+    Map_Uart_API_Register((void **)&_uart_ops);
 }
 
 /**
@@ -103,12 +106,12 @@ void Hal_GPIO_Module_Register(void)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Open(struct Hal_GPIO_Device *drv)
+__INLINE void Hal_Uart_Open(struct Hal_Uart_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-
-    _gpio_ops->Open(drv->Port); 
+    hal_assert(IS_PTR_NULL(_uart_ops));
+    
+    _uart_ops->Open(drv->Port); 
 }
 
 /**
@@ -119,12 +122,12 @@ __INLINE void Hal_GPIO_Open(struct Hal_GPIO_Device *drv)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Close(struct Hal_GPIO_Device *drv)
+__INLINE void Hal_Uart_Close(struct Hal_Uart_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
+    hal_assert(IS_PTR_NULL(_uart_ops));
 
-    _gpio_ops->Close(drv->Port); 
+    _uart_ops->Close(drv->Port); 
 }
 
 /**
@@ -136,15 +139,16 @@ __INLINE void Hal_GPIO_Close(struct Hal_GPIO_Device *drv)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Init(struct Hal_GPIO_Device *drv, void *param)
+__INLINE void Hal_Uart_Init(struct Hal_Uart_Device *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-
-    drv->Opera = (struct Hal_GPIO_Opera *)&gpio_ops;
+    hal_assert(IS_PTR_NULL(_uart_ops));
+    hal_assert(IS_PTR_NULL(param));
     
-    _gpio_ops->Open(drv->Port);
-    _gpio_ops->Init(drv->Port, drv->Pin, drv->Dir, drv->Mode); 
+    drv->Opera = (struct Hal_Uart_Opera *)&uart_ops;
+    
+    _uart_ops->Open(drv->Port);
+    _uart_ops->Init(drv->Port, param); 
 }
 
 /**
@@ -155,240 +159,185 @@ __INLINE void Hal_GPIO_Init(struct Hal_GPIO_Device *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Fini(struct Hal_GPIO_Device *drv)
+__INLINE void Hal_Uart_Fini(struct Hal_Uart_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
+    hal_assert(IS_PTR_NULL(_uart_ops));
     
-    _gpio_ops->Fini(drv->Port, drv->Pin); 
+    _uart_ops->Fini(drv->Port);   
     
     drv->Opera = NULL;
-    drv->Port = 0;
-    drv->Pin = 0;
 }
 
 /**
  *******************************************************************************
- * @brief       hal api : write data to device
+ * @brief       hal api : uart send data
  * @param       [in/out]  *drv        device block
- * @param       [in/out]  *param      config param
+ * @param       [in/out]  sendData    uart send data
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Write(struct Hal_GPIO_Device *drv, uint8_t *wrData, uint8_t wrNum)
+__INLINE void Hal_Uart_Send(struct Hal_Uart_Device *drv, uint8_t sendData)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-    hal_assert(IS_PTR_NULL(param));
-
-    _gpio_ops->Write(drv->Port, drv->Pin, *((uint16_t *)wrData), wrNum); 
+    hal_assert(IS_PTR_NULL(_uart_ops));
+    
+    _uart_ops->Send(drv->Port, sendData);
 }
 
 /**
  *******************************************************************************
- * @brief       hal api : read data from device
+ * @brief       hal api : uart receive data
  * @param       [in/out]  *drv        device block
- * @param       [in/out]  *param      config param
+ * @return      [in/out]  recData     recevie data
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE uint8_t Hal_Uart_Receive(struct Hal_Uart_Device *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(_uart_ops));
+
+    return _uart_ops->Receive(drv->Port);
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : set uart tx call back 
+ * @param       [in/out]  *drv        device block
+ * @param       [in/out]  *param      config block
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Read(struct Hal_GPIO_Device *drv, uint8_t *rdData, uint8_t rdNum)
+__INLINE void Hal_Uart_SetTxCallback(struct Hal_Uart_Device *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-    hal_assert(IS_PTR_NULL(param));
+    hal_assert(IS_PTR_NULL(_uart_ops));
 
-    _gpio_ops->Read(drv->Port, GPIO_DIR_INTPUT, drv->Pin, (uint16_t *)rdData, rdNum); 
+    struct Hal_Uart_Config *config = (struct Hal_Uart_Config *)param;
+    
+    _uart_ops->SetTxCallback(drv->Port, config->TxCallback.Callback, config->TxCallback.Param);
 }
 
 /**
  *******************************************************************************
- * @brief       hal api : set pin
+ * @brief       hal api : set uart rx call back 
  * @param       [in/out]  *drv        device block
+ * @return      [in/out]  *param      config block
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Set(struct Hal_GPIO_Device *drv)
+__INLINE void Hal_Uart_SetRxCallback(struct Hal_Uart_Device *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
+    hal_assert(IS_PTR_NULL(_uart_ops));
 
-    _gpio_ops->Write(drv->Port, drv->Pin, 1, 1); 
+    struct Hal_Uart_Config *config = (struct Hal_Uart_Config *)param;
+    
+    _uart_ops->SetRxCallback(drv->Port, config->RxCallback.Callback, config->RxCallback.Param);
 }
 
 /**
  *******************************************************************************
- * @brief       hal api : reset pin
- * @param       [in/out]  *drv        device block
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-__INLINE void Hal_GPIO_Clr(struct Hal_GPIO_Device *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-
-    _gpio_ops->Write(drv->Port, drv->Pin, 0, 1); 
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : get gpio intput status
- * @param       [in/out]  *drv        device block
- * @return      [in/out]  status      pin status
- * @note        None
- *******************************************************************************
- */
-__INLINE bool Hal_GPIO_GetIntputStatus(struct Hal_GPIO_Device *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-
-    uint16_t status = 0;
-    
-    _gpio_ops->Read(drv->Port, GPIO_DIR_INTPUT, drv->Pin, &status, 1); 
-    
-    return (status == 0) ? (false) : (true);
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : get gpio output status
- * @param       [in/out]  *drv        device block
- * @return      [in/out]  status      pin status
- * @note        None
- *******************************************************************************
- */
-__INLINE bool Hal_GPIO_GetOutputStatus(struct Hal_GPIO_Device *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-
-    uint16_t status = 0;
-    
-    _gpio_ops->Read(drv->Port, GPIO_DIR_OUTPUT, drv->Pin, &status, 1); 
-    
-    return (status == 0) ? (false) : (true);
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : gpio toggle opera
+ * @brief       hal api : connect uart tx opera
  * @param       [in/out]  *drv        device block
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Toggle(struct Hal_GPIO_Device *drv)
+__INLINE void Hal_Uart_TxConnect(struct Hal_Uart_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
+    hal_assert(IS_PTR_NULL(_uart_ops));
 
-    uint16_t status = 0;
-    
-    _gpio_ops->Read(drv->Port, GPIO_DIR_OUTPUT, drv->Pin, &status, 1); 
-    
-    if(status == 1)
-    {
-        _gpio_ops->Write(drv->Port, drv->Pin, 0, 1); 
-    }
-    else
-    {
-        _gpio_ops->Write(drv->Port, drv->Pin, 1, 1); 
-    }
+    _uart_ops->TxConnect(drv->Port);
 }
 
 /**
  *******************************************************************************
- * @brief       hal api : gpio control opera
+ * @brief       hal api : disconnect uart tx opera
  * @param       [in/out]  *drv        device block
- * @param       [in/out]  cmd         control command
- * @param       [in/out]  *param      control param
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_GPIO_Control(struct Hal_GPIO_Device *drv, uint8_t cmd, void *param)
+__INLINE void Hal_Uart_TxDisconnect(struct Hal_Uart_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(_gpio_ops));
-    hal_assert(IS_PTR_NULL(param));
+    hal_assert(IS_PTR_NULL(_uart_ops));
 
-    switch(cmd)
-    {
-        case HAL_GPIO_CMD_OPEN:
-        {
-            _gpio_ops->Open(drv->Port);
-            break;
-        }
-        case HAL_GPIO_CMD_CLOSE:
-        {
-            _gpio_ops->Close(drv->Port);
-            break;
-        }
-        case HAL_GPIO_CMD_INIT:
-        {
-            struct Hal_GPIO_Config *config = (struct Hal_GPIO_Config *)param;
-            
-            _gpio_ops->Init(drv->Port, drv->Pin, config->Dir, config->Mode);
-            break;
-        }
-        case HAL_GPIO_CMD_FINI:
-        {
-            _gpio_ops->Fini(drv->Port, drv->Pin);
-            break;
-        }
-        case HAL_GPIO_CMD_SET:
-        {
-            _gpio_ops->Write(drv->Port, drv->Pin, 1, 1);
-            break;
-        }
-        case HAL_GPIO_CMD_CLEAR:
-        {
-            _gpio_ops->Write(drv->Port, drv->Pin, 0, 1);
-            break;
-        }
-        case HAL_GPIO_CMD_GET_INTPUT:
-        {   
-            _gpio_ops->Read(drv->Port, GPIO_DIR_INTPUT, drv->Pin, (uint16_t *)param, 1);
-            break;
-        }
-        case HAL_GPIO_CMD_GET_OUTPUT:
-        {
-            _gpio_ops->Read(drv->Port, GPIO_DIR_OUTPUT, drv->Pin, (uint16_t *)param, 1);
-            break;
-        }
-        case HAL_GPIO_CMD_TOGGLE:
-        {
-            Hal_GPIO_Toggle(drv);
-            break;
-        }
-        case HAL_GPIO_CMD_WRITE:
-        {
-            struct Hal_GPIO_Config *config = (struct Hal_GPIO_Config *)param;
-            
-            _gpio_ops->Write(drv->Port, drv->Pin, config->RWData, config->Num);
-            break;
-        }
-        case HAL_GPIO_CMD_READ:
-        {
-            struct Hal_GPIO_Config *config = (struct Hal_GPIO_Config *)param;
-            
-            _gpio_ops->Read(drv->Port, config->Dir, drv->Pin, &config->RWData, config->Num); 
-            break;
-        }
-        default:
-        {
-            break;
-        }
-    }
+    _uart_ops->TxDisconnect(drv->Port);
 }
+
+/**
+ *******************************************************************************
+ * @brief       hal api : connect uart rx opera
+ * @param       [in/out]  *drv        device block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE void Hal_Uart_RxConnect(struct Hal_Uart_Device *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(_uart_ops));
+
+    _uart_ops->RxConnect(drv->Port);
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : disconnect uart rx opera
+ * @param       [in/out]  *drv        device block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE void Hal_Uart_RxDisconnect(struct Hal_Uart_Device *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(_uart_ops));
+
+    _uart_ops->RxDisconnect(drv->Port);
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : check tx complet isr flag
+ * @param       [in/out]  *drv        device block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE bool Hal_Uart_IsTxComplet(struct Hal_Uart_Device *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(_uart_ops));
+
+    return _uart_ops->IsTxComplet(drv->Port);
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : check rx complet isr flag
+ * @param       [in/out]  *drv        device block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE bool Hal_Uart_IsRxComplet(struct Hal_Uart_Device* drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(_uart_ops));
+    
+    return _uart_ops->IsRxComplet(drv->Port);
+}
+
 #endif
 
-/** @}*/     /** hal gpio component */
+/** @}*/     /** hal uart component */
 
 /**********************************END OF FILE*********************************/

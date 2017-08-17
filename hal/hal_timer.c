@@ -95,13 +95,11 @@ void Hal_Timer_Module_Register(void)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_Open(Hal_Device_t *drv)
+__INLINE void Hal_Timer_Open(struct Hal_Timer_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    
-    struct Hal_Timer_Device *timer = (struct Hal_Timer_Device *)&drv->Device;
-    
-    _timer_ops->Open(timer->Port);
+
+    _timer_ops->Open(drv->Port);
 }
 
 /**
@@ -112,13 +110,11 @@ void Hal_Timer_Open(Hal_Device_t *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_Close(Hal_Device_t *drv)
+__INLINE void Hal_Timer_Close(struct Hal_Timer_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    
-    struct Hal_Timer_Device *timer = (struct Hal_Timer_Device *)&drv->Device;
-    
-    _timer_ops->Close(timer->Port);
+
+    _timer_ops->Close(drv->Port);
 }
 
 /**
@@ -130,16 +126,14 @@ void Hal_Timer_Close(Hal_Device_t *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_Init(Hal_Device_t *drv, void *param)
+__INLINE void Hal_Timer_Init(struct Hal_Timer_Device *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
+     
+    drv->Opera = (struct Hal_Timer_Opera *)&timer_ops;
     
-    struct Hal_Timer_Device *timer = (struct Hal_Timer_Device *)&drv->Device;
-    
-    timer->Opera = (struct Hal_Timer_Opera *)&timer_ops;
-    
-    _timer_ops->Open(timer->Port);
-    _timer_ops->Init(timer->Port, param);
+    _timer_ops->Open(drv->Port);
+    _timer_ops->Init(drv->Port, param);
 }
 
 /**
@@ -150,16 +144,14 @@ void Hal_Timer_Init(Hal_Device_t *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_Fini(Hal_Device_t *drv)
+__INLINE void Hal_Timer_Fini(struct Hal_Timer_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
+
+    _timer_ops->Fini(drv->Port); 
     
-    struct Hal_Timer_Device *timer = (struct Hal_Timer_Device *)&drv->Device;
-    
-    timer->Opera = NULL;
-    timer->Port = 0;
-    
-    _timer_ops->Fini(timer->Port);
+    drv->Opera = NULL;
+    drv->Port = 0;
 }
 
 /**
@@ -171,14 +163,13 @@ void Hal_Timer_Fini(Hal_Device_t *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_SetUpCallback(Hal_Device_t *drv, void *param)
+__INLINE void Hal_Timer_SetUpCallback(struct Hal_Timer_Device *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
-    
-    struct Hal_Timer_Device *timer = (struct Hal_Timer_Device *)&drv->Device;
+
     struct Hal_Callback *callback = (struct Hal_Callback *)param;
     
-    _timer_ops->SetUpCallback(timer->Port, callback->Callback, callback->Param);
+    _timer_ops->SetUpCallback(drv->Port, callback->Callback, callback->Param);
 }
 
 /**
@@ -189,13 +180,11 @@ void Hal_Timer_SetUpCallback(Hal_Device_t *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_Start(Hal_Device_t *drv)
+__INLINE void Hal_Timer_Start(struct Hal_Timer_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     
-    struct Hal_Timer_Device *timer = (struct Hal_Timer_Device *)&drv->Device;
-
-    _timer_ops->Start(timer->Port);
+    _timer_ops->Start(drv->Port);
 }
 
 /**
@@ -206,13 +195,11 @@ void Hal_Timer_Start(Hal_Device_t *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_Stop(Hal_Device_t *drv)
+__INLINE void Hal_Timer_Stop(struct Hal_Timer_Device *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    
-    struct Hal_Timer_Device *timer = (struct Hal_Timer_Device *)&drv->Device;
 
-    _timer_ops->Stop(timer->Port);
+    _timer_ops->Stop(drv->Port);
 }
 #endif
 

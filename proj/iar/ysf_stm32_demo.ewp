@@ -2117,6 +2117,15 @@
         </group>
         <group>
             <name>stream</name>
+            <group>
+                <name>uartstream</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\framework\fw_uartstream.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\framework\fw_uartstream.h</name>
+                </file>
+            </group>
             <file>
                 <name>$PROJ_DIR$\..\..\framework\fw_stream.c</name>
             </file>
@@ -2187,16 +2196,10 @@
         <group>
             <name>uart</name>
             <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_uart.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\hal\hal_uart.h</name>
-            </file>
-        </group>
-        <group>
-            <name>uartstream</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\hal\hal_uartstream.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\hal\hal_uartstream.h</name>
             </file>
         </group>
     </group>

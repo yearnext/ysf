@@ -62,22 +62,22 @@ static struct Fw_Task StreamTask;
  *******************************************************************************
  */
 #if USE_STREAM_COMPONENT
-static fw_err_t _FifoStreamOpera_Init(struct Fw_Stream*, void*);
-static fw_err_t _FifoStreamOpera_Fini(struct Fw_Stream*);
-static fw_err_t _FifoStreamOpera_Write(struct Fw_Stream*, uint8_t*, uint8_t);
-static fw_err_t _FifoStreamOpera_Read(struct Fw_Stream*, uint8_t*, uint8_t);
+static void _FifoStreamOpera_Init(void*, void*);
+static void _FifoStreamOpera_Fini(void*);
+static fw_err_t _FifoStreamOpera_Write(void*, uint8_t*, uint8_t);
+static fw_err_t _FifoStreamOpera_Read(void*, uint8_t*, uint8_t);
 
-static fw_err_t _BlockStreamOpera_Init(struct Fw_Stream*, void*);
-static fw_err_t _BlockStreamOpera_Fini(struct Fw_Stream*);
-static fw_err_t _BlockStreamOpera_Write(struct Fw_Stream*, uint8_t*, uint8_t);
-static fw_err_t _BlockStreamOpera_Read(struct Fw_Stream*, uint8_t*, uint8_t);
+//static void _BlockStreamOpera_Init(struct Fw_Stream*, void*);
+//static void _BlockStreamOpera_Fini(struct Fw_Stream*);
+//static fw_err_t _BlockStreamOpera_Write(struct Fw_Stream*, uint8_t*, uint8_t);
+//static fw_err_t _BlockStreamOpera_Read(struct Fw_Stream*, uint8_t*, uint8_t);
 
 /**
  *******************************************************************************
  * @brief       framework stream opera block
  *******************************************************************************
  */
-const _StreamBufferOperaInitType StreamFifoOpera = 
+const struct Fw_Stream_Buffer_Opera FwStreamFifoOpera = 
 {
     .Init  = _FifoStreamOpera_Init,
     .Fini  = _FifoStreamOpera_Fini,
@@ -86,14 +86,14 @@ const _StreamBufferOperaInitType StreamFifoOpera =
     .Read  = _FifoStreamOpera_Read,
 };
   
-const _StreamBufferOperaInitType StreamBlockOpera = 
-{
-    .Init  = _BlockStreamOpera_Init,
-    .Fini  = _BlockStreamOpera_Fini,
-    
-    .Write = _BlockStreamOpera_Write,
-    .Read  = _BlockStreamOpera_Read,
-};
+//const struct Fw_Stream_Buffer_Opera FwStreamBlockOpera = 
+//{
+//    .Init  = _BlockStreamOpera_Init,
+//    .Fini  = _BlockStreamOpera_Fini,
+//    
+//    .Write = _BlockStreamOpera_Write,
+//    .Read  = _BlockStreamOpera_Read,
+//};
 #endif
 
 /* Private functions ---------------------------------------------------------*/
@@ -130,15 +130,13 @@ static fw_err_t Fw_StreamTask_Handle(uint32_t event, void *param)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_InitComponent(void)
+void Fw_Stream_InitComponent(void)
 {
     Fw_Task_Init(&StreamTask, 
                  "Framework Stream Task", 
                  1, 
                  (void *)Fw_StreamTask_Handle,
                  FW_MESSAGE_HANDLE_TYPE_TASK);
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -149,11 +147,9 @@ fw_err_t Fw_Stream_InitComponent(void)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_PostRxEvent(struct Fw_Stream *stream)
+void Fw_Stream_PostEvent(struct Fw_Stream *stream, uint8_t event)
 {
-    Fw_Task_PostMessage(&StreamTask, FW_STREAM_RX_EVENT, (void *)stream);
-    
-    return FW_ERR_NONE;
+    Fw_Task_PostMessage(&StreamTask, event, (void *)stream);
 }
 
 /**
@@ -167,28 +163,23 @@ fw_err_t Fw_Stream_PostRxEvent(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_Init(struct Fw_Stream *stream, 
-                        _StreamBufferOperaInitType *opera, 
-                        void *param)
+__INLINE void Fw_Stream_Init(struct Fw_Stream *stream, Fw_Stream_InitType *init)
 {
     //< detect stream param
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(opera));
+    _FW_ASSERT(IS_PTR_NULL(init));
     
-    //< init stream block
-    stream->IsRxReady = false;
-	stream->IsTxReady = false;
+    //< config stream param
+    stream->Buf_Ops = init->Buf_Ops;
 
-    //< set stream buffer opera
-    stream->Opera = opera;
-    
-    //< init memory
-    if(!IS_PTR_NULL(stream->Opera->Init))
+    memcpy(&stream->Tx, &init->Tx, sizeof(stream->Tx));
+    memcpy(&stream->Rx, &init->Rx, sizeof(stream->Rx));
+
+    //< init buffer
+    if(!IS_PTR_NULL(stream->Buf_Ops->Init))
     {
-        stream->Opera->Init(stream, param);
+        stream->Buf_Ops->Init(stream->Buffer, init->Buffer);
     }
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -199,29 +190,30 @@ fw_err_t Fw_Stream_Init(struct Fw_Stream *stream,
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_Fini(struct Fw_Stream *stream)
+__INLINE void Fw_Stream_Fini(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
 
-	if(stream->IsRxReady)
+    //< disconnect stream rx
+	if(stream->Rx.IsReady && !IS_PTR_NULL(stream->Rx.Disconnect))
 	{
-		stream->Rx.Disconnect(stream->Rx.Param);
+        stream->Rx.Disconnect(stream->Rx.Param);
 	}
 
-	if(stream->IsTxReady)
+    //< disconnect stream tx
+	if(stream->Tx.IsReady && !IS_PTR_NULL(stream->Tx.Disconnect))
 	{
 		stream->Tx.Disconnect(stream->Tx.Param);
 	}
 	
-    //< init stream buffer
-    if(!IS_PTR_NULL(stream->Opera->Fini))
+    //< deinit stream buffer
+    if(!IS_PTR_NULL(stream->Buf_Ops->Fini))
     {
-        stream->Opera->Fini(stream);
+        stream->Buf_Ops->Fini(stream);
     }
     
+    //< clear stream param
     memset(stream, 0, sizeof(struct Fw_Stream));
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -232,21 +224,19 @@ fw_err_t Fw_Stream_Fini(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_TxConnect(struct Fw_Stream *stream)
+__INLINE void Fw_Stream_TxConnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
 
-	if(stream->IsTxReady == false)
+	if(stream->Tx.IsReady == false)
 	{
 		if(!IS_PTR_NULL(stream->Tx.Connect))
 		{
-			stream->Tx.Connect(stream);
+			stream->Tx.Connect(stream->Tx.Param);
 		}
 
-		stream->IsTxReady = true;
+		stream->Tx.IsReady = true;
 	}
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -257,22 +247,19 @@ fw_err_t Fw_Stream_TxConnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_TxDisconnect(struct Fw_Stream *stream)
+__INLINE void Fw_Stream_TxDisconnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
     
-	if(stream->IsTxReady == true)
+	if(stream->Tx.IsReady == true)
 	{
 		if(!IS_PTR_NULL(stream->Tx.Disconnect))
 		{
-			stream->Tx.Disconnect(stream);
+			stream->Tx.Disconnect(stream->Tx.Param);
 		}
 
-		stream->IsTxReady = false;
+		stream->Tx.IsReady = false;
 	}
-
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -283,21 +270,19 @@ fw_err_t Fw_Stream_TxDisconnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_RxConnect(struct Fw_Stream *stream)
+__INLINE void Fw_Stream_RxConnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
     
-	if(stream->IsRxReady == false)
+	if(stream->Rx.IsReady == false)
 	{
 		if(!IS_PTR_NULL(stream->Rx.Connect))
 		{
 			stream->Rx.Connect(stream);
 		}
 
-		stream->IsRxReady = true;
+		stream->Rx.IsReady = true;
 	}
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -308,21 +293,19 @@ fw_err_t Fw_Stream_RxConnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_RxDisconnect(struct Fw_Stream *stream)
+__INLINE void Fw_Stream_RxDisconnect(struct Fw_Stream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
     
-	if(stream->IsRxReady == true)
+	if(stream->Rx.IsReady == true)
 	{
 		if(!IS_PTR_NULL(stream->Rx.Disconnect))
 		{
 			stream->Rx.Disconnect(stream);
 		}
 
-		stream->IsRxReady = false;
+		stream->Rx.IsReady = false;
 	}
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -336,26 +319,26 @@ fw_err_t Fw_Stream_RxDisconnect(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+__INLINE fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(stream->Opera));
+    _FW_ASSERT(IS_PTR_NULL(stream->Buf_Ops));
     _FW_ASSERT(IS_PTR_NULL(buffer));
     _FW_ASSERT(IS_PARAM_ZERO(size));
     
-    if(stream->IsTxReady == true)
+    if(!IS_PTR_NULL(stream->Buf_Ops->Write))
     {
-        if(!IS_PTR_NULL(stream->Opera->Write) && !IS_PTR_NULL(stream->Rx.InOut))
-        {
-            if(stream->Opera->Write(stream, buffer, size) == FW_ERR_NONE)
+        if(stream->Buf_Ops->Write(stream->Buffer, buffer, size) == FW_ERR_NONE)
+        { 
+            if(!IS_PTR_NULL(stream->Rx.InOut))
             {
                 stream->Rx.InOut(stream);
-            
-                return FW_ERR_NONE;
             }
+            
+            return FW_ERR_NONE;
         }
     }
-    
+        
     return FW_ERR_FAIL;
 }
 
@@ -370,21 +353,18 @@ fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+__INLINE fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(stream->Opera));
+    _FW_ASSERT(IS_PTR_NULL(stream->Buf_Ops));
     _FW_ASSERT(IS_PTR_NULL(buffer));
     _FW_ASSERT(IS_PARAM_ZERO(size));
     
-    if(stream->IsRxReady == true)
+    if(!IS_PTR_NULL(stream->Buf_Ops->Read))
     {
-        if(!IS_PTR_NULL(stream->Opera->Read))
-        {
-            return stream->Opera->Read(stream, buffer, size);
-        }
+        return stream->Buf_Ops->Read(stream->Buffer, buffer, size);
     }
-    
+        
     return FW_ERR_FAIL;
 }
 
@@ -398,15 +378,13 @@ fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
  * @note        None
  *******************************************************************************
  */
-static fw_err_t _FifoStreamOpera_Init(struct Fw_Stream *stream, void *buffer)
+static void _FifoStreamOpera_Init(void *fifo, void *buffer)
 {
-    struct Fw_FifoStream *fifoStream = (struct Fw_FifoStream *)stream;
-    _FifoInitType *fifo = (_FifoInitType *)buffer;
-    
-    _FW_ASSERT(IS_PTR_NULL(fifoStream));
-    _FW_ASSERT(IS_PTR_NULL(fifo));
+    _FW_ASSERT(IS_PTR_NULL(buffer));
 
-    return Fw_Buffer_Init((struct Fw_RingBuffer *)&fifoStream->Fifo, fifo->Buffer, fifo->Size);
+    Fw_Fifo_InitType *init = (Fw_Fifo_InitType *)buffer;
+    
+    Fw_Buffer_Init((struct Fw_RingBuffer *)fifo, init->Buffer, init->Size);
 }
 
 /**
@@ -418,13 +396,9 @@ static fw_err_t _FifoStreamOpera_Init(struct Fw_Stream *stream, void *buffer)
  * @note        None
  *******************************************************************************
  */
-static fw_err_t _FifoStreamOpera_Fini(struct Fw_Stream *stream)
+static void _FifoStreamOpera_Fini(void *fifo)
 {
-    struct Fw_FifoStream *fifoStream = (struct Fw_FifoStream *)stream;
-
-    _FW_ASSERT(IS_PTR_NULL(fifoStream));
-    
-    return Fw_Buffer_Fini((struct Fw_RingBuffer *)&fifoStream->Fifo);
+    Fw_Buffer_Fini((struct Fw_RingBuffer *)fifo);
 }
 
 /**
@@ -438,13 +412,9 @@ static fw_err_t _FifoStreamOpera_Fini(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-static fw_err_t _FifoStreamOpera_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+static fw_err_t _FifoStreamOpera_Write(void *fifo, uint8_t *buffer, uint8_t size)
 {
-    struct Fw_FifoStream *fifoStream = (struct Fw_FifoStream *)stream;
-
-    _FW_ASSERT(IS_PTR_NULL(fifoStream));
-    
-    return Fw_Buffer_Write((struct Fw_RingBuffer *)&fifoStream->Fifo, buffer, size);
+    return Fw_Buffer_Write((struct Fw_RingBuffer *)fifo, buffer, size);
 }
 
 /**
@@ -458,186 +428,178 @@ static fw_err_t _FifoStreamOpera_Write(struct Fw_Stream *stream, uint8_t *buffer
  * @note        None
  *******************************************************************************
  */
-static fw_err_t _FifoStreamOpera_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+static fw_err_t _FifoStreamOpera_Read(void *fifo, uint8_t *buffer, uint8_t size)
 {
-    struct Fw_FifoStream *fifoStream = (struct Fw_FifoStream *)stream;
-
-    _FW_ASSERT(IS_PTR_NULL(fifoStream));
-    
-    return Fw_Buffer_Read((struct Fw_RingBuffer *)&fifoStream->Fifo, buffer, size);
+    return Fw_Buffer_Read((struct Fw_RingBuffer *)fifo, buffer, size);
 }
-
-/**
- *******************************************************************************
- * @brief       block stream opera init
- * @param       [in/out]  *stream        stream block
- * @param       [in/out]  *buffer        buffer
- * @return      [in/out]  FW_ERR_NONE    init success
- * @return      [in/out]  FW_ERR_FAIL    init failed
- * @note        None
- *******************************************************************************
- */
-static fw_err_t _BlockStreamOpera_Init(struct Fw_Stream *stream, void *buffer)
-{
-    struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
-    
-	blockStream->LinkList.Head = NULL;
-	blockStream->LinkList.Tail = NULL;
-    
-    return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       block stream opera deinit
- * @param       [in/out]  *stream        stream block
- * @return      [in/out]  FW_ERR_NONE    deinit success
- * @return      [in/out]  FW_ERR_FAIL    deinit failed
- * @note        None
- *******************************************************************************
- */
-static fw_err_t _BlockStreamOpera_Fini(struct Fw_Stream *stream)
-{
-    struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
-    
-	blockStream->LinkList.Head = NULL;
-	blockStream->LinkList.Tail = NULL;
-    
-    return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       create queue and write data
- * @param       [in/out]  *stream        stream block
- * @param       [in/out]  *buffer        buffer
- * @param       [in/out]  size           buffer size
- * @return      [in/out]  FW_ERR_NONE    opera success
- * @return      [in/out]  FW_ERR_FAIL    opera failed
- * @note        None
- *******************************************************************************
- */
-__STATIC_INLINE
-fw_err_t _BlockStream_CreateBufferAndWrite(struct Fw_BlockStream *stream, uint8_t *buffer, uint8_t size)
-{
-	struct Fw_BlockStreamBuffer *queue = (struct Fw_BlockStreamBuffer *)Fw_Mem_Alloc(sizeof(struct Fw_BlockStreamBuffer));
-
-	_FW_ASSERT(IS_PTR_NULL(queue));
-
-	uint8_t *memBuffer = (uint8_t *)Fw_Mem_Alloc(BLOCK_STREAM_BUFFER_SIZE);
-
-	if(IS_PTR_NULL(memBuffer))
-	{
-		Fw_Mem_Free(queue);
-		return FW_ERR_FAIL;
-	}
-
-	Fw_sLinkList_Init((struct Fw_sLinkList *)&queue->LinkList);
-	Fw_sLinkList_Push((struct Fw_sLinkList_Block *)&stream->LinkList,
-					  (struct Fw_sLinkList *)&queue->LinkList);
-
-	Fw_Queue_Init(&queue->Queue, memBuffer, BLOCK_STREAM_BUFFER_SIZE);
-	Fw_Queue_Write(&queue->Queue, buffer, size);
-		
-	return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       write data to stream
- * @param       [in/out]  *stream        stream block
- * @param       [in/out]  *buffer        buffer
- * @param       [in/out]  size           buffer size
- * @return      [in/out]  FW_ERR_NONE    opera success
- * @return      [in/out]  FW_ERR_FAIL    opera failed
- * @note        None
- *******************************************************************************
- */
-static fw_err_t _BlockStreamOpera_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
-{
-	struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
-
-	_FW_ASSERT(IS_PTR_NULL(blockStream));
-	_FW_ASSERT(size > BLOCK_STREAM_BUFFER_SIZE);
-
-	if(Fw_sLinkList_IsEmpty((struct Fw_sLinkList_Block *)&blockStream->LinkList) == true)
-	{
-		_BlockStream_CreateBufferAndWrite(blockStream, buffer, size);
-	}
-	else
-	{
-		uint8_t canWrite = 0;
-		Fw_Queue_GetFreeSize(&blockStream->LinkList.Tail->Queue, &canWrite);
-
-		if(canWrite >= size)
-		{
-			Fw_Queue_Write(&blockStream->LinkList.Tail->Queue, buffer, size);
-		}
-		else
-		{
-			Fw_Queue_Write(&blockStream->LinkList.Tail->Queue, buffer, canWrite);
-			return _BlockStream_CreateBufferAndWrite(blockStream, &buffer[canWrite], size-canWrite);
-		}
-	}
-
-    return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       remove buffer and read data
- * @param       [in/out]  *stream        stream block
- * @param       [in/out]  *buffer        buffer
- * @param       [in/out]  size           buffer size
- * @return      [in/out]  FW_ERR_NONE    opera success
- * @return      [in/out]  FW_ERR_FAIL    opera failed
- * @note        None
- *******************************************************************************
- */
-__STATIC_INLINE
-fw_err_t _BlockStream_RemoveBufferAndRead(struct Fw_BlockStream *stream, uint8_t *buffer, uint8_t size)
-{
-	struct Fw_sLinkList *node = NULL;
-	Fw_sLinkList_Pop((struct Fw_sLinkList_Block *)&stream->LinkList, 
-                     (struct Fw_sLinkList **)&node);
-	Fw_Mem_Free(node);
-	Fw_Queue_Read(&stream->LinkList.Head->Queue, buffer, size);
-
-	return FW_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       read data from stream
- * @param       [in/out]  *stream        stream block
- * @param       [in/out]  *buffer        buffer
- * @param       [in/out]  size           buffer size
- * @return      [in/out]  FW_ERR_NONE    opera success
- * @return      [in/out]  FW_ERR_FAIL    opera failed
- * @note        None
- *******************************************************************************
- */
-static fw_err_t _BlockStreamOpera_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
-{
-	struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
-	uint8_t canRead = 0;
-	
-	_FW_ASSERT(IS_PTR_NULL(blockStream));
-	
-	Fw_Queue_GetUseSize(&blockStream->LinkList.Head->Queue, &canRead);
-
-	if(canRead >= size)
-	{
-		Fw_Queue_Read(&blockStream->LinkList.Head->Queue, buffer, size);
-	}
-	else
-	{
-		Fw_Queue_Read(&blockStream->LinkList.Head->Queue, buffer, canRead);
-		_BlockStream_RemoveBufferAndRead(blockStream, &buffer[canRead], size - canRead);
-	}
-	
-    return FW_ERR_NONE;
-}
+//
+///**
+// *******************************************************************************
+// * @brief       block stream opera init
+// * @param       [in/out]  *stream        stream block
+// * @param       [in/out]  *buffer        buffer
+// * @return      [in/out]  FW_ERR_NONE    init success
+// * @return      [in/out]  FW_ERR_FAIL    init failed
+// * @note        None
+// *******************************************************************************
+// */
+//static void _BlockStreamOpera_Init(void *block, void *buffer)
+//{
+//    struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
+//    
+//	blockStream->LinkList.Head = NULL;
+//	blockStream->LinkList.Tail = NULL;
+//}
+//
+///**
+// *******************************************************************************
+// * @brief       block stream opera deinit
+// * @param       [in/out]  *stream        stream block
+// * @return      [in/out]  FW_ERR_NONE    deinit success
+// * @return      [in/out]  FW_ERR_FAIL    deinit failed
+// * @note        None
+// *******************************************************************************
+// */
+//static void _BlockStreamOpera_Fini(struct Fw_Stream *stream)
+//{
+//    struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
+//    
+//	blockStream->LinkList.Head = NULL;
+//	blockStream->LinkList.Tail = NULL;
+//}
+//
+///**
+// *******************************************************************************
+// * @brief       create queue and write data
+// * @param       [in/out]  *stream        stream block
+// * @param       [in/out]  *buffer        buffer
+// * @param       [in/out]  size           buffer size
+// * @return      [in/out]  FW_ERR_NONE    opera success
+// * @return      [in/out]  FW_ERR_FAIL    opera failed
+// * @note        None
+// *******************************************************************************
+// */
+//__STATIC_INLINE
+//fw_err_t _BlockStream_CreateBufferAndWrite(struct Fw_BlockStream *stream, uint8_t *buffer, uint8_t size)
+//{
+//	struct Fw_BlockStreamBuffer *queue = (struct Fw_BlockStreamBuffer *)Fw_Mem_Alloc(sizeof(struct Fw_BlockStreamBuffer));
+//
+//	_FW_ASSERT(IS_PTR_NULL(queue));
+//
+//	uint8_t *memBuffer = (uint8_t *)Fw_Mem_Alloc(BLOCK_STREAM_BUFFER_SIZE);
+//
+//	if(IS_PTR_NULL(memBuffer))
+//	{
+//		Fw_Mem_Free(queue);
+//		return FW_ERR_FAIL;
+//	}
+//
+//	Fw_sLinkList_Init((struct Fw_sLinkList *)&queue->LinkList);
+//	Fw_sLinkList_Push((struct Fw_sLinkList_Block *)&stream->LinkList,
+//					  (struct Fw_sLinkList *)&queue->LinkList);
+//
+//	Fw_Queue_Init(&queue->Queue, memBuffer, BLOCK_STREAM_BUFFER_SIZE);
+//	Fw_Queue_Write(&queue->Queue, buffer, size);
+//		
+//	return FW_ERR_NONE;
+//}
+//
+///**
+// *******************************************************************************
+// * @brief       write data to stream
+// * @param       [in/out]  *stream        stream block
+// * @param       [in/out]  *buffer        buffer
+// * @param       [in/out]  size           buffer size
+// * @return      [in/out]  FW_ERR_NONE    opera success
+// * @return      [in/out]  FW_ERR_FAIL    opera failed
+// * @note        None
+// *******************************************************************************
+// */
+//static fw_err_t _BlockStreamOpera_Write(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+//{
+//	struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
+//
+//	_FW_ASSERT(IS_PTR_NULL(blockStream));
+//	_FW_ASSERT(size > BLOCK_STREAM_BUFFER_SIZE);
+//
+//	if(Fw_sLinkList_IsEmpty((struct Fw_sLinkList_Block *)&blockStream->LinkList) == true)
+//	{
+//		_BlockStream_CreateBufferAndWrite(blockStream, buffer, size);
+//	}
+//	else
+//	{
+//		uint8_t canWrite = 0;
+//		Fw_Queue_GetFreeSize(&blockStream->LinkList.Tail->Queue, &canWrite);
+//
+//		if(canWrite >= size)
+//		{
+//			Fw_Queue_Write(&blockStream->LinkList.Tail->Queue, buffer, size);
+//		}
+//		else
+//		{
+//			Fw_Queue_Write(&blockStream->LinkList.Tail->Queue, buffer, canWrite);
+//			return _BlockStream_CreateBufferAndWrite(blockStream, &buffer[canWrite], size-canWrite);
+//		}
+//	}
+//
+//    return FW_ERR_NONE;
+//}
+//
+///**
+// *******************************************************************************
+// * @brief       remove buffer and read data
+// * @param       [in/out]  *stream        stream block
+// * @param       [in/out]  *buffer        buffer
+// * @param       [in/out]  size           buffer size
+// * @return      [in/out]  FW_ERR_NONE    opera success
+// * @return      [in/out]  FW_ERR_FAIL    opera failed
+// * @note        None
+// *******************************************************************************
+// */
+//__STATIC_INLINE
+//fw_err_t _BlockStream_RemoveBufferAndRead(struct Fw_BlockStream *stream, uint8_t *buffer, uint8_t size)
+//{
+//	struct Fw_sLinkList *node = NULL;
+//	Fw_sLinkList_Pop((struct Fw_sLinkList_Block *)&stream->LinkList, 
+//                     (struct Fw_sLinkList **)&node);
+//	Fw_Mem_Free(node);
+//	Fw_Queue_Read(&stream->LinkList.Head->Queue, buffer, size);
+//
+//	return FW_ERR_NONE;
+//}
+//
+///**
+// *******************************************************************************
+// * @brief       read data from stream
+// * @param       [in/out]  *stream        stream block
+// * @param       [in/out]  *buffer        buffer
+// * @param       [in/out]  size           buffer size
+// * @return      [in/out]  FW_ERR_NONE    opera success
+// * @return      [in/out]  FW_ERR_FAIL    opera failed
+// * @note        None
+// *******************************************************************************
+// */
+//static fw_err_t _BlockStreamOpera_Read(struct Fw_Stream *stream, uint8_t *buffer, uint8_t size)
+//{
+//	struct Fw_BlockStream *blockStream = (struct Fw_BlockStream *)stream;
+//	uint8_t canRead = 0;
+//	
+//	_FW_ASSERT(IS_PTR_NULL(blockStream));
+//	
+//	Fw_Queue_GetUseSize(&blockStream->LinkList.Head->Queue, &canRead);
+//
+//	if(canRead >= size)
+//	{
+//		Fw_Queue_Read(&blockStream->LinkList.Head->Queue, buffer, size);
+//	}
+//	else
+//	{
+//		Fw_Queue_Read(&blockStream->LinkList.Head->Queue, buffer, canRead);
+//		_BlockStream_RemoveBufferAndRead(blockStream, &buffer[canRead], size - canRead);
+//	}
+//	
+//    return FW_ERR_NONE;
+//}
 #endif
 
 /** @}*/     /** framework stream component */

@@ -40,7 +40,7 @@
 #include "fw_tick.h"
 #include "fw_task.h"
 #include "fw_timer.h"
-#include "map_timer.h"
+#include "hal_timer.h"
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
@@ -72,23 +72,23 @@ static void Fw_Tick_Handle(void *param);
 void Fw_Tick_InitComponent(void)
 {
     struct Hal_Timer_Device tickTimer;
-    struct Hal_Timer_Config config;
-
+    struct Hal_Timer_Config timerConfig;
+        
     SystemTick = 0;
     
     Fw_Task_Init(&Fw_Tick_Task, "Framework Tick Task", 0, (void *)Fw_Timer_Poll, FW_CALL_BACK_TYPE_TASK);
     
     tickTimer.Port = MCU_TICK_TIMER;
     
-    config.Callback.Callback = Fw_Tick_Handle;
-    config.Callback.Param = NULL;
-    config.Mode = TIMER_TICK_MODE;
-    config.Period = 1;
-    config.Prescaler = 1;
-    config.Priority = 1;
+    timerConfig.Callback.Callback = Fw_Tick_Handle;
+    timerConfig.Callback.Param = NULL;
+    timerConfig.Mode = TIMER_TICK_MODE;
+    timerConfig.Period = 1;
+    timerConfig.Prescaler = 1;
+    timerConfig.Priority = 1;
 
-    Hal_Timer_Init((Hal_Device_t *)&tickTimer, (void *)&config);
-    Hal_Timer_Start((Hal_Device_t *)&tickTimer);
+    Hal_Timer_Init(&tickTimer, (void *)&timerConfig);
+    Hal_Timer_Start(&tickTimer);
 }
 
 /**
@@ -128,7 +128,7 @@ uint32_t Fw_Tick_GetInfo(void)
  * @note        None
  *******************************************************************************
  */
-uint32_t Fw_GetPastTick(uint32_t lastTick, uint32_t nowTick)
+__INLINE uint32_t Fw_GetPastTick(uint32_t lastTick, uint32_t nowTick)
 {
     uint32_t calTick;
 

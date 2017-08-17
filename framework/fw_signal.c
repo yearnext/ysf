@@ -383,15 +383,11 @@ fw_err_t Fw_Signal_Init(struct Fw_Signal *signal, char *str, struct Fw_Task *tas
     _FW_ASSERT(IS_PTR_NULL(signal));
 	_FW_ASSERT(IS_PTR_NULL(str));
     _FW_ASSERT(IS_PTR_NULL(task));
-    
-	memset(&SignalBlock, 0, sizeof(struct Fw_Signal));
-	
+
     signal->Str  = str;
     signal->Task = task;
     signal->Scan = scan;
     
-	SignalBlock.Num++;
-	
     return FW_ERR_NONE;
 }
 
@@ -414,8 +410,10 @@ fw_err_t Fw_Signal_Open(struct Fw_Signal *signal, uint8_t triggerState, uint32_t
 	Fw_Timer_Init(&signal->Timer, signal->Str);
     Fw_Timer_SetCallback(&signal->Timer, Fw_Signal_Task_Handle, (void *)signal);
 	Fw_Timer_Start(&signal->Timer, tick, FW_TIMER_CYCLE_MODE);
-
-	return FW_ERR_NONE;
+    
+    SignalBlock.Num++;
+	
+    return FW_ERR_NONE;
 }
 
 /**

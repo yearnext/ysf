@@ -128,12 +128,12 @@ struct Fw_Task
  */
 #if USE_TASK_COMPONENT
 extern void Fw_Task_InitComponent(void);
-extern fw_err_t Fw_Task_Init(struct Fw_Task*, char*, uint8_t, void*, enum _Fw_Task_Type);
-extern void Fw_Task_PostEvent(struct Fw_Task*, uint32_t);
-extern void Fw_Task_PostMessage(struct Fw_Task*, uint32_t, void*);
+extern __INLINE fw_err_t Fw_Task_Init(struct Fw_Task*, char*, uint8_t, void*, enum _Fw_Task_Type);
+extern __INLINE void Fw_Task_PostEvent(struct Fw_Task*, uint32_t);
+extern __INLINE void Fw_Task_PostMessage(struct Fw_Task*, uint32_t, void*);
 extern void Fw_Task_Dispatch(void);
-extern void Fw_Task_Enable(struct Fw_Task*);
-extern void Fw_Task_Disable(struct Fw_Task*);
+extern __INLINE void Fw_Task_Enable(struct Fw_Task*);
+extern __INLINE void Fw_Task_Disable(struct Fw_Task*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

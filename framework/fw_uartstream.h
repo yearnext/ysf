@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_uartstream.h                                                *
+ * @file       fw_uartstream.h                                                 *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
  * @date       2017-08-08                                                      *
- * @brief      hal uart stream component head files                            *
+ * @brief      framework uart stream component head files                      *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,8 +32,8 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HAL_UART_STREAM_H__
-#define __HAL_UART_STREAM_H__
+#ifndef __FRAMEWORK_UART_STREAM_H__
+#define __FRAMEWORK_UART_STREAM_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -42,7 +42,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "map_uart.h"
+#include "hal_uart.h"
 #include "fw_stream.h"
 #include "fw_timer.h"
     
@@ -50,14 +50,14 @@ extern "C"
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define uart stream
+ * @brief       define framework uart stream
  *******************************************************************************
  */
 struct Fw_UartStream
 {
-    struct Fw_FifoStream TxStream;
-    struct Fw_FifoStream RxStream;
-    
+    struct Fw_Stream Tx;
+    struct Fw_Stream Rx;
+     
     struct Hal_Uart_Device Device;
     struct Fw_Timer Timer;
 
@@ -70,10 +70,17 @@ struct Fw_UartStream
     }State;
 };
     
+struct Fw_UartStream_Config
+{
+    Fw_Stream_InitType Tx;
+    Fw_Stream_InitType Rx;
+    struct Hal_Uart_Config Device;
+};
+        
 /* Exported constants --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define stream opera
+ * @brief       define framework stream opera
  *******************************************************************************
  */
 extern const struct _FwStreamDeviceOpera UartStreamDeviceOpera;
@@ -81,19 +88,19 @@ extern const struct _FwStreamDeviceOpera UartStreamDeviceOpera;
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       hal uart stream apis
+ * @brief       framework uart stream apis
  *******************************************************************************
  */
-extern void Hal_UartStream_Init(void *param);
-extern void Hal_UartStream_Fini(void *param);
-extern void Hal_UartStream_TxConnect(void *param);
-extern void Hal_UartStream_TxDisconnect(void *param);
-extern void Hal_UartStream_RxConnect(void *param);
-extern void Hal_UartStream_RxDisconnect(void *param);
-extern void Hal_UartStream_TxOut(void *param);
-extern void Hal_UartStream_RxIn(void *param);
-extern void Hal_UartStream_Send(void*);
-extern void Hal_UartStream_Receive(void*, uint8_t);
+extern __INLINE void Fw_UartStream_Init(struct Fw_UartStream*, void*);
+extern __INLINE void Fw_UartStream_Fini(struct Fw_UartStream*);
+extern void Fw_UartStream_TxConnect(void*);
+extern void Fw_UartStream_TxDisconnect(void*);
+extern void Fw_UartStream_RxConnect(void*);
+extern void Fw_UartStream_RxDisconnect(void*);
+extern void Fw_UartStream_TxOut(void*);
+extern void Fw_UartStream_RxIn(void*);
+extern void Fw_UartStream_Send(void*);
+extern void Fw_UartStream_Receive(void*, uint8_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
