@@ -62,7 +62,7 @@ static struct Fw_Task StreamTask;
  *******************************************************************************
  */
 #if USE_STREAM_COMPONENT
-static void _FifoStreamOpera_Init(void*, void*);
+static void _FifoStreamOpera_Init(void*);
 static void _FifoStreamOpera_Fini(void*);
 static fw_err_t _FifoStreamOpera_Write(void*, uint8_t*, uint8_t);
 static fw_err_t _FifoStreamOpera_Read(void*, uint8_t*, uint8_t);
@@ -163,22 +163,47 @@ void Fw_Stream_PostEvent(struct Fw_Stream *stream, uint8_t event)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Fw_Stream_Init(struct Fw_Stream *stream, Fw_Stream_InitType *init)
+__INLINE void Fw_Stream_Init(struct Fw_Stream *stream)
 {
     //< detect stream param
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(init));
     
-    //< config stream param
-    stream->Buf_Ops = init->Buf_Ops;
-
-    memcpy(&stream->Tx, &init->Tx, sizeof(stream->Tx));
-    memcpy(&stream->Rx, &init->Rx, sizeof(stream->Rx));
-
     //< init buffer
     if(!IS_PTR_NULL(stream->Buf_Ops->Init))
     {
-        stream->Buf_Ops->Init(stream->Buffer, init->Buffer);
+        stream->Buf_Ops->Init(stream->Buffer);
+    }
+    
+    //< init tx pipe
+    if(stream->Tx.IsReady)
+    {
+        if(!IS_PTR_NULL(stream->Tx.Connect))
+        {
+            stream->Tx.Connect(stream->Tx.Param);
+        }
+    }
+    else
+    {
+        if(!IS_PTR_NULL(stream->Tx.Disconnect))
+        {
+            stream->Tx.Disconnect(stream->Tx.Param);
+        }
+    }
+    
+    //< init rx pipe
+    if(stream->Tx.IsReady)
+    {
+        if(!IS_PTR_NULL(stream->Rx.Connect))
+        {
+            stream->Rx.Connect(stream->Rx.Param);
+        }
+    }
+    else
+    {
+        if(!IS_PTR_NULL(stream->Rx.Disconnect))
+        {
+            stream->Rx.Disconnect(stream->Rx.Param);
+        }
     }
 }
 
@@ -326,7 +351,7 @@ __INLINE fw_err_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buffer, uin
     _FW_ASSERT(IS_PTR_NULL(buffer));
     _FW_ASSERT(IS_PARAM_ZERO(size));
     
-    if(!IS_PTR_NULL(stream->Buf_Ops->Write))
+    if(stream->Tx.IsReady == true && !IS_PTR_NULL(stream->Buf_Ops->Write))
     {
         if(stream->Buf_Ops->Write(stream->Buffer, buffer, size) == FW_ERR_NONE)
         { 
@@ -360,7 +385,7 @@ __INLINE fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buffer, uint
     _FW_ASSERT(IS_PTR_NULL(buffer));
     _FW_ASSERT(IS_PARAM_ZERO(size));
     
-    if(!IS_PTR_NULL(stream->Buf_Ops->Read))
+    if(stream->Rx.IsReady == true && !IS_PTR_NULL(stream->Buf_Ops->Read))
     {
         return stream->Buf_Ops->Read(stream->Buffer, buffer, size);
     }
@@ -378,13 +403,13 @@ __INLINE fw_err_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buffer, uint
  * @note        None
  *******************************************************************************
  */
-static void _FifoStreamOpera_Init(void *fifo, void *buffer)
+static void _FifoStreamOpera_Init(void *fifo)
 {
-    _FW_ASSERT(IS_PTR_NULL(buffer));
+    _FW_ASSERT(IS_PTR_NULL(fifo));
 
-    Fw_Fifo_InitType *init = (Fw_Fifo_InitType *)buffer;
-    
-    Fw_Buffer_Init((struct Fw_RingBuffer *)fifo, init->Buffer, init->Size);
+    struct Fw_RingBuffer *rb = (struct Fw_RingBuffer *)fifo;
+        
+    Fw_Buffer_Init(rb, rb->Buffer, rb->Size);
 }
 
 /**

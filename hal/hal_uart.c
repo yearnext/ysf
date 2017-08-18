@@ -216,7 +216,7 @@ __INLINE void Hal_Uart_SetTxCallback(struct Hal_Uart_Device *drv, void *param)
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(_uart_ops));
 
-    struct Hal_Uart_Config *config = (struct Hal_Uart_Config *)param;
+    Hal_Uart_InitType *config = (Hal_Uart_InitType *)param;
     
     _uart_ops->SetTxCallback(drv->Port, config->TxCallback.Callback, config->TxCallback.Param);
 }
@@ -235,7 +235,7 @@ __INLINE void Hal_Uart_SetRxCallback(struct Hal_Uart_Device *drv, void *param)
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(_uart_ops));
 
-    struct Hal_Uart_Config *config = (struct Hal_Uart_Config *)param;
+    Hal_Uart_InitType *config = (Hal_Uart_InitType *)param;
     
     _uart_ops->SetRxCallback(drv->Port, config->RxCallback.Callback, config->RxCallback.Param);
 }

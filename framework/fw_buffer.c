@@ -60,7 +60,7 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Init(struct Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize)
+__INLINE void Fw_Buffer_Init(struct Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rbSize)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(rbBuffer));
@@ -71,8 +71,6 @@ fw_err_t Fw_Buffer_Init(struct Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rb
     rb->Head   = 0;
     rb->Tail   = 0;
     rb->Len    = 0;
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -83,7 +81,7 @@ fw_err_t Fw_Buffer_Init(struct Fw_RingBuffer *rb, uint8_t *rbBuffer, uint16_t rb
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Fini(struct Fw_RingBuffer *rb)
+__INLINE void Fw_Buffer_Fini(struct Fw_RingBuffer *rb)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     
@@ -92,8 +90,6 @@ fw_err_t Fw_Buffer_Fini(struct Fw_RingBuffer *rb)
     rb->Head   = 0;
     rb->Tail   = 0;
     rb->Len    = 0;
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -105,14 +101,11 @@ fw_err_t Fw_Buffer_Fini(struct Fw_RingBuffer *rb)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_GetLen(struct Fw_RingBuffer *rb, uint16_t *getSize)
+__INLINE uint16_t Fw_Buffer_GetLen(struct Fw_RingBuffer *rb)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
-    _FW_ASSERT(IS_PTR_NULL(getSize));
     
-    *getSize =  rb->Len;
-    
-    return FW_ERR_NONE;
+    return rb->Len;
 }
 
 /**
@@ -158,7 +151,7 @@ uint16_t RingBufferCanWrite(struct Fw_RingBuffer *rb)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
+__INLINE fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(writeBuffer));
@@ -209,7 +202,7 @@ fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
+__INLINE fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(readBuffer));
@@ -260,7 +253,7 @@ fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t 
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_Init(struct Fw_Queue *queue, uint8_t *buffer, uint16_t len)
+__INLINE void Fw_Queue_Init(struct Fw_Queue *queue, uint8_t *buffer, uint16_t len)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
     _FW_ASSERT(IS_PTR_NULL(buffer));
@@ -270,8 +263,6 @@ fw_err_t Fw_Queue_Init(struct Fw_Queue *queue, uint8_t *buffer, uint16_t len)
 	queue->Len    = len;
 	queue->Head   = 0;
     queue->Tail   = 0;
-	
-    return FW_ERR_NONE;
 }
 
 /**
@@ -283,7 +274,7 @@ fw_err_t Fw_Queue_Init(struct Fw_Queue *queue, uint8_t *buffer, uint16_t len)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_Fini(struct Fw_Queue *queue)
+__INLINE void Fw_Queue_Fini(struct Fw_Queue *queue)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
 
@@ -291,8 +282,6 @@ fw_err_t Fw_Queue_Fini(struct Fw_Queue *queue)
 	queue->Len    = 0;
 	queue->Head   = 0;
     queue->Tail   = 0;
-
-    return FW_ERR_NONE;
 }
 
 /**
@@ -306,7 +295,7 @@ fw_err_t Fw_Queue_Fini(struct Fw_Queue *queue)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_Write(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
+__INLINE fw_err_t Fw_Queue_Write(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
     _FW_ASSERT(IS_PTR_NULL(buffer));
@@ -338,7 +327,7 @@ fw_err_t Fw_Queue_Write(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_Queue_Read(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
+__INLINE fw_err_t Fw_Queue_Read(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
     _FW_ASSERT(IS_PTR_NULL(buffer));
@@ -359,24 +348,18 @@ fw_err_t Fw_Queue_Read(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
 	return FW_ERR_NONE;
 }
 
-__INLINE fw_err_t Fw_Queue_GetFreeSize(struct Fw_Queue *queue, uint8_t *num)
+__INLINE uint16_t Fw_Queue_GetFreeSize(struct Fw_Queue *queue)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
-    _FW_ASSERT(IS_PTR_NULL(num));
 
-	*num = queue->Len - queue->Tail;
-
-	return FW_ERR_NONE;
+	return queue->Len - queue->Tail;
 }
 
-__INLINE fw_err_t Fw_Queue_GetUseSize(struct Fw_Queue *queue, uint8_t *num)
+__INLINE uint16_t Fw_Queue_GetUseSize(struct Fw_Queue *queue)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
-    _FW_ASSERT(IS_PTR_NULL(num));
 
-	*num = queue->Tail - queue->Head;
-
-	return FW_ERR_NONE;
+	return queue->Tail - queue->Head;
 }
 
 #endif

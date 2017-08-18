@@ -120,23 +120,23 @@ struct Fw_Queue
  * @brief       ring buffer function api
  *******************************************************************************
  */
-extern fw_err_t Fw_Buffer_Init(struct Fw_RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t Fw_Buffer_Fini(struct Fw_RingBuffer*);
-extern fw_err_t Fw_Buffer_GetLen(struct Fw_RingBuffer*, uint16_t*);
-extern fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer*, uint8_t*, uint16_t);
-extern fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer*, uint8_t*, uint16_t);
+extern __INLINE void Fw_Buffer_Init(struct Fw_RingBuffer*, uint8_t*, uint16_t);
+extern __INLINE void Fw_Buffer_Fini(struct Fw_RingBuffer*);
+extern __INLINE uint16_t Fw_Buffer_GetLen(struct Fw_RingBuffer*);
+extern __INLINE fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer*, uint8_t*, uint16_t);
+extern __INLINE fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer*, uint8_t*, uint16_t);
 
 /**
  *******************************************************************************
  * @brief       queue function api
  *******************************************************************************
  */
-extern fw_err_t Fw_Queue_Init(struct Fw_Queue*, uint8_t*, uint16_t);
-extern fw_err_t Fw_Queue_Fini(struct Fw_Queue*);
-extern fw_err_t Fw_Queue_Write(struct Fw_Queue*, uint8_t*, uint16_t);
-extern fw_err_t Fw_Queue_Read(struct Fw_Queue*, uint8_t*, uint16_t);
-extern __INLINE fw_err_t Fw_Queue_GetFreeSize(struct Fw_Queue*, uint8_t*);
-extern __INLINE fw_err_t Fw_Queue_GetUseSize(struct Fw_Queue*, uint8_t*);
+extern __INLINE void Fw_Queue_Init(struct Fw_Queue*, uint8_t*, uint16_t);
+extern __INLINE void Fw_Queue_Fini(struct Fw_Queue*);
+extern __INLINE fw_err_t Fw_Queue_Write(struct Fw_Queue*, uint8_t*, uint16_t);
+extern __INLINE fw_err_t Fw_Queue_Read(struct Fw_Queue*, uint8_t*, uint16_t);
+extern __INLINE uint16_t Fw_Queue_GetFreeSize(struct Fw_Queue*);
+extern __INLINE uint16_t Fw_Queue_GetUseSize(struct Fw_Queue*);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

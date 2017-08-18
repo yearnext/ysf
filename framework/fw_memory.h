@@ -81,7 +81,7 @@ extern "C"
 #if USE_MEMORY_COMPONENT
 extern void  Fw_Mem_InitComponent(void);
 extern void *Fw_Mem_Alloc(uint32_t);
-extern void  Fw_Mem_Free(void *);
+extern void  Fw_Mem_Free(void*);
 
 #endif
 

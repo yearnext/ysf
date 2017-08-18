@@ -91,24 +91,20 @@ void Hal_UartStream_TxInit(void *param)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Fw_UartStream_Init(struct Fw_UartStream *stream, void *param)
+__INLINE void Fw_UartStream_Init(struct Fw_UartStream *stream)
 {
     _FW_ASSERT(IS_PTR_NULL(stream));
-    _FW_ASSERT(IS_PTR_NULL(param));
-    
-    struct Fw_UartStream_Config *config = (struct Fw_UartStream_Config *)param;
     
     //< init stream
-    Fw_Stream_Init(&stream->Tx, &config->Tx);
-    Fw_Stream_Init(&stream->Rx, &config->Rx);
+    Fw_Stream_Init(&stream->Tx);
+    Fw_Stream_Init(&stream->Rx);
     
     //< init timeout call back
 	Fw_Timer_Init(&stream->Timer, "Stream Timeout Timer");
     Fw_Timer_SetCallback(&stream->Timer, Hal_UartStream_TxInit, (void *)stream);
     
     //< init hardware
-    stream->Device.Port = config->Device.Port;
-	Hal_Uart_Init(&stream->Device, (void *)&config->Device);
+	Hal_Uart_Init(&stream->Device, (void *)&stream->Device);
 }
 
 /**

@@ -223,7 +223,7 @@ void Map_Uart_Close(uint8_t port)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_Port_Switch(uint8_t port, struct Hal_Uart_Config *dev)
+void _Uart_Port_Switch(uint8_t port, Hal_Uart_InitType *dev)
 {
     switch (port)
     {
@@ -275,7 +275,7 @@ void _Uart_Port_Switch(uint8_t port, struct Hal_Uart_Config *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_GPIO_Init(uint8_t port, struct Hal_Uart_Config *dev)
+void _Uart_GPIO_Init(uint8_t port, Hal_Uart_InitType *dev)
 {
     struct Hal_GPIO_Device txPort;
     struct Hal_GPIO_Device rxPort;
@@ -381,7 +381,7 @@ void Map_Uart_Init(uint8_t port, void *param)
     hal_assert(IS_PTR_NULL(config));
     
     LL_USART_InitTypeDef LL_USART_InitStructure;
-    struct Hal_Uart_Config *dev = (struct Hal_Uart_Config *)param;
+    Hal_Uart_InitType *dev = (Hal_Uart_InitType *)param;
     
     //< init uart gpio
     _Uart_GPIO_Init(port, dev);

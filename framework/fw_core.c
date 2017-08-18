@@ -67,7 +67,7 @@ __WEAK void App_User_Init(void)
  * @note        None
  *******************************************************************************
  */
-void Fw_Core_Init(void)
+__INLINE void Fw_Core_Init(void)
 {   
     __ATOM_ACTIVE_BEGIN();
     
@@ -109,7 +109,7 @@ void Fw_Core_Init(void)
  * @note        None
  *******************************************************************************
  */
-void Fw_Core_Start(void)
+__INLINE void Fw_Core_Start(void)
 {
     for(;;)
     {

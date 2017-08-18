@@ -59,7 +59,7 @@
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, pt_thread ptThread, uint8_t priority)
+__INLINE void Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, pt_thread ptThread, uint8_t priority)
 {
     _FW_ASSERT(IS_PTR_NULL(pt));
     _FW_ASSERT(IS_PTR_NULL(str));
@@ -74,8 +74,6 @@ fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, pt_thread ptThread, ui
 
     Fw_Timer_Init(&pt->Timer, str);
     Fw_Timer_SetEvent(&pt->Timer, &pt->Task, FW_DELAY_EVENT, (void *)pt);
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -87,7 +85,7 @@ fw_err_t Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, pt_thread ptThread, ui
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_PT_Fini(struct Fw_ProtoThread *pt)
+__INLINE void Fw_PT_Fini(struct Fw_ProtoThread *pt)
 {
     _FW_ASSERT(IS_PTR_NULL(pt));
 
@@ -95,8 +93,6 @@ fw_err_t Fw_PT_Fini(struct Fw_ProtoThread *pt)
     pt->Str       = NULL;
     pt->Thread    = NULL;
     pt->UseStatus = false;
-
-    return FW_ERR_NONE;
 }
 
 /**
@@ -108,15 +104,13 @@ fw_err_t Fw_PT_Fini(struct Fw_ProtoThread *pt)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_PT_Open(struct Fw_ProtoThread *pt)
+__INLINE void Fw_PT_Open(struct Fw_ProtoThread *pt)
 {
     _FW_ASSERT(IS_PTR_NULL(pt));
     _FW_ASSERT(IS_PTR_NULL(pt->Thread));
 
     pt->UseStatus = true;
     pt->Thread(pt, FW_INIT_EVENT);
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -128,15 +122,13 @@ fw_err_t Fw_PT_Open(struct Fw_ProtoThread *pt)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_PT_Close(struct Fw_ProtoThread *pt)
+__INLINE void Fw_PT_Close(struct Fw_ProtoThread *pt)
 {
     _FW_ASSERT(IS_PTR_NULL(pt));
     _FW_ASSERT(IS_PTR_NULL(pt->Thread));
     
     pt->Thread(pt, FW_FINI_EVENT);
     pt->UseStatus = false;
-    
-    return FW_ERR_NONE;
 }
 
 #endif

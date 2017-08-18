@@ -136,22 +136,22 @@ extern fw_err_t IsInSingleList(void**, void**);
  * @brief       the new api apply single link list
  *******************************************************************************
  */
-extern fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList*);
-extern fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block*, struct Fw_sLinkList*);
-extern fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block*, struct Fw_sLinkList**);
-extern fw_err_t Fw_sLinkList_Remove(struct Fw_sLinkList_Block*, struct Fw_sLinkList*);
+extern __INLINE void Fw_sLinkList_Init(struct Fw_sLinkList*);
+extern __INLINE fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block*, struct Fw_sLinkList*);
+extern __INLINE fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block*, struct Fw_sLinkList**);
+extern __INLINE fw_err_t Fw_sLinkList_Remove(struct Fw_sLinkList_Block*, struct Fw_sLinkList*);
 
 /**
  *******************************************************************************
  * @brief       the new api apply double link list
  *******************************************************************************
  */
-extern fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList*);
-extern fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block*, struct Fw_dLinkList*);
-extern fw_err_t Fw_dLinkList_Pop(struct Fw_dLinkList_Block*, struct Fw_dLinkList**);
-extern fw_err_t Fw_dLinkList_Remove(struct Fw_dLinkList_Block*, struct Fw_dLinkList*);
-extern __INLINE bool Fw_sLinkList_IsEmpty(struct Fw_sLinkList_Block *block);
-extern __INLINE bool Fw_dLinkList_IsEmpty(struct Fw_dLinkList_Block *block);
+extern __INLINE void Fw_dLinkList_Init(struct Fw_dLinkList*);
+extern __INLINE fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block*, struct Fw_dLinkList*);
+extern __INLINE fw_err_t Fw_dLinkList_Pop(struct Fw_dLinkList_Block*, struct Fw_dLinkList**);
+extern __INLINE fw_err_t Fw_dLinkList_Remove(struct Fw_dLinkList_Block*, struct Fw_dLinkList*);
+extern __INLINE bool Fw_sLinkList_IsEmpty(struct Fw_sLinkList_Block*);
+extern __INLINE bool Fw_dLinkList_IsEmpty(struct Fw_dLinkList_Block*);
 
 #endif
 

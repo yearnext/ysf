@@ -70,12 +70,12 @@ struct Fw_UartStream
     }State;
 };
     
-struct Fw_UartStream_Config
-{
-    Fw_Stream_InitType Tx;
-    Fw_Stream_InitType Rx;
-    struct Hal_Uart_Config Device;
-};
+//struct Fw_UartStream_Config
+//{
+//    Fw_Stream_InitType Tx;
+//    Fw_Stream_InitType Rx;
+//    struct Hal_Uart_Config Device;
+//};
         
 /* Exported constants --------------------------------------------------------*/
 /**
@@ -91,7 +91,7 @@ extern const struct _FwStreamDeviceOpera UartStreamDeviceOpera;
  * @brief       framework uart stream apis
  *******************************************************************************
  */
-extern __INLINE void Fw_UartStream_Init(struct Fw_UartStream*, void*);
+extern __INLINE void Fw_UartStream_Init(struct Fw_UartStream*);
 extern __INLINE void Fw_UartStream_Fini(struct Fw_UartStream*);
 extern void Fw_UartStream_TxConnect(void*);
 extern void Fw_UartStream_TxDisconnect(void*);

@@ -48,10 +48,7 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/ 
 #include "fw_type.h"
 #include "fw_conf.h"
-    
-/* Exported macro ------------------------------------------------------------*/ 
-/* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
+   
 #if USE_FRAMEWORK_COMPONENT_LIBRARY
 #ifdef USE_FRAMEWORK_BUFFER_COMPONENT
 #include "fw_buffer.h"
@@ -97,7 +94,23 @@ extern "C"
 #warning Please Enable Framework Component Library!
 #endif
     
+/* Exported macro ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
+/* Exported variables --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define framework core apis
+ *******************************************************************************
+ */
+extern __INLINE void Fw_Core_Init(void);
+extern __INLINE void Fw_Core_Start(void);
+
+/**
+ *******************************************************************************
+ * @brief       define user init function
+ *******************************************************************************
+ */
 extern void App_User_Init(void);
     
 /* Add c++ compatibility------------------------------------------------------*/

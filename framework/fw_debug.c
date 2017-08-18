@@ -50,7 +50,7 @@
  * @brief       config debug buffer size
  *******************************************************************************
  */
-#define FW_DEBUG_BUFFER_SIZE                                                (128)
+#define FW_DEBUG_BUFFER_SIZE                                               (128)
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -61,10 +61,75 @@
  *******************************************************************************
  */
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+//< buffer init cache
 static uint8_t BufferCache[FW_DEBUG_BUFFER_SIZE];
-static bool StreamInitFlag = false;
 
-static struct Fw_UartStream DebugStream;
+//< define debug component init flag
+static bool FwDebugInitFlag = false;
+
+//< define stream buffer
+static uint8_t TxBuffer[FW_DEBUG_BUFFER_SIZE];
+static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
+
+//< define stream fifo management block
+static Fw_Fifo_t TxFifo = {.Buffer = TxBuffer, .Size = FW_DEBUG_BUFFER_SIZE};
+static Fw_Fifo_t RxFifo = {.Buffer = RxBuffer, .Size = FW_DEBUG_BUFFER_SIZE};
+    
+//< config debug stream param
+static struct Fw_UartStream DebugStream = 
+{
+    //< uart stream hardware param init
+    .Device.Port = MCU_UART_1,
+    .Device.Group = 0,
+    .Device.Baud = 115200,
+    .Device.WordLen = MCU_UART_WORD_LEN_8B,
+    .Device.Priority = MCU_UART_PARTY_NONE,
+    .Device.StopBits = MCU_UART_STOP_BITS_1,
+    .Device.TxConfig = MCU_UART_ENABLE_TX_ISR,
+    .Device.RxConfig = MCU_UART_ENABLE_RX_ISR,
+    .Device.Parity = 1,
+
+    //< uart stream hardware call back config
+    .Device.RxCallback.Callback = Fw_UartStream_Receive,
+    .Device.RxCallback.Param = (void *)&DebugStream,
+        
+    .Device.TxCallback.Callback = Fw_UartStream_Send,
+    .Device.TxCallback.Param = (void *)&DebugStream,
+    
+    //< uart stream tx pipe config
+    .Tx.Buffer = (void *)&TxFifo,
+    .Tx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera,
+    .Tx.Callback = NULL,
+        
+    .Tx.Rx.Connect = Fw_UartStream_TxConnect,
+    .Tx.Rx.Disconnect = Fw_UartStream_TxDisconnect,
+    .Tx.Rx.InOut = Fw_UartStream_TxOut,
+    .Tx.Rx.IsReady = true,
+    .Tx.Rx.Param = (void *)&DebugStream,
+        
+    .Tx.Tx.Connect = NULL,
+    .Tx.Tx.Disconnect = NULL,
+    .Tx.Tx.InOut = NULL,
+    .Tx.Tx.IsReady = true,
+    .Tx.Tx.Param = (void *)&DebugStream,
+        
+    //< uart stream tx pipe config
+    .Rx.Buffer = (void *)&RxFifo,
+    .Rx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera,
+    .Rx.Callback = NULL,
+        
+    .Rx.Rx.Connect = NULL,
+    .Rx.Rx.Disconnect = NULL,
+    .Rx.Rx.InOut = NULL,
+    .Rx.Rx.IsReady = true,
+    .Rx.Rx.Param = (void *)&DebugStream,
+        
+    .Rx.Tx.Connect = Fw_UartStream_RxConnect,
+    .Rx.Tx.Disconnect = Fw_UartStream_RxDisconnect,
+    .Rx.Tx.InOut = Fw_UartStream_RxIn,
+    .Rx.Tx.IsReady = true,
+    .Rx.Tx.Param = (void *)&DebugStream,
+};
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -81,69 +146,9 @@ static struct Fw_UartStream DebugStream;
  */
 void Fw_Debug_InitComponent(void)
 {
-    struct Fw_UartStream_Config config;
-    
-    static uint8_t TxBuffer[FW_DEBUG_BUFFER_SIZE];
-    static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
-    
-    Fw_Fifo_t TxFifo = {TxBuffer, FW_DEBUG_BUFFER_SIZE};
-    Fw_Fifo_t RxFifo = {RxBuffer, FW_DEBUG_BUFFER_SIZE};
-    
-    //< uart stream hardware param init
-    config.Device.Port = MCU_UART_1;
-    config.Device.Group = 0;
-    config.Device.Baud = 115200;
-    config.Device.WordLen = MCU_UART_WORD_LEN_8B;
-    config.Device.Priority = MCU_UART_PARTY_NONE;
-    config.Device.StopBits = MCU_UART_STOP_BITS_1;
-    config.Device.TxConfig = MCU_UART_ENABLE_TX_ISR;
-    config.Device.RxConfig = MCU_UART_ENABLE_RX_ISR;
-    config.Device.Parity = 1;
+    Fw_UartStream_Init(&DebugStream);
 
-    //< uart stream hardware call back config
-    config.Device.RxCallback.Callback = Fw_UartStream_Receive;
-    config.Device.RxCallback.Param = (void *)&DebugStream;
-        
-    config.Device.TxCallback.Callback = Fw_UartStream_Send;
-    config.Device.TxCallback.Param = (void *)&DebugStream;
-    
-    //< uart stream tx pipe config
-    config.Tx.Buffer = (void *)&TxFifo;
-    config.Tx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera;
-    config.Tx.Callback = NULL;
-        
-    config.Tx.Rx.Connect = Fw_UartStream_TxConnect;
-    config.Tx.Rx.Disconnect = Fw_UartStream_TxDisconnect;
-    config.Tx.Rx.InOut = Fw_UartStream_TxOut;
-    config.Tx.Rx.IsReady = true;
-    config.Tx.Rx.Param = (void *)&DebugStream;
-        
-    config.Tx.Tx.Connect = NULL;
-    config.Tx.Tx.Disconnect = NULL;
-    config.Tx.Tx.InOut = NULL;
-    config.Tx.Tx.IsReady = true;
-    config.Tx.Tx.Param = (void *)&DebugStream;
-        
-    //< uart stream tx pipe config
-    config.Rx.Buffer = (void *)&RxFifo;
-    config.Rx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera;
-    config.Rx.Callback = NULL;
-        
-    config.Rx.Rx.Connect = NULL;
-    config.Rx.Rx.Disconnect = NULL;
-    config.Rx.Rx.InOut = NULL;
-    config.Rx.Rx.IsReady = true;
-    config.Rx.Rx.Param = (void *)&DebugStream;
-        
-    config.Rx.Tx.Connect = Fw_UartStream_RxConnect;
-    config.Rx.Tx.Disconnect = Fw_UartStream_RxDisconnect;
-    config.Rx.Tx.InOut = Fw_UartStream_RxIn;
-    config.Rx.Tx.IsReady = true;
-    config.Rx.Tx.Param = (void *)&DebugStream;
-
-    Fw_UartStream_Init(&DebugStream, (void *)&config);
-
-    StreamInitFlag = true;
+    FwDebugInitFlag = true;
 }
 
 /**
@@ -191,7 +196,7 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
 	uint8_t len = 0;
     va_list args;
 	
-    if(StreamInitFlag == false)
+    if(FwDebugInitFlag == false)
     {
         return;
     }

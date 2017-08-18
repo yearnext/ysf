@@ -328,13 +328,11 @@ fw_err_t IsInSingleList( void **listHead, void **ctx )
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList *node)
+__INLINE void Fw_sLinkList_Init(struct Fw_sLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(node));
     
     node->Next = NULL;
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -347,7 +345,7 @@ fw_err_t Fw_sLinkList_Init(struct Fw_sLinkList *node)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block *block, struct Fw_sLinkList *node)
+__INLINE fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block *block, struct Fw_sLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(node));
     _FW_ASSERT(IS_PTR_NULL(block));
@@ -363,7 +361,7 @@ fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block *block, struct Fw_sLinkList
     {                                                                          
         block->Tail->Next = node;                                            
         block->Tail       = node;                                            
-    }  
+    }
     
     return FW_ERR_NONE;
 }
@@ -378,7 +376,7 @@ fw_err_t Fw_sLinkList_Push(struct Fw_sLinkList_Block *block, struct Fw_sLinkList
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block *block, struct Fw_sLinkList **node)
+__INLINE fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block *block, struct Fw_sLinkList **node)
 {
     _FW_ASSERT(IS_PTR_NULL(node));
     _FW_ASSERT(IS_PTR_NULL(block));
@@ -395,7 +393,7 @@ fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block *block, struct Fw_sLinkList 
         block->Head = block->Head->Next;                                          
     }                                                                          
                                                                                
-    ((struct Fw_sLinkList *)(*node))->Next = NULL;                                                       
+    ((struct Fw_sLinkList *)(*node))->Next = NULL;     
     
     return FW_ERR_NONE;
 }
@@ -410,7 +408,7 @@ fw_err_t Fw_sLinkList_Pop(struct Fw_sLinkList_Block *block, struct Fw_sLinkList 
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_sLinkList_Remove(struct Fw_sLinkList_Block *block, struct Fw_sLinkList *node)
+__INLINE fw_err_t Fw_sLinkList_Remove(struct Fw_sLinkList_Block *block, struct Fw_sLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(node));
     _FW_ASSERT(IS_PTR_NULL(block));
@@ -468,14 +466,12 @@ __INLINE bool Fw_sLinkList_IsEmpty(struct Fw_sLinkList_Block *block)
  * @note        None
  *******************************************************************************
  */
-fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList *node)
+__INLINE void Fw_dLinkList_Init(struct Fw_dLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(node));
     
     node->Last = NULL;
     node->Next = NULL;
-    
-    return FW_ERR_NONE;
 }
 
 /**
@@ -488,7 +484,7 @@ fw_err_t Fw_dLinkList_Init(struct Fw_dLinkList *node)
  * @note        application in fifo link list
  *******************************************************************************
  */
-fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block *block, struct Fw_dLinkList *node)
+__INLINE fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block *block, struct Fw_dLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(block));
     _FW_ASSERT(IS_PTR_NULL(node));
@@ -523,7 +519,7 @@ fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block *block, struct Fw_dLinkList
  * @note        application in fifo link list
  *******************************************************************************
  */
-fw_err_t Fw_dLinkList_Pop(struct Fw_dLinkList_Block *block, struct Fw_dLinkList **node)
+__INLINE fw_err_t Fw_dLinkList_Pop(struct Fw_dLinkList_Block *block, struct Fw_dLinkList **node)
 {
     _FW_ASSERT(IS_PTR_NULL(block));
     _FW_ASSERT(IS_PTR_NULL(*node));
@@ -560,7 +556,7 @@ fw_err_t Fw_dLinkList_Pop(struct Fw_dLinkList_Block *block, struct Fw_dLinkList 
  * @note        application in fifo link list
  *******************************************************************************
  */
-fw_err_t Fw_dLinkList_Remove(struct Fw_dLinkList_Block *block, struct Fw_dLinkList *node)
+__INLINE fw_err_t Fw_dLinkList_Remove(struct Fw_dLinkList_Block *block, struct Fw_dLinkList *node)
 {
     _FW_ASSERT(IS_PTR_NULL(block));
     _FW_ASSERT(IS_PTR_NULL(node));

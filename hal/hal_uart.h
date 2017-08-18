@@ -147,18 +147,6 @@ struct Hal_Uart_Opera;
 struct Hal_Uart_Device
 {
     uint8_t Port;
-    
-    struct Hal_Uart_Opera *Opera;
-};
-
-/**
- *******************************************************************************
- * @brief      define hal uart config structure
- *******************************************************************************
- */
-struct Hal_Uart_Config
-{
-    uint8_t Port;
     uint8_t Group;
     
     uint8_t WordLen;
@@ -179,7 +167,16 @@ struct Hal_Uart_Config
         void (*Callback)(void*, uint8_t);
         void *Param;
     }RxCallback;
+    
+    struct Hal_Uart_Opera *Opera;
 };
+
+/**
+ *******************************************************************************
+ * @brief      define hal uart config structure
+ *******************************************************************************
+ */
+typedef struct Hal_Uart_Device Hal_Uart_InitType;
 
 /**
  *******************************************************************************

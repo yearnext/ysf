@@ -89,7 +89,7 @@ struct Fw_Stream;
  */
 struct Fw_Stream_Buffer_Opera
 {
-    void (*Init)(void*, void*);
+    void (*Init)(void*);
     void (*Fini)(void*);
 
     fw_err_t (*Write)(void*, uint8_t*, uint8_t);
@@ -141,15 +141,15 @@ struct Fw_Stream
 	struct Fw_Stream_Pipe Rx;
 };
 
-typedef struct 
-{
-    struct Fw_Stream_Buffer_Opera *Buf_Ops;
-    void (*Callback)(uint8_t, void*);
-    void *Buffer;
-
-    struct Fw_Stream_Pipe Tx;
-    struct Fw_Stream_Pipe Rx;
-}Fw_Stream_InitType;
+//typedef struct 
+//{
+//    void *Buffer;
+//    struct Fw_Stream_Buffer_Opera *Buf_Ops;
+//    void (*Callback)(uint8_t, void*);
+//
+//    struct Fw_Stream_Pipe Tx;
+//    struct Fw_Stream_Pipe Rx;
+//}Fw_Stream_InitType;
 
 //
 ///**
@@ -211,7 +211,7 @@ extern const struct Fw_Stream_Buffer_Opera FwStreamFifoOpera;
 extern void Fw_Stream_InitComponent(void);
 extern void Fw_Stream_PostEvent(struct Fw_Stream*, uint8_t);
 
-extern __INLINE void Fw_Stream_Init(struct Fw_Stream*, Fw_Stream_InitType*);
+extern __INLINE void Fw_Stream_Init(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_Fini(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_TxConnect(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_TxDisconnect(struct Fw_Stream*);
