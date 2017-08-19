@@ -50,40 +50,16 @@ extern "C"
 #include "hal_timer.h"
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/      
-///**
-// *******************************************************************************
-// * @brief      define set timer time mode param structure
-// *******************************************************************************
-// */ 
-//struct Hal_Timer_Config
-//{
-//    uint8_t Port;
-//    uint8_t Priority;
-//    uint8_t Mode;
-//	uint16_t Period;
-//	uint16_t Prescaler;
-//
-//	struct Hal_Callback Callback;
-//};
-
+/* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define map api
  *******************************************************************************
  */ 
-extern void Map_Timer_Open(uint8_t);
-extern void Map_Timer_Close(uint8_t);
-extern void Map_Timer_Init(uint8_t, void*);
-extern void Map_Timer_Fini(uint8_t);
-extern void Map_Timer_SetUpCallback(uint8_t, void (*)(void*), void*);
-extern void Map_Timer_Start(uint8_t);
-extern void Map_Timer_Stop(uint8_t);
+extern const struct Map_Timer_Opera map_timer_api;
 
-extern void Map_Timer_API_Register(void**);
-
+/* Exported functions --------------------------------------------------------*/
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

@@ -46,27 +46,6 @@
 #include "comm_path.h"
 
 /* Private constants ---------------------------------------------------------*/
-#if USE_TIMER_COMPONENT
-/**
- *******************************************************************************
- * @brief      define map api
- *******************************************************************************
- */ 
-#if USE_GPIO_COMPONENT
-static const struct Map_Timer_Opera _timer_ops = 
-{
-    .Open = Map_Timer_Open,
-    .Close = Map_Timer_Close, 
-    
-    .Init = Map_Timer_Init,
-    .Fini = Map_Timer_Fini,
-    .SetUpCallback = Map_Timer_SetUpCallback,
-    
-    .Start = Map_Timer_Start,
-    .Stop = Map_Timer_Stop,
-};
-#endif
-
 /**
  *******************************************************************************
  * @brief       define timer register
@@ -223,6 +202,32 @@ static const IRQn_Type TimerIrqn[] =
 #endif
 };
 
+/**
+ *******************************************************************************
+ * @brief      define map api
+ *******************************************************************************
+ */ 
+void Map_Timer_Open(uint8_t);
+void Map_Timer_Close(uint8_t);
+void Map_Timer_Init(uint8_t, void*);
+void Map_Timer_Fini(uint8_t);
+void Map_Timer_SetUpCallback(uint8_t, void (*)(void*), void*);
+void Map_Timer_Start(uint8_t);
+void Map_Timer_Stop(uint8_t);
+
+const struct Map_Timer_Opera map_timer_api = 
+{
+    .Open = Map_Timer_Open,
+    .Close = Map_Timer_Close, 
+    
+    .Init = Map_Timer_Init,
+    .Fini = Map_Timer_Fini,
+    .SetUpCallback = Map_Timer_SetUpCallback,
+    
+    .Start = Map_Timer_Start,
+    .Stop = Map_Timer_Stop,
+};
+
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -230,7 +235,6 @@ static const IRQn_Type TimerIrqn[] =
  *******************************************************************************
  */
 static struct Hal_Callback TimerUpCallback[_dimof(Timer)];
-#endif
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -242,7 +246,6 @@ static struct Hal_Callback TimerUpCallback[_dimof(Timer)];
 
 /* Private typedef -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable timer
@@ -532,7 +535,7 @@ void Map_Timer_Close(uint8_t port)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTickMode_Init(struct Hal_Timer_Config *param)
+void _TimerTickMode_Init(Hal_Timer_Handle *param)
 {
 	uint32_t tick = MCU_CLOCK_FREQ/8000;
 
@@ -546,8 +549,8 @@ void _TimerTickMode_Init(struct Hal_Timer_Config *param)
 	//< enable tick timer isr and set tick timer clock source is core clock
     SysTick->CTRL  = (uint32_t)((1 << 1) | (1 << 2));
 
-	TimerUpCallback[0].Callback = param->Callback.Callback;
-	TimerUpCallback[0].Param    = param->Callback.Param;
+	TimerUpCallback[MCU_TICK_TIMER].Callback = param->Callback.Callback;
+	TimerUpCallback[MCU_TICK_TIMER].Param    = param->Callback.Param;
 }
 
 /**
@@ -560,7 +563,7 @@ void _TimerTickMode_Init(struct Hal_Timer_Config *param)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTimeMode_Init(uint8_t port, struct Hal_Timer_Config *param)
+void _TimerTimeMode_Init(uint8_t port, Hal_Timer_Handle *param)
 {
 	LL_TIM_InitTypeDef LL_TIM_InitStructure;
 
@@ -599,7 +602,7 @@ void Map_Timer_Init(uint8_t port, void *param)
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 	hal_assert(IS_PTR_NULL(param));
     
-    struct Hal_Timer_Config *config = (struct Hal_Timer_Config *)param;
+    Hal_Timer_Handle *config = (Hal_Timer_Handle *)param;
 	
     switch(config->Mode)
 	{
@@ -693,21 +696,6 @@ void Map_Timer_Stop(uint8_t port)
 	{
 		SysTick->CTRL &= ~0x01;
 	}
-}
-
-/**
- *******************************************************************************
- * @brief       mcu timer api register
- * @param       [in/out]  **ops                   timer opera
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_API_Register(void **ops)
-{
-    hal_assert(IS_PTR_NULL(ops));
-    
-    *ops = (void *)&_timer_ops;
 }
 
 /**
@@ -902,8 +890,6 @@ void TIM8_UP_IRQHandler(void)
 
 	Timer[8]->SR &= ~0x01;
 }
-#endif
-
 #endif
 
 /** @}*/     /** map timer component */

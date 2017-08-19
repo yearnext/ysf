@@ -44,13 +44,6 @@
 #if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
- * @brief      define mcu application pack gpio opera interface
- *******************************************************************************
- */ 
-static struct Map_Timer_Opera *_timer_ops = NULL;
-
-/**
- *******************************************************************************
  * @brief      define timer opera interface
  *******************************************************************************
  */ 
@@ -76,30 +69,17 @@ static const struct Hal_Timer_Opera timer_ops =
 #if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
- * @brief       register hal gpio module
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Hal_Timer_Module_Register(void)
-{
-    Map_Timer_API_Register((void **)&_timer_ops);
-}
-
-/**
- *******************************************************************************
  * @brief       hal api : open device
  * @param       [in/out]  *drv        device block
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_Timer_Open(struct Hal_Timer_Device *drv)
+void Hal_Timer_Open(Hal_Timer_Handle *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    _timer_ops->Open(drv->Port);
+    map_timer_api.Open(drv->Port);
 }
 
 /**
@@ -110,11 +90,11 @@ __INLINE void Hal_Timer_Open(struct Hal_Timer_Device *drv)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_Timer_Close(struct Hal_Timer_Device *drv)
+void Hal_Timer_Close(Hal_Timer_Handle *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    _timer_ops->Close(drv->Port);
+    map_timer_api.Close(drv->Port);
 }
 
 /**
@@ -126,14 +106,14 @@ __INLINE void Hal_Timer_Close(struct Hal_Timer_Device *drv)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_Timer_Init(struct Hal_Timer_Device *drv, void *param)
+void Hal_Timer_Init(Hal_Timer_Handle *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
      
     drv->Opera = (struct Hal_Timer_Opera *)&timer_ops;
     
-    _timer_ops->Open(drv->Port);
-    _timer_ops->Init(drv->Port, param);
+    map_timer_api.Open(drv->Port);
+    map_timer_api.Init(drv->Port, (void *)drv);
 }
 
 /**
@@ -144,11 +124,11 @@ __INLINE void Hal_Timer_Init(struct Hal_Timer_Device *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_Timer_Fini(struct Hal_Timer_Device *drv)
+void Hal_Timer_Fini(Hal_Timer_Handle *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    _timer_ops->Fini(drv->Port); 
+    map_timer_api.Fini(drv->Port); 
     
     drv->Opera = NULL;
     drv->Port = 0;
@@ -163,13 +143,13 @@ __INLINE void Hal_Timer_Fini(struct Hal_Timer_Device *drv)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_Timer_SetUpCallback(struct Hal_Timer_Device *drv, void *param)
+void Hal_Timer_SetUpCallback(Hal_Timer_Handle *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
 
     struct Hal_Callback *callback = (struct Hal_Callback *)param;
     
-    _timer_ops->SetUpCallback(drv->Port, callback->Callback, callback->Param);
+    map_timer_api.SetUpCallback(drv->Port, callback->Callback, callback->Param);
 }
 
 /**
@@ -180,11 +160,11 @@ __INLINE void Hal_Timer_SetUpCallback(struct Hal_Timer_Device *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_Timer_Start(struct Hal_Timer_Device *drv)
+void Hal_Timer_Start(Hal_Timer_Handle *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     
-    _timer_ops->Start(drv->Port);
+    map_timer_api.Start(drv->Port);
 }
 
 /**
@@ -195,11 +175,11 @@ __INLINE void Hal_Timer_Start(struct Hal_Timer_Device *drv)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Hal_Timer_Stop(struct Hal_Timer_Device *drv)
+void Hal_Timer_Stop(Hal_Timer_Handle *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    _timer_ops->Stop(drv->Port);
+    map_timer_api.Stop(drv->Port);
 }
 #endif
 

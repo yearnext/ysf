@@ -52,29 +52,14 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define map api
+ * @brief      define map uart api
  *******************************************************************************
  */ 
-extern void Map_Uart_Open(uint8_t);
-extern void Map_Uart_Close(uint8_t);
-extern void Map_Uart_Init(uint8_t, void*);
-extern void Map_Uart_Fini(uint8_t);
-extern void Map_Uart_SetTxCallback(uint8_t, void (*)(void*), void*);
-extern void Map_Uart_SetRxCallback(uint8_t, void (*)(void*, uint8_t), void*);
-extern void Map_Uart_SendData(uint8_t, uint8_t);
-extern uint8_t Map_Uart_ReceiveData(uint8_t);
-extern void Map_Uart_TxConnect(uint8_t);
-extern void Map_Uart_TxDisconnect(uint8_t);
-extern void Map_Uart_RxConnect(uint8_t);
-extern void Map_Uart_RxDisconnect(uint8_t);
-extern bool Map_Uart_IsTxComplet(uint8_t);
-extern bool Map_Uart_IsRxComplet(uint8_t);
+extern const struct Map_Uart_Opera map_uart_api;
 
-extern void Map_Uart_API_Register(void**);
-
+/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define test api

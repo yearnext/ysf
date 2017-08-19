@@ -58,7 +58,7 @@ struct Fw_UartStream
     struct Fw_Stream Tx;
     struct Fw_Stream Rx;
      
-    struct Hal_Uart_Device Device;
+    Hal_Uart_Handle Device;
     struct Fw_Timer Timer;
 
     enum

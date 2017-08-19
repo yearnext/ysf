@@ -52,45 +52,14 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/ 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-#if USE_GPIO_COMPONENT
 /**
  *******************************************************************************
  * @brief      define map api
  *******************************************************************************
  */ 
-extern hal_err_t Map_GPIO_Open(uint8_t);
-extern hal_err_t Map_GPIO_Close(uint8_t);
-extern hal_err_t Map_GPIO_Init(uint8_t, uint8_t, uint8_t, uint8_t);
-extern hal_err_t Map_GPIO_Fini(uint8_t, uint8_t);
-extern hal_err_t Map_GPIO_Set(uint8_t, uint8_t);
-extern hal_err_t Map_GPIO_Clear(uint8_t, uint8_t);
-extern hal_err_t Map_GPIO_GetIntputStatus(uint8_t, uint8_t, uint16_t*);
-extern hal_err_t Map_GPIO_GetOutputStatus(uint8_t, uint8_t, uint16_t*);
-extern hal_err_t Map_GPIO_Toggle(uint8_t, uint8_t);
-extern hal_err_t Map_GPIO_Write(uint8_t, uint8_t, uint16_t, uint8_t);
-extern hal_err_t Map_GPIO_Read(uint8_t, uint8_t, uint16_t*, uint8_t);
-extern hal_err_t Map_GPIO_Control(struct Hal_GPIO_Device*, uint8_t, void*);
+extern const struct Map_GPIO_Opera map_gpio_api;
 
-/**
- *******************************************************************************
- * @brief      define hal api
- *******************************************************************************
- */ 
-extern __INLINE hal_err_t Hal_GPIO_Open(struct Hal_GPIO_Device*);
-extern __INLINE hal_err_t Hal_GPIO_Close(struct Hal_GPIO_Device*);
-extern __INLINE hal_err_t Hal_GPIO_Init(struct Hal_GPIO_Device*);
-extern __INLINE hal_err_t Hal_GPIO_Fini(struct Hal_GPIO_Device*);
-extern __INLINE hal_err_t Hal_GPIO_Set(struct Hal_GPIO_Device*);
-extern __INLINE hal_err_t Hal_GPIO_Clear(struct Hal_GPIO_Device*);
-extern __INLINE hal_err_t Hal_GPIO_GetIntputStatus(struct Hal_GPIO_Device*, uint16_t*);
-extern __INLINE hal_err_t Hal_GPIO_GetOutputStatus(struct Hal_GPIO_Device*, uint16_t*);
-extern __INLINE hal_err_t Hal_GPIO_Toggle(struct Hal_GPIO_Device*);
-extern __INLINE hal_err_t Hal_GPIO_Write(struct Hal_GPIO_Device*, struct Hal_GPIO_Param*);
-extern __INLINE hal_err_t Hal_GPIO_Read(struct Hal_GPIO_Device*, struct Hal_GPIO_Param*);
-extern __INLINE hal_err_t Hal_GPIO_Control(struct Hal_GPIO_Device*, uint8_t, void*);
-#endif
-
+/* Exported functions --------------------------------------------------------*/
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

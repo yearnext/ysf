@@ -50,7 +50,39 @@
  */
 static TIM_TypeDef * const Timer[] = 
 {
-    NULL, TIM1, TIM2, TIM3, TIM4, TIM5, TIM6, TIM7, TIM8,
+    NULL, 
+    
+#ifdef TIM1
+    TIM1,
+#endif
+
+#ifdef TIM2
+    TIM2,
+#endif
+
+#ifdef TIM3
+    TIM3,
+#endif
+
+#ifdef TIM4
+    TIM4,
+#endif
+
+#ifdef TIM5
+    TIM5,
+#endif
+
+#ifdef TIM6
+    TIM6, 
+#endif
+
+#ifdef TIM7
+    TIM7, 
+#endif
+
+#ifdef TIM8
+    TIM8,
+#endif
 };
 
 /**
@@ -60,18 +92,71 @@ static TIM_TypeDef * const Timer[] =
  */
 static const IRQn_Type TimerIrqn[] = 
 {
-    TIM1_UP_IRQn, TIM2_IRQn, TIM3_IRQn, TIM4_IRQn, TIM5_IRQn, 
-    TIM6_IRQn, TIM7_IRQn, TIM8_UP_IRQn
+#ifdef TIM1
+    TIM1_UP_IRQn,
+#endif
+
+#ifdef TIM2
+    TIM2_IRQn,
+#endif
+    
+#ifdef TIM3
+    TIM3_IRQn,
+#endif
+
+#ifdef TIM4
+    TIM4_IRQn,
+#endif
+
+#ifdef TIM5
+    TIM5_IRQn,
+#endif
+    
+#ifdef TIM6
+    TIM6_IRQn,
+#endif
+
+#ifdef TIM7
+    TIM7_IRQn,
+#endif
+
+#ifdef TIM8
+    TIM8_UP_IRQn,
+#endif
 };
 
+/**
+ *******************************************************************************
+ * @brief      define map api
+ *******************************************************************************
+ */ 
+void Map_Timer_Open(uint8_t);
+void Map_Timer_Close(uint8_t);
+void Map_Timer_Init(uint8_t, void*);
+void Map_Timer_Fini(uint8_t);
+void Map_Timer_SetUpCallback(uint8_t, void (*)(void*), void*);
+void Map_Timer_Start(uint8_t);
+void Map_Timer_Stop(uint8_t);
 
+const struct Map_Timer_Opera map_timer_api = 
+{
+    .Open = Map_Timer_Open,
+    .Close = Map_Timer_Close, 
+    
+    .Init = Map_Timer_Init,
+    .Fini = Map_Timer_Fini,
+    .SetUpCallback = Map_Timer_SetUpCallback,
+    
+    .Start = Map_Timer_Start,
+    .Stop = Map_Timer_Stop,
+};
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       define timer time mode call back
  *******************************************************************************
  */
-static struct HalCallback TimerUpCallback[_dimof(Timer)];
+static struct Hal_Callback TimerUpCallback[_dimof(Timer)];
 #endif
 
 /* Private define ------------------------------------------------------------*/
@@ -80,7 +165,7 @@ static struct HalCallback TimerUpCallback[_dimof(Timer)];
  * @brief       define timer assert macro
  *******************************************************************************
  */
-#define IS_TIMER_PORT_INVAILD(n) ((n) >= _dimof(Timer))
+#define IS_TIMER_PORT_INVAILD(n)                          ((n) >= _dimof(Timer))
 
 /* Private typedef -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -93,7 +178,7 @@ static struct HalCallback TimerUpCallback[_dimof(Timer)];
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Open(uint8_t port)
+void Map_Timer_Open(uint8_t port)
 {
     hal_assert(IS_TIMER_PORT_INVAILD(port));
     
@@ -169,21 +254,6 @@ hal_err_t Map_Timer_Open(uint8_t port)
 	{
 		RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM17, ENABLE);
 	}
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       enable timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_Open(struct Hal_Timer_Device *dev)
-{
-    return Map_Timer_Open(dev->Port);
 }
 
 /**
@@ -194,7 +264,7 @@ __INLINE hal_err_t Hal_Timer_Open(struct Hal_Timer_Device *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Close(uint8_t port)
+void Map_Timer_Close(uint8_t port)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 
@@ -283,21 +353,6 @@ hal_err_t Map_Timer_Close(uint8_t port)
 		RCC_APB2PeriphResetCmd(RCC_APB2Periph_TIM17, ENABLE);
 		RCC_APB2PeriphResetCmd(RCC_APB2Periph_TIM17, DISABLE);
 	}
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       disable timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    set finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_Close(struct Hal_Timer_Device *dev)
-{
-    return Map_Timer_Close(dev->Port);
 }
 
 /**
@@ -309,7 +364,7 @@ __INLINE hal_err_t Hal_Timer_Close(struct Hal_Timer_Device *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTickMode_Init(struct Hal_Timer_Param *param)
+void _TimerTickMode_Init(Hal_Timer_Handle *param)
 {
 	uint32_t tick = MCU_CLOCK_FREQ/8000;
 
@@ -337,7 +392,7 @@ void _TimerTickMode_Init(struct Hal_Timer_Param *param)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTimeMode_Init(uint8_t port, struct Hal_Timer_Param *param)
+void _TimerTimeMode_Init(uint8_t port, Hal_Timer_Handle *param)
 {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStruct;
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -374,50 +429,43 @@ void _TimerTimeMode_Init(uint8_t port, struct Hal_Timer_Param *param)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Init(uint8_t port, uint8_t mode, void *param)
+void Map_Timer_Init(uint8_t port, void *param)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 	hal_assert(IS_PTR_NULL(param));
 
-	switch(mode)
+    Hal_Timer_Handle *config = (Hal_Timer_Handle*)param;
+    
+	switch(config->Mode)
 	{
 		case TIMER_TICK_MODE:
-			_TimerTickMode_Init((struct Hal_Timer_Param*)param);
+			_TimerTickMode_Init(config);
 			break;
 		case TIMER_TIME_MODE:
-			_TimerTimeMode_Init(port, (struct Hal_Timer_Param*)param);
+			_TimerTimeMode_Init(port, config);
 			break;
 		case TIMER_PWM_OUTPUT_MODE:
-			return HAL_ERR_FAIL;
-//			break;
+			break;
 		case TIMER_PWM_INTPUT_MODE:
-			return HAL_ERR_FAIL;
-//			break;
+			break;
 		default:
             break;
 	}
-	
-	return HAL_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       init timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
+ * @brief       deinit timer function
+ * @param       [in/out]  port            timer id
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Init(struct Hal_Timer_Device *dev)
+void Map_Timer_Fini(uint8_t port)
 {
-    struct Hal_Timer_Param config;
-    
-    config.Period            = dev->Period;
-    config.Prescaler         = dev->Prescaler;
-    config.Callback.Callback = dev->Callback.Callback;
-    config.Callback.Param    = dev->Callback.Param;
-    
-    return Map_Timer_Init(dev->Port, dev->SetMode, (void *)&config);
+	hal_assert(IS_TIMER_PORT_INVAILD(port));
+
+    TIM_DeInit(Timer[port]);
 }
 
 /**
@@ -430,29 +478,12 @@ __INLINE hal_err_t Hal_Timer_Init(struct Hal_Timer_Device *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_SetUpCallback(uint8_t port, void (*callback)(void*), void *param)
+void Map_Timer_SetUpCallback(uint8_t port, void (*callback)(void*), void *param)
 {
     hal_assert(IS_TIMER_PORT_INVAILD(port));
     
     TimerUpCallback[port].Callback = callback;
 	TimerUpCallback[port].Param    = param;
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       init timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_SetUpCallback(struct Hal_Timer_Device *dev)
-{
-    return Map_Timer_SetUpCallback(dev->Port, 
-                                   dev->Callback.Callback, 
-                                   dev->Callback.Param);
 }
 
 /**
@@ -463,7 +494,7 @@ __INLINE hal_err_t Hal_Timer_SetUpCallback(struct Hal_Timer_Device *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Start(uint8_t port)
+void Map_Timer_Start(uint8_t port)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 
@@ -475,21 +506,6 @@ hal_err_t Map_Timer_Start(uint8_t port)
 	{
 		SysTick->CTRL |= 0x01;
 	}
-
-	return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       start timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
- * @note        None
- *******************************************************************************
- */
-__INLINE hal_err_t Hal_Timer_Start(struct Hal_Timer_Device *dev)
-{
-    return Map_Timer_Start(dev->Port);
 }
 
 /**
@@ -500,7 +516,7 @@ __INLINE hal_err_t Hal_Timer_Start(struct Hal_Timer_Device *dev)
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_Timer_Stop(uint8_t port)
+void Map_Timer_Stop(uint8_t port)
 {
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 
@@ -512,22 +528,23 @@ hal_err_t Map_Timer_Stop(uint8_t port)
 	{
 		SysTick->CTRL &= ~0x01;
 	}
-
-	return HAL_ERR_NONE;
 }
 
 /**
  *******************************************************************************
- * @brief       stop timer
- * @param       [in/out]  *dev            timer block
- * @return      [in/out]  HAL_ERR_NONE    init finish
+ * @brief       mcu timer api register
+ * @param       [in/out]  **ops                   timer opera
+ * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-__INLINE hal_err_t Hal_Timer_Stop(struct Hal_Timer_Device *dev)
+void Map_Timer_API_Register(void **ops)
 {
-    return Map_Timer_Stop(dev->Port);
+    hal_assert(IS_PTR_NULL(ops));
+    
+    *ops = (void *)&map_timer_api;
 }
+
 /**
  *******************************************************************************
  * @brief       tick timer isr handle
@@ -538,9 +555,9 @@ __INLINE hal_err_t Hal_Timer_Stop(struct Hal_Timer_Device *dev)
  */
 void SysTick_Handler(void)
 {
-	if(!IS_PTR_NULL(TimerUpCallback[0].Callback))
+	if(!IS_PTR_NULL(TimerUpCallback[MCU_TICK_TIMER].Callback))
 	{
-		TimerUpCallback[0].Callback(TimerUpCallback[0].Param);
+		TimerUpCallback[MCU_TICK_TIMER].Callback(TimerUpCallback[MCU_TICK_TIMER].Param);
 	}
 }
 
@@ -554,9 +571,9 @@ void SysTick_Handler(void)
  */
 void TIM1_UP_IRQHandler(void)
 {
-	if(!IS_PTR_NULL(TimerUpCallback[1].Callback))
+	if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_1].Callback))
 	{
-		TimerUpCallback[1].Callback(TimerUpCallback[1].Param);
+		TimerUpCallback[MCU_TIMER_1].Callback(TimerUpCallback[MCU_TIMER_1].Param);
 	}
 
 	Timer[1]->SR &= ~0x01;
@@ -574,9 +591,9 @@ void TIM2_IRQHandler(void)
 {
 	if(Timer[2]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[2].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_2].Callback))
 		{
-			TimerUpCallback[2].Callback(TimerUpCallback[2].Param);
+			TimerUpCallback[MCU_TIMER_2].Callback(TimerUpCallback[MCU_TIMER_2].Param);
 		}
 		
 		Timer[2]->SR &= ~0x01;
@@ -595,9 +612,9 @@ void TIM3_IRQHandler(void)
 {
 	if(Timer[3]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[3].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_3].Callback))
 		{
-			TimerUpCallback[3].Callback(TimerUpCallback[3].Param);
+			TimerUpCallback[MCU_TIMER_3].Callback(TimerUpCallback[MCU_TIMER_3].Param);
 		}
 		
 		Timer[3]->SR &= ~0x01;
@@ -616,9 +633,9 @@ void TIM4_IRQHandler(void)
 {
 	if(Timer[4]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[4].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_4].Callback))
 		{
-			TimerUpCallback[4].Callback(TimerUpCallback[4].Param);
+			TimerUpCallback[MCU_TIMER_4].Callback(TimerUpCallback[MCU_TIMER_4].Param);
 		}
 		
 		Timer[4]->SR &= ~0x01;
@@ -637,9 +654,9 @@ void TIM5_IRQHandler(void)
 {
 	if(Timer[5]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[5].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_5].Callback))
 		{
-			TimerUpCallback[5].Callback(TimerUpCallback[5].Param);
+			TimerUpCallback[MCU_TIMER_5].Callback(TimerUpCallback[MCU_TIMER_5].Param);
 		}
 		
 		Timer[5]->SR &= ~0x01;
@@ -658,9 +675,9 @@ void TIM6_IRQHandler(void)
 {
 	if(Timer[6]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[6].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_6].Callback))
 		{
-			TimerUpCallback[6].Callback(TimerUpCallback[6].Param);
+			TimerUpCallback[MCU_TIMER_6].Callback(TimerUpCallback[MCU_TIMER_6].Param);
 		}
 		
 		Timer[6]->SR &= ~0x01;
@@ -679,9 +696,9 @@ void TIM7_IRQHandler(void)
 {
 	if(Timer[7]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[7].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_7].Callback))
 		{
-			TimerUpCallback[7].Callback(TimerUpCallback[7].Param);
+			TimerUpCallback[MCU_TIMER_7].Callback(TimerUpCallback[MCU_TIMER_7].Param);
 		}
 		
 		Timer[7]->SR &= ~0x01;
@@ -698,9 +715,9 @@ void TIM7_IRQHandler(void)
  */
 void TIM8_UP_IRQHandler(void)
 {
-	if(!IS_PTR_NULL(TimerUpCallback[8].Callback))
+	if(!IS_PTR_NULL(TimerUpCallback[MCU_TIMER_8].Callback))
 	{
-		TimerUpCallback[8].Callback(TimerUpCallback[8].Param);
+		TimerUpCallback[MCU_TIMER_8].Callback(TimerUpCallback[MCU_TIMER_8].Param);
 	}
 
 	Timer[8]->SR &= ~0x01;

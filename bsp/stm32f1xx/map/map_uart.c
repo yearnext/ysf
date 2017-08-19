@@ -48,7 +48,6 @@
 #include "map_gpio.h"
 
 /* Private constants ---------------------------------------------------------*/
-#if USE_UART_COMPONENT
 /**
  *******************************************************************************
  * @brief      define uart register
@@ -110,7 +109,22 @@ static const IRQn_Type UartIrqn[] =
  * @brief      define map api
  *******************************************************************************
  */ 
-static const struct Map_Uart_Opera _uart_ops = 
+void Map_Uart_Open(uint8_t);
+void Map_Uart_Close(uint8_t);
+void Map_Uart_Init(uint8_t, void*);
+void Map_Uart_Fini(uint8_t);
+void Map_Uart_SetTxCallback(uint8_t, void (*)(void*), void*);
+void Map_Uart_SetRxCallback(uint8_t, void (*)(void*, uint8_t), void*);
+void Map_Uart_SendData(uint8_t, uint8_t);
+uint8_t Map_Uart_ReceiveData(uint8_t);
+void Map_Uart_TxConnect(uint8_t);
+void Map_Uart_TxDisconnect(uint8_t);
+void Map_Uart_RxConnect(uint8_t);
+void Map_Uart_RxDisconnect(uint8_t);
+bool Map_Uart_IsTxComplet(uint8_t);
+bool Map_Uart_IsRxComplet(uint8_t);
+
+const struct Map_Uart_Opera map_uart_api = 
 {
     .Open = Map_Uart_Open,
     .Close = Map_Uart_Close,
@@ -152,7 +166,6 @@ static struct
     void (*Callback)(void*, uint8_t);
     void *Param;
 }UartRxCallback[_dimof(Uart)];
-#endif
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -164,7 +177,6 @@ static struct
 
 /* Private typedef -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_UART_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable uart
@@ -223,7 +235,7 @@ void Map_Uart_Close(uint8_t port)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_Port_Switch(uint8_t port, Hal_Uart_InitType *dev)
+void _Uart_Port_Switch(uint8_t port, Hal_Uart_Handle *dev)
 {
     switch (port)
     {
@@ -275,19 +287,16 @@ void _Uart_Port_Switch(uint8_t port, Hal_Uart_InitType *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_GPIO_Init(uint8_t port, Hal_Uart_InitType *dev)
+void _Uart_GPIO_Init(uint8_t port, Hal_Uart_Handle *dev)
 {
-    struct Hal_GPIO_Device txPort;
-    struct Hal_GPIO_Device rxPort;
-    
-    struct Hal_GPIO_Config txConfig;
-    struct Hal_GPIO_Config rxConfig;
-    
-    txConfig.Dir = GPIO_DIR_HS_OUTPUT;
-    txConfig.Mode = GPIO_AF_PUSH_PULL_MODE;
+    Hal_GPIO_Handle txPort;
+    Hal_GPIO_Handle rxPort;
 
-    rxConfig.Dir = GPIO_DIR_INTPUT;
-    rxConfig.Mode = GPIO_PULL_UP_DOWN_MODE;
+    txPort.Dir = GPIO_DIR_HS_OUTPUT;
+    txPort.Mode = GPIO_AF_PUSH_PULL_MODE;
+
+    rxPort.Dir = GPIO_DIR_INTPUT;
+    rxPort.Mode = GPIO_PULL_UP_DOWN_MODE;
     
     switch (port)
     {
@@ -357,11 +366,11 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Uart_InitType *dev)
             break;
     }
     
-    Map_GPIO_Open(txPort.Port);
-    Map_GPIO_Init(txPort.Port, txPort.Pin, txConfig.Dir, txConfig.Mode);
+    map_gpio_api.Open(txPort.Port);
+    map_gpio_api.Init(txPort.Port, txPort.Pin, txPort.Dir, txPort.Mode);
     
-    Map_GPIO_Open(rxPort.Port);
-    Map_GPIO_Init(rxPort.Port, rxPort.Pin, rxConfig.Dir, rxConfig.Mode);
+    map_gpio_api.Open(rxPort.Port);
+    map_gpio_api.Init(rxPort.Port, rxPort.Pin, rxPort.Dir, rxPort.Mode);
     
     _Uart_Port_Switch(port, dev);
 }
@@ -381,7 +390,7 @@ void Map_Uart_Init(uint8_t port, void *param)
     hal_assert(IS_PTR_NULL(config));
     
     LL_USART_InitTypeDef LL_USART_InitStructure;
-    Hal_Uart_InitType *dev = (Hal_Uart_InitType *)param;
+    Hal_Uart_Handle *dev = (Hal_Uart_Handle *)param;
     
     //< init uart gpio
     _Uart_GPIO_Init(port, dev);
@@ -682,21 +691,6 @@ bool Map_Uart_IsRxComplet(uint8_t port)
 
 /**
  *******************************************************************************
- * @brief       register uart api
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Uart_API_Register(void **ops)
-{
-    hal_assert(IS_PTR_NULL(ops));
-    
-    *ops = (void *)&_uart_ops;
-}
-
-/**
- *******************************************************************************
  * @brief       uart1 isr handle
  * @param       [in/out]  void           
  * @return      [in/out]  void
@@ -875,8 +869,6 @@ void Hal_Uart_Test(void)
 //        Hal_Uart_SendData(&uart, 0xFF);
     }
 }
-
-#endif
 
 /** @}*/     /** map uart component */
 

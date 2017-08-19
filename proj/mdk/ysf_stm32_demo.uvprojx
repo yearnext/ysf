@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_FULL_LL_DRIVER</Define>
+              <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\core;..\..\demo;..\..\framework;..\..\common;..\..\hal;..\..\bsp\stm32f1xx\CMSIS;..\..\bsp\stm32f1xx\map;..\..\bsp\stm32f1xx\msp\ll_lib;..\..\bsp\stm32f1xx\msp;..\..\bsp\stm32f1xx\startup;..\..\bsp\stm32f1xx\msp\hal_lib;..\..\bsp\stm32f1xx\msp\hal_lib\Legacy</IncludePath>
+              <IncludePath>..\..\core;..\..\demo;..\..\framework;..\..\common;..\..\hal;..\..\bsp\stm32f10x\map;..\..\bsp\stm32f10x\msp;..\..\bsp\stm32f10x\startup</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -456,24 +456,9 @@
           <GroupName>ysf/hal</GroupName>
           <Files>
             <File>
-              <FileName>hal_conf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\hal\hal_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>hal_core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\hal\hal_core.h</FilePath>
-            </File>
-            <File>
               <FileName>hal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\hal\hal_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_gpio.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\hal\hal_gpio.h</FilePath>
             </File>
             <File>
               <FileName>hal_timer.c</FileName>
@@ -481,24 +466,9 @@
               <FilePath>..\..\hal\hal_timer.c</FilePath>
             </File>
             <File>
-              <FileName>hal_timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\hal\hal_timer.h</FilePath>
-            </File>
-            <File>
-              <FileName>hal_type.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\hal\hal_type.h</FilePath>
-            </File>
-            <File>
               <FileName>hal_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\hal\hal_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\hal\hal_uart.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -506,14 +476,14 @@
           <GroupName>bsp/startup</GroupName>
           <Files>
             <File>
-              <FileName>system_stm32f1xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\startup\system_stm32f1xx.c</FilePath>
+              <FileName>startup_stm32f10x_hd.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\bsp\stm32f10x\startup\arm\startup_stm32f10x_hd.s</FilePath>
             </File>
             <File>
-              <FileName>startup_stm32f103xe.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\startup\arm\startup_stm32f103xe.s</FilePath>
+              <FileName>system_stm32f10x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\startup\system_stm32f10x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -523,17 +493,17 @@
             <File>
               <FileName>map_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\map\map_gpio.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\map\map_gpio.c</FilePath>
             </File>
             <File>
               <FileName>map_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\map\map_timer.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\map\map_timer.c</FilePath>
             </File>
             <File>
               <FileName>map_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\map\map_uart.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\map\map_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -541,84 +511,124 @@
           <GroupName>bsp/msp</GroupName>
           <Files>
             <File>
-              <FileName>stm32f1xx_ll_adc.c</FileName>
+              <FileName>misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_adc.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\misc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_crc.c</FileName>
+              <FileName>stm32f10x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_crc.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_adc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_dac.c</FileName>
+              <FileName>stm32f10x_bkp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dac.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_bkp.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_dma.c</FileName>
+              <FileName>stm32f10x_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dma.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_can.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_exti.c</FileName>
+              <FileName>stm32f10x_cec.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_exti.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_cec.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_gpio.c</FileName>
+              <FileName>stm32f10x_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_gpio.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_crc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_i2c.c</FileName>
+              <FileName>stm32f10x_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_i2c.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_dac.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_pwr.c</FileName>
+              <FileName>stm32f10x_dbgmcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_pwr.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_dbgmcu.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_rcc.c</FileName>
+              <FileName>stm32f10x_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rcc.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_dma.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_rtc.c</FileName>
+              <FileName>stm32f10x_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rtc.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_exti.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_sdmmc.c</FileName>
+              <FileName>stm32f10x_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_sdmmc.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_flash.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_spi.c</FileName>
+              <FileName>stm32f10x_fsmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_spi.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_fsmc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_tim.c</FileName>
+              <FileName>stm32f10x_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_tim.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_usart.c</FileName>
+              <FileName>stm32f10x_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usart.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_i2c.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_usb.c</FileName>
+              <FileName>stm32f10x_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usb.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_it.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f1xx_ll_utils.c</FileName>
+              <FileName>stm32f10x_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_utils.c</FilePath>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_sdio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f10x\msp\stm32f10x_wwdg.c</FilePath>
             </File>
           </Files>
         </Group>

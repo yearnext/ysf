@@ -46,8 +46,14 @@
  * @brief      define map api
  *******************************************************************************
  */ 
-#if USE_GPIO_COMPONENT
-static const struct Map_GPIO_Opera _gpio_ops = 
+void Map_GPIO_Open(uint8_t);
+void Map_GPIO_Close(uint8_t);
+void Map_GPIO_Init(uint8_t, uint8_t, uint8_t, uint8_t);
+void Map_GPIO_Fini(uint8_t, uint8_t);
+hal_err_t Map_GPIO_Write(uint8_t, uint8_t, uint16_t, uint8_t);
+hal_err_t Map_GPIO_Read(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
+
+const struct Map_GPIO_Opera map_gpio_api = 
 {
     .Open = Map_GPIO_Open,
     .Close = Map_GPIO_Close, 
@@ -58,7 +64,6 @@ static const struct Map_GPIO_Opera _gpio_ops =
     .Write = Map_GPIO_Write,
     .Read = Map_GPIO_Read,
 };
-#endif
 
 /* Exported variables --------------------------------------------------------*/
 /**
@@ -112,7 +117,6 @@ static GPIO_TypeDef * const GPIO[] =
  *******************************************************************************
  */
 #define IS_PORT_NUM_INVAILD(num)                         ((num) >= MCU_PORT_NUM)
-
 #define IS_PIN_NUM_INVAILD(num)                           ((num) >= MCU_PIN_NUM)                 
 
 /**
@@ -127,7 +131,6 @@ static GPIO_TypeDef * const GPIO[] =
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-#if USE_GPIO_COMPONENT
 /**
  *******************************************************************************
  * @brief       enable gpio
@@ -348,7 +351,7 @@ void Map_GPIO_Fini(uint8_t port, uint8_t pin)
  * @note        None
  *******************************************************************************
  */
-void Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num)
+hal_err_t Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pos+num));
@@ -371,6 +374,8 @@ void Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num)
     
     //< update param
     _SET_REG(gpio->BSRR, portData);
+    
+    return HAL_ERR_NONE;
 }
 
 /**
@@ -385,7 +390,7 @@ void Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num)
  * @note        None
  *******************************************************************************
  */
-void Map_GPIO_Read(uint8_t port, uint8_t dir, uint8_t pos, uint16_t *rdData, uint8_t num)
+hal_err_t Map_GPIO_Read(uint8_t port, uint8_t dir, uint8_t pos, uint16_t *rdData, uint8_t num)
 {
     hal_assert(IS_PTR_NULL(wrData));
     hal_assert(IS_PORT_NUM_INVAILD(port));
@@ -406,24 +411,9 @@ void Map_GPIO_Read(uint8_t port, uint8_t dir, uint8_t pos, uint16_t *rdData, uin
             *rdData |= 1 << pos;
         }
     }
-}
-
-/**
- *******************************************************************************
- * @brief       register gpio opara
- * @param       [in/out]  **ops                   gpio opera
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_GPIO_API_Register(void **ops)
-{
-    hal_assert(IS_PTR_NULL(ops));
     
-    *ops = (void *)&_gpio_ops;
+    return HAL_ERR_NONE;
 }
-
-#endif
 
 /** @}*/     /** map gpio component */
 

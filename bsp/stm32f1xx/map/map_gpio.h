@@ -58,14 +58,7 @@ extern "C"
  * @brief      define map api
  *******************************************************************************
  */ 
-extern void Map_GPIO_Open(uint8_t);
-extern void Map_GPIO_Close(uint8_t);
-extern void Map_GPIO_Init(uint8_t, uint8_t, uint8_t, uint8_t);
-extern void Map_GPIO_Fini(uint8_t, uint8_t);
-extern void Map_GPIO_Write(uint8_t, uint8_t, uint16_t, uint8_t);
-extern void Map_GPIO_Read(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
-
-extern void Map_GPIO_API_Register(void**);
+extern const struct Map_GPIO_Opera map_gpio_api;
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

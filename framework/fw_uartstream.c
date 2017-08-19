@@ -104,7 +104,7 @@ __INLINE void Fw_UartStream_Init(struct Fw_UartStream *stream)
     Fw_Timer_SetCallback(&stream->Timer, Hal_UartStream_TxInit, (void *)stream);
     
     //< init hardware
-	Hal_Uart_Init(&stream->Device, (void *)&stream->Device);
+	Hal_Uart_Init(&stream->Device);
 }
 
 /**

@@ -49,7 +49,7 @@
  * @brief       device port define
  *******************************************************************************
  */  
-static struct Hal_GPIO_Device Led1 = 
+static Hal_GPIO_Handle Led1 = 
 {
     .Port = MCU_PORT_D,
     .Pin  = MCU_PIN_13,
@@ -57,7 +57,7 @@ static struct Hal_GPIO_Device Led1 =
     .Mode = GPIO_PUSH_PULL_MODE,
 };
 
-static struct Hal_GPIO_Device Led2 = 
+static Hal_GPIO_Handle Led2 = 
 {
     .Port = MCU_PORT_G,
     .Pin  = MCU_PIN_14,
@@ -65,7 +65,7 @@ static struct Hal_GPIO_Device Led2 =
     .Mode = GPIO_PUSH_PULL_MODE,
 };
 
-static struct Hal_GPIO_Device Key1 = 
+static Hal_GPIO_Handle Key1 = 
 {
     .Port = MCU_PORT_E,
     .Pin  = MCU_PIN_0,
@@ -73,7 +73,7 @@ static struct Hal_GPIO_Device Key1 =
     .Mode = GPIO_PULL_UP_DOWN_MODE,
 };
 
-static struct Hal_GPIO_Device Key2 = 
+static Hal_GPIO_Handle Key2 = 
 {
     .Port = MCU_PORT_C,
     .Pin  = MCU_PIN_13,
@@ -113,7 +113,7 @@ void Led1_Task_Handle(uint32_t event, void *param);
 
 void App_Led1_Init(void)
 {
-    Hal_GPIO_Init(&Led1, NULL);
+    Hal_GPIO_Init(&Led1);
     
     Fw_Task_Init(&Led1Task, "Led1 Task", 1, (void *)Led1_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
     
@@ -124,7 +124,7 @@ void App_Led1_Init(void)
 
 void Led1_Task_Handle(uint32_t event, void *param)
 {
-    struct Hal_GPIO_Device *drv = (struct Hal_GPIO_Device *)param;
+    Hal_GPIO_Handle *drv = (Hal_GPIO_Handle *)param;
     
     switch(event)
     {
@@ -151,7 +151,7 @@ _PT_THREAD(Led2_Task_Handle);
 
 void App_Led2_Init(void)
 {
-    Hal_GPIO_Init(&Led2, NULL);
+    Hal_GPIO_Init(&Led2);
 
     Fw_PT_Init(&Led2Task, "Led2 Task", Led2_Task_Handle, 1);
     Fw_PT_Open(&Led2Task);
@@ -193,7 +193,7 @@ uint8_t Key2_Scan_Function(void)
  */
 void App_Key1_Init(void)
 {
-    Hal_GPIO_Init(&Key1, NULL);
+    Hal_GPIO_Init(&Key1);
     
     Fw_Signal_Init(&Key1Signal, "Key1 Signal", &KeyTask, Key1_Scan_Function);
     Fw_Signal_Open(&Key1Signal, REG_RELEASE_EDGE_STATE, 50);
@@ -201,7 +201,7 @@ void App_Key1_Init(void)
 
 void App_Key2_Init(void)
 {
-    Hal_GPIO_Init(&Key2, NULL);
+    Hal_GPIO_Init(&Key2);
     
     Fw_Signal_Init(&Key2Signal, "Key2 Signal", &KeyTask, Key2_Scan_Function);
     Fw_Signal_Open(&Key2Signal, REG_RELEASE_EDGE_STATE, 50);

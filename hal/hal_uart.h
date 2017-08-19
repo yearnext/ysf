@@ -144,7 +144,7 @@ enum
  *******************************************************************************
  */
 struct Hal_Uart_Opera;
-struct Hal_Uart_Device
+typedef struct
 {
     uint8_t Port;
     uint8_t Group;
@@ -169,14 +169,7 @@ struct Hal_Uart_Device
     }RxCallback;
     
     struct Hal_Uart_Opera *Opera;
-};
-
-/**
- *******************************************************************************
- * @brief      define hal uart config structure
- *******************************************************************************
- */
-typedef struct Hal_Uart_Device Hal_Uart_InitType;
+}Hal_Uart_Handle;
 
 /**
  *******************************************************************************
@@ -185,26 +178,26 @@ typedef struct Hal_Uart_Device Hal_Uart_InitType;
  */
 struct Hal_Uart_Opera
 {
-    void (*Open)(struct Hal_Uart_Device*);
-    void (*Close)(struct Hal_Uart_Device*);
+    void (*Open)(Hal_Uart_Handle*);
+    void (*Close)(Hal_Uart_Handle*);
     
-    void (*Init)(struct Hal_Uart_Device*, void*);
-    void (*Fini)(struct Hal_Uart_Device*);
+    void (*Init)(Hal_Uart_Handle*);
+    void (*Fini)(Hal_Uart_Handle*);
     
-    void (*SetTxCallback)(struct Hal_Uart_Device*, void*);
-    void (*SetRxCallback)(struct Hal_Uart_Device*, void*);
+    void (*SetTxCallback)(Hal_Uart_Handle*, void*);
+    void (*SetRxCallback)(Hal_Uart_Handle*, void*);
 
-    void (*Send)(struct Hal_Uart_Device*, uint8_t);
-    uint8_t (*Receive)(struct Hal_Uart_Device*);
+    void (*Send)(Hal_Uart_Handle*, uint8_t);
+    uint8_t (*Receive)(Hal_Uart_Handle*);
     
-    void (*TxConnect)(struct Hal_Uart_Device*);
-    void (*TxDisconnect)(struct Hal_Uart_Device*);
+    void (*TxConnect)(Hal_Uart_Handle*);
+    void (*TxDisconnect)(Hal_Uart_Handle*);
     
-    void (*RxConnect)(struct Hal_Uart_Device*);
-    void (*RxDisconnect)(struct Hal_Uart_Device*);
+    void (*RxConnect)(Hal_Uart_Handle*);
+    void (*RxDisconnect)(Hal_Uart_Handle*);
     
-    bool (*IsTxComplet)(struct Hal_Uart_Device*);
-    bool (*IsRxComplet)(struct Hal_Uart_Device*);
+    bool (*IsTxComplet)(Hal_Uart_Handle*);
+    bool (*IsRxComplet)(Hal_Uart_Handle*);
 };
 
 /**
@@ -238,21 +231,20 @@ struct Map_Uart_Opera
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-extern __INLINE void Hal_Uart_Module_Register(void);
-extern __INLINE void Hal_Uart_Open(struct Hal_Uart_Device*);
-extern __INLINE void Hal_Uart_Close(struct Hal_Uart_Device*);
-extern __INLINE void Hal_Uart_Init(struct Hal_Uart_Device*, void*);
-extern __INLINE void Hal_Uart_Fini(struct Hal_Uart_Device*);
-extern __INLINE void Hal_Uart_Send(struct Hal_Uart_Device*, uint8_t);
-extern __INLINE uint8_t Hal_Uart_Receive(struct Hal_Uart_Device*);
-extern __INLINE void Hal_Uart_SetTxCallback(struct Hal_Uart_Device*, void*);
-extern __INLINE void Hal_Uart_SetRxCallback(struct Hal_Uart_Device*, void*);
-extern __INLINE void Hal_Uart_TxConnect(struct Hal_Uart_Device*);
-extern __INLINE void Hal_Uart_TxDisconnect(struct Hal_Uart_Device*);
-extern __INLINE void Hal_Uart_RxConnect(struct Hal_Uart_Device*);
-extern __INLINE void Hal_Uart_RxDisconnect(struct Hal_Uart_Device*);
-extern __INLINE bool Hal_Uart_IsTxComplet(struct Hal_Uart_Device*);
-extern __INLINE bool Hal_Uart_IsRxComplet(struct Hal_Uart_Device*);
+extern void Hal_Uart_Open(Hal_Uart_Handle*);
+extern void Hal_Uart_Close(Hal_Uart_Handle*);
+extern void Hal_Uart_Init(Hal_Uart_Handle*);
+extern void Hal_Uart_Fini(Hal_Uart_Handle*);
+extern void Hal_Uart_Send(Hal_Uart_Handle*, uint8_t);
+extern uint8_t Hal_Uart_Receive(Hal_Uart_Handle*);
+extern void Hal_Uart_SetTxCallback(Hal_Uart_Handle*, void*);
+extern void Hal_Uart_SetRxCallback(Hal_Uart_Handle*, void*);
+extern void Hal_Uart_TxConnect(Hal_Uart_Handle*);
+extern void Hal_Uart_TxDisconnect(Hal_Uart_Handle*);
+extern void Hal_Uart_RxConnect(Hal_Uart_Handle*);
+extern void Hal_Uart_RxDisconnect(Hal_Uart_Handle*);
+extern bool Hal_Uart_IsTxComplet(Hal_Uart_Handle*);
+extern bool Hal_Uart_IsRxComplet(Hal_Uart_Handle*);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

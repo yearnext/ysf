@@ -171,7 +171,7 @@ enum
  *******************************************************************************
  */ 
 struct Hal_GPIO_Opera;
-struct Hal_GPIO_Device
+typedef struct
 {
     uint8_t Port;
     uint8_t Pin;
@@ -179,19 +179,19 @@ struct Hal_GPIO_Device
     uint8_t Mode;
     
     struct Hal_GPIO_Opera *Opera;
-};
+}Hal_GPIO_Handle;
 
 /**
  *******************************************************************************
- * @brief      define gpio rw param
+ * @brief      define gpio read write opera param
  *******************************************************************************
  */ 
-struct Hal_GPIO_Config
+struct Hal_GPIO_RW_Param
 {
     uint8_t Dir;
     uint8_t Mode;
     uint8_t Num;
-    uint16_t RWData;
+    uint16_t RW_Data;
 };
 
 /**
@@ -201,23 +201,23 @@ struct Hal_GPIO_Config
  */ 
 struct Hal_GPIO_Opera
 {
-    void (*Open)(struct Hal_GPIO_Device*);
-    void (*Close)(struct Hal_GPIO_Device*);
+    void (*Open)(Hal_GPIO_Handle*);
+    void (*Close)(Hal_GPIO_Handle*);
     
-    void (*Init)(struct Hal_GPIO_Device*, void*);
-    void (*Fini)(struct Hal_GPIO_Device*);
+    void (*Init)(Hal_GPIO_Handle*);
+    void (*Fini)(Hal_GPIO_Handle*);
     
-    void (*Set)(struct Hal_GPIO_Device*);
-    void (*Clr)(struct Hal_GPIO_Device*);
-    void (*Toggle)(struct Hal_GPIO_Device*);
+    void (*Set)(Hal_GPIO_Handle*);
+    void (*Clr)(Hal_GPIO_Handle*);
+    void (*Toggle)(Hal_GPIO_Handle*);
 
-    bool (*GetIntput)(struct Hal_GPIO_Device*);
-    bool (*GetOutput)(struct Hal_GPIO_Device*);
+    bool (*GetIntput)(Hal_GPIO_Handle*);
+    bool (*GetOutput)(Hal_GPIO_Handle*);
         
-    void (*Write)(struct Hal_GPIO_Device*, uint8_t*, uint8_t);
-    void (*Read)(struct Hal_GPIO_Device*, uint8_t*, uint8_t);
+    hal_err_t (*Write)(Hal_GPIO_Handle*, uint8_t*, uint8_t);
+    hal_err_t (*Read)(Hal_GPIO_Handle*, uint8_t*, uint8_t);
     
-    void (*Control)(struct Hal_GPIO_Device*, uint8_t, void*);
+    void (*Control)(Hal_GPIO_Handle*, uint8_t, void*);
 };
 
 /**
@@ -233,8 +233,8 @@ struct Map_GPIO_Opera
     void (*Init)(uint8_t, uint8_t, uint8_t, uint8_t);
     void (*Fini)(uint8_t, uint8_t);
    
-    void (*Write)(uint8_t, uint8_t, uint16_t, uint8_t);
-    void (*Read)(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
+    hal_err_t (*Write)(uint8_t, uint8_t, uint16_t, uint8_t);
+    hal_err_t (*Read)(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
 };
 
 /* Exported constants --------------------------------------------------------*/
@@ -245,19 +245,18 @@ struct Map_GPIO_Opera
  *******************************************************************************
  */
 #if USE_GPIO_COMPONENT
-extern __INLINE void Hal_GPIO_Module_Register(void);
-extern __INLINE void Hal_GPIO_Open(struct Hal_GPIO_Device*);
-extern __INLINE void Hal_GPIO_Close(struct Hal_GPIO_Device*);
-extern __INLINE void Hal_GPIO_Init(struct Hal_GPIO_Device*, void*);
-extern __INLINE void Hal_GPIO_Fini(struct Hal_GPIO_Device*);
-extern __INLINE void Hal_GPIO_Write(struct Hal_GPIO_Device*, uint8_t*, uint8_t);
-extern __INLINE void Hal_GPIO_Read(struct Hal_GPIO_Device*, uint8_t*, uint8_t);
-extern __INLINE void Hal_GPIO_Set(struct Hal_GPIO_Device*);
-extern __INLINE void Hal_GPIO_Clr(struct Hal_GPIO_Device*);
-extern __INLINE bool Hal_GPIO_GetIntputStatus(struct Hal_GPIO_Device*);
-extern __INLINE bool Hal_GPIO_GetOutputStatus(struct Hal_GPIO_Device*);
-extern __INLINE void Hal_GPIO_Toggle(struct Hal_GPIO_Device*);
-extern __INLINE void Hal_GPIO_Control(struct Hal_GPIO_Device*, uint8_t, void*);
+extern void Hal_GPIO_Open(Hal_GPIO_Handle*);
+extern void Hal_GPIO_Close(Hal_GPIO_Handle*);
+extern void Hal_GPIO_Init(Hal_GPIO_Handle*);
+extern void Hal_GPIO_Fini(Hal_GPIO_Handle*);
+extern hal_err_t Hal_GPIO_Write(Hal_GPIO_Handle*, uint8_t*, uint8_t);
+extern hal_err_t Hal_GPIO_Read(Hal_GPIO_Handle*, uint8_t*, uint8_t);
+extern void Hal_GPIO_Set(Hal_GPIO_Handle*);
+extern void Hal_GPIO_Clr(Hal_GPIO_Handle*);
+extern bool Hal_GPIO_GetIntputStatus(Hal_GPIO_Handle*);
+extern bool Hal_GPIO_GetOutputStatus(Hal_GPIO_Handle*);
+extern void Hal_GPIO_Toggle(Hal_GPIO_Handle*);
+extern void Hal_GPIO_Control(Hal_GPIO_Handle*, uint8_t, void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

@@ -52,33 +52,14 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
-#if USE_TIMER_COMPONENT
 /**
  *******************************************************************************
  * @brief      define map api
  *******************************************************************************
  */ 
-extern hal_err_t Map_Timer_Open(uint8_t);
-extern hal_err_t Map_Timer_Close(uint8_t);
-extern hal_err_t Map_Timer_Init(uint8_t, uint8_t, void*);
-extern hal_err_t Map_Timer_SetUpCallback(uint8_t, void (*)(void*), void*);
-extern hal_err_t Map_Timer_Start(uint8_t);
-extern hal_err_t Map_Timer_Stop(uint8_t);
-
-/**
- *******************************************************************************
- * @brief      define hal api
- *******************************************************************************
- */ 
-extern __INLINE hal_err_t Hal_Timer_Open(struct Hal_Timer_Device*);
-extern __INLINE hal_err_t Hal_Timer_Close(struct Hal_Timer_Device*);
-extern __INLINE hal_err_t Hal_Timer_Init(struct Hal_Timer_Device*);
-extern __INLINE hal_err_t Hal_Timer_SetUpCallback(struct Hal_Timer_Device*);
-extern __INLINE hal_err_t Hal_Timer_Start(struct Hal_Timer_Device*);
-extern __INLINE hal_err_t Hal_Timer_Stop(struct Hal_Timer_Device*);
-#endif
-
+extern const struct Map_Timer_Opera map_timer_api;
+    
+/* Exported functions --------------------------------------------------------*/
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

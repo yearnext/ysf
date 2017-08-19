@@ -118,26 +118,36 @@ enum
  *******************************************************************************
  */ 
 struct Hal_Timer_Opera;
-struct Hal_Timer_Device
+typedef struct
 {
     uint8_t Port;
-
-    struct Hal_Timer_Opera *Opera;
-};
-
-/**
- *******************************************************************************
- * @brief      define set timer time mode param structure
- *******************************************************************************
- */ 
-struct Hal_Timer_Config
-{
     uint8_t Priority;
     uint8_t Mode;
 	uint16_t Period;
 	uint16_t Prescaler;
 
 	struct Hal_Callback Callback;
+    
+    struct Hal_Timer_Opera *Opera;
+}Hal_Timer_Handle;
+
+/**
+ *******************************************************************************
+ * @brief      define timer opera interface
+ *******************************************************************************
+ */ 
+struct Hal_Timer_Opera
+{
+    void (*Open)(Hal_Timer_Handle*);
+    void (*Close)(Hal_Timer_Handle*);
+    
+    void (*Init)(Hal_Timer_Handle*);
+    void (*Fini)(Hal_Timer_Handle*);
+    
+    void (*SetUpCallback)(Hal_Timer_Handle*, void*);
+    
+    void (*Start)(Hal_Timer_Handle*);
+    void (*Stop)(Hal_Timer_Handle*);
 };
 
 /**
@@ -159,25 +169,6 @@ struct Map_Timer_Opera
     void (*Stop)(uint8_t);
 };
 
-/**
- *******************************************************************************
- * @brief      define timer opera interface
- *******************************************************************************
- */ 
-struct Hal_Timer_Opera
-{
-    void (*Open)(struct Hal_Timer_Device*);
-    void (*Close)(struct Hal_Timer_Device*);
-    
-    void (*Init)(struct Hal_Timer_Device*, void*);
-    void (*Fini)(struct Hal_Timer_Device*);
-    
-    void (*SetUpCallback)(struct Hal_Timer_Device*, void*);
-    
-    void (*Start)(struct Hal_Timer_Device*);
-    void (*Stop)(struct Hal_Timer_Device*);
-};
-
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -186,14 +177,14 @@ struct Hal_Timer_Opera
  *******************************************************************************
  */
 #if USE_TIMER_COMPONENT
-extern __INLINE void Hal_Timer_Module_Register(void);
-extern __INLINE void Hal_Timer_Open(struct Hal_Timer_Device*);
-extern __INLINE void Hal_Timer_Close(struct Hal_Timer_Device*);
-extern __INLINE void Hal_Timer_Init(struct Hal_Timer_Device*, void*);
-extern __INLINE void Hal_Timer_Fini(struct Hal_Timer_Device*);
-extern __INLINE void Hal_Timer_SetUpCallback(struct Hal_Timer_Device*, void*);
-extern __INLINE void Hal_Timer_Start(struct Hal_Timer_Device*);
-extern __INLINE void Hal_Timer_Stop(struct Hal_Timer_Device*);
+extern void Hal_Timer_Module_Register(void);
+extern void Hal_Timer_Open(Hal_Timer_Handle*);
+extern void Hal_Timer_Close(Hal_Timer_Handle*);
+extern void Hal_Timer_Init(Hal_Timer_Handle*);
+extern void Hal_Timer_Fini(Hal_Timer_Handle*);
+extern void Hal_Timer_SetUpCallback(Hal_Timer_Handle*, void*);
+extern void Hal_Timer_Start(Hal_Timer_Handle*);
+extern void Hal_Timer_Stop(Hal_Timer_Handle*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
