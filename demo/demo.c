@@ -1,21 +1,5 @@
 /**
  *******************************************************************************
- *                       Copyright (C) 2017  yearnext                          *
- *                                                                             *
- *    This program is free software; you can redistribute it and/or modify     *
- *    it under the terms of the GNU General Public License as published by     *
- *    the Free Software Foundation; either version 2 of the License, or        *
- *    (at your option) any later version.                                      *
- *                                                                             *
- *    This program is distributed in the hope that it will be useful,          *
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of           *
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
- *    GNU General Public License for more details.                             *
- *                                                                             *
- *    You should have received a copy of the GNU General Public License along  *
- *    with this program; if not, write to the Free Software Foundation, Inc.,  *
- *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
- *******************************************************************************
  * @file       demo.c                                                          *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
@@ -49,7 +33,7 @@
  * @brief       device port define
  *******************************************************************************
  */  
-static Hal_GPIO_Handle Led1 = 
+static Hal_GPIO_Handle Led = 
 {
     .Port = MCU_PORT_D,
     .Pin  = MCU_PIN_13,
@@ -57,49 +41,13 @@ static Hal_GPIO_Handle Led1 =
     .Mode = GPIO_PUSH_PULL_MODE,
 };
 
-static Hal_GPIO_Handle Led2 = 
-{
-    .Port = MCU_PORT_G,
-    .Pin  = MCU_PIN_14,
-    .Dir  = GPIO_DIR_HS_OUTPUT,
-    .Mode = GPIO_PUSH_PULL_MODE,
-};
-
-static Hal_GPIO_Handle Key1 = 
-{
-    .Port = MCU_PORT_E,
-    .Pin  = MCU_PIN_0,
-    .Dir  = GPIO_DIR_INTPUT,
-    .Mode = GPIO_PULL_UP_DOWN_MODE,
-};
-
-static Hal_GPIO_Handle Key2 = 
-{
-    .Port = MCU_PORT_C,
-    .Pin  = MCU_PIN_13,
-    .Dir  = GPIO_DIR_INTPUT,
-    .Mode = GPIO_PULL_UP_DOWN_MODE,
-};
-
 /**
  *******************************************************************************
  * @brief       timer variable define
  *******************************************************************************
  */ 
-static struct Fw_Task        Led1Task;
-static struct Fw_Timer       Led1Timer;
-
-static struct Fw_ProtoThread Led2Task;
-
-static struct Fw_Task        KeyTask;
-
-/**
- *******************************************************************************
- * @brief       signal variable define
- *******************************************************************************
- */
-static struct Fw_Signal Key1Signal;
-static struct Fw_Signal Key2Signal;
+static struct Fw_Task        LedTask;
+static struct Fw_Timer       LedTimer;
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -109,20 +57,20 @@ static struct Fw_Signal Key2Signal;
  * @brief       led1 blink function
  *******************************************************************************
  */
-void Led1_Task_Handle(uint32_t event, void *param);
+void Led_Task_Handle(uint32_t event, void *param);
 
-void App_Led1_Init(void)
+void App_Led_Init(void)
 {
-    Hal_GPIO_Init(&Led1);
+    Hal_GPIO_Init(&Led);
     
-    Fw_Task_Init(&Led1Task, "Led1 Task", 1, (void *)Led1_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
+    Fw_Task_Init(&LedTask, "Led Task", 1, (void *)Led_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
     
-    Fw_Timer_Init(&Led1Timer, "Led1 Timer");
-    Fw_Timer_SetEvent(&Led1Timer, &Led1Task, LED_BLINK_EVENT, (void *)&Led1);
-    Fw_Timer_Start(&Led1Timer, 1000, -1);
+    Fw_Timer_Init(&LedTimer, "Led Timer");
+    Fw_Timer_SetEvent(&LedTimer, &LedTask, LED_BLINK_EVENT, (void *)&Led);
+    Fw_Timer_Start(&LedTimer, 1000, -1);
 }
 
-void Led1_Task_Handle(uint32_t event, void *param)
+void Led_Task_Handle(uint32_t event, void *param)
 {
     Hal_GPIO_Handle *drv = (Hal_GPIO_Handle *)param;
     
@@ -144,128 +92,12 @@ void Led1_Task_Handle(uint32_t event, void *param)
 
 /**
  *******************************************************************************
- * @brief       led2 blink function
- *******************************************************************************
- */
-_PT_THREAD(Led2_Task_Handle);
-
-void App_Led2_Init(void)
-{
-    Hal_GPIO_Init(&Led2);
-
-    Fw_PT_Init(&Led2Task, "Led2 Task", Led2_Task_Handle, 1);
-    Fw_PT_Open(&Led2Task);
-}
-
-_PT_THREAD(Led2_Task_Handle)
-{
-    Fw_PT_Begin();
-    
-    while(1)
-    {
-        Hal_GPIO_Toggle(&Led2);
-        
-        Fw_PT_Delay(500); 
-    }
-    
-    Fw_PT_End();
-}
-
-/**
- *******************************************************************************
- * @brief       key scan function
- *******************************************************************************
- */
-uint8_t Key1_Scan_Function(void)
-{
-    return (Hal_GPIO_GetIntputStatus(&Key1) == true) ? (DEMO_KEY1_SIGNAL) : (0);
-}
-
-uint8_t Key2_Scan_Function(void)
-{
-    return (Hal_GPIO_GetIntputStatus(&Key2) == true) ? (DEMO_KEY2_SIGNAL) : (0);
-}
-
-/**
- *******************************************************************************
- * @brief       key init function
- *******************************************************************************
- */
-void App_Key1_Init(void)
-{
-    Hal_GPIO_Init(&Key1);
-    
-    Fw_Signal_Init(&Key1Signal, "Key1 Signal", &KeyTask, Key1_Scan_Function);
-    Fw_Signal_Open(&Key1Signal, REG_RELEASE_EDGE_STATE, 50);
-}
-
-void App_Key2_Init(void)
-{
-    Hal_GPIO_Init(&Key2);
-    
-    Fw_Signal_Init(&Key2Signal, "Key2 Signal", &KeyTask, Key2_Scan_Function);
-    Fw_Signal_Open(&Key2Signal, REG_RELEASE_EDGE_STATE, 50);
-}
-
-void App_KeyTask_Handle(uint32_t event, void *param);
-void App_KeyTask_Init(void)
-{
-    Fw_Task_Init(&Led1Task, "Key Task", 1, (void *)App_KeyTask_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
-}
-
-/**
- *******************************************************************************
- * @brief       key handle function
- *******************************************************************************
- */
-void App_KeyTask_Handle(uint32_t event, void *param)
-{
-    switch(event)
-    {
-        //< signal event handle
-        case FW_SIGNAL_HANDLE_EVENT:
-        {
-            struct Fw_Signal *signal = (struct Fw_Signal *)param;
-            
-            //< key handle
-            switch(signal->Value)
-            {
-                case DEMO_KEY1_SIGNAL:
-                    if(signal->State == SIGNAL_RELEASE_EDGE_STATE)
-                    {
-                        
-                    }
-                    break;
-                case DEMO_KEY2_SIGNAL:
-                    if(signal->State == SIGNAL_RELEASE_EDGE_STATE)
-                    {
-                        
-                    }
-                    break;
-                default:
-                    break;
-            }
-            
-            break;
-        }
-        default:
-            break;
-    }
-}
-
-/**
- *******************************************************************************
  * @brief       user init function
  *******************************************************************************
  */
 void App_User_Init(void)
 {
-    App_Led1_Init();
-    App_Led2_Init();
-    
-    App_KeyTask_Init();
-    App_Key1_Init();
-    App_Key2_Init();
+    App_Led_Init();
 }
 
 /** @}*/     /* key control demo  */

@@ -350,33 +350,27 @@ void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
  *******************************************************************************
  */
 __STATIC_INLINE
-fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event *event)
+fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event **event)
 {
     //< 1. check task is vaild
     _FW_ASSERT(IS_TASK_PRIORITY_INVAILD(priority));
-
+    _FW_ASSERT(IS_PTR_NULL(event));
+    
     //< 2. check queue is vaild
     struct Fw_TaskMgr *queue = &TaskBlock.TaskMgrBlock[priority];
     
     //< 3. get event
-    struct Fw_Task_Event *getEvent = NULL;
-    
     Fw_sLinkList_Pop((struct Fw_sLinkList_Block *)&queue->LinkList,
-                     (struct Fw_sLinkList**)&getEvent->LinkList);
+                     (struct Fw_sLinkList**)event);
     
     //< 4. clear event count
     if(queue->Num > 0)
     {
         queue->Num--;
     }
-    
-    //< 5. write to buffer
-    event->Event = getEvent->Event;
-    event->Param = getEvent->Param;
-    event->Task  = getEvent->Task;
-    
-    //< 6. free memory
-    EventFree(getEvent);
+
+    //< 5. free memory
+    EventFree((struct Fw_Task_Event *)*event);
     
     return FW_ERR_NONE;
 }
@@ -502,7 +496,7 @@ void Fw_Task_Dispatch(void)
     {
         if(TaskBlock.TaskMgrBlock[i].Num > 0)
         {
-            ReadTaskEventQueue(i, event);
+            ReadTaskEventQueue(i, (struct Fw_Task_Event **)&event);
             break;
         }
     }

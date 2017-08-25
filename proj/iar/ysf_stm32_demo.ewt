@@ -2466,6 +2466,15 @@
             </file>
         </group>
         <group>
+            <name>spi</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_spi.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_spi.h</name>
+            </file>
+        </group>
+        <group>
             <name>timer</name>
             <file>
                 <name>$PROJ_DIR$\..\..\hal\hal_timer.c</name>
@@ -2495,6 +2504,15 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_gpio.h</name>
+                </file>
+            </group>
+            <group>
+                <name>spi</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_spi.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_spi.h</name>
                 </file>
             </group>
             <group>

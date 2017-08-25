@@ -362,7 +362,7 @@ hal_err_t Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num
     //< update cache
     for(; num--; pos++)
     {
-        if(wrData & (1 << pos))
+        if(wrData & 0x01)
         {
             portData |= (1 << pos);
         }
@@ -370,10 +370,12 @@ hal_err_t Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num
         {
             portData &= ~(1 << pos);
         }
+        
+        wrData >>= 1;
     }
     
     //< update param
-    _SET_REG(gpio->BSRR, portData);
+    _WRITE_REG(gpio->ODR, portData);
     
     return HAL_ERR_NONE;
 }
@@ -406,9 +408,9 @@ hal_err_t Map_GPIO_Read(uint8_t port, uint8_t dir, uint8_t pos, uint16_t *rdData
     //< update register data
     for(; num--; pos++)
     {
-        if (portData & (1 << pos))
+        if (_READ_BIT(portData, pos))
         {
-            *rdData |= 1 << pos;
+            *rdData |= 0x01;
         }
     }
     

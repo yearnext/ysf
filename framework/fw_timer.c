@@ -322,7 +322,7 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
             //< 5. detect timer is active
             if(timer->Cycle == FW_TIMER_CYCLE_MODE || --timer->Cycle)
             {
-                timer->TimeOutTick = timer->InitTick + Fw_Tick_GetInfo();
+                timer->TimeOutTick = timer->InitTick + tick;
             }
             else
             {
@@ -340,12 +340,9 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
             {
                 Fw_Task_PostMessage(timer->Task, timer->TaskEvent, timer->TaskParam);
             }
-            
-            //< 8. clear timer block
-            memset(timer, 0, sizeof(struct Fw_Timer));
         }
         
-        //< 9. poll timer link list
+        //< 8. poll timer link list
         timer = timer->LinkList.Next;
     }
     

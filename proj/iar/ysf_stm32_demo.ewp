@@ -32,11 +32,11 @@
                 </option>
                 <option>
                     <name>Input description</name>
-                    <state>Automatic choice of formatter.</state>
+                    <state>Automatic choice of formatter, without multibyte support.</state>
                 </option>
                 <option>
                     <name>Output description</name>
-                    <state>Automatic choice of formatter.</state>
+                    <state>Automatic choice of formatter, without multibyte support.</state>
                 </option>
                 <option>
                     <name>GOutputBinary</name>
@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32F103ZE	ST STM32F103ZE</state>
+                    <state>STM32F103C8	ST STM32F103C8</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32F103ZE	ST STM32F103ZE</state>
+                    <state>STM32F103C8	ST STM32F103C8</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -2185,6 +2185,15 @@
             </file>
         </group>
         <group>
+            <name>spi</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_spi.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_spi.h</name>
+            </file>
+        </group>
+        <group>
             <name>timer</name>
             <file>
                 <name>$PROJ_DIR$\..\..\hal\hal_timer.c</name>
@@ -2214,6 +2223,15 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_gpio.h</name>
+                </file>
+            </group>
+            <group>
+                <name>spi</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_spi.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_spi.h</name>
                 </file>
             </group>
             <group>
