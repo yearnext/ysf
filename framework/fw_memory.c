@@ -100,7 +100,8 @@ void Fw_Mem_InitComponent(void)
  */
 void *Fw_Mem_Alloc(uint32_t size)
 {
-    return malloc(size);
+//    return malloc(size);
+    return NULL;
 }
 
 /**
@@ -113,11 +114,11 @@ void *Fw_Mem_Alloc(uint32_t size)
  */
 void Fw_Mem_Free(void *memory)
 {
-#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
-    free(memory);
-#else
-//    FreeHeapMemory(&Managemrnt, memory);
-#endif
+//#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
+//    free(memory);
+//#else
+////    FreeHeapMemory(&Managemrnt, memory);
+//#endif
 }
 
 ///**

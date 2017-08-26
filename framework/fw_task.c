@@ -68,6 +68,8 @@
 #define SetEventQueueUseFlag(a, b, c)                   ClrBitMap((a), (b), (c))
 #define ClrEvenrQueueUseFlag(a, b, c)                   SetBitMap((a), (b), (c))
 
+#define FW_TASK_QUEUE_MAX                 (CalUseMemorySize(FW_TASK_QUEUE_SIZE))
+
 /* Private typedef -----------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -121,7 +123,7 @@ struct
     {
         struct Fw_Task_Event Event[FW_TASK_QUEUE_SIZE];
         
-        uint8_t FreeSpaceTab[CalUseMemorySize(FW_TASK_QUEUE_SIZE)];
+        uint8_t FreeSpaceTab[FW_TASK_QUEUE_MAX];
         uint32_t FreeSpaceGroup;
     }Queue;
     
@@ -136,7 +138,7 @@ struct
  * @brief       bit map
  *******************************************************************************
  */
-const uint8_t EventQueueBitMap[] =
+const uint8_t _BitMap[] =
 {
     /* 00 */ 0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
     /* 10 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
@@ -188,8 +190,9 @@ void Fw_Task_InitComponent(void)
     memset(&TaskBlock, 0, sizeof(TaskBlock));
     
     //< init event queue
-    memset(&TaskBlock.Queue.FreeSpaceTab, 0xFF, sizeof(TaskBlock.Queue.FreeSpaceTab));
-    memset(&TaskBlock.Queue.FreeSpaceGroup, 0xFF, sizeof(TaskBlock.Queue.FreeSpaceGroup));
+
+    memset(&TaskBlock.Queue.FreeSpaceTab, 0xFF, FW_TASK_QUEUE_SIZE);
+    memset(&TaskBlock.Queue.FreeSpaceGroup, 0xFF, FW_TASK_QUEUE_SIZE);
 }
 
 /**
@@ -271,9 +274,34 @@ void SetBitMap(uint8_t offset, uint8_t *tab, uint32_t *group)
 __STATIC_INLINE
 struct Fw_Task_Event *EventAlloc(void)
 {
-    uint8_t x = EventQueueBitMap[TaskBlock.Queue.FreeSpaceGroup];
-    uint8_t y = EventQueueBitMap[TaskBlock.Queue.FreeSpaceTab[x]];
-    uint8_t prio = (x << 3) | y;
+    uint32_t temp = 4;
+    uint8_t x;
+    uint8_t y;
+    uint8_t prio;
+    
+    if ((temp = TaskBlock.Queue.FreeSpaceGroup & 0xFFUL) != 0UL)
+    {
+        x = _BitMap[temp];
+    }
+    else if ((temp = (TaskBlock.Queue.FreeSpaceGroup & 0xFF00UL) >> 8) != 0UL)
+    {
+        x = _BitMap[temp] + 8;
+    }
+    if ((temp = (TaskBlock.Queue.FreeSpaceGroup & 0xFF0000UL) >> 16) != 0UL)
+    {
+        x = _BitMap[temp] + 16;
+    }
+    else if ((temp = (TaskBlock.Queue.FreeSpaceGroup & 0xFF00000UL) >> 24) != 0UL)
+    {
+        x = _BitMap[temp] + 24;
+    }
+    else
+    {
+        return NULL;
+    }
+    
+    y = _BitMap[TaskBlock.Queue.FreeSpaceTab[x]];
+    prio = (x << 3) | y;
     
     if(prio >= FW_TASK_QUEUE_SIZE)
     {

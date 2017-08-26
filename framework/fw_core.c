@@ -69,7 +69,7 @@ __WEAK void App_User_Init(void)
  */
 __INLINE void Fw_Core_Init(void)
 {   
-    __ATOM_ACTIVE_BEGIN();
+//    __ATOM_ACTIVE_BEGIN();
     
 #ifdef USE_FRAMEWORK_TASK_COMPONENT 
     Fw_Task_InitComponent();
@@ -98,7 +98,7 @@ __INLINE void Fw_Core_Init(void)
 
     App_User_Init();
     
-    __ATOM_ACTIVE_END();
+//    __ATOM_ACTIVE_END();
 }
 
 /**
