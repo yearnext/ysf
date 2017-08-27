@@ -129,6 +129,8 @@ static struct Fw_UartStream DebugStream =
     .Rx.Tx.InOut = Fw_UartStream_RxIn,
     .Rx.Tx.IsReady = true,
     .Rx.Tx.Param = (void *)&DebugStream,
+        
+    .State = UART_STREAM_INIT_STATE,
 };
 #endif
 

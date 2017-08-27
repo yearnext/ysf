@@ -274,7 +274,7 @@ void SetBitMap(uint8_t offset, uint8_t *tab, uint32_t *group)
 __STATIC_INLINE
 struct Fw_Task_Event *EventAlloc(void)
 {
-    uint32_t temp = 4;
+    uint32_t temp;
     uint8_t x;
     uint8_t y;
     uint8_t prio;
@@ -287,7 +287,7 @@ struct Fw_Task_Event *EventAlloc(void)
     {
         x = _BitMap[temp] + 8;
     }
-    if ((temp = (TaskBlock.Queue.FreeSpaceGroup & 0xFF0000UL) >> 16) != 0UL)
+    else if ((temp = (TaskBlock.Queue.FreeSpaceGroup & 0xFF0000UL) >> 16) != 0UL)
     {
         x = _BitMap[temp] + 16;
     }
@@ -536,7 +536,7 @@ void Fw_Task_Dispatch(void)
     }
     
     //< 3. event handle
-    if(IS_PTR_NULL(event) && event->Task->Status == 0)
+    if(IS_PTR_NULL(event) || event->Task->Status == 0)
     {
         Fw_EmptyTask_Handle();
     }

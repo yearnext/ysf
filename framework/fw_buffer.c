@@ -185,6 +185,8 @@ __INLINE fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer
             }
         }
 
+        rb->Len += writeSize;
+        
         return FW_ERR_NONE;
     }
 
@@ -235,7 +237,9 @@ __INLINE fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer *rb, uint8_t *readBuffer, 
                 readBuffer[i] = rb->Buffer[rb->Head++];
             }
         }
-
+        
+        rb->Len -= readSize;
+        
         return FW_ERR_NONE;
     }
 

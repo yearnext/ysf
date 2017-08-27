@@ -237,17 +237,21 @@ fw_err_t Fw_Timer_Stop(struct Fw_Timer *timer)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     
-    Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList, \
-                        (struct Fw_dLinkList*)&timer->LinkList);
-    
-    memset(timer, 0, sizeof(struct Fw_Timer));
-    
-    if(TimerBlock.Num > 0)
+    if(Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList, \
+                           (struct Fw_dLinkList*)&timer->LinkList)            \
+       == FW_ERR_NONE)
     {
-        TimerBlock.Num--;
+        memset(timer, 0, sizeof(struct Fw_Timer));
+        
+        if(TimerBlock.Num > 0)
+        {
+            TimerBlock.Num--;
+        }
+        
+        return FW_ERR_NONE;
     }
     
-    return FW_ERR_NONE;
+    return FW_ERR_FAIL;
 }
 
 /**
@@ -308,7 +312,7 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
     _FW_ASSERT(IS_PTR_NULL(timer));
 
     //< 2. poll timer
-    for(i=0; i<TimerBlock.Num; i++)
+    for(i=0; i<TimerBlock.Num && IS_PTR_NULL(timer); i++)
     {
         //< 3. clear sleep timer
         if(timer->Cycle == 0)

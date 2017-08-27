@@ -118,7 +118,9 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>?????</Name>
+          <Name>P?
+?UwP?
+</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -128,7 +130,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U20080643 -O14 -S8 -ZTIFSpeedSel50000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight JTAG-DP") -D00(3BA00477) -L00(4) -N01("Unknown JTAG device") -D01(06414041) -L01(5) -TO18 -TC10000000 -TP21 -TDS8004 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F10x_512.FLM -FS08000000 -FL080000 -FP0($$Device:STM32F103ZE$Flash\STM32F10x_512.FLM)</Name>
+          <Name>-U140723718 -O78 -S0 -ZTIFSpeedSel20000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(1BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8004 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F10x_512.FLM -FS08000000 -FL080000 -FP0($$Device:STM32F103ZE$Flash\STM32F10x_512.FLM)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -138,7 +140,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>ARMRTXEVENTFLAGS</Key>
-          <Name>-L70 -Z18 -C0 -M0 -T1</Name>
+          <Name>-L70 -Z12 -C0 -M0 -T1</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -155,286 +157,46 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>505</LineNumber>
+          <LineNumber>97</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226642</Address>
+          <Address>134224968</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
+          <Filename>..\..\demo\demo.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../framework/fw_task.c\505</Expression>
+          <Expression>\\ysf_stm32_demo\../../demo/demo.c\97</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>135</LineNumber>
+          <LineNumber>77</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134236672</Address>
+          <Address>134231158</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\framework\fw_core.c</Filename>
+          <Filename>..\..\demo\demo.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../framework/fw_core.c\135</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>328</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134235228</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../framework/fw_task.c\328</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>318</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134235182</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../framework/fw_task.c\318</Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>274</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134224976</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\ysf_stm32_demo\../../framework/fw_task.c\274</Expression>
-        </Bp>
-        <Bp>
-          <Number>5</Number>
-          <Type>0</Type>
-          <LineNumber>275</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>6</Number>
-          <Type>0</Type>
-          <LineNumber>330</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>7</Number>
-          <Type>0</Type>
-          <LineNumber>340</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>8</Number>
-          <Type>0</Type>
-          <LineNumber>517</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>9</Number>
-          <Type>0</Type>
-          <LineNumber>276</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>10</Number>
-          <Type>0</Type>
-          <LineNumber>278</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>11</Number>
-          <Type>0</Type>
-          <LineNumber>334</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>12</Number>
-          <Type>0</Type>
-          <LineNumber>344</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>13</Number>
-          <Type>0</Type>
-          <LineNumber>346</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>14</Number>
-          <Type>0</Type>
-          <LineNumber>356</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>15</Number>
-          <Type>0</Type>
-          <LineNumber>521</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>16</Number>
-          <Type>0</Type>
-          <LineNumber>533</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\framework\fw_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\ysf_stm32_demo\../../demo/demo.c\77</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Fw_Tick_Task</ItemText>
+          <ItemText>TimerBlock</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>BufferCache</ItemText>
+          <ItemText>SystemTick,0x10</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
@@ -444,7 +206,17 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>TaskBlock,0x10</ItemText>
+          <ItemText>DebugStream</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>event</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>BufferCache</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>

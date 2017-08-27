@@ -49,6 +49,8 @@ static Hal_GPIO_Handle Led =
 static struct Fw_Task        LedTask;
 static struct Fw_Timer       LedTimer;
 
+static struct Fw_Timer       PutTimer;
+
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
@@ -67,7 +69,7 @@ void App_Led_Init(void)
     
     Fw_Timer_Init(&LedTimer, "Led Timer");
     Fw_Timer_SetEvent(&LedTimer, &LedTask, LED_BLINK_EVENT, (void *)&Led);
-    Fw_Timer_Start(&LedTimer, 1000, -1);
+    Fw_Timer_Start(&LedTimer, 500, -1);
 }
 
 void Led_Task_Handle(uint32_t event, void *param)
@@ -90,6 +92,18 @@ void Led_Task_Handle(uint32_t event, void *param)
     }
 }
 
+void App_Put_Callback(void *param)
+{
+    log("Hello World!\r\n");
+}
+
+void App_Put_Init(void)
+{
+    Fw_Timer_Init(&PutTimer, "Put User Message Timer");
+    Fw_Timer_SetCallback(&PutTimer, App_Put_Callback, NULL);
+    Fw_Timer_Start(&PutTimer, 1000, -1);
+}
+
 /**
  *******************************************************************************
  * @brief       user init function
@@ -98,6 +112,7 @@ void Led_Task_Handle(uint32_t event, void *param)
 void App_User_Init(void)
 {
     App_Led_Init();
+    App_Put_Init();
 }
 
 /** @}*/     /* key control demo  */

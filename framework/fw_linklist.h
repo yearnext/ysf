@@ -97,8 +97,8 @@ struct Fw_sLinkList_Block
 
 struct Fw_dLinkList
 {
-    struct Fw_dLinkList *Next;
     struct Fw_dLinkList *Last;
+    struct Fw_dLinkList *Next;
 };
 
 struct Fw_dLinkList_Block
