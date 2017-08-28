@@ -154,18 +154,8 @@ const struct Map_Uart_Opera map_uart_api =
  * @brief       define uart tx isr call back
  *******************************************************************************
  */
-static struct Hal_Callback UartTxCallback[_dimof(Uart)];
-
-/**
- *******************************************************************************
- * @brief       define uart rx isr call back
- *******************************************************************************
- */
-static struct 
-{
-    void (*Callback)(void*, uint8_t);
-    void *Param;
-}UartRxCallback[_dimof(Uart)];
+static Hal_Callback_t UartTxCallback[_dimof(Uart)];
+static Hal_Callback_t UartRxCallback[_dimof(Uart)];
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -189,25 +179,43 @@ void Map_Uart_Open(uint8_t port)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
 
+#ifdef USART1
     if (port == MCU_UART_1)
     {
         LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1);
     }
+#endif
+
+#ifdef USART2
     else if (port == MCU_UART_2)
     {
         LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2);
     }
+#endif
+    
+#ifdef USART3
     else if (port == MCU_UART_3)
     {
         LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
     }    
+#endif
+    
+#ifdef UART4
     else if (port == MCU_UART_4)
     {
         LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_UART4);
     }    
-    else
+#endif
+    
+#ifdef UART5
+    else if (port == MCU_UART_5)
     { 
         LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_UART5);
+    }
+#endif
+    else
+    {
+        //< do nothing!
     }
 }
 
@@ -235,12 +243,13 @@ void Map_Uart_Close(uint8_t port)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_Port_Switch(uint8_t port, Hal_Uart_Handle *dev)
+void _Uart_Port_Switch(uint8_t port, Hal_Device_Uart *drv)
 {
     switch (port)
     {
+#ifdef USART1
         case MCU_UART_1:
-            if (dev->Group == 0)
+            if (drv->Config.Group == 0)
             {
                 LL_GPIO_AF_DisableRemap_USART1();
             }
@@ -249,8 +258,11 @@ void _Uart_Port_Switch(uint8_t port, Hal_Uart_Handle *dev)
                 LL_GPIO_AF_EnableRemap_USART1();
             }
             break;
+#endif
+            
+#ifdef USART2
         case MCU_UART_2:
-            if (dev->Group == 0)
+            if (drv->Config.Group == 0)
             {
                 LL_GPIO_AF_DisableRemap_USART2();
             }
@@ -259,12 +271,15 @@ void _Uart_Port_Switch(uint8_t port, Hal_Uart_Handle *dev)
                 LL_GPIO_AF_EnableRemap_USART2();
             }
             break;
+#endif
+            
+#ifdef USART3
         case MCU_UART_3:
-            if (dev->Group == 0)
+            if (drv->Config.Group == 0)
             {
                 LL_GPIO_AF_DisableRemap_USART3();
             }
-            else if (dev->Group == 1)
+            else if (drv->Config.Group == 1)
             {
                 LL_GPIO_AF_RemapPartial_USART3();
             }
@@ -273,6 +288,7 @@ void _Uart_Port_Switch(uint8_t port, Hal_Uart_Handle *dev)
                 LL_GPIO_AF_EnableRemap_USART3();
             }
             break;
+#endif
         default:
             break;
     }
@@ -287,21 +303,22 @@ void _Uart_Port_Switch(uint8_t port, Hal_Uart_Handle *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _Uart_GPIO_Init(uint8_t port, Hal_Uart_Handle *dev)
+void _Uart_GPIO_Init(uint8_t port, Hal_Device_Uart *drv)
 {
-    Hal_GPIO_Handle txPort;
-    Hal_GPIO_Handle rxPort;
+    Hal_Device_GPIO txPort;
+    Hal_Device_GPIO rxPort;
 
     txPort.Dir = GPIO_DIR_HS_OUTPUT;
     txPort.Mode = GPIO_AF_PUSH_PULL_MODE;
 
     rxPort.Dir = GPIO_DIR_INTPUT;
-    rxPort.Mode = GPIO_PULL_UP_DOWN_MODE;
+    rxPort.Mode = GPIO_FLOAT_MODE;
     
     switch (port)
     {
+#ifdef USART1
         case MCU_UART_1:
-            if (dev->Group == 0)
+            if (drv->Config.Group == 0)
             {
                 txPort.Port = MCU_PORT_A;
                 txPort.Pin  = MCU_PIN_9;
@@ -318,8 +335,11 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Uart_Handle *dev)
                 rxPort.Pin  = MCU_PIN_7;
             }
             break;
+#endif
+            
+#ifdef USART2
         case MCU_UART_2:
-            if (dev->Group == 0)
+            if (drv->Config.Group == 0)
             {
                 txPort.Port = MCU_PORT_A;
                 txPort.Pin  = MCU_PIN_2;
@@ -336,8 +356,11 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Uart_Handle *dev)
                 rxPort.Pin  = MCU_PIN_6;
             }
             break;
+#endif
+            
+#ifdef USART3
         case MCU_UART_3:
-            if (dev->Group == 0)
+            if (drv->Config.Group == 0)
             {
                 txPort.Port = MCU_PORT_B;
                 txPort.Pin  = MCU_PIN_10;
@@ -345,7 +368,7 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Uart_Handle *dev)
                 rxPort.Port = MCU_PORT_B;  
                 rxPort.Pin  = MCU_PIN_11;
             }
-            else if (dev->Group == 1)
+            else if (drv->Config.Group == 1)
             {
                 txPort.Port = MCU_PORT_C;
                 txPort.Pin  = MCU_PIN_10;
@@ -362,6 +385,7 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Uart_Handle *dev)
                 rxPort.Pin  = MCU_PIN_9;
             }
             break;
+#endif
         default:
             break;
     }
@@ -372,7 +396,7 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Uart_Handle *dev)
     map_gpio_api.Open(rxPort.Port);
     map_gpio_api.Init(rxPort.Port, rxPort.Pin, rxPort.Dir, rxPort.Mode);
     
-    _Uart_Port_Switch(port, dev);
+    _Uart_Port_Switch(port, drv);
 }
 
 /**
@@ -390,16 +414,16 @@ void Map_Uart_Init(uint8_t port, void *param)
     hal_assert(IS_PTR_NULL(config));
     
     LL_USART_InitTypeDef LL_USART_InitStructure;
-    Hal_Uart_Handle *dev = (Hal_Uart_Handle *)param;
+    Hal_Device_Uart *drv = (Hal_Device_Uart *)param;
     
     //< init uart gpio
-    _Uart_GPIO_Init(port, dev);
+    _Uart_GPIO_Init(port, drv);
     
     //< init uart baud rate
-    LL_USART_InitStructure.BaudRate = dev->Baud;
+    LL_USART_InitStructure.BaudRate = drv->Config.Baud;
     
     //< init uart word len
-    if(dev->WordLen == MCU_UART_WORD_LEN_8B)
+    if(drv->Config.WordLen == MCU_UART_WORD_LEN_8B)
     {
         LL_USART_InitStructure.DataWidth = LL_USART_DATAWIDTH_8B;
     }
@@ -409,15 +433,15 @@ void Map_Uart_Init(uint8_t port, void *param)
     }
     
     //< set uart stop bits
-    if(dev->StopBits == MCU_UART_STOP_BITS_0_5)
+    if(drv->Config.StopBits == MCU_UART_STOP_BITS_0_5)
     {
         LL_USART_InitStructure.StopBits = LL_USART_STOPBITS_0_5;
     }
-    else if(dev->StopBits == MCU_UART_STOP_BITS_1)
+    else if(drv->Config.StopBits == MCU_UART_STOP_BITS_1)
     {
         LL_USART_InitStructure.StopBits = LL_USART_STOPBITS_1;
     }
-    else if(dev->StopBits == MCU_UART_STOP_BITS_1_5)
+    else if(drv->Config.StopBits == MCU_UART_STOP_BITS_1_5)
     {
         LL_USART_InitStructure.StopBits = LL_USART_STOPBITS_1_5;
     }
@@ -427,11 +451,11 @@ void Map_Uart_Init(uint8_t port, void *param)
     }
     
     //< set uart parity
-	if(dev->Parity == MCU_UART_PARTY_NONE)
+	if(drv->Config.Parity == MCU_UART_PARTY_NONE)
     {
         LL_USART_InitStructure.Parity = LL_USART_PARITY_NONE;
     }
-    else if(dev->Parity == MCU_UART_PARTY_EVEN)
+    else if(drv->Config.Parity == MCU_UART_PARTY_EVEN)
     {
         LL_USART_InitStructure.Parity = LL_USART_PARITY_EVEN;
     }
@@ -444,44 +468,47 @@ void Map_Uart_Init(uint8_t port, void *param)
     LL_USART_InitStructure.TransferDirection = LL_USART_DIRECTION_NONE;
 
     //< set uart tx state
-    if(dev->TxConfig != MCU_UART_DISABLE_TX)
+    if(drv->Config.TxConfig != MCU_UART_DISABLE_TX)
     {
         LL_USART_InitStructure.TransferDirection = LL_USART_DIRECTION_TX;
     }
     
     //< set uart rx state
-    if(dev->RxConfig == MCU_UART_DISABLE_RX)
+    if(drv->Config.RxConfig != MCU_UART_DISABLE_RX)
     {
-        LL_USART_InitStructure.TransferDirection   |= LL_USART_DIRECTION_RX;
+        LL_USART_InitStructure.TransferDirection |= LL_USART_DIRECTION_RX;
     }
 
     //< disable hardware flow control
     LL_USART_InitStructure.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
 
     //< config uart call back
-    UartTxCallback[port].Callback = dev->TxCallback.Callback;
-    UartTxCallback[port].Param    = dev->TxCallback.Param;
-    UartRxCallback[port].Callback = dev->RxCallback.Callback;
-    UartRxCallback[port].Param    = dev->RxCallback.Param;
+    UartTxCallback[port].Tx = drv->Config.TxCallback.Tx;
+    UartTxCallback[port].Param    = drv->Config.TxCallback.Param;
+    UartRxCallback[port].Rx = drv->Config.RxCallback.Rx;
+    UartRxCallback[port].Param    = drv->Config.RxCallback.Param;
     
     //< init uart
     LL_USART_DeInit(Uart[port]);
     LL_USART_Init(Uart[port], &LL_USART_InitStructure);
     
-    if(dev->TxConfig == MCU_UART_ENABLE_TX_ISR)
+    if(drv->Config.TxConfig == MCU_UART_ENABLE_TX_ISR)
     {
         LL_USART_ClearFlag_TC(Uart[port]);
         LL_USART_EnableIT_TC(Uart[port]);
     }
     
-    if(dev->RxConfig == MCU_UART_ENABLE_RX_ISR)
+    if(drv->Config.RxConfig == MCU_UART_ENABLE_RX_ISR)
     {
         LL_USART_ClearFlag_RXNE(Uart[port]);
         LL_USART_EnableIT_RXNE(Uart[port]);
     }
 	
-    NVIC_EnableIRQ(UartIrqn[port]); 
-    NVIC_SetPriority(UartIrqn[port], dev->Priority);  
+    if(drv->Config.TxConfig == MCU_UART_ENABLE_TX_ISR && drv->Config.RxConfig == MCU_UART_ENABLE_RX_ISR)
+    {
+        NVIC_EnableIRQ(UartIrqn[port]); 
+        NVIC_SetPriority(UartIrqn[port], drv->Config.Priority);  
+    }
     
     LL_USART_Enable(Uart[port]);
 }
@@ -500,7 +527,7 @@ void Map_Uart_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
-    UartTxCallback[port].Callback = callback;
+    UartTxCallback[port].Tx = callback;
     UartTxCallback[port].Param = param;
 }
 
@@ -518,7 +545,7 @@ void Map_Uart_SetRxCallback(uint8_t port, void (*callback)(void*, uint8_t), void
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
-    UartRxCallback[port].Callback = callback;
+    UartRxCallback[port].Rx = callback;
     UartRxCallback[port].Param = param;
 }
 
@@ -702,17 +729,17 @@ void USART1_IRQHandler(void)
 {
     if (Map_Uart_IsTxComplet(MCU_UART_1) == true)
     {
-        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_1].Callback))
+        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_1].Tx))
         {
-            UartTxCallback[MCU_UART_1].Callback(UartTxCallback[MCU_UART_1].Param);
+            UartTxCallback[MCU_UART_1].Tx(UartTxCallback[MCU_UART_1].Param);
         }
     }
     
     if (Map_Uart_IsRxComplet(MCU_UART_1) == true)
     {
-        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_1].Callback))
+        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_1].Rx))
         {
-            UartRxCallback[MCU_UART_1].Callback(UartRxCallback[MCU_UART_1].Param, Uart[MCU_UART_1]->DR);
+            UartRxCallback[MCU_UART_1].Rx(UartRxCallback[MCU_UART_1].Param, Uart[MCU_UART_1]->DR);
         }
     }
 }
@@ -731,17 +758,17 @@ void USART2_IRQHandler(void)
 {
     if (Map_Uart_IsTxComplet(MCU_UART_2) == true)
     {
-        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_2].Callback))
+        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_2].Tx))
         {
-            UartTxCallback[MCU_UART_2].Callback(UartTxCallback[MCU_UART_2].Param);
+            UartTxCallback[MCU_UART_2].Tx(UartTxCallback[MCU_UART_2].Param);
         }
     }
     
     if (Map_Uart_IsRxComplet(MCU_UART_2) == true)
     {
-        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_2].Callback))
+        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_2].Rx))
         {
-            UartRxCallback[MCU_UART_2].Callback(UartRxCallback[MCU_UART_2].Param, Uart[MCU_UART_2]->DR);
+            UartRxCallback[MCU_UART_2].Rx(UartRxCallback[MCU_UART_2].Param, Uart[MCU_UART_2]->DR);
         }
     }
 }
@@ -760,17 +787,17 @@ void USART3_IRQHandler(void)
 {
     if (Map_Uart_IsTxComplet(MCU_UART_3) == true)
     {
-        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_3].Callback))
+        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_3].Tx))
         {
-            UartTxCallback[MCU_UART_3].Callback(UartTxCallback[MCU_UART_3].Param);
+            UartTxCallback[MCU_UART_3].Tx(UartTxCallback[MCU_UART_3].Param);
         }
     }
     
     if (Map_Uart_IsRxComplet(MCU_UART_3) == true)
     {
-        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_3].Callback))
+        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_3].Rx))
         {
-            UartRxCallback[MCU_UART_3].Callback(UartRxCallback[MCU_UART_3].Param, Uart[MCU_UART_3]->DR);
+            UartRxCallback[MCU_UART_3].Rx(UartRxCallback[MCU_UART_3].Param, Uart[MCU_UART_3]->DR);
         }
     }
 }
@@ -789,17 +816,17 @@ void UART4_IRQHandler(void)
 {
     if (Map_Uart_IsTxComplet(MCU_UART_4) == true)
     {
-        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_4].Callback))
+        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_4].Tx))
         {
-            UartTxCallback[MCU_UART_4].Callback(UartTxCallback[MCU_UART_4].Param);
+            UartTxCallback[MCU_UART_4].Tx(UartTxCallback[MCU_UART_4].Param);
         }
     }
     
     if (Map_Uart_IsRxComplet(MCU_UART_4) == true)
     {
-        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_4].Callback))
+        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_4].Rx))
         {
-            UartRxCallback[MCU_UART_4].Callback(UartRxCallback[MCU_UART_4].Param, Uart[MCU_UART_4]->DR);
+            UartRxCallback[MCU_UART_4].Rx(UartRxCallback[MCU_UART_4].Param, Uart[MCU_UART_4]->DR);
         }
     }  
 }
@@ -818,22 +845,23 @@ void UART5_IRQHandler(void)
 {
     if (Map_Uart_IsTxComplet(MCU_UART_5) == true)
     {
-        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_5].Callback))
+        if(!IS_PTR_NULL(UartTxCallback[MCU_UART_5].Tx))
         {
-            UartTxCallback[MCU_UART_5].Callback(UartTxCallback[MCU_UART_5].Param);
+            UartTxCallback[MCU_UART_5].Tx(UartTxCallback[MCU_UART_5].Param);
         }
     }
     
     if (Map_Uart_IsRxComplet(MCU_UART_5) == true)
     {
-        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_5].Callback))
+        if(!IS_PTR_NULL(UartRxCallback[MCU_UART_5].Rx))
         {
-            UartRxCallback[MCU_UART_5].Callback(UartRxCallback[MCU_UART_5].Param, Uart[MCU_UART_5]->DR);
+            UartRxCallback[MCU_UART_5].Rx(UartRxCallback[MCU_UART_5].Param, Uart[MCU_UART_5]->DR);
         }
     }
 }
 #endif
 
+#ifdef USE_HAL_UNIT_TEST
 /**
  *******************************************************************************
  * @brief       hal uart unit test function
@@ -844,31 +872,31 @@ void UART5_IRQHandler(void)
  */
 void Hal_Uart_Test(void)
 {
-//    struct Hal_Uart_Device uart = 
-//    {
-//        .Port = MCU_UART_2,
-//        .Baud = 115200,
-//        .Parity = MCU_UART_PARTY_NONE,
-//        .StopBits = MCU_UART_STOP_BITS_1,
-//        .WordLen = MCU_UART_WORD_LEN_8B,
-//
-//        .RxConfig = MCU_UART_ENABLE_RX,
-//        .TxConfig = MCU_UART_ENABLE_TX,
-//        
-//        .Priority = 0x02,
-//    };
-//    
-//    uint16_t i;
+    Hal_Device_Uart uart = 
+    {
+        .Config.Port = MCU_UART_1,
+        .Config.Baud = 115200,
+        .Config.Parity = MCU_UART_PARTY_NONE,
+        .Config.StopBits = MCU_UART_STOP_BITS_1,
+        .Config.WordLen = MCU_UART_WORD_LEN_8B,
 
-//    Hal_Uart_Open(&uart);
-//    Hal_Uart_Init(&uart);
+        .Config.RxConfig = MCU_UART_ENABLE_RX,
+        .Config.TxConfig = MCU_UART_ENABLE_TX,
+        
+        .Config.Priority = 0x02,
+    };
+    
+    uint16_t i;
+
+    Hal_Uart_Init(&uart);
 
     while(1)
     {
-//        for(i=0; i<100; i++);
-//        Hal_Uart_SendData(&uart, 0xFF);
+        for(i=0; i<1000; i++);
+        Hal_Uart_Send(&uart, 'A');
     }
 }
+#endif
 
 /** @}*/     /** map uart component */
 

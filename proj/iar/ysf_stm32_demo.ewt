@@ -2399,12 +2399,12 @@
         <group>
             <name>stream</name>
             <group>
-                <name>uartstream</name>
+                <name>fifostream</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\fw_uartstream.c</name>
+                    <name>$PROJ_DIR$\..\..\framework\fw_fifostream.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\framework\fw_uartstream.h</name>
+                    <name>$PROJ_DIR$\..\..\framework\fw_fifostream.h</name>
                 </file>
             </group>
             <file>
@@ -2454,6 +2454,15 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\hal\hal_type.h</name>
+            </file>
+        </group>
+        <group>
+            <name>device</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_device.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\hal\hal_device.h</name>
             </file>
         </group>
         <group>

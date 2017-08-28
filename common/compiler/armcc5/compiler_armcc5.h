@@ -67,7 +67,7 @@ extern "C"
  */
 extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
 
-#define __HEAP_HEAD_ADDR    ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
+#define __HEAP_HEAD_ADDR             ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
     
 #define USE_COMPILER_HEAP_ADDR                                               (1)
 
@@ -155,11 +155,11 @@ extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
  *******************************************************************************
  */
 #ifndef __ENTER_CRITICAL
-#define __ENTER_CRITICAL()      __disable_irq()
+#define __ENTER_CRITICAL()      _ST(__disable_irq();)
 #endif
 
 #ifndef __EXIT_CRITICAL
-#define __EXIT_CRITICAL()       __enable_irq()
+#define __EXIT_CRITICAL()       _ST(__enable_irq();)
 #endif
 
 //#ifndef __NOP

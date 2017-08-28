@@ -49,7 +49,7 @@ extern "C"
 #include "fw_type.h"
 #include "fw_conf.h"
    
-#if USE_FRAMEWORK_COMPONENT_LIBRARY
+#if USE_FRAMEWORK_COMPONENT
 #ifdef USE_FRAMEWORK_BUFFER_COMPONENT
 #include "fw_buffer.h"
 #endif

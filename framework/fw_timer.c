@@ -312,7 +312,7 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
     _FW_ASSERT(IS_PTR_NULL(timer));
 
     //< 2. poll timer
-    for(i=0; i<TimerBlock.Num && IS_PTR_NULL(timer); i++)
+    for(i=0; i<TimerBlock.Num && !IS_PTR_NULL(timer); i++)
     {
         //< 3. clear sleep timer
         if(timer->Cycle == 0)

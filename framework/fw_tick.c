@@ -78,7 +78,7 @@ void Fw_Tick_InitComponent(void)
     Fw_Task_Init(&Fw_Tick_Task, "Framework Tick Task", 0, (void *)Fw_Timer_Poll, FW_CALL_BACK_TYPE_TASK);
     
     timer.Port = MCU_TICK_TIMER;
-    timer.Callback.Callback = Fw_Tick_Handle;
+    timer.Callback.TimeOut = Fw_Tick_Handle;
     timer.Callback.Param = NULL;
     timer.Mode = TIMER_TICK_MODE;
     timer.Period = 1;

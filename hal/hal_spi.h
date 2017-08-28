@@ -184,14 +184,9 @@ typedef struct
     uint8_t CrcOptions;
     uint8_t ClockOptions;
     
-    struct Hal_Callback TxCallback;
-    
-    struct 
-    {
-        void (*Callback)(void*, uint8_t);
-        void *Param;
-    }RxCallback;
-    
+    Hal_Callback_t TxCallback;
+    Hal_Callback_t RxCallback;
+
     struct Hal_SPI_Opera *Opera;
 }Hal_SPI_Handle;
 

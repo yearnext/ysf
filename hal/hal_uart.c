@@ -70,11 +70,70 @@ static const struct Hal_Uart_Opera uart_ops =
     .IsRxComplet = Hal_Uart_IsRxComplet,
 };
 
+#ifdef USE_HAL_DEVICE_COMPONENT
+static hal_err_t Hal_Uart_Interface_Init(void*);
+static hal_err_t Hal_Uart_Interface_Fini(void*);
+static hal_err_t Hal_Uart_Interface_Write(void*, uint8_t*, uint8_t);
+static hal_err_t Hal_Uart_Interface_Read(void*, uint8_t*, uint8_t);
+static hal_err_t Hal_Uart_Interface_Control(void*, uint8_t, va_list);
+const struct Hal_Interface Hal_Uart_Interface = 
+{
+    .Init = Hal_Uart_Interface_Init, 
+    .Fini = Hal_Uart_Interface_Fini, 
+    .Write = Hal_Uart_Interface_Write, 
+    .Read = Hal_Uart_Interface_Read,
+    .Control = Hal_Uart_Interface_Control,
+};
+#endif
+
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#ifdef USE_HAL_DEVICE_COMPONENT
+static hal_err_t Hal_Uart_Interface_Init(void *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_Uart *uart = (Hal_Device_Uart *)drv;
+    
+    map_uart_api.Open(uart->Config.Port);
+    map_uart_api.Init(uart->Config.Port, (void *)uart);
+    
+    return HAL_ERR_NONE;
+}
+
+static hal_err_t Hal_Uart_Interface_Fini(void *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_Uart *uart = (Hal_Device_Uart *)drv;
+    
+    map_uart_api.Fini(uart->Config.Port);   
+
+    uart->Opera = NULL;
+    
+    return HAL_ERR_NONE;
+}
+
+static hal_err_t Hal_Uart_Interface_Write(void *drv, uint8_t *buf, uint8_t size)
+{
+    return HAL_ERR_NONE;
+}
+
+static hal_err_t Hal_Uart_Interface_Read(void *drv, uint8_t *buf, uint8_t size)
+{
+    return HAL_ERR_NONE;
+}
+
+static hal_err_t Hal_Uart_Interface_Control(void *drv, uint8_t cmd, va_list args)
+{
+    return HAL_ERR_NONE;
+}
+#endif
+
+
 /**
  *******************************************************************************
  * @brief       hal api : open device
@@ -83,12 +142,12 @@ static const struct Hal_Uart_Opera uart_ops =
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_Open(Hal_Uart_Handle *drv)
+void Hal_Uart_Open(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
+
     
-    map_uart_api.Open(drv->Port); 
+    map_uart_api.Open(drv->Config.Port); 
 }
 
 /**
@@ -99,12 +158,12 @@ void Hal_Uart_Open(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_Close(Hal_Uart_Handle *drv)
+void Hal_Uart_Close(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    map_uart_api.Close(drv->Port); 
+
+    map_uart_api.Close(drv->Config.Port); 
 }
 
 /**
@@ -116,16 +175,16 @@ void Hal_Uart_Close(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_Init(Hal_Uart_Handle *drv)
+void Hal_Uart_Init(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
+
     hal_assert(IS_PTR_NULL(param));
     
     drv->Opera = (struct Hal_Uart_Opera *)&uart_ops;
     
-    map_uart_api.Open(drv->Port);
-    map_uart_api.Init(drv->Port, (void *)drv); 
+    map_uart_api.Open(drv->Config.Port);
+    map_uart_api.Init(drv->Config.Port, (void *)drv); 
 }
 
 /**
@@ -136,12 +195,12 @@ void Hal_Uart_Init(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_Fini(Hal_Uart_Handle *drv)
+void Hal_Uart_Fini(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
+
     
-    map_uart_api.Fini(drv->Port);   
+    map_uart_api.Fini(drv->Config.Port);   
     
     drv->Opera = NULL;
 }
@@ -155,12 +214,12 @@ void Hal_Uart_Fini(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_Send(Hal_Uart_Handle *drv, uint8_t sendData)
+void Hal_Uart_Send(Hal_Device_Uart *drv, uint8_t sendData)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
+
     
-    map_uart_api.Send(drv->Port, sendData);
+    map_uart_api.Send(drv->Config.Port, sendData);
 }
 
 /**
@@ -171,12 +230,12 @@ void Hal_Uart_Send(Hal_Uart_Handle *drv, uint8_t sendData)
  * @note        None
  *******************************************************************************
  */
-uint8_t Hal_Uart_Receive(Hal_Uart_Handle *drv)
+uint8_t Hal_Uart_Receive(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    return map_uart_api.Receive(drv->Port);
+
+    return map_uart_api.Receive(drv->Config.Port);
 }
 
 /**
@@ -188,14 +247,14 @@ uint8_t Hal_Uart_Receive(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_SetTxCallback(Hal_Uart_Handle *drv, void *param)
+void Hal_Uart_SetTxCallback(Hal_Device_Uart *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    Hal_Uart_Handle *config = (Hal_Uart_Handle *)param;
+
+    Hal_Device_Uart *config = (Hal_Device_Uart *)param;
     
-    map_uart_api.SetTxCallback(drv->Port, config->TxCallback.Callback, config->TxCallback.Param);
+    map_uart_api.SetTxCallback(drv->Config.Port, config->Config.TxCallback.Tx, config->Config.TxCallback.Param);
 }
 
 /**
@@ -207,14 +266,14 @@ void Hal_Uart_SetTxCallback(Hal_Uart_Handle *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_SetRxCallback(Hal_Uart_Handle *drv, void *param)
+void Hal_Uart_SetRxCallback(Hal_Device_Uart *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    Hal_Uart_Handle *config = (Hal_Uart_Handle *)param;
+
+    Hal_Device_Uart *config = (Hal_Device_Uart *)param;
     
-    map_uart_api.SetRxCallback(drv->Port, config->RxCallback.Callback, config->RxCallback.Param);
+    map_uart_api.SetRxCallback(drv->Config.Port, config->Config.RxCallback.Rx, config->Config.RxCallback.Param);
 }
 
 /**
@@ -225,12 +284,12 @@ void Hal_Uart_SetRxCallback(Hal_Uart_Handle *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_TxConnect(Hal_Uart_Handle *drv)
+void Hal_Uart_TxConnect(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    map_uart_api.TxConnect(drv->Port);
+
+    map_uart_api.TxConnect(drv->Config.Port);
 }
 
 /**
@@ -241,12 +300,12 @@ void Hal_Uart_TxConnect(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_TxDisconnect(Hal_Uart_Handle *drv)
+void Hal_Uart_TxDisconnect(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    map_uart_api.TxDisconnect(drv->Port);
+
+    map_uart_api.TxDisconnect(drv->Config.Port);
 }
 
 /**
@@ -257,12 +316,12 @@ void Hal_Uart_TxDisconnect(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_RxConnect(Hal_Uart_Handle *drv)
+void Hal_Uart_RxConnect(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    map_uart_api.RxConnect(drv->Port);
+
+    map_uart_api.RxConnect(drv->Config.Port);
 }
 
 /**
@@ -273,12 +332,12 @@ void Hal_Uart_RxConnect(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Uart_RxDisconnect(Hal_Uart_Handle *drv)
+void Hal_Uart_RxDisconnect(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    map_uart_api.RxDisconnect(drv->Port);
+
+    map_uart_api.RxDisconnect(drv->Config.Port);
 }
 
 /**
@@ -289,12 +348,12 @@ void Hal_Uart_RxDisconnect(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-bool Hal_Uart_IsTxComplet(Hal_Uart_Handle *drv)
+bool Hal_Uart_IsTxComplet(Hal_Device_Uart *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
 
-    return map_uart_api.IsTxComplet(drv->Port);
+
+    return map_uart_api.IsTxComplet(drv->Config.Port);
 }
 
 /**
@@ -305,12 +364,12 @@ bool Hal_Uart_IsTxComplet(Hal_Uart_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-bool Hal_Uart_IsRxComplet(Hal_Uart_Handle* drv)
+bool Hal_Uart_IsRxComplet(Hal_Device_Uart* drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-    hal_assert(IS_PTR_NULL(map_uart_api));
+
     
-    return map_uart_api.IsRxComplet(drv->Port);
+    return map_uart_api.IsRxComplet(drv->Config.Port);
 }
 
 /** @}*/     /** hal uart component */

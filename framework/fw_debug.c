@@ -40,7 +40,7 @@
 #include "fw_debug.h"
 #include "fw_tick.h"
 #include "fw_timer.h"
-#include "fw_uartstream.h"
+#include "fw_fifostream.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -60,7 +60,7 @@
  * @note        user config
  *******************************************************************************
  */
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
+#if USE_DEBUG_COMPONENT
 //< buffer init cache
 static uint8_t BufferCache[FW_DEBUG_BUFFER_SIZE];
 
@@ -74,36 +74,39 @@ static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
 //< define stream fifo management block
 static Fw_Fifo_t TxFifo = {.Buffer = TxBuffer, .Size = FW_DEBUG_BUFFER_SIZE};
 static Fw_Fifo_t RxFifo = {.Buffer = RxBuffer, .Size = FW_DEBUG_BUFFER_SIZE};
-    
-//< config debug stream param
-static struct Fw_UartStream DebugStream = 
-{
-    //< uart stream hardware param init
-    .Device.Port = MCU_UART_1,
-    .Device.Group = 0,
-    .Device.Baud = 115200,
-    .Device.WordLen = MCU_UART_WORD_LEN_8B,
-    .Device.Priority = MCU_UART_PARTY_NONE,
-    .Device.StopBits = MCU_UART_STOP_BITS_1,
-    .Device.TxConfig = MCU_UART_ENABLE_TX_ISR,
-    .Device.RxConfig = MCU_UART_ENABLE_RX_ISR,
-    .Device.Parity = 1,
 
-    //< uart stream hardware call back config
-    .Device.RxCallback.Callback = Fw_UartStream_Receive,
-    .Device.RxCallback.Param = (void *)&DebugStream,
-        
-    .Device.TxCallback.Callback = Fw_UartStream_Send,
-    .Device.TxCallback.Param = (void *)&DebugStream,
+//< define hal device
+
+
+//< config debug stream param
+static Fw_FifoStream_t DebugStream = 
+{
+//    //< uart stream hardware param init
+//    .Device.Port = MCU_UART_1,
+//    .Device.Group = 0,
+//    .Device.Baud = 115200,
+//    .Device.WordLen = MCU_UART_WORD_LEN_8B,
+//    .Device.Priority = MCU_UART_PARTY_NONE,
+//    .Device.StopBits = MCU_UART_STOP_BITS_1,
+//    .Device.TxConfig = MCU_UART_ENABLE_TX_ISR,
+//    .Device.RxConfig = MCU_UART_ENABLE_RX_ISR,
+//    .Device.Parity = 1,
+
+//    //< uart stream hardware call back config
+//    .Device.RxCallback.Rx    = Fw_UartStream_Receive,
+//    .Device.RxCallback.Param = (void *)&DebugStream,
+//        
+//    .Device.TxCallback.Tx    = Fw_UartStream_Send,
+//    .Device.TxCallback.Param = (void *)&DebugStream,
     
     //< uart stream tx pipe config
     .Tx.Buffer = (void *)&TxFifo,
-    .Tx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera,
+    .Tx.Buf_Ops = (struct Fw_StreamBuffer_Ops *)&Fw_FifoStream_Ops,
     .Tx.Callback = NULL,
         
-    .Tx.Rx.Connect = Fw_UartStream_TxConnect,
-    .Tx.Rx.Disconnect = Fw_UartStream_TxDisconnect,
-    .Tx.Rx.InOut = Fw_UartStream_TxOut,
+    .Tx.Rx.Connect = Fw_FifoStream_ConnectTx,
+    .Tx.Rx.Disconnect = Fw_FifoStream_DisconnectTx,
+    .Tx.Rx.InOut = Fw_FifoStream_TxOut,
     .Tx.Rx.IsReady = true,
     .Tx.Rx.Param = (void *)&DebugStream,
         
@@ -115,7 +118,7 @@ static struct Fw_UartStream DebugStream =
         
     //< uart stream tx pipe config
     .Rx.Buffer = (void *)&RxFifo,
-    .Rx.Buf_Ops = (struct Fw_Stream_Buffer_Opera *)&FwStreamFifoOpera,
+    .Rx.Buf_Ops = (struct Fw_StreamBuffer_Ops *)&Fw_FifoStream_Ops,
     .Rx.Callback = NULL,
         
     .Rx.Rx.Connect = NULL,
@@ -124,13 +127,13 @@ static struct Fw_UartStream DebugStream =
     .Rx.Rx.IsReady = true,
     .Rx.Rx.Param = (void *)&DebugStream,
         
-    .Rx.Tx.Connect = Fw_UartStream_RxConnect,
-    .Rx.Tx.Disconnect = Fw_UartStream_RxDisconnect,
-    .Rx.Tx.InOut = Fw_UartStream_RxIn,
+    .Rx.Tx.Connect = Fw_FifoStream_ConnectRx,
+    .Rx.Tx.Disconnect = Fw_FifoStream_DisconnectRx,
+    .Rx.Tx.InOut = Fw_FifoStream_RxIn,
     .Rx.Tx.IsReady = true,
     .Rx.Tx.Param = (void *)&DebugStream,
         
-    .State = UART_STREAM_INIT_STATE,
+    .State = FIFO_STREAM_INIT_STATE,
 };
 #endif
 
@@ -148,7 +151,7 @@ static struct Fw_UartStream DebugStream =
  */
 void Fw_Debug_InitComponent(void)
 {
-    Fw_UartStream_Init(&DebugStream);
+    Fw_FifoStream_Init(&DebugStream);
 
     FwDebugInitFlag = true;
 }
@@ -170,15 +173,15 @@ uint8_t Fw_Debug_FillHeadInfo(uint8_t *buffer, enum _DEBUG_MESSAGE_TYPE type)
 
 	if(type == DEBUG_OUTPUT_ERROR_MESSAGE)
 	{
-		return (uint8_t)sprintf((char *)buffer, "[Error][Tick:%ld]", tick);
+		return (uint8_t)sprintf((char *)buffer, "[Error][Tick:%ld]", (long)tick);
 	}
 	else if(type == DEBUG_OUTPUT_WARNING_MESSAGE)
 	{
-		return (uint8_t)sprintf((char *)buffer, "[Warning][Tick:%ld]", tick);
+		return (uint8_t)sprintf((char *)buffer, "[Warning][Tick:%ld]", (long)tick);
 	}
 	else
 	{
-		return (uint8_t)sprintf((char *)buffer, "[Tick:%ld]", tick);
+		return (uint8_t)sprintf((char *)buffer, "[Tick:%ld]", (long)tick);
 	}
 }
 

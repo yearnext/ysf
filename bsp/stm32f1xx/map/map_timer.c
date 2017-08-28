@@ -211,7 +211,7 @@ void Map_Timer_Open(uint8_t);
 void Map_Timer_Close(uint8_t);
 void Map_Timer_Init(uint8_t, void*);
 void Map_Timer_Fini(uint8_t);
-void Map_Timer_SetUpCallback(uint8_t, void (*)(void*), void*);
+void Map_Timer_SetTimeOutCallback(uint8_t, void (*)(void*), void*);
 void Map_Timer_Start(uint8_t);
 void Map_Timer_Stop(uint8_t);
 
@@ -222,7 +222,7 @@ const struct Map_Timer_Opera map_timer_api =
     
     .Init = Map_Timer_Init,
     .Fini = Map_Timer_Fini,
-    .SetUpCallback = Map_Timer_SetUpCallback,
+    .SetTimeOutCallback = Map_Timer_SetTimeOutCallback,
     
     .Start = Map_Timer_Start,
     .Stop = Map_Timer_Stop,
@@ -234,7 +234,7 @@ const struct Map_Timer_Opera map_timer_api =
  * @brief       define timer time mode call back
  *******************************************************************************
  */
-static struct Hal_Callback TimerUpCallback[_dimof(Timer)];
+static Hal_Callback_t TimerUpCallback[_dimof(Timer)];
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -549,7 +549,7 @@ void _TimerTickMode_Init(Hal_Timer_Handle *param)
 	//< enable tick timer isr and set tick timer clock source is core clock
     SysTick->CTRL  = (uint32_t)((1 << 1) | (1 << 2));
 
-	TimerUpCallback[MCU_TICK_TIMER].Callback = param->Callback.Callback;
+	TimerUpCallback[MCU_TICK_TIMER].TimeOut = param->Callback.TimeOut;
 	TimerUpCallback[MCU_TICK_TIMER].Param    = param->Callback.Param;
 }
 
@@ -581,7 +581,7 @@ void _TimerTimeMode_Init(uint8_t port, Hal_Timer_Handle *param)
     NVIC_EnableIRQ(TimerIrqn[port]); 
     NVIC_SetPriority(TimerIrqn[port], param->Priority);  
 
-	TimerUpCallback[port].Callback = param->Callback.Callback;
+	TimerUpCallback[port].TimeOut = param->Callback.TimeOut;
 	TimerUpCallback[port].Param    = param->Callback.Param;
     
     LL_TIM_EnableCounter(Timer[port]);
@@ -646,11 +646,11 @@ void Map_Timer_Fini(uint8_t port)
  * @note        None
  *******************************************************************************
  */
-void Map_Timer_SetUpCallback(uint8_t port, void (*callback)(void*), void *param)
+void Map_Timer_SetTimeOutCallback(uint8_t port, void (*callback)(void*), void *param)
 {
     hal_assert(IS_TIMER_PORT_INVAILD(port));
     
-    TimerUpCallback[port].Callback = callback;
+    TimerUpCallback[port].TimeOut = callback;
 	TimerUpCallback[port].Param    = param;
 }
 
@@ -708,9 +708,9 @@ void Map_Timer_Stop(uint8_t port)
  */
 void SysTick_Handler(void)
 {
-	if(!IS_PTR_NULL(TimerUpCallback[0].Callback))
+	if(!IS_PTR_NULL(TimerUpCallback[0].TimeOut))
 	{
-		TimerUpCallback[0].Callback(TimerUpCallback[0].Param);
+		TimerUpCallback[0].TimeOut(TimerUpCallback[0].Param);
 	}
 }
 
@@ -725,9 +725,9 @@ void SysTick_Handler(void)
 #ifdef TIM1
 void TIM1_UP_IRQHandler(void)
 {
-	if(!IS_PTR_NULL(TimerUpCallback[1].Callback))
+	if(!IS_PTR_NULL(TimerUpCallback[1].TimeOut))
 	{
-		TimerUpCallback[1].Callback(TimerUpCallback[1].Param);
+		TimerUpCallback[1].TimeOut(TimerUpCallback[1].Param);
 	}
 
 	Timer[1]->SR &= ~0x01;
@@ -747,9 +747,9 @@ void TIM2_IRQHandler(void)
 {
 	if(Timer[2]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[2].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[2].TimeOut))
 		{
-			TimerUpCallback[2].Callback(TimerUpCallback[2].Param);
+			TimerUpCallback[2].TimeOut(TimerUpCallback[2].Param);
 		}
 		
 		Timer[2]->SR &= ~0x01;
@@ -770,9 +770,9 @@ void TIM3_IRQHandler(void)
 {
 	if(Timer[3]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[3].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[3].TimeOut))
 		{
-			TimerUpCallback[3].Callback(TimerUpCallback[3].Param);
+			TimerUpCallback[3].TimeOut(TimerUpCallback[3].Param);
 		}
 		
 		Timer[3]->SR &= ~0x01;
@@ -793,9 +793,9 @@ void TIM4_IRQHandler(void)
 {
 	if(Timer[4]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[4].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[4].TimeOut))
 		{
-			TimerUpCallback[4].Callback(TimerUpCallback[4].Param);
+			TimerUpCallback[4].TimeOut(TimerUpCallback[4].Param);
 		}
 		
 		Timer[4]->SR &= ~0x01;
@@ -816,9 +816,9 @@ void TIM5_IRQHandler(void)
 {
 	if(Timer[5]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[5].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[5].TimeOut))
 		{
-			TimerUpCallback[5].Callback(TimerUpCallback[5].Param);
+			TimerUpCallback[5].TimeOut(TimerUpCallback[5].Param);
 		}
 		
 		Timer[5]->SR &= ~0x01;
@@ -839,9 +839,9 @@ void TIM6_IRQHandler(void)
 {
 	if(Timer[6]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[6].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[6].TimeOut))
 		{
-			TimerUpCallback[6].Callback(TimerUpCallback[6].Param);
+			TimerUpCallback[6].TimeOut(TimerUpCallback[6].Param);
 		}
 		
 		Timer[6]->SR &= ~0x01;
@@ -862,9 +862,9 @@ void TIM7_IRQHandler(void)
 {
 	if(Timer[7]->SR & 0x01)
 	{
-		if(!IS_PTR_NULL(TimerUpCallback[7].Callback))
+		if(!IS_PTR_NULL(TimerUpCallback[7].TimeOut))
 		{
-			TimerUpCallback[7].Callback(TimerUpCallback[7].Param);
+			TimerUpCallback[7].TimeOut(TimerUpCallback[7].Param);
 		}
 		
 		Timer[7]->SR &= ~0x01;
@@ -883,9 +883,9 @@ void TIM7_IRQHandler(void)
 #ifdef TIM8
 void TIM8_UP_IRQHandler(void)
 {
-	if(!IS_PTR_NULL(TimerUpCallback[8].Callback))
+	if(!IS_PTR_NULL(TimerUpCallback[8].TimeOut))
 	{
-		TimerUpCallback[8].Callback(TimerUpCallback[8].Param);
+		TimerUpCallback[8].TimeOut(TimerUpCallback[8].Param);
 	}
 
 	Timer[8]->SR &= ~0x01;

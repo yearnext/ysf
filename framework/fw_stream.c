@@ -77,7 +77,7 @@ static fw_err_t _FifoStreamOpera_Read(void*, uint8_t*, uint8_t);
  * @brief       framework stream opera block
  *******************************************************************************
  */
-const struct Fw_Stream_Buffer_Opera FwStreamFifoOpera = 
+const struct Fw_StreamBuffer_Ops Fw_FifoStream_Ops = 
 {
     .Init  = _FifoStreamOpera_Init,
     .Fini  = _FifoStreamOpera_Fini,

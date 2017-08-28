@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       hal_type.h                                                      *
+ * @file       fw_fifostream.h                                                 *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-04-18                                                      *
- * @brief      hal type head files                                             *
+ * @date       2017-08-08                                                      *
+ * @brief      framework fifo stream component head files                      *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -31,14 +31,9 @@
  *******************************************************************************
  */
 
-/**
- * @defgroup hal type
- * @{
- */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HAL_TYPE_H__
-#define __HAL_TYPE_H__
+#ifndef __FRAMEWORK_FIFO_STREAM_H__
+#define __FRAMEWORK_FIFO_STREAM_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -47,52 +42,65 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "comm_path.h"
+#include "fw_stream.h"
+#include "fw_timer.h"
+#include "hal_device.h"
     
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define hal error type
+ * @brief       define framework uart stream
  *******************************************************************************
  */
-#define HAL_ERR_NONE                                                 (_ERR_NONE)
-#define HAL_ERR_FAIL                                                 (_ERR_FAIL)
-#define HAL_ERR_NOT_READY                                       (_ERR_NOT_READY)
-#define HAL_ERR_NOT_SUPPORT                                   (_ERR_NOT_SUPPORT)
-#define HAL_ERR_INVAILD_PTR                                   (_ERR_INVAILD_PTR)
-#define HAL_ERR_INVAILD_PARAM                               (_ERR_INVAILD_PARAM)
-#define HAL_ERR_IO                                                     (_ERR_IO)
-#define HAL_ERR_BUG                                                   (_ERR_BUG)
-#define HAL_ERR_UNKNOW                                             (_ERR_UNKNOW)
+typedef struct Fw_FifoStream
+{
+	Hal_Device_t Device;
+	
+    struct Fw_Stream Tx;
+    struct Fw_Stream Rx;
+     
+    struct Fw_Timer Timer;
 
-typedef _err_t                                                        hal_err_t;
-    
+    enum
+    {
+        FIFO_STREAM_INIT_STATE,
+        FIFO_STREAM_SEND_STATE,
+        FIFO_STREAM_SLEEP_STATE,
+        FIFO_STREAM_COMPLET_STATE,
+    }State;
+}Fw_FifoStream_t;
+      
+/* Exported constants --------------------------------------------------------*/
+///**
+// *******************************************************************************
+// * @brief       define framework stream opera
+// *******************************************************************************
+// */
+//extern const struct _FwStreamDeviceOpera UartStreamDeviceOpera;
+
+/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define hal isr call back
+ * @brief       framework uart stream apis
  *******************************************************************************
- */ 
-typedef struct
-{
-    union
-    {
-        void (*Pin)(void*);
-        void (*TimeOut)(void*);
-        void (*Tx)(void*);
-        void (*Rx)(void*, uint8_t);
-	};
-    
-    void *Param;
-}Hal_Callback_t;
+ */
+extern __INLINE void Fw_FifoStream_Init(Fw_FifoStream_t*);
+extern __INLINE void Fw_FifoStream_Fini(Fw_FifoStream_t*);
+extern __INLINE void Fw_FifoStream_ConnectTx(void*);
+extern __INLINE void Fw_FifoStream_DisconnectTx(void*);
+extern __INLINE void Fw_FifoStream_ConnectRx(void*);
+extern __INLINE void Fw_FifoStream_DisconnectRx(void*);
+extern __INLINE void Fw_FifoStream_TxOut(void*);
+extern __INLINE void Fw_FifoStream_RxIn(void*);
+extern __INLINE void Fw_FifoStream_Send(void*);
+extern __INLINE void Fw_FifoStream_Receive(void*, uint8_t);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
-	
-#endif       /** end include define */
 
-/** @}*/     /** hal type */
+#endif      /** prevent recursive inclusion */
 
 /**********************************END OF FILE*********************************/

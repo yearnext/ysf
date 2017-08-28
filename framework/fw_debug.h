@@ -67,7 +67,7 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_DEBUG_COMPONENT                                                 (1)
+#define USE_DEBUG_COMPONENT                                                 (0)
 #endif
 
 /**

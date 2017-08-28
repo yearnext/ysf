@@ -54,7 +54,7 @@ static const struct Hal_Timer_Opera timer_ops =
     
     .Init = Hal_Timer_Init,
     .Fini = Hal_Timer_Fini,
-    .SetUpCallback = Hal_Timer_SetUpCallback,
+    .SetTimeOutCallback = Hal_Timer_SetTimeOutCallback,
     
     .Start = Hal_Timer_Start,
     .Stop = Hal_Timer_Stop,
@@ -143,13 +143,13 @@ void Hal_Timer_Fini(Hal_Timer_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_Timer_SetUpCallback(Hal_Timer_Handle *drv, void *param)
+void Hal_Timer_SetTimeOutCallback(Hal_Timer_Handle *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    struct Hal_Callback *callback = (struct Hal_Callback *)param;
+    Hal_Callback_t *callback = (Hal_Callback_t *)param;
     
-    map_timer_api.SetUpCallback(drv->Port, callback->Callback, callback->Param);
+    map_timer_api.SetTimeOutCallback(drv->Port, callback->TimeOut, callback->Param);
 }
 
 /**

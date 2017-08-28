@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_core.c                                                       * 
+ * @file       hal_device.c                                                    *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-04-13                                                      *
- * @brief      framework core interface source files                           *
+ * @date       2017-08-28                                                      *
+ * @brief      hal device component source files                               *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -32,14 +32,13 @@
  */
 
 /**
- * @defgroup framework core interface
+ * @defgroup hal device component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "fw_core.h"
+#include "hal_device.h"
 
-/* Private functions ---------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -48,97 +47,122 @@
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       user application init
- * @param       [in/out]  void
- * @return      [in/out]  void
+ * @brief       device open opera
+ * @param       [in/out]  *drv            device type
+ * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
-__WEAK void App_User_Init(void)
+__INLINE
+hal_err_t Hal_Device_Init(Hal_Device_t *drv)
 {
+    hal_assert(IS_PTR_NULL(drv));
     
-}
-
-/**
- *******************************************************************************
- * @brief       init core
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-__INLINE void Fw_Core_Init(void)
-{   
-//    __ATOM_ACTIVE_BEGIN();
-    
-#ifdef USE_FRAMEWORK_TASK_COMPONENT 
-    Fw_Task_InitComponent();
-#endif
-    
-#ifdef USE_FRAMEWORK_TICK_COMPONENT 
-    Fw_Tick_InitComponent();
-#endif
-    
-#ifdef USE_FRAMEWORK_TIMER_COMPONENT  
-    Fw_Timer_InitComponent();
-#endif
-
-#ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT 
-    Fw_Mem_InitComponent();
-#endif
-
-#ifdef USE_FRAMEWORK_STREAM_COMPONENT 
-    Fw_Stream_InitComponent();
-#endif
-
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-    Fw_Debug_InitComponent();
-    Fw_Debug_PutMcuInfo();
-#endif
-
-    App_User_Init();
-    
-//    __ATOM_ACTIVE_END();
-}
-
-/**
- *******************************************************************************
- * @brief       start core
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-__INLINE void Fw_Core_Start(void)
-{
-    for(;;)
+    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Init))
     {
-#ifdef USE_FRAMEWORK_TASK_COMPONENT
-        Fw_Task_Dispatch();
-#endif
+        return drv->Interface->Init(drv->Device);
     }
+    
+    return HAL_ERR_NONE;
 }
 
-#if USE_FRAMEWORK_COMPONENT
 /**
  *******************************************************************************
- * @brief       main function
- * @param       [in/out]  void
- * @return      [in/out]  int     never return
+ * @brief       device close opera
+ * @param       [in/out]  *drv            device type
+ * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
-int main(void)
+__INLINE
+hal_err_t Hal_Device_Fini(Hal_Device_t *drv)
 {
-    Fw_Core_Init();
-
-    Fw_Core_Start();
+    hal_assert(IS_PTR_NULL(drv));
     
-    return 0;
+    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Fini))
+    {
+        return drv->Interface->Fini(drv->Device);
+    }
+    
+    return HAL_ERR_NONE;
+}
+    
+/**
+ *******************************************************************************
+ * @brief       device write opera
+ * @param       [in/out]  *drv            device type
+ * @param       [in/out]  buf             write buffer
+ * @param       [in/out]  size            write size
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE
+hal_err_t Hal_Device_Write(Hal_Device_t *drv, uint8_t *buf, uint8_t size)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Write))
+    {
+        return drv->Interface->Write(drv->Device, buf, size);
+    }
+    
+    return HAL_ERR_NONE;
 }
 
-#endif
+/**
+ *******************************************************************************
+ * @brief       device read opera
+ * @param       [in/out]  *drv            device type
+ * @param       [in/out]  buf             read buffer
+ * @param       [in/out]  size            read size
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE
+hal_err_t Hal_Device_Read(Hal_Device_t *drv, uint8_t *buf, uint8_t size)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Read))
+    {
+        return drv->Interface->Read(drv->Device, buf, size);
+    }
+    
+    return HAL_ERR_NONE;
+}
 
-/** @}*/     /** framework core interface */
+
+/**
+ *******************************************************************************
+ * @brief       hal device control
+ * @param       [in/out]  *drv            device type
+ * @param       [in/out]  cmd             control cmd
+ * @param       [in/out]  ...             expand param
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE
+hal_err_t Hal_Device_Control(Hal_Device_t *drv, uint8_t cmd, ...)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    va_list args;
+    hal_err_t retValue = HAL_ERR_FAIL;
+    
+    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Control))
+    {
+        va_start(args, cmd);
+        retValue = drv->Interface->Control(drv->Device, cmd, args);
+        va_end(args);
+        
+        return retValue;
+    }
+    
+    return HAL_ERR_NONE;
+}
+
+/** @}*/     /** hal device component */
 
 /**********************************END OF FILE*********************************/

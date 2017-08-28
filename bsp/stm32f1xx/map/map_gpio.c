@@ -286,31 +286,31 @@ void Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t dir, uint8_t mode)
     }
     
     //< set gpio mode
-    if(dir == GPIO_ANALOG_MODE)
+    if(mode == GPIO_ANALOG_MODE)
     {
         setMode |= 0x00;
     }
-    else if(dir == GPIO_FLOAT_MODE)
+    else if(mode == GPIO_FLOAT_MODE)
     {
         setMode |= 0x04;
     }
-    else if(dir == GPIO_PULL_UP_DOWN_MODE)
+    else if(mode == GPIO_PULL_UP_DOWN_MODE)
     {
         setMode |= 0x08;
     }
-    else if(dir == GPIO_PUSH_PULL_MODE)
+    else if(mode == GPIO_PUSH_PULL_MODE)
     {
         setMode |= 0x00;
     }
-    else if(dir == GPIO_OPEN_DRAIN_MODE)
+    else if(mode == GPIO_OPEN_DRAIN_MODE)
     {
         setMode |= 0x04;
     }
-    else if(dir == GPIO_AF_PUSH_PULL_MODE)
+    else if(mode == GPIO_AF_PUSH_PULL_MODE)
     {
         setMode |= 0x08;
     }
-    else if(dir == GPIO_AF_OPEN_DRAIN_MODE)
+    else if(mode == GPIO_AF_OPEN_DRAIN_MODE)
     {
         setMode |= 0x0C;
     }
@@ -384,15 +384,15 @@ hal_err_t Map_GPIO_Write(uint8_t port, uint8_t pos, uint16_t wrData, uint8_t num
  *******************************************************************************
  * @brief       read gpio port data
  * @param       [in/out]  port                    gpio port
- * @param       [in/out]  dir                     get intput or output data
  * @param       [in/out]  pos                     gpio pin pos
+ * @param       [in/out]  dir                     get intput or output data
  * @param       [in/out]  *rdData                 read data
  * @param       [in/out]  num                     pos num
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
-hal_err_t Map_GPIO_Read(uint8_t port, uint8_t dir, uint8_t pos, uint16_t *rdData, uint8_t num)
+hal_err_t Map_GPIO_Read(uint8_t port, uint8_t pos, uint8_t dir, uint16_t *rdData, uint8_t num)
 {
     hal_assert(IS_PTR_NULL(wrData));
     hal_assert(IS_PORT_NUM_INVAILD(port));
@@ -400,17 +400,18 @@ hal_err_t Map_GPIO_Read(uint8_t port, uint8_t dir, uint8_t pos, uint16_t *rdData
     
     GPIO_TypeDef *gpio = GPIO[port];
     uint16_t portData;
+    uint8_t i;
     
     //< get register data
-    (dir == GPIO_DIR_INTPUT) ? (portData = _READ_REG(gpio->ODR)) \
-                             : (portData = _READ_REG(gpio->IDR));
+    (dir == GPIO_DIR_INTPUT) ? (portData = _READ_REG(gpio->IDR)) \
+                             : (portData = _READ_REG(gpio->ODR));
                              
     //< update register data
-    for(; num--; pos++)
+    for(i=0; i<num; i++)
     {
-        if (_READ_BIT(portData, pos))
+        if (_READ_BIT(portData, pos+i))
         {
-            *rdData |= 0x01;
+            _SET_BIT(*rdData, i);
         }
     }
     

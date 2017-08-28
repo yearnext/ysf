@@ -352,6 +352,14 @@ __INLINE fw_err_t Fw_Queue_Read(struct Fw_Queue *queue, uint8_t *buffer, uint16_
 	return FW_ERR_NONE;
 }
 
+/**
+ *******************************************************************************
+ * @brief       get queue free size
+ * @param       [in/out]  *queue             queue block
+ * @return      [in/out]  uint16_t           free size
+ * @note        None
+ *******************************************************************************
+ */
 __INLINE uint16_t Fw_Queue_GetFreeSize(struct Fw_Queue *queue)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
@@ -359,6 +367,14 @@ __INLINE uint16_t Fw_Queue_GetFreeSize(struct Fw_Queue *queue)
 	return queue->Len - queue->Tail;
 }
 
+/**
+ *******************************************************************************
+ * @brief       get queue use size
+ * @param       [in/out]  *queue             queue block
+ * @return      [in/out]  uint16_t           queue use size
+ * @note        None
+ *******************************************************************************
+ */
 __INLINE uint16_t Fw_Queue_GetUseSize(struct Fw_Queue *queue)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));

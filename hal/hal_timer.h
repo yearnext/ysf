@@ -126,7 +126,7 @@ typedef struct
 	uint16_t Period;
 	uint16_t Prescaler;
 
-	struct Hal_Callback Callback;
+    Hal_Callback_t Callback;
     
     struct Hal_Timer_Opera *Opera;
 }Hal_Timer_Handle;
@@ -144,7 +144,7 @@ struct Hal_Timer_Opera
     void (*Init)(Hal_Timer_Handle*);
     void (*Fini)(Hal_Timer_Handle*);
     
-    void (*SetUpCallback)(Hal_Timer_Handle*, void*);
+    void (*SetTimeOutCallback)(Hal_Timer_Handle*, void*);
     
     void (*Start)(Hal_Timer_Handle*);
     void (*Stop)(Hal_Timer_Handle*);
@@ -163,7 +163,7 @@ struct Map_Timer_Opera
     void (*Init)(uint8_t, void*);
     void (*Fini)(uint8_t);
     
-    void (*SetUpCallback)(uint8_t, void (*)(void*), void*);
+    void (*SetTimeOutCallback)(uint8_t, void (*)(void*), void*);
     
     void (*Start)(uint8_t);
     void (*Stop)(uint8_t);
@@ -182,7 +182,7 @@ extern void Hal_Timer_Open(Hal_Timer_Handle*);
 extern void Hal_Timer_Close(Hal_Timer_Handle*);
 extern void Hal_Timer_Init(Hal_Timer_Handle*);
 extern void Hal_Timer_Fini(Hal_Timer_Handle*);
-extern void Hal_Timer_SetUpCallback(Hal_Timer_Handle*, void*);
+extern void Hal_Timer_SetTimeOutCallback(Hal_Timer_Handle*, void*);
 extern void Hal_Timer_Start(Hal_Timer_Handle*);
 extern void Hal_Timer_Stop(Hal_Timer_Handle*);
 #endif

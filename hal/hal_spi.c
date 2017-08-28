@@ -46,6 +46,7 @@
  * @brief      define gpio opera interface
  *******************************************************************************
  */ 
+#if USE_SPI_COMPONENT
 static const struct Hal_SPI_Opera spi_ops = 
 {
     .Open = Hal_SPI_Open,
@@ -69,12 +70,14 @@ static const struct Hal_SPI_Opera spi_ops =
     .IsTxComplet = Hal_SPI_IsTxComplet,
     .IsRxComplet = Hal_SPI_IsRxComplet,
 };
+#endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#if USE_SPI_COMPONENT
 /**
  *******************************************************************************
  * @brief       hal api : open device
@@ -195,7 +198,7 @@ void Hal_SPI_SetTxCallback(Hal_SPI_Handle *drv, void *param)
 
     Hal_SPI_Handle *config = (Hal_SPI_Handle *)param;
     
-    map_spi_api.SetTxCallback(drv->Port, config->TxCallback.Callback, config->TxCallback.Param);
+    map_spi_api.SetTxCallback(drv->Port, config->TxCallback.Tx, config->TxCallback.Param);
 }
 
 /**
@@ -214,7 +217,7 @@ void Hal_SPI_SetRxCallback(Hal_SPI_Handle *drv, void *param)
 
     Hal_SPI_Handle *config = (Hal_SPI_Handle *)param;
     
-    map_spi_api.SetRxCallback(drv->Port, config->RxCallback.Callback, config->RxCallback.Param);
+    map_spi_api.SetRxCallback(drv->Port, config->RxCallback.Rx, config->RxCallback.Param);
 }
 
 /**
@@ -312,6 +315,7 @@ bool Hal_SPI_IsRxComplet(Hal_SPI_Handle* drv)
     
     return map_spi_api.IsRxComplet(drv->Port);
 }
+#endif
 
 /** @}*/     /** hal spi component */
 

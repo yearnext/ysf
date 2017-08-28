@@ -115,7 +115,7 @@ extern "C"
  * @note STM32F107xC STM32F107RB, STM32F107VB, STM32F107RC, STM32F107VC
  *******************************************************************************
  */
-#define STM32F103xE
+#define STM32F103xB
 #define USE_HAL_DRIVER
 //#define USE_FULL_LL_DRIVER
 
@@ -186,9 +186,15 @@ extern "C"
 #if USE_FRAMEWORK_HAL_LIBRARY
 #define USE_HAL_DEBUG
     
+#define USE_HAL_UNIT_TEST
+
+#define USE_HAL_DEVICE_COMPONENT
+    
 #define USE_HAL_GPIO_COMPONENT
 #define USE_HAL_TIMER_COMPONENT
 #define USE_HAL_UART_COMPONENT
+#define USE_HAL_SPI_COMPONENT
+
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

@@ -72,7 +72,7 @@ extern "C"
  * @note        0                       disable
  *******************************************************************************
  */
-#define USE_FRAMEWORK_COMPONENT_LIBRARY                                      (1)
+#define USE_FRAMEWORK_COMPONENT                                              (1)
 
 /**
  *******************************************************************************
@@ -86,7 +86,7 @@ extern "C"
  * @brief      frameowrk component config <user config in>
  *******************************************************************************
  */
-#if USE_FRAMEWORK_COMPONENT_LIBRARY
+#if USE_FRAMEWORK_COMPONENT
 #define USE_FRAMEWORK_DEBUG                                                  
 #define USE_FRAMEWORK_BUFFER_COMPONENT 
 #define USE_FRAMEWORK_DEBUG_COMPONENT    

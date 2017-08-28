@@ -87,7 +87,7 @@ struct Fw_Stream;
  * @brief       stream buffer opera function
  *******************************************************************************
  */
-struct Fw_Stream_Buffer_Opera
+struct Fw_StreamBuffer_Ops
 {
     void (*Init)(void*);
     void (*Fini)(void*);
@@ -95,18 +95,6 @@ struct Fw_Stream_Buffer_Opera
     fw_err_t (*Write)(void*, uint8_t*, uint8_t);
     fw_err_t (*Read)(void*, uint8_t*, uint8_t);
 };
-
-///**
-// *******************************************************************************
-// * @brief       stream hardware opera function
-// *******************************************************************************
-// */
-//struct Fw_Stream_Device_Opera
-//{
-////    void (*Init)(struct Fw_Stream*, void*);
-////    void (*Fini)(struct Fw_Stream*);
-//    void (*Callback)(uint8_t, void*); 
-//};
 
 /**
  *******************************************************************************
@@ -134,61 +122,12 @@ struct Fw_Stream_Pipe
 struct Fw_Stream
 {
     void *Buffer;
-    struct Fw_Stream_Buffer_Opera *Buf_Ops;
+    struct Fw_StreamBuffer_Ops *Buf_Ops;
     void (*Callback)(uint8_t, void*);
 
 	struct Fw_Stream_Pipe Tx;
 	struct Fw_Stream_Pipe Rx;
 };
-
-//typedef struct 
-//{
-//    void *Buffer;
-//    struct Fw_Stream_Buffer_Opera *Buf_Ops;
-//    void (*Callback)(uint8_t, void*);
-//
-//    struct Fw_Stream_Pipe Tx;
-//    struct Fw_Stream_Pipe Rx;
-//}Fw_Stream_InitType;
-
-//
-///**
-// *******************************************************************************
-// * @brief       define framework fifo stream
-// *******************************************************************************
-// */
-//struct Fw_FifoStream
-//{
-//    struct Fw_Stream Stream;
-//    
-//    Fw_Fifo_t Fifo;
-//};
-//
-///**
-// *******************************************************************************
-// * @brief       define framework fifo stream
-// *******************************************************************************
-// */
-//struct Fw_BlockStreamBuffer
-//{
-//	struct
-//	{
-//		struct Fw_BlockStreamBuffer *Next;
-//	}LinkList;
-//
-//	struct Fw_Queue Queue;
-//};
-//
-//struct Fw_BlockStream
-//{
-//    struct Fw_Stream Stream;
-//    
-//    struct
-//    {
-//        struct Fw_BlockStreamBuffer *Head;
-//        struct Fw_BlockStreamBuffer *Tail;
-//    }LinkList;
-//};
 
 /* Exported variables --------------------------------------------------------*/
 /**
@@ -197,7 +136,7 @@ struct Fw_Stream
  *******************************************************************************
  */
 #if USE_STREAM_COMPONENT
-extern const struct Fw_Stream_Buffer_Opera FwStreamFifoOpera;
+extern const struct Fw_StreamBuffer_Ops Fw_FifoStream_Ops;
 //extern const struct Fw_Stream_Buffer_Opera FwStreamBlockOpera;
 #endif
 

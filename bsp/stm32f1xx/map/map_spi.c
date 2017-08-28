@@ -147,18 +147,8 @@ const struct Map_SPI_Opera map_spi_api =
  * @brief       define uart tx isr call back
  *******************************************************************************
  */
-static struct Hal_Callback SPI_Tx_Callback[HAL_SPI_PORT_NUM];
-
-/**
- *******************************************************************************
- * @brief       define uart rx isr call back
- *******************************************************************************
- */
-static struct 
-{
-    void (*Callback)(void*, uint8_t);
-    void *Param;
-}SPI_Rx_Callback[HAL_SPI_PORT_NUM];
+static Hal_Callback_t SPI_Tx_Callback[HAL_SPI_PORT_NUM];
+static Hal_Callback_t SPI_Rx_Callback[HAL_SPI_PORT_NUM];
 
 /**
  *******************************************************************************
@@ -280,10 +270,10 @@ void _SPI_Port_Switch(uint8_t port, Hal_SPI_Handle *dev)
 __STATIC_INLINE
 void _SPI_GPIO_Init(uint8_t port, Hal_SPI_Handle *dev)
 {
-//    Hal_GPIO_Handle txPort;
-//    Hal_GPIO_Handle rxPort;
-//    Hal_GPIO_Handle sckPort;
-//    Hal_GPIO_Handle cssPort;
+//    Hal_Device_GPIO txPort;
+//    Hal_Device_GPIO rxPort;
+//    Hal_Device_GPIO sckPort;
+//    Hal_Device_GPIO cssPort;
 //
 //    //< config mcu spi mosi port
 //    if(dev->TxConfig != MCU_SPI_DISABLE_TX)
@@ -475,9 +465,9 @@ void _SPI_GPIO_Init(uint8_t port, Hal_SPI_Handle *dev)
 //        map_gpio_api.Init(cssPort.Port, cssPort.Pin, cssPort.Dir, cssPort.Mode);
 //    }
     
-    Hal_GPIO_Handle txPort;
-    Hal_GPIO_Handle rxPort;
-    Hal_GPIO_Handle sckPort;
+    Hal_Device_GPIO txPort;
+    Hal_Device_GPIO rxPort;
+    Hal_Device_GPIO sckPort;
 
     txPort.Dir = GPIO_DIR_HS_OUTPUT;
     txPort.Mode = GPIO_AF_PUSH_PULL_MODE;    
@@ -585,10 +575,10 @@ void Map_SPI_Init(uint8_t port, void *param)
     LL_SPI_InitStructure.TransferDirection = LL_SPI_FULL_DUPLEX;
         
     //< config uart call back
-    SPI_Tx_Callback[port].Callback = dev->TxCallback.Callback;
-    SPI_Tx_Callback[port].Param    = dev->TxCallback.Param;
-    SPI_Rx_Callback[port].Callback = dev->RxCallback.Callback;
-    SPI_Rx_Callback[port].Param    = dev->RxCallback.Param;
+    SPI_Tx_Callback[port].Tx    = dev->TxCallback.Tx;
+    SPI_Tx_Callback[port].Param = dev->TxCallback.Param;
+    SPI_Rx_Callback[port].Rx    = dev->RxCallback.Rx;
+    SPI_Rx_Callback[port].Param = dev->RxCallback.Param;
     
     //< init uart
     LL_SPI_DeInit(SPI[port]);
@@ -621,7 +611,7 @@ void Map_SPI_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
 {
     hal_assert(IS_SPI_PORT_INVAILD(port));
     
-    SPI_Tx_Callback[port].Callback = callback;
+    SPI_Tx_Callback[port].Tx = callback;
     SPI_Tx_Callback[port].Param = param;
 }
 
@@ -639,7 +629,7 @@ void Map_SPI_SetRxCallback(uint8_t port, void (*callback)(void*, uint8_t), void 
 {
     hal_assert(IS_SPI_PORT_INVAILD(port));
     
-    SPI_Rx_Callback[port].Callback = callback;
+    SPI_Rx_Callback[port].Rx = callback;
     SPI_Rx_Callback[port].Param = param;
 }
 
@@ -827,17 +817,17 @@ void SPI1_IRQHandler(void)
 {
     if (Map_SPI_IsTxComplet(MCU_SPI_1) == true)
     {
-        if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_1].Callback))
+        if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_1].Tx))
         {
-            SPI_Tx_Callback[MCU_SPI_1].Callback(SPI_Tx_Callback[MCU_SPI_1].Param);
+            SPI_Tx_Callback[MCU_SPI_1].Tx(SPI_Tx_Callback[MCU_SPI_1].Param);
         }
     }
     
     if (Map_SPI_IsRxComplet(MCU_SPI_1) == true)
     {
-        if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_1].Callback))
+        if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_1].Rx))
         {
-            SPI_Rx_Callback[MCU_SPI_1].Callback(SPI_Rx_Callback[MCU_SPI_1].Param, SPI[MCU_SPI_1]->DR);
+            SPI_Rx_Callback[MCU_SPI_1].Rx(SPI_Rx_Callback[MCU_SPI_1].Param, SPI[MCU_SPI_1]->DR);
         }
     }
 }
@@ -856,17 +846,17 @@ void SPI2_IRQHandler(void)
 {
     if (Map_SPI_IsTxComplet(MCU_SPI_2) == true)
     {
-        if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_2].Callback))
+        if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_2].Tx))
         {
-            SPI_Tx_Callback[MCU_SPI_2].Callback(SPI_Tx_Callback[MCU_SPI_2].Param);
+            SPI_Tx_Callback[MCU_SPI_2].Tx(SPI_Tx_Callback[MCU_SPI_2].Param);
         }
     }
     
     if (Map_SPI_IsRxComplet(MCU_SPI_2) == true)
     {
-        if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_2].Callback))
+        if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_2].Rx))
         {
-            SPI_Rx_Callback[MCU_SPI_2].Callback(SPI_Rx_Callback[MCU_SPI_2].Param, SPI[MCU_SPI_2]->DR);
+            SPI_Rx_Callback[MCU_SPI_2].Rx(SPI_Rx_Callback[MCU_SPI_2].Param, SPI[MCU_SPI_2]->DR);
         }
     }
 }
@@ -885,17 +875,17 @@ void SPI3_IRQHandler(void)
 {
     if (Map_SPI_IsTxComplet(MCU_SPI_3) == true)
     {
-        if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_3].Callback))
+        if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_3].Tx))
         {
-            SPI_Tx_Callback[MCU_SPI_3].Callback(SPI_Tx_Callback[MCU_SPI_3].Param);
+            SPI_Tx_Callback[MCU_SPI_3].Tx(SPI_Tx_Callback[MCU_SPI_3].Param);
         }
     }
     
     if (Map_SPI_IsRxComplet(MCU_SPI_3) == true)
     {
-        if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_3].Callback))
+        if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_3].Rx))
         {
-            SPI_Rx_Callback[MCU_SPI_3].Callback(SPI_Rx_Callback[MCU_SPI_3].Param, SPI[MCU_SPI_3]->DR);
+            SPI_Rx_Callback[MCU_SPI_3].Rx(SPI_Rx_Callback[MCU_SPI_3].Param, SPI[MCU_SPI_3]->DR);
         }
     }
 }

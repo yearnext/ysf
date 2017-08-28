@@ -217,9 +217,7 @@ __INLINE fw_err_t Fw_Task_Init(struct Fw_Task *task, char *str, uint8_t priority
     task->Str           = str;
     task->Priority      = priority;
     task->Status        = 1;
-    
-    log("%s Create Success! \r\n", str);
-    
+
     return FW_ERR_NONE;
 }
 
@@ -342,6 +340,8 @@ void EventFree(struct Fw_Task_Event *event)
 __STATIC_INLINE
 void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
 {
+    __ATOM_ACTIVE_BEGIN();
+    
     //< 1. check param
     struct Fw_Task_Event *nowNode = EventAlloc();
     struct Fw_TaskMgr *queue;
@@ -366,6 +366,8 @@ void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
     {
         queue->Num++;
     }
+    
+    __ATOM_ACTIVE_END();
 }
 
 /**
@@ -384,6 +386,8 @@ fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event **event)
     _FW_ASSERT(IS_TASK_PRIORITY_INVAILD(priority));
     _FW_ASSERT(IS_PTR_NULL(event));
     
+    __ATOM_ACTIVE_BEGIN();
+    
     //< 2. check queue is vaild
     struct Fw_TaskMgr *queue = &TaskBlock.TaskMgrBlock[priority];
     
@@ -399,6 +403,8 @@ fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event **event)
 
     //< 5. free memory
     EventFree((struct Fw_Task_Event *)*event);
+    
+    __ATOM_ACTIVE_END();
     
     return FW_ERR_NONE;
 }

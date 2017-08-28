@@ -65,7 +65,9 @@ extern const struct Map_Uart_Opera map_uart_api;
  * @brief      define test api
  *******************************************************************************
  */ 
+#ifdef USE_HAL_UNIT_TEST
 extern void Hal_Uart_Test(void);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

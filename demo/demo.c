@@ -33,12 +33,18 @@
  * @brief       device port define
  *******************************************************************************
  */  
-static Hal_GPIO_Handle Led = 
+static Hal_Device_GPIO LedPort = 
 {
-    .Port = MCU_PORT_D,
-    .Pin  = MCU_PIN_13,
+    .Port = MCU_PORT_B,
+    .Pin  = MCU_PIN_2,
     .Dir  = GPIO_DIR_HS_OUTPUT,
     .Mode = GPIO_PUSH_PULL_MODE,
+};
+ 
+static Hal_Device_t Led = 
+{
+    .Device = (void *)&LedPort,
+    .Interface = (struct Hal_Interface *)&Hal_GPIO_Interface,
 };
 
 /**
@@ -63,7 +69,7 @@ void Led_Task_Handle(uint32_t event, void *param);
 
 void App_Led_Init(void)
 {
-    Hal_GPIO_Init(&Led);
+    Hal_Device_Init(&Led);
     
     Fw_Task_Init(&LedTask, "Led Task", 1, (void *)Led_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
     
@@ -74,18 +80,18 @@ void App_Led_Init(void)
 
 void Led_Task_Handle(uint32_t event, void *param)
 {
-    Hal_GPIO_Handle *drv = (Hal_GPIO_Handle *)param;
+    Hal_Device_t *drv = (Hal_Device_t *)param;
     
     switch(event)
     {
         case LED_ON_EVENT:
-            Hal_GPIO_Set(drv);
+            Hal_Device_Control(drv, HAL_GPIO_WRITE_CMD, 0x01, 1);
             break;
         case LED_OFF_EVENT:
-            Hal_GPIO_Clr(drv);
+            Hal_Device_Control(drv, HAL_GPIO_WRITE_CMD, 0x00, 1);
             break;
         case LED_BLINK_EVENT:
-            Hal_GPIO_Toggle(drv);
+            Hal_Device_Control(drv, HAL_GPIO_TOGGLE_CMD);
             break;
         default:
             break;
