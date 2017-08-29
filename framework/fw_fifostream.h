@@ -42,7 +42,6 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "fw_stream.h"
 #include "fw_timer.h"
 #include "hal_device.h"
     
@@ -55,20 +54,13 @@ extern "C"
  */
 typedef struct Fw_FifoStream
 {
-	Hal_Device_t Device;
-	
-    struct Fw_Stream Tx;
-    struct Fw_Stream Rx;
-     
-    struct Fw_Timer Timer;
-
-    enum
-    {
-        FIFO_STREAM_INIT_STATE,
-        FIFO_STREAM_SEND_STATE,
-        FIFO_STREAM_SLEEP_STATE,
-        FIFO_STREAM_COMPLET_STATE,
-    }State;
+	Hal_Device_t *Device;
+    
+	uint16_t TxTick;
+    uint16_t RxTick;
+    
+    struct Fw_Timer TxTimer; 
+    struct Fw_Timer RxTimer;
 }Fw_FifoStream_t;
       
 /* Exported constants --------------------------------------------------------*/
@@ -87,14 +79,10 @@ typedef struct Fw_FifoStream
  */
 extern __INLINE void Fw_FifoStream_Init(Fw_FifoStream_t*);
 extern __INLINE void Fw_FifoStream_Fini(Fw_FifoStream_t*);
-extern __INLINE void Fw_FifoStream_ConnectTx(void*);
-extern __INLINE void Fw_FifoStream_DisconnectTx(void*);
-extern __INLINE void Fw_FifoStream_ConnectRx(void*);
-extern __INLINE void Fw_FifoStream_DisconnectRx(void*);
-extern __INLINE void Fw_FifoStream_TxOut(void*);
-extern __INLINE void Fw_FifoStream_RxIn(void*);
-extern __INLINE void Fw_FifoStream_Send(void*);
-extern __INLINE void Fw_FifoStream_Receive(void*, uint8_t);
+extern __INLINE void Fw_FifoStream_ConnectTx(Fw_FifoStream_t*);
+extern __INLINE void Fw_FifoStream_DisconnectTx(Fw_FifoStream_t*);
+extern __INLINE void Fw_FifoStream_ConnectRx(Fw_FifoStream_t*);
+extern __INLINE void Fw_FifoStream_DisconnectRx(Fw_FifoStream_t*);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

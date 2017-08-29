@@ -49,6 +49,8 @@ extern "C"
 /* Includes ------------------------------------------------------------------*/
 #include "fw_path.h"
 #include "fw_buffer.h"
+#include "fw_timer.h"
+#include "hal_device.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -80,20 +82,12 @@ extern "C"
 #define BLOCK_STREAM_BUFFER_SIZE                                           (128)
 
 /* Exported types ------------------------------------------------------------*/
-struct Fw_Stream;
-
-/**
- *******************************************************************************
- * @brief       stream buffer opera function
- *******************************************************************************
- */
-struct Fw_StreamBuffer_Ops
+struct Fw_Stream_Pool_Interface
 {
     void (*Init)(void*);
     void (*Fini)(void*);
-
-    fw_err_t (*Write)(void*, uint8_t*, uint8_t);
-    fw_err_t (*Read)(void*, uint8_t*, uint8_t);
+    uint16_t (*Write)(void*, uint8_t*, uint8_t);
+    uint16_t (*Read)(void*, uint8_t*, uint8_t);
 };
 
 /**
@@ -103,15 +97,10 @@ struct Fw_StreamBuffer_Ops
  */
 struct Fw_Stream_Pipe
 {
-    //< pipe function param
-	void *Param;
-	
-	void (*InOut)(void*);
-    void (*Connect)(void*);
-    void (*Disconnect)(void*);
-
-    //< pipe ready flag
 	bool IsReady;
+    uint8_t Status;
+    uint16_t TimeOutTick;
+    struct Fw_Timer Timer;
 };
 
 /**
@@ -121,25 +110,16 @@ struct Fw_Stream_Pipe
  */
 struct Fw_Stream
 {
-    void *Buffer;
-    struct Fw_StreamBuffer_Ops *Buf_Ops;
-    void (*Callback)(uint8_t, void*);
-
+    void *Pool;
+    struct Fw_Stream_Pool_Interface *Interface;
+     
+    Hal_Device_t *Device;
+    
 	struct Fw_Stream_Pipe Tx;
 	struct Fw_Stream_Pipe Rx;
 };
 
 /* Exported variables --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define stream opera
- *******************************************************************************
- */
-#if USE_STREAM_COMPONENT
-extern const struct Fw_StreamBuffer_Ops Fw_FifoStream_Ops;
-//extern const struct Fw_Stream_Buffer_Opera FwStreamBlockOpera;
-#endif
-
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -147,17 +127,14 @@ extern const struct Fw_StreamBuffer_Ops Fw_FifoStream_Ops;
  *******************************************************************************
  */
 #if USE_STREAM_COMPONENT
-extern void Fw_Stream_InitComponent(void);
-extern void Fw_Stream_PostEvent(struct Fw_Stream*, uint8_t);
-
 extern __INLINE void Fw_Stream_Init(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_Fini(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_TxConnect(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_TxDisconnect(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_RxConnect(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_RxDisconnect(struct Fw_Stream*);
-extern __INLINE fw_err_t Fw_Stream_Write(struct Fw_Stream*, uint8_t*, uint8_t);
-extern __INLINE fw_err_t Fw_Stream_Read(struct Fw_Stream*, uint8_t*, uint8_t);
+extern __INLINE uint16_t Fw_Stream_Write(struct Fw_Stream*, uint8_t*, uint8_t);
+extern __INLINE uint16_t Fw_Stream_Read(struct Fw_Stream*, uint8_t*, uint8_t);
 
 #endif
 

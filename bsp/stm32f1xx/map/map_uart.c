@@ -483,10 +483,10 @@ void Map_Uart_Init(uint8_t port, void *param)
     LL_USART_InitStructure.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
 
     //< config uart call back
-    UartTxCallback[port].Tx = drv->Config.TxCallback.Tx;
-    UartTxCallback[port].Param    = drv->Config.TxCallback.Param;
-    UartRxCallback[port].Rx = drv->Config.RxCallback.Rx;
-    UartRxCallback[port].Param    = drv->Config.RxCallback.Param;
+    UartTxCallback[port].Tx    = drv->TxCallback.Tx;
+    UartTxCallback[port].Param = drv->TxCallback.Param;
+    UartRxCallback[port].Rx    = drv->RxCallback.Rx;
+    UartRxCallback[port].Param = drv->RxCallback.Param;
     
     //< init uart
     LL_USART_DeInit(Uart[port]);
@@ -562,6 +562,12 @@ void Map_Uart_Fini(uint8_t port)
     hal_assert(IS_UART_PORT_INVAILD(port));
     
     LL_USART_DeInit(Uart[port]);
+    
+    UartTxCallback[port].Tx    = NULL;
+    UartTxCallback[port].Param = NULL;
+    
+    UartRxCallback[port].Rx    = NULL;
+    UartRxCallback[port].Param = NULL;
 }
 
 /**

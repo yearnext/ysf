@@ -55,6 +55,9 @@ extern "C"
 enum _Hal_Control_Cmd
 {
     //< hal device common cmd
+    HAL_DEVICE_INIT_CMD,
+    HAL_DEVICE_FINI_CMD,
+    
     HAL_CLR_TX_FLAG_CMD,
     HAL_GET_TX_FLAG_CMD,
     
@@ -70,13 +73,7 @@ enum _Hal_Control_Cmd
     HAL_SEND_BYTE_CMD,
     HAL_RECEIVE_BYTE_CMD,
     
-    HAL_DEVICE_INIT_CMD,
-    HAL_DEVICE_FINI_CMD,
-    
-    //< hal device gpio cmd
-    HAL_GPIO_INIT_CMD,
-    HAL_GPIO_FINI_CMD,
-    
+    //< hal device gpio cmd    
     HAL_GPIO_SET_CMD,
     HAL_GPIO_CLR_CMD,
     
@@ -103,6 +100,26 @@ enum _Hal_Device_Type
     HAL_DEVICE_IIC,
 };
 
+typedef enum
+{
+    HAL_DEVICE_UNINIT_STATE,
+    HAL_DEVICE_INIT_STATE,
+}Hal_Device_State;
+
+typedef enum
+{
+    HAL_DEVICE_LOCK,
+    HAL_DEVICE_UNLOCK,
+}Hal_Device_Lock_State;
+
+typedef enum
+{
+    HAL_DEVICE_ERR_CODE_NONE,
+    HAL_DEVICE_ERR_CODE_LOCK,
+    HAL_DEVICE_ERR_CODE_UNINIT,
+    HAL_DEVICE_ERR_CODE_INITED,
+}Hal_Device_ErrCode;
+
 /**
  *******************************************************************************
  * @brief       hal device type structure
@@ -114,8 +131,9 @@ typedef struct
     void *Device;
     struct Hal_Interface *Interface;
     
-//    enum _Hal_Device_Type Type;
-    
+    Hal_Device_Lock_State Lock;
+    Hal_Device_State      State;
+    Hal_Device_ErrCode    ErrCode;
 }Hal_Device_t;
 
 /**
@@ -146,6 +164,9 @@ extern __INLINE hal_err_t Hal_Device_Fini(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Write(Hal_Device_t*, uint8_t*, uint8_t);
 extern __INLINE hal_err_t Hal_Device_Read(Hal_Device_t*, uint8_t*, uint8_t);
 extern __INLINE hal_err_t Hal_Device_Control(Hal_Device_t*, uint8_t, ...);
+extern __INLINE hal_err_t Hal_Device_Lock(Hal_Device_t*);
+extern __INLINE hal_err_t Hal_Device_Unlock(Hal_Device_t*);
+extern __INLINE uint8_t Hal_Device_GetErrCode(Hal_Device_t*);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

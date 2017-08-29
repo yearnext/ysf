@@ -385,6 +385,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\demo\demo.c</FilePath>
             </File>
+            <File>
+              <FileName>app_conf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\demo\app_conf.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -431,11 +436,6 @@
               <FilePath>..\..\framework\fw_linklist.c</FilePath>
             </File>
             <File>
-              <FileName>fw_stream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_stream.c</FilePath>
-            </File>
-            <File>
               <FileName>fw_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\framework\fw_core.c</FilePath>
@@ -449,6 +449,11 @@
               <FileName>fw_fifostream.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\framework\fw_fifostream.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_stream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\fw_stream.c</FilePath>
             </File>
           </Files>
         </Group>

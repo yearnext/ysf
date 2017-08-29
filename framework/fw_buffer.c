@@ -108,21 +108,19 @@ __INLINE uint16_t Fw_Buffer_GetLen(struct Fw_RingBuffer *rb)
     return rb->Len;
 }
 
-/**
- *******************************************************************************
- * @brief       get ring buffer can read data size
- * @param       [in/out]  *rb                 ring buffer control block
- * @return      [in/out]  uint16_t            ring buffer can read data size
- * @note        None
- *******************************************************************************
- */
-__STATIC_INLINE 
-uint16_t RingBufferCanRead(struct Fw_RingBuffer *rb)
-{
-    _FW_ASSERT(IS_PTR_NULL(rb));
-
-    return rb->Len;
-}
+///**
+// *******************************************************************************
+// * @brief       get ring buffer can read data size
+// * @param       [in/out]  *rb                 ring buffer control block
+// * @return      [in/out]  uint16_t            ring buffer can read data size
+// * @note        None
+// *******************************************************************************
+// */
+//__STATIC_INLINE 
+//uint16_t RingBufferCanRead(struct Fw_RingBuffer *rb)
+//{
+//    return rb->Len;
+//}
 
 /**
  *******************************************************************************
@@ -135,8 +133,6 @@ uint16_t RingBufferCanRead(struct Fw_RingBuffer *rb)
 __STATIC_INLINE 
 uint16_t RingBufferCanWrite(struct Fw_RingBuffer *rb)
 {
-    _FW_ASSERT(IS_PTR_NULL(rb));
-    
     return rb->Size - rb->Len - 1;
 }
 
@@ -146,51 +142,59 @@ uint16_t RingBufferCanWrite(struct Fw_RingBuffer *rb)
  * @param       [in/out]  *rb                ring buffer control block
  * @param       [in/out]  *buff              write data buffer
  * @param       [in/out]  rbSize             write data buffer size
- * @return      [in/out]  FW_ERR_NONE        ring buffer write success
- * @return      [in/out]  FW_ERR_FAIL        ring buffer write failed
+ * @return      [in/out]  readSize           read data num
  * @note        None
  *******************************************************************************
  */
-__INLINE fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t writeSize)
+__INLINE uint16_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer, uint16_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(writeBuffer));
-    _FW_ASSERT(writeSize == 0);
+    _FW_ASSERT(size == 0);
     
     uint16_t free = 0;
     uint16_t i = 0;
     uint16_t canWriteSize = RingBufferCanWrite(rb);
-
-    if(writeSize <= canWriteSize)
+    uint16_t writeSize = 0;
+    
+    if (size <= canWriteSize)
     {
-        if((rb->Tail + writeSize) >= rb->Size)
-        {
-            free = rb->Size - rb->Tail;
+        writeSize = size;
+    }
+    else if (size == 0xFFFF)
+    {
+        writeSize = canWriteSize;
+    }
+    else
+    {
+        return 0;
+    }
+    
+    if((rb->Tail + writeSize) >= rb->Size)
+    {
+        free = rb->Size - rb->Tail;
 
-            for(i=0; i<free; i++)
-            {
-                rb->Buffer[rb->Tail++] = writeBuffer[i];
-            }
-
-            for(rb->Tail=0; i<writeSize; i++)
-            {
-                rb->Buffer[rb->Tail++] = writeBuffer[i];
-            }
-        }
-        else
+        for(i=0; i<free; i++)
         {
-            for(i=0; i<writeSize; i++)
-            {
-                rb->Buffer[rb->Tail++] = writeBuffer[i];
-            }
+            rb->Buffer[rb->Tail++] = writeBuffer[i];
         }
 
-        rb->Len += writeSize;
-        
-        return FW_ERR_NONE;
+        for(rb->Tail=0; i<writeSize; i++)
+        {
+            rb->Buffer[rb->Tail++] = writeBuffer[i];
+        }
+    }
+    else
+    {
+        for(i=0; i<writeSize; i++)
+        {
+            rb->Buffer[rb->Tail++] = writeBuffer[i];
+        }
     }
 
-    return FW_ERR_OVERFLOW;
+    rb->Len += writeSize;
+        
+    return 0;
 }
 
 /**
@@ -198,52 +202,60 @@ __INLINE fw_err_t Fw_Buffer_Write(struct Fw_RingBuffer *rb, uint8_t *writeBuffer
  * @brief       read data from ring buffer
  * @param       [in/out]  *rb                ring buffer control block
  * @param       [in/out]  *buff              read data buffer
- * @param       [in/out]  rbSize             read data size
- * @return      [in/out]  FW_ERR_NONE        ring buffer read success
- * @return      [in/out]  FW_ERR_FAIL        ring buffer read failed
+ * @param       [in/out]  size               read data size
+ * @return      [in/out]  readSize           read data num
  * @note        None
  *******************************************************************************
  */
-__INLINE fw_err_t Fw_Buffer_Read(struct Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t readSize)
+__INLINE uint16_t Fw_Buffer_Read(struct Fw_RingBuffer *rb, uint8_t *readBuffer, uint16_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(rb));
     _FW_ASSERT(IS_PTR_NULL(readBuffer));
-    _FW_ASSERT(readSize == 0); 
+    _FW_ASSERT(size == 0); 
     
     uint16_t free = 0;
     uint16_t i = 0;
-    uint16_t canReadSize = RingBufferCanRead(rb);
+    uint16_t canReadSize = rb->Len;
+    uint16_t readSize = 0;
     
-    if (readSize <= canReadSize)
+    if (size <= canReadSize)
     {
-        if ((rb->Head + readSize) >= rb->Size)
-        {
-            free = rb->Size - rb->Head;
-
-            for (i=0; i<free; i++)
-            {
-                 readBuffer[i] = rb->Buffer[rb->Head++];
-            }
-
-            for (rb->Head=0; i<readSize; i++)
-            {
-                readBuffer[i] = rb->Buffer[rb->Head++];
-            }
-        }
-        else
-        {
-            for (i=0; i<readSize; i++)
-            {
-                readBuffer[i] = rb->Buffer[rb->Head++];
-            }
-        }
-        
-        rb->Len -= readSize;
-        
-        return FW_ERR_NONE;
+        readSize = size;
     }
+    else if (size == 0xFFFF)
+    {
+        readSize = canReadSize;
+    }
+    else
+    {
+        return 0;
+    }
+    
+    if ((rb->Head + size) >= rb->Size)
+    {
+        free = rb->Size - rb->Head;
 
-    return FW_ERR_FAIL;
+        for (i=0; i<free; i++)
+        {
+             readBuffer[i] = rb->Buffer[rb->Head++];
+        }
+
+        for (rb->Head=0; i<readSize; i++)
+        {
+            readBuffer[i] = rb->Buffer[rb->Head++];
+        }
+    }
+    else
+    {
+        for (i=0; i<readSize; i++)
+        {
+            readBuffer[i] = rb->Buffer[rb->Head++];
+        }
+    }
+    
+    rb->Len -= readSize;
+    
+    return readSize;
 }
 
 /**
@@ -294,30 +306,28 @@ __INLINE void Fw_Queue_Fini(struct Fw_Queue *queue)
  * @param       [in/out]  *queue             queue block
  * @param       [in/out]  *buffer            buffer
  * @param       [in/out]  len                buffer size
- * @return      [in/out]  FW_ERR_NONE        write success
- * @return      [in/out]  FW_ERR_FAIL        write failed
+ * @return      [in/out]  size               write data num
  * @note        None
  *******************************************************************************
  */
-__INLINE fw_err_t Fw_Queue_Write(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
+__INLINE uint16_t Fw_Queue_Write(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
     _FW_ASSERT(IS_PTR_NULL(buffer));
     _FW_ASSERT(size == 0); 
 
-	uint16_t freeSize = queue->Len - queue->Tail;
-	uint8_t *queueBuffer = &queue->Buffer[queue->Tail];
-	
+	uint16_t freeSize = queue->Len - queue->Tail - 1;
+
 	if(size > freeSize)
 	{
-		return FW_ERR_OVERFLOW;
+		return 0;
 	}
 	
-	memcpy(queueBuffer, buffer, size);
+	memcpy(&queue->Buffer[queue->Tail], buffer, size);
 
-	queue->Tail += freeSize;
+	queue->Tail += size;
 
-	return FW_ERR_NONE;
+	return size;
 }
 
 /**
@@ -331,25 +341,24 @@ __INLINE fw_err_t Fw_Queue_Write(struct Fw_Queue *queue, uint8_t *buffer, uint16
  * @note        None
  *******************************************************************************
  */
-__INLINE fw_err_t Fw_Queue_Read(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
+__INLINE uint16_t Fw_Queue_Read(struct Fw_Queue *queue, uint8_t *buffer, uint16_t size)
 {
     _FW_ASSERT(IS_PTR_NULL(queue));
     _FW_ASSERT(IS_PTR_NULL(buffer));
     _FW_ASSERT(size == 0); 
 
 	uint16_t useSize = queue->Tail - queue->Head;
-	uint8_t *queueBuffer = &queue->Buffer[queue->Head];
-	
+
 	if(size > useSize)
 	{
-		return FW_ERR_FAIL;
+		return 0;
 	}
 	
-	memcpy(buffer, queueBuffer, size);
+	memcpy(buffer, &queue->Buffer[queue->Head], size);
 
-	queue->Head += useSize;
+	queue->Head += size;
 
-	return FW_ERR_NONE;
+	return size;
 }
 
 /**

@@ -190,7 +190,29 @@ static hal_err_t Hal_GPIO_Interface_Read(void *drv, uint8_t *cfg, uint8_t num)
  * @param       [in/out]  cmd            device command
  * @param       [in/out]  ...            expand param
  * @return      [in/out]  HAL_ERR_NONE   result
- * @note        None
+ * @note        [-------------------------command commit-----------------------]
+ * @note        [cmd]     HAL_DEVICE_INIT_CMD
+ * @note        [param]   dir            set gpio dir
+ * @note        [param]   mode           set gpio mode
+ * @note        [cmd]     HAL_DEVICE_FINI_CMD
+ * @note        [param]   None
+ * @note        [cmd]     HAL_GPIO_SET_CMD
+ * @note        [param]   None
+ * @note        [cmd]     HAL_GPIO_CLR_CMD
+ * @note        [param]   None
+ * @note        [cmd]     HAL_GPIO_WRITE_CMD
+ * @note        [param]   value          write pin value
+ * @note        [param]   num            write pin num
+ * @note        [cmd]     HAL_GPIO_READ_CMD
+ * @note        [param]   dir            read pin dir
+ * @note        [param]   *value         read pin value
+ * @note        [param]   num            read pin num
+ * @note        [cmd]     HAL_GPIO_GET_OUTPUT_CMD
+ * @note        [param]   *status        pin output status
+ * @note        [cmd]     HAL_GPIO_GET_INTPUT_CMD
+ * @note        [param]   *status        pin intput status
+ * @note        [cmd]     HAL_GPIO_TOGGLE_CMD
+ * @note        [param]   None
  *******************************************************************************
  */
 static hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
@@ -210,19 +232,6 @@ static hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args
             break;
         }
         case HAL_DEVICE_FINI_CMD:
-        {
-            map_gpio_api.Fini(gpio->Port, gpio->Pin);
-            break;
-        }
-        case HAL_GPIO_INIT_CMD:
-        {
-            uint8_t dir = *va_arg(args, uint8_t *);
-            uint8_t mode = *va_arg(args, uint8_t *);
-
-            map_gpio_api.Init(gpio->Port, gpio->Pin, dir, mode);
-            break;
-        }
-        case HAL_GPIO_FINI_CMD:
         {
             map_gpio_api.Fini(gpio->Port, gpio->Pin);
             break;

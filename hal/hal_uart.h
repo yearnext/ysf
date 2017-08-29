@@ -48,6 +48,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/  
 #include "hal_core.h"
+#include "fw_buffer.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -140,6 +141,18 @@ enum
 
 /**
  *******************************************************************************
+ * @brief      uart pipe status
+ *******************************************************************************
+ */ 
+enum
+{
+    MCU_UART_PIPE_DISCONNECT = 0,
+    MCU_UART_PIPE_CONNECT_WITH_IDLE,
+    MCU_UART_CONNECT_WITH_WORK,
+};
+
+/**
+ *******************************************************************************
  * @brief      define map deivce uart structure
  *******************************************************************************
  */
@@ -161,10 +174,19 @@ typedef struct
         uint8_t Priority;
         
         uint32_t Baud;
-        
-        Hal_Callback_t TxCallback;
-        Hal_Callback_t RxCallback;
     }Config;
+    
+    Hal_Callback_t TxCallback;
+    Hal_Callback_t RxCallback;
+    
+    Fw_Fifo_t *TxBuffer;
+    Fw_Fifo_t *RxBuffer;
+    
+    //< 0: disable connect
+    //< 1: connect with idle
+    //< 2: working with busy
+    uint8_t TxFlag;
+    uint8_t RxFlag;
     
     struct Hal_Uart_Opera *Opera;
 }Hal_Device_Uart;
@@ -238,6 +260,12 @@ extern const struct Hal_Interface Hal_Uart_Interface;
 #endif
 
 /* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define hal gpio apis
+ *******************************************************************************
+ */ 
+#if USE_UART_COMPONENT
 extern void Hal_Uart_Open(Hal_Device_Uart*);
 extern void Hal_Uart_Close(Hal_Device_Uart*);
 extern void Hal_Uart_Init(Hal_Device_Uart*);
@@ -252,6 +280,7 @@ extern void Hal_Uart_RxConnect(Hal_Device_Uart*);
 extern void Hal_Uart_RxDisconnect(Hal_Device_Uart*);
 extern bool Hal_Uart_IsTxComplet(Hal_Device_Uart*);
 extern bool Hal_Uart_IsRxComplet(Hal_Device_Uart*);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
