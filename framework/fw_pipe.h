@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_debug.h                                                      *
+ * @file       fw_pipe.h                                                       *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-01-10                                                      *
- * @brief      framework debug component head files                            *
+ * @date       2017-08-31                                                      *
+ * @brief      framework pipe component head files                             *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -30,14 +30,15 @@
  * 1.XXXXX                  						                           *
  *******************************************************************************
  */
-
+ 
 /**
- * @defgroup framework debug component
+ * @defgroup framework pipe component
  * @{
  */
+ 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_DEBUG_H__
-#define __FRAMEWORK_DEBUG_H__
+#ifndef __FRAMEWORK_PIPE_H__
+#define __FRAMEWORK_PIPE_H__
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
@@ -47,6 +48,9 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_path.h"
+#include "fw_buffer.h"
+#include "fw_timer.h"
+#include "fw_task.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -56,8 +60,8 @@ extern "C"
  * @note        0                        disable
  *******************************************************************************
  */
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-#define USE_DEBUG_COMPONENT                                                  (1)
+#ifdef USE_FRAMEWORK_PIPE_COMPONENT
+#define USE_PIPE_COMPONENT                                                   (1)
 
 /**
  *******************************************************************************
@@ -67,80 +71,86 @@ extern "C"
  *******************************************************************************
  */
 #else
-#define USE_DEBUG_COMPONENT                                                 (0)
+#define USE_PIPE_COMPONENT                                                   (1)
 #endif
 
-/**
- *******************************************************************************
- * @brief      define debug component filling mode
- *******************************************************************************
- */
-#define USE_DEBUG_COMPONENT_FILLING_MODE                                     (1)
-   
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define debug output message type
+ * @brief       define pipe pool interface
  *******************************************************************************
  */
-enum _DEBUG_MESSAGE_TYPE
+struct Fw_Pipe;
+struct Fw_Pipe_Pool_Interface
 {
-	DEBUG_OUTPUT_ERROR_MESSAGE,
-	DEBUG_OUTPUT_WARNING_MESSAGE,
-	DEBUG_OUTPUT_NORMAL_MESSAGE,
+    void (*Init)(struct Fw_Pipe*);
+    void (*Fini)(struct Fw_Pipe*);
+    uint16_t (*Write)(struct Fw_Pipe*, uint8_t*, uint16_t);
+    uint16_t (*Read)(struct Fw_Pipe*, uint8_t*, uint16_t);
 };
 
+/**
+ *******************************************************************************
+ * @brief       define framework pipe type
+ *******************************************************************************
+ */
+typedef struct Fw_Pipe
+{
+    //< pipe cache memory pool
+    void *Pool;
+    struct Fw_Pipe_Pool_Interface *Interface;
+    
+    //< pipe task call back
+    struct Fw_Task *Param;
+    
+    //< pipe in out handle
+    union
+    {
+        void (*Out)(uint8_t, void*);
+        void (*In)(uint8_t, void*, uint8_t);
+        void (*InOut)(uint8_t, void*);
+    };
+        
+    void *Stream;
+    
+    //< pipe status
+	bool IsConnect;
+    bool IsLock;
+    
+    //< pipe timer
+    uint16_t TimeOutTick;
+    struct Fw_Timer Timer;
+
+    bool DeviceLock;
+}Fw_Pipe_t;
+
 /* Exported variables --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       pipe cache fifo type option
+ *******************************************************************************
+ */
+#if USE_PIPE_COMPONENT
+extern const struct Fw_Pipe_Pool_Interface PipeFifoInterface;
+#endif
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      debug component init function
+ * @brief       define framework stream api
  *******************************************************************************
- */  
-extern void Fw_Debug_InitComponent(void);
-
-/**
- *******************************************************************************
- * @brief      debug component log message output function
- *******************************************************************************
- */ 
-extern void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE, const char*, ...); 
-
-#if USE_DEBUG_COMPONENT
-#define log(str, ...)    Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
-#define log_e(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_ERROR_MESSAGE, str, ##__VA_ARGS__)
-#define log_w(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_WARNING_MESSAGE, str, ##__VA_ARGS__)
-#define log_d(str, ...)  Fw_Debug_Write(DEBUG_OUTPUT_NORMAL_MESSAGE, str, ##__VA_ARGS__)
-#else
-#define log(str, ...)
-#define log_e(str, ...)
-#define log_w(str, ...)
-#define log_d(str, ...)
-#endif
-
-/**
- *******************************************************************************
- * @brief      debug component put init message
- *******************************************************************************
- */ 
-extern __INLINE void Fw_Debug_PutMcuInfo(void);
-
-/**
- *******************************************************************************
- * @brief      debug component assert failed function
- *******************************************************************************
- */ 
-extern __INLINE void Fw_AssertFailed(uint8_t*, uint32_t);
-
-/**
- *******************************************************************************
- * @brief      MACRO
- *******************************************************************************
- */    
-#if USE_DEBUG_COMPONENT
-#define _FW_ASSERT(expr) _ST(if(expr) { (Fw_AssertFailed((uint8_t *)__FILE__, __LINE__)); })
-#else
-#define _FW_ASSERT(expr)
+ */
+#if USE_PIPE_COMPONENT
+extern __INLINE void Fw_Pipe_Init(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_Fini(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_Connect(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_Disconnect(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_LockDevice(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_UnlockDevice(Fw_Pipe_t*);
+extern __INLINE bool Fw_Pipe_GetDeviceLock(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_SetTimeOut(Fw_Pipe_t*, uint16_t);
+extern __INLINE uint16_t Fw_Pipe_Write(Fw_Pipe_t*, uint8_t*, uint16_t);
+extern __INLINE uint16_t Fw_Pipe_Read(Fw_Pipe_t*, uint8_t*, uint16_t);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
@@ -150,6 +160,6 @@ extern __INLINE void Fw_AssertFailed(uint8_t*, uint32_t);
 	
 #endif       /** end include define */
 
-/** @}*/     /** framework debug component */
+/** @}*/     /** framework pipe component */
 
 /**********************************END OF FILE*********************************/

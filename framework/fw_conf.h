@@ -98,6 +98,8 @@ extern "C"
 #define USE_FRAMEWORK_TASK_COMPONENT                                         
 #define USE_FRAMEWORK_PT_COMPONENT     
 #define USE_FRAMEWORK_STREAM_COMPONENT
+#define USE_FRAMEWORK_PIPE_COMPONENT
+#define USE_FRAMEWORK_COMMUNICATION_COMPONENT
 #endif
 
 /**
@@ -134,10 +136,34 @@ extern "C"
 
 /**
  *******************************************************************************
- * @brief      define tick timer init
+ * @brief      define framework event
  *******************************************************************************
  */
-//#define FwTickHardwareInit(tick, func)     msp_timer_base_init(MCU_TICK_TIMER, (tick), func)
+enum _FRAMEWORK_EVENT
+{
+    FW_EVENT_NONE,
+    FW_TICK_EVENT,
+    FW_SIGNAL_EVENT,
+    FW_DELAY_EVENT,
+    FW_BEGIN_EVENT,
+    FW_END_EVENT,
+    FW_FLOW_EVENT,
+    FW_TIMEOUT_EVENT,
+    FW_INIT_EVENT,
+    FW_FINI_EVENT,
+    FW_STREAM_TX_EVENT,
+    FW_STREAM_RX_EVENT,
+    FW_TRANSFER_START_EVENT,
+    FW_TRANSFER_EVENT,
+    FW_TRANSFER_WAIT_EVNET,
+    FW_TRANSFER_COMPLET_EVENT,
+    FW_TRANSFER_TX_TIMEOUT_EVENT,
+    FW_TRANSFER_RX_TIMEOUT_EVENT,
+    FW_TRANSFER_PARSE_EVENT,
+    FW_SIGNAL_HANDLE_EVENT,
+    FW_DEVICE_TX_EVENT,
+    FW_DEVICE_RX_EVENT,
+};
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

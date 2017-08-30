@@ -79,8 +79,8 @@ typedef struct
     {
         void (*Pin)(void*);
         void (*TimeOut)(void*);
-        void (*Tx)(void*);
-        void (*Rx)(void*, uint8_t);
+        void (*Tx)(uint8_t, void*);
+        void (*Rx)(uint8_t, void*, uint8_t);
 	};
     
     void *Param;

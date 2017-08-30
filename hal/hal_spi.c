@@ -72,10 +72,163 @@ static const struct Hal_SPI_Opera spi_ops =
 };
 #endif
 
+#ifdef USE_HAL_DEVICE_COMPONENT
+static hal_err_t Hal_SPI_Interface_Init(void*);
+static hal_err_t Hal_SPI_Interface_Fini(void*);
+static hal_err_t Hal_SPI_Interface_Control(void*, uint8_t, va_list);
+const struct Hal_Interface Hal_SPI_Interface = 
+{
+    .Init = Hal_SPI_Interface_Init, 
+    .Fini = Hal_SPI_Interface_Fini, 
+    .Write = NULL, 
+    .Read = NULL,
+    .Control = Hal_SPI_Interface_Control,
+};
+#endif
+
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+#ifdef USE_HAL_DEVICE_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       hal api : init device
+ * @param       [in/out]  *drv            device block
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+static hal_err_t Hal_SPI_Interface_Init(void *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_SPI *spi = (Hal_Device_SPI *)drv;
+    
+    //< init device
+    map_spi_api.Open(spi->Config.Port);
+    map_spi_api.Init(spi->Config.Port, drv);
+    
+    //< set hal device opera
+    spi->Opera = (struct Hal_SPI_Opera *)&spi_ops;
+    
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : deinit device
+ * @param       [in/out]  *drv            device block
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+static hal_err_t Hal_SPI_Interface_Fini(void *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_SPI *spi = (Hal_Device_SPI *)drv;
+    
+    map_spi_api.Fini(spi->Config.Port);   
+
+    spi->Opera = NULL;
+    
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : device control
+ * @param       [in/out]  *drv            device block
+ * @param       [in/out]  cmd             control cmd
+ * @param       [in/out]  args            control param
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+static hal_err_t Hal_SPI_Interface_Control(void *drv, uint8_t cmd, va_list args)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_SPI *spi = (Hal_Device_SPI *)drv;
+    
+    switch(cmd)
+    {
+        case HAL_DEVICE_INIT_CMD:
+        {
+            //< init device
+            map_spi_api.Open(spi->Config.Port);
+            map_spi_api.Init(spi->Config.Port, drv);
+            
+            //< set hal device opera
+            spi->Opera = (struct Hal_SPI_Opera *)&spi_ops;
+            
+            break;
+        }
+        case HAL_DEVICE_FINI_CMD:
+        {
+            map_spi_api.Fini(spi->Config.Port);   
+
+            spi->Opera = NULL;
+            
+            break;
+        }
+        case HAL_CONNECT_TX_CMD:
+        {
+            map_spi_api.TxConnect(spi->Config.Port);
+            break;
+        }
+        case HAL_DISCONNECT_TX_CMD:
+        {
+            map_spi_api.TxDisconnect(spi->Config.Port);
+            break;
+        }
+        case HAL_CONNECT_RX_CMD:
+        {
+            map_spi_api.RxConnect(spi->Config.Port);
+            break;
+        }
+        case HAL_DISCONNECT_RX_CMD:
+        {
+            map_spi_api.RxDisconnect(spi->Config.Port);
+            break;
+        }
+        case HAL_SEND_BYTE_CMD:
+        {
+            uint8_t sendData = va_arg(args, int);
+            map_spi_api.Send(spi->Config.Port, sendData);
+            break;
+        }
+        case HAL_RECEIVE_BYTE_CMD:
+        {
+            uint8_t *recData = va_arg(args, uint8_t*);
+            *recData = map_spi_api.Receive(spi->Config.Port);
+            break;
+        }
+//        case HAL_CLR_TX_FLAG_CMD:
+//        {
+//            break;
+//        }
+//        case HAL_GET_TX_FLAG_CMD:
+//        {
+//            break;
+//        }
+//        case HAL_CLR_RX_FLAG_CMD:
+//        {
+//            break;
+//        }
+//        case HAL_GET_RX_FLAG_CMD:
+//        {
+//            break;
+//        }
+        default:
+            break;
+    }
+    
+    return HAL_ERR_NONE;
+}
+#endif
+
 /* Exported functions --------------------------------------------------------*/
 #if USE_SPI_COMPONENT
 /**
@@ -86,12 +239,12 @@ static const struct Hal_SPI_Opera spi_ops =
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_Open(Hal_SPI_Handle *drv)
+void Hal_SPI_Open(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
     
-    map_spi_api.Open(drv->Port); 
+    map_spi_api.Open(drv->Config.Port); 
 }
 
 /**
@@ -102,12 +255,12 @@ void Hal_SPI_Open(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_Close(Hal_SPI_Handle *drv)
+void Hal_SPI_Close(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    map_spi_api.Close(drv->Port); 
+    map_spi_api.Close(drv->Config.Port); 
 }
 
 /**
@@ -119,7 +272,7 @@ void Hal_SPI_Close(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_Init(Hal_SPI_Handle *drv)
+void Hal_SPI_Init(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
@@ -127,8 +280,8 @@ void Hal_SPI_Init(Hal_SPI_Handle *drv)
     
     drv->Opera = (struct Hal_SPI_Opera *)&spi_ops;
     
-    map_spi_api.Open(drv->Port);
-    map_spi_api.Init(drv->Port, (void *)drv); 
+    map_spi_api.Open(drv->Config.Port);
+    map_spi_api.Init(drv->Config.Port, (void *)drv); 
 }
 
 /**
@@ -139,12 +292,12 @@ void Hal_SPI_Init(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_Fini(Hal_SPI_Handle *drv)
+void Hal_SPI_Fini(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
     
-    map_spi_api.Fini(drv->Port);   
+    map_spi_api.Fini(drv->Config.Port);   
     
     drv->Opera = NULL;
 }
@@ -158,12 +311,12 @@ void Hal_SPI_Fini(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_Send(Hal_SPI_Handle *drv, uint8_t sendData)
+void Hal_SPI_Send(Hal_Device_SPI *drv, uint8_t sendData)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
     
-    map_spi_api.Send(drv->Port, sendData);
+    map_spi_api.Send(drv->Config.Port, sendData);
 }
 
 /**
@@ -174,12 +327,12 @@ void Hal_SPI_Send(Hal_SPI_Handle *drv, uint8_t sendData)
  * @note        None
  *******************************************************************************
  */
-uint8_t Hal_SPI_Receive(Hal_SPI_Handle *drv)
+uint8_t Hal_SPI_Receive(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    return map_spi_api.Receive(drv->Port);
+    return map_spi_api.Receive(drv->Config.Port);
 }
 
 /**
@@ -191,14 +344,14 @@ uint8_t Hal_SPI_Receive(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_SetTxCallback(Hal_SPI_Handle *drv, void *param)
+void Hal_SPI_SetTxCallback(Hal_Device_SPI *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    Hal_SPI_Handle *config = (Hal_SPI_Handle *)param;
+    Hal_Device_SPI *config = (Hal_Device_SPI *)param;
     
-    map_spi_api.SetTxCallback(drv->Port, config->TxCallback.Tx, config->TxCallback.Param);
+    map_spi_api.SetTxCallback(drv->Config.Port, config->TxCallback.Tx, config->TxCallback.Param);
 }
 
 /**
@@ -210,14 +363,14 @@ void Hal_SPI_SetTxCallback(Hal_SPI_Handle *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_SetRxCallback(Hal_SPI_Handle *drv, void *param)
+void Hal_SPI_SetRxCallback(Hal_Device_SPI *drv, void *param)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    Hal_SPI_Handle *config = (Hal_SPI_Handle *)param;
+    Hal_Device_SPI *config = (Hal_Device_SPI *)param;
     
-    map_spi_api.SetRxCallback(drv->Port, config->RxCallback.Rx, config->RxCallback.Param);
+    map_spi_api.SetRxCallback(drv->Config.Port, config->RxCallback.Rx, config->RxCallback.Param);
 }
 
 /**
@@ -228,12 +381,12 @@ void Hal_SPI_SetRxCallback(Hal_SPI_Handle *drv, void *param)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_TxConnect(Hal_SPI_Handle *drv)
+void Hal_SPI_TxConnect(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    map_spi_api.TxConnect(drv->Port);
+    map_spi_api.TxConnect(drv->Config.Port);
 }
 
 /**
@@ -244,12 +397,12 @@ void Hal_SPI_TxConnect(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_TxDisconnect(Hal_SPI_Handle *drv)
+void Hal_SPI_TxDisconnect(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    map_spi_api.TxDisconnect(drv->Port);
+    map_spi_api.TxDisconnect(drv->Config.Port);
 }
 
 /**
@@ -260,12 +413,12 @@ void Hal_SPI_TxDisconnect(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_RxConnect(Hal_SPI_Handle *drv)
+void Hal_SPI_RxConnect(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    map_spi_api.RxConnect(drv->Port);
+    map_spi_api.RxConnect(drv->Config.Port);
 }
 
 /**
@@ -276,12 +429,12 @@ void Hal_SPI_RxConnect(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-void Hal_SPI_RxDisconnect(Hal_SPI_Handle *drv)
+void Hal_SPI_RxDisconnect(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    map_spi_api.RxDisconnect(drv->Port);
+    map_spi_api.RxDisconnect(drv->Config.Port);
 }
 
 /**
@@ -292,12 +445,12 @@ void Hal_SPI_RxDisconnect(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-bool Hal_SPI_IsTxComplet(Hal_SPI_Handle *drv)
+bool Hal_SPI_IsTxComplet(Hal_Device_SPI *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
 
-    return map_spi_api.IsTxComplet(drv->Port);
+    return map_spi_api.IsTxComplet(drv->Config.Port);
 }
 
 /**
@@ -308,12 +461,12 @@ bool Hal_SPI_IsTxComplet(Hal_SPI_Handle *drv)
  * @note        None
  *******************************************************************************
  */
-bool Hal_SPI_IsRxComplet(Hal_SPI_Handle* drv)
+bool Hal_SPI_IsRxComplet(Hal_Device_SPI* drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(map_spi_api));
     
-    return map_spi_api.IsRxComplet(drv->Port);
+    return map_spi_api.IsRxComplet(drv->Config.Port);
 }
 #endif
 

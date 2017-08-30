@@ -106,8 +106,8 @@ void Map_SPI_Open(uint8_t);
 void Map_SPI_Close(uint8_t);
 void Map_SPI_Init(uint8_t, void*);
 void Map_SPI_Fini(uint8_t);
-void Map_SPI_SetTxCallback(uint8_t, void (*)(void*), void*);
-void Map_SPI_SetRxCallback(uint8_t, void (*)(void*, uint8_t), void*);
+void Map_SPI_SetTxCallback(uint8_t, void (*)(uint8_t, void*), void*);
+void Map_SPI_SetRxCallback(uint8_t, void (*)(uint8_t, void*, uint8_t), void*);
 void Map_SPI_SendData(uint8_t, uint8_t);
 uint8_t Map_SPI_ReceiveData(uint8_t);
 void Map_SPI_TxConnect(uint8_t);
@@ -225,13 +225,13 @@ void Map_SPI_Close(uint8_t port)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _SPI_Port_Switch(uint8_t port, Hal_SPI_Handle *dev)
+void _SPI_Port_Switch(uint8_t port, Hal_Device_SPI *dev)
 {
     switch (port)
     {
 #ifdef SPI1
         case MCU_SPI_1:
-            if (dev->Group == 0)
+            if (dev->Config.Group == 0)
             {
                 LL_GPIO_AF_DisableRemap_SPI1();
             }
@@ -244,7 +244,7 @@ void _SPI_Port_Switch(uint8_t port, Hal_SPI_Handle *dev)
 
 #if defined(SPI3) && defined(AFIO_MAPR_SPI3_REMAP)      
         case MCU_SPI_3:
-            if (dev->Group == 0)
+            if (dev->Config.Group == 0)
             {
                 LL_GPIO_AF_DisableRemap_SPI3();
             }
@@ -268,203 +268,8 @@ void _SPI_Port_Switch(uint8_t port, Hal_SPI_Handle *dev)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _SPI_GPIO_Init(uint8_t port, Hal_SPI_Handle *dev)
+void _SPI_GPIO_Init(uint8_t port, Hal_Device_SPI *dev)
 {
-//    Hal_Device_GPIO txPort;
-//    Hal_Device_GPIO rxPort;
-//    Hal_Device_GPIO sckPort;
-//    Hal_Device_GPIO cssPort;
-//
-//    //< config mcu spi mosi port
-//    if(dev->TxConfig != MCU_SPI_DISABLE_TX)
-//    {
-//        txPort.Dir = GPIO_DIR_HS_OUTPUT;
-//        txPort.Mode = GPIO_AF_PUSH_PULL_MODE;
-//    }
-//    
-//    //< config mcu spi miso port
-//    if(dev->RxConfig != MCU_SPI_DISABLE_RX)
-//    {
-//        rxPort.Dir = GPIO_DIR_INTPUT;
-//        rxPort.Mode = GPIO_PULL_UP_DOWN_MODE;
-//    }
-//    
-//    //< config mcu spi sck port
-//    if(dev->SckConfig != MCU_SPI_DISABLE_SCK)
-//    {
-//        if(dev->Mode == MCU_SPI_MASTER_MODE)
-//        {
-//            sckPort.Dir = GPIO_DIR_HS_OUTPUT;
-//            sckPort.Mode = GPIO_AF_PUSH_PULL_MODE;
-//        }
-//        else
-//        {
-//            sckPort.Dir = GPIO_DIR_INTPUT;
-//            sckPort.Mode = GPIO_PULL_UP_DOWN_MODE;
-//        }
-//
-//    }
-//    
-//    //< config mcu spi css port
-//    if(dev->CssConfig != MCU_SPI_DISABLE_CSS)
-//    {
-//        if(dev->Mode == MCU_SPI_MASTER_MODE)
-//        {        
-//            cssPort.Dir = GPIO_DIR_HS_OUTPUT;
-//            cssPort.Mode = GPIO_AF_PUSH_PULL_MODE;
-//        }
-//        else
-//        {
-//                    
-//            cssPort.Dir = GPIO_DIR_INTPUT;
-//            cssPort.Mode = GPIO_PULL_UP_DOWN_MODE;
-//        }
-//    }
-//    
-//    switch (port)
-//    {
-//        case MCU_SPI_1:
-//            if (dev->Group == 0)
-//            {
-//                txPort.Port = MCU_PORT_A;
-//                txPort.Pin  = MCU_PIN_7;
-//                
-//                rxPort.Port = MCU_PORT_A;  
-//                rxPort.Pin  = MCU_PIN_6;
-//                
-//                //< config mcu spi sck port
-//                if(dev->SckConfig != MCU_SPI_DISABLE_SCK)
-//                {
-//                    sckPort.Port = MCU_PORT_A;
-//                    sckPort.Pin = MCU_PIN_5;
-//                }
-//                
-//                //< config mcu spi css port
-//                if(dev->CssConfig != MCU_SPI_DISABLE_CSS)
-//                {      
-//                    cssPort.Port = MCU_PORT_A;
-//                    cssPort.Pin = MCU_PIN_4;
-//                }
-//            }
-//            else
-//            {
-//                txPort.Port = MCU_PORT_B;
-//                txPort.Pin  = MCU_PIN_5;
-//                
-//                rxPort.Port = MCU_PORT_B;  
-//                rxPort.Pin  = MCU_PIN_4;
-//                
-//                //< config mcu spi sck port
-//                if(dev->SckConfig != MCU_SPI_DISABLE_SCK)
-//                {
-//                    sckPort.Port = MCU_PORT_B;
-//                    sckPort.Pin = MCU_PIN_3;
-//                }
-//                
-//                //< config mcu spi css port
-//                if(dev->CssConfig != MCU_SPI_DISABLE_CSS)
-//                {      
-//                    cssPort.Port = MCU_PORT_A;
-//                    cssPort.Pin = MCU_PIN_15;
-//                }
-//            }
-//            break;
-//        case MCU_SPI_2:
-//            txPort.Port = MCU_PORT_B;
-//            txPort.Pin  = MCU_PIN_14;
-//            
-//            rxPort.Port = MCU_PORT_B;  
-//            rxPort.Pin  = MCU_PIN_15;
-//            
-//            //< config mcu spi sck port
-//            if(dev->SckConfig != MCU_SPI_DISABLE_SCK)
-//            {
-//                sckPort.Port = MCU_PORT_B;
-//                sckPort.Pin = MCU_PIN_13;
-//            }
-//            
-//            //< config mcu spi css port
-//            if(dev->CssConfig != MCU_SPI_DISABLE_CSS)
-//            {      
-//                cssPort.Port = MCU_PORT_B;
-//                cssPort.Pin = MCU_PIN_12;
-//            }
-//            break;
-//        case MCU_SPI_3:
-//            if (dev->Group == 0)
-//            {
-//                txPort.Port = MCU_PORT_B;
-//                txPort.Pin  = MCU_PIN_5;
-//                
-//                rxPort.Port = MCU_PORT_B;  
-//                rxPort.Pin  = MCU_PIN_4;
-//                
-//                //< config mcu spi sck port
-//                if(dev->SckConfig != MCU_SPI_DISABLE_SCK)
-//                {
-//                    sckPort.Port = MCU_PORT_B;
-//                    sckPort.Pin = MCU_PIN_3;
-//                }
-//                
-//                //< config mcu spi css port
-//                if(dev->CssConfig != MCU_SPI_DISABLE_CSS)
-//                {      
-//                    cssPort.Port = MCU_PORT_A;
-//                    cssPort.Pin = MCU_PIN_15;
-//                }
-//            }
-//            else
-//            {
-//                txPort.Port = MCU_PORT_C;
-//                txPort.Pin  = MCU_PIN_12;
-//                
-//                rxPort.Port = MCU_PORT_C;  
-//                rxPort.Pin  = MCU_PIN_11;
-//                
-//                //< config mcu spi sck port
-//                if(dev->SckConfig != MCU_SPI_DISABLE_SCK)
-//                {
-//                    sckPort.Port = MCU_PORT_C;
-//                    sckPort.Pin = MCU_PIN_10;
-//                }
-//                
-//                //< config mcu spi css port
-//                if(dev->CssConfig != MCU_SPI_DISABLE_CSS)
-//                {      
-//                    cssPort.Port = MCU_PORT_A;
-//                    cssPort.Pin = MCU_PIN_4;
-//                }
-//            }
-//            break;
-//        default:
-//            break;
-//    }
-//    
-//    if(dev->TxConfig != MCU_SPI_DISABLE_TX)
-//    {
-//        map_gpio_api.Open(txPort.Port);
-//        map_gpio_api.Init(txPort.Port, txPort.Pin, txPort.Dir, txPort.Mode);
-//    }
-//    
-//    if(dev->RxConfig != MCU_SPI_DISABLE_RX)
-//    {
-//        map_gpio_api.Open(rxPort.Port);
-//        map_gpio_api.Init(rxPort.Port, rxPort.Pin, rxPort.Dir, rxPort.Mode);
-//    }
-//        //< config mcu spi sck port
-//    if(dev->SckConfig != MCU_SPI_DISABLE_SCK)
-//    {
-//        map_gpio_api.Open(sckPort.Port);
-//        map_gpio_api.Init(sckPort.Port, sckPort.Pin, sckPort.Dir, sckPort.Mode);
-//    }
-//    
-//    //< config mcu spi css port
-//    if(dev->CssConfig != MCU_SPI_DISABLE_CSS)
-//    {
-//        map_gpio_api.Open(cssPort.Port);
-//        map_gpio_api.Init(cssPort.Port, cssPort.Pin, cssPort.Dir, cssPort.Mode);
-//    }
-    
     Hal_Device_GPIO txPort;
     Hal_Device_GPIO rxPort;
     Hal_Device_GPIO sckPort;
@@ -539,14 +344,14 @@ void Map_SPI_Init(uint8_t port, void *param)
     hal_assert(IS_PTR_NULL(param));
     
     LL_SPI_InitTypeDef LL_SPI_InitStructure;
-    Hal_SPI_Handle *dev = (Hal_SPI_Handle *)param;
+    Hal_Device_SPI *dev = (Hal_Device_SPI *)param;
     
     //< init spi gpio
     _SPI_GPIO_Init(port, dev);
     
     LL_SPI_InitStructure.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256;
     
-    if(dev->BitOrder == MCU_SPI_BIT_ORDER_MSB)
+    if(dev->Config.BitOrder == MCU_SPI_BIT_ORDER_MSB)
     {
         LL_SPI_InitStructure.BitOrder = LL_SPI_MSB_FIRST;
     }
@@ -557,7 +362,7 @@ void Map_SPI_Init(uint8_t port, void *param)
     
     LL_SPI_InitStructure.ClockPhase = LL_SPI_PHASE_1EDGE;
     
-    if(dev->ClockOptions == 0)
+    if(dev->Config.ClockOptions == 0)
     {   
         LL_SPI_InitStructure.ClockPolarity = LL_SPI_POLARITY_LOW;
     }
@@ -592,7 +397,7 @@ void Map_SPI_Init(uint8_t port, void *param)
     LL_SPI_EnableIT_RXNE(SPI[port]);
 	
     NVIC_EnableIRQ(SPIIrqn[port]); 
-    NVIC_SetPriority(SPIIrqn[port], dev->Priority);  
+    NVIC_SetPriority(SPIIrqn[port], dev->Config.Priority);  
     
     LL_SPI_Enable(SPI[port]);
 }
@@ -607,7 +412,7 @@ void Map_SPI_Init(uint8_t port, void *param)
  * @note        None
  *******************************************************************************
  */
-void Map_SPI_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
+void Map_SPI_SetTxCallback(uint8_t port, void (*callback)(uint8_t, void*), void *param)
 {
     hal_assert(IS_SPI_PORT_INVAILD(port));
     
@@ -625,7 +430,7 @@ void Map_SPI_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
  * @note        None
  *******************************************************************************
  */
-void Map_SPI_SetRxCallback(uint8_t port, void (*callback)(void*, uint8_t), void *param)
+void Map_SPI_SetRxCallback(uint8_t port, void (*callback)(uint8_t, void*, uint8_t), void *param)
 {
     hal_assert(IS_SPI_PORT_INVAILD(port));
     
@@ -819,7 +624,7 @@ void SPI1_IRQHandler(void)
     {
         if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_1].Tx))
         {
-            SPI_Tx_Callback[MCU_SPI_1].Tx(SPI_Tx_Callback[MCU_SPI_1].Param);
+            SPI_Tx_Callback[MCU_SPI_1].Tx(HAL_DEVICE_TX_EVENT, SPI_Tx_Callback[MCU_SPI_1].Param);
         }
     }
     
@@ -827,7 +632,7 @@ void SPI1_IRQHandler(void)
     {
         if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_1].Rx))
         {
-            SPI_Rx_Callback[MCU_SPI_1].Rx(SPI_Rx_Callback[MCU_SPI_1].Param, SPI[MCU_SPI_1]->DR);
+            SPI_Rx_Callback[MCU_SPI_1].Rx(HAL_DEVICE_RX_EVENT, SPI_Rx_Callback[MCU_SPI_1].Param, SPI[MCU_SPI_1]->DR);
         }
     }
 }
@@ -848,7 +653,7 @@ void SPI2_IRQHandler(void)
     {
         if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_2].Tx))
         {
-            SPI_Tx_Callback[MCU_SPI_2].Tx(SPI_Tx_Callback[MCU_SPI_2].Param);
+            SPI_Tx_Callback[MCU_SPI_2].Tx(HAL_DEVICE_TX_EVENT, SPI_Tx_Callback[MCU_SPI_2].Param);
         }
     }
     
@@ -856,7 +661,7 @@ void SPI2_IRQHandler(void)
     {
         if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_2].Rx))
         {
-            SPI_Rx_Callback[MCU_SPI_2].Rx(SPI_Rx_Callback[MCU_SPI_2].Param, SPI[MCU_SPI_2]->DR);
+            SPI_Rx_Callback[MCU_SPI_2].Rx(HAL_DEVICE_RX_EVENT, SPI_Rx_Callback[MCU_SPI_2].Param, SPI[MCU_SPI_2]->DR);
         }
     }
 }
@@ -877,7 +682,7 @@ void SPI3_IRQHandler(void)
     {
         if(!IS_PTR_NULL(SPI_Tx_Callback[MCU_SPI_3].Tx))
         {
-            SPI_Tx_Callback[MCU_SPI_3].Tx(SPI_Tx_Callback[MCU_SPI_3].Param);
+            SPI_Tx_Callback[MCU_SPI_3].Tx(HAL_DEVICE_TX_EVENT, SPI_Tx_Callback[MCU_SPI_3].Param);
         }
     }
     
@@ -885,7 +690,7 @@ void SPI3_IRQHandler(void)
     {
         if(!IS_PTR_NULL(SPI_Rx_Callback[MCU_SPI_3].Rx))
         {
-            SPI_Rx_Callback[MCU_SPI_3].Rx(SPI_Rx_Callback[MCU_SPI_3].Param, SPI[MCU_SPI_3]->DR);
+            SPI_Rx_Callback[MCU_SPI_3].Rx(HAL_DEVICE_RX_EVENT, SPI_Rx_Callback[MCU_SPI_3].Param, SPI[MCU_SPI_3]->DR);
         }
     }
 }

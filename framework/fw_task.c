@@ -358,13 +358,16 @@ void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
     nowNode->Task  = task;
     
     //< 4. add event to queue
-    Fw_sLinkList_Push((struct Fw_sLinkList_Block *)&queue->LinkList,
-                      (struct Fw_sLinkList*)&nowNode->LinkList);
-    
-    //< 5. inc task wait handle event num
-    if(queue->Num < 255)
+    if (Fw_sLinkList_Push((struct Fw_sLinkList_Block *)&queue->LinkList,  \
+                          (struct Fw_sLinkList*)&nowNode->LinkList)       \
+        == FW_ERR_NONE)
     {
-        queue->Num++;
+    
+        //< 5. inc task wait handle event num
+        if(queue->Num < 255)
+        {
+            queue->Num++;
+        }
     }
     
     __ATOM_ACTIVE_END();
@@ -392,15 +395,17 @@ fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event **event)
     struct Fw_TaskMgr *queue = &TaskBlock.TaskMgrBlock[priority];
     
     //< 3. get event
-    Fw_sLinkList_Pop((struct Fw_sLinkList_Block *)&queue->LinkList,
-                     (struct Fw_sLinkList**)event);
-    
-    //< 4. clear event count
-    if(queue->Num > 0)
+    if (Fw_sLinkList_Pop((struct Fw_sLinkList_Block *)&queue->LinkList,    \
+                         (struct Fw_sLinkList**)event)                     \
+        == FW_ERR_NONE)
     {
-        queue->Num--;
+        //< 4. clear event count
+        if(queue->Num > 0)
+        {
+            queue->Num--;
+        }
     }
-
+                         
     //< 5. free memory
     EventFree((struct Fw_Task_Event *)*event);
     
@@ -493,6 +498,11 @@ bool Fw_SleepTask_Handle(uint8_t priority)
 __STATIC_INLINE
 void EventHandle(struct Fw_Task_Event *event)
 {
+    if(IS_PTR_NULL(event->Task))
+    {
+        return;
+    }
+    
     switch(event->Task->Handle.Type)
     {
         case FW_SIMPLE_TYPE_TASK:

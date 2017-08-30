@@ -446,14 +446,19 @@
               <FilePath>..\..\framework\fw_pt.c</FilePath>
             </File>
             <File>
-              <FileName>fw_fifostream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\framework\fw_fifostream.c</FilePath>
-            </File>
-            <File>
               <FileName>fw_stream.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\framework\fw_stream.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\fw_comm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fw_pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\framework\fw_pipe.c</FilePath>
             </File>
           </Files>
         </Group>

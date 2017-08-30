@@ -74,7 +74,7 @@ void App_Led_Init(void)
     Fw_Task_Init(&LedTask, "Led Task", 1, (void *)Led_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
     
     Fw_Timer_Init(&LedTimer, "Led Timer");
-    Fw_Timer_SetEvent(&LedTimer, &LedTask, LED_BLINK_EVENT, (void *)&Led);
+    Fw_Timer_SetTaskHandle(&LedTimer, &LedTask, LED_BLINK_EVENT, (void *)&Led);
     Fw_Timer_Start(&LedTimer, 500, -1);
 }
 

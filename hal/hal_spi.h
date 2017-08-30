@@ -171,24 +171,27 @@ enum
 struct Hal_SPI_Opera;
 typedef struct
 {
-    uint8_t Port;
-    uint8_t Group;
-    
-    uint8_t Mode;
-    uint8_t CommType;
-    
-    uint8_t Priority;
-    
-    uint32_t Speed;
-    uint8_t BitOrder;
-    uint8_t CrcOptions;
-    uint8_t ClockOptions;
+    struct
+    {
+        uint8_t Port;
+        uint8_t Group;
+        
+        uint8_t Mode;
+        uint8_t CommType;
+        
+        uint8_t Priority;
+        
+        uint32_t Speed;
+        uint8_t BitOrder;
+        uint8_t CrcOptions;
+        uint8_t ClockOptions;
+    }Config;
     
     Hal_Callback_t TxCallback;
     Hal_Callback_t RxCallback;
 
     struct Hal_SPI_Opera *Opera;
-}Hal_SPI_Handle;
+}Hal_Device_SPI;
 
 /**
  *******************************************************************************
@@ -197,26 +200,26 @@ typedef struct
  */
 struct Hal_SPI_Opera
 {
-    void (*Open)(Hal_SPI_Handle*);
-    void (*Close)(Hal_SPI_Handle*);
+    void (*Open)(Hal_Device_SPI*);
+    void (*Close)(Hal_Device_SPI*);
     
-    void (*Init)(Hal_SPI_Handle*);
-    void (*Fini)(Hal_SPI_Handle*);
+    void (*Init)(Hal_Device_SPI*);
+    void (*Fini)(Hal_Device_SPI*);
     
-    void (*SetTxCallback)(Hal_SPI_Handle*, void*);
-    void (*SetRxCallback)(Hal_SPI_Handle*, void*);
+    void (*SetTxCallback)(Hal_Device_SPI*, void*);
+    void (*SetRxCallback)(Hal_Device_SPI*, void*);
 
-    void (*Send)(Hal_SPI_Handle*, uint8_t);
-    uint8_t (*Receive)(Hal_SPI_Handle*);
+    void (*Send)(Hal_Device_SPI*, uint8_t);
+    uint8_t (*Receive)(Hal_Device_SPI*);
     
-    void (*TxConnect)(Hal_SPI_Handle*);
-    void (*TxDisconnect)(Hal_SPI_Handle*);
+    void (*TxConnect)(Hal_Device_SPI*);
+    void (*TxDisconnect)(Hal_Device_SPI*);
     
-    void (*RxConnect)(Hal_SPI_Handle*);
-    void (*RxDisconnect)(Hal_SPI_Handle*);
+    void (*RxConnect)(Hal_Device_SPI*);
+    void (*RxDisconnect)(Hal_Device_SPI*);
     
-    bool (*IsTxComplet)(Hal_SPI_Handle*);
-    bool (*IsRxComplet)(Hal_SPI_Handle*);
+    bool (*IsTxComplet)(Hal_Device_SPI*);
+    bool (*IsRxComplet)(Hal_Device_SPI*);
 };
 
 /**
@@ -232,8 +235,8 @@ struct Map_SPI_Opera
     void (*Init)(uint8_t, void*);
     void (*Fini)(uint8_t);
     
-    void (*SetTxCallback)(uint8_t, void (*)(void*), void*);
-    void (*SetRxCallback)(uint8_t, void (*)(void*, uint8_t), void*);
+    void (*SetTxCallback)(uint8_t, void (*)(uint8_t, void*), void*);
+    void (*SetRxCallback)(uint8_t, void (*)(uint8_t, void*, uint8_t), void*);
 
     void (*Send)(uint8_t, uint8_t);
     uint8_t (*Receive)(uint8_t);
@@ -249,21 +252,27 @@ struct Map_SPI_Opera
 };
 
 /* Exported constants --------------------------------------------------------*/
+#ifdef USE_HAL_DEVICE_COMPONENT
+extern const struct Hal_Interface Hal_SPI_Interface;
+#endif
+
 /* Exported functions --------------------------------------------------------*/
-extern void Hal_SPI_Open(Hal_SPI_Handle*);
-extern void Hal_SPI_Close(Hal_SPI_Handle*);
-extern void Hal_SPI_Init(Hal_SPI_Handle*);
-extern void Hal_SPI_Fini(Hal_SPI_Handle*);
-extern void Hal_SPI_Send(Hal_SPI_Handle*, uint8_t);
-extern uint8_t Hal_SPI_Receive(Hal_SPI_Handle*);
-extern void Hal_SPI_SetTxCallback(Hal_SPI_Handle*, void*);
-extern void Hal_SPI_SetRxCallback(Hal_SPI_Handle*, void*);
-extern void Hal_SPI_TxConnect(Hal_SPI_Handle*);
-extern void Hal_SPI_TxDisconnect(Hal_SPI_Handle*);
-extern void Hal_SPI_RxConnect(Hal_SPI_Handle*);
-extern void Hal_SPI_RxDisconnect(Hal_SPI_Handle*);
-extern bool Hal_SPI_IsTxComplet(Hal_SPI_Handle*);
-extern bool Hal_SPI_IsRxComplet(Hal_SPI_Handle*);
+#if USE_SPI_COMPONENT
+extern void Hal_SPI_Open(Hal_Device_SPI*);
+extern void Hal_SPI_Close(Hal_Device_SPI*);
+extern void Hal_SPI_Init(Hal_Device_SPI*);
+extern void Hal_SPI_Fini(Hal_Device_SPI*);
+extern void Hal_SPI_Send(Hal_Device_SPI*, uint8_t);
+extern uint8_t Hal_SPI_Receive(Hal_Device_SPI*);
+extern void Hal_SPI_SetTxCallback(Hal_Device_SPI*, void*);
+extern void Hal_SPI_SetRxCallback(Hal_Device_SPI*, void*);
+extern void Hal_SPI_TxConnect(Hal_Device_SPI*);
+extern void Hal_SPI_TxDisconnect(Hal_Device_SPI*);
+extern void Hal_SPI_RxConnect(Hal_Device_SPI*);
+extern void Hal_SPI_RxDisconnect(Hal_Device_SPI*);
+extern bool Hal_SPI_IsTxComplet(Hal_Device_SPI*);
+extern bool Hal_SPI_IsRxComplet(Hal_Device_SPI*);
+#endif
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

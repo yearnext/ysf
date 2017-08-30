@@ -73,7 +73,7 @@ __INLINE void Fw_PT_Init(struct Fw_ProtoThread *pt, char *str, pt_thread ptThrea
     Fw_Task_Init(&pt->Task, str, priority, (void *)ptThread, FW_PT_THREAD_TYPE_TASK);     
 
     Fw_Timer_Init(&pt->Timer, str);
-    Fw_Timer_SetEvent(&pt->Timer, &pt->Task, FW_DELAY_EVENT, (void *)pt);
+    Fw_Timer_SetTaskHandle(&pt->Timer, &pt->Task, FW_DELAY_EVENT, (void *)pt);
 }
 
 /**

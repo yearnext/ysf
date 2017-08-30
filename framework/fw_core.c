@@ -87,10 +87,6 @@ __INLINE void Fw_Core_Init(void)
     Fw_Mem_InitComponent();
 #endif
 
-#ifdef USE_FRAMEWORK_STREAM_COMPONENT 
-    Fw_Stream_InitComponent();
-#endif
-
 #ifdef USE_FRAMEWORK_DEBUG_COMPONENT
     Fw_Debug_InitComponent();
     Fw_Debug_PutMcuInfo();
@@ -135,6 +131,11 @@ int main(void)
     Fw_Core_Start();
     
     return 0;
+}
+
+void HardFault_Handler(void)
+{
+    return;
 }
 
 #endif

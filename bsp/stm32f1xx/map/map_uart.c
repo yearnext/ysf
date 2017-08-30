@@ -24,7 +24,7 @@
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
- *                 GCC                                                         * 
+ *                 GCC                                                         *
  *******************************************************************************
  * @note                                                                       *
  * 1.XXXXX                  						                           *
@@ -113,8 +113,8 @@ void Map_Uart_Open(uint8_t);
 void Map_Uart_Close(uint8_t);
 void Map_Uart_Init(uint8_t, void*);
 void Map_Uart_Fini(uint8_t);
-void Map_Uart_SetTxCallback(uint8_t, void (*)(void*), void*);
-void Map_Uart_SetRxCallback(uint8_t, void (*)(void*, uint8_t), void*);
+void Map_Uart_SetTxCallback(uint8_t, void (*)(uint8_t, void*), void*);
+void Map_Uart_SetRxCallback(uint8_t, void (*)(uint8_t, void*, uint8_t), void*);
 void Map_Uart_SendData(uint8_t, uint8_t);
 uint8_t Map_Uart_ReceiveData(uint8_t);
 void Map_Uart_TxConnect(uint8_t);
@@ -523,7 +523,7 @@ void Map_Uart_Init(uint8_t port, void *param)
  * @note        None
  *******************************************************************************
  */
-void Map_Uart_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
+void Map_Uart_SetTxCallback(uint8_t port, void (*callback)(uint8_t, void*), void *param)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
@@ -541,7 +541,7 @@ void Map_Uart_SetTxCallback(uint8_t port, void (*callback)(void*), void *param)
  * @note        None
  *******************************************************************************
  */
-void Map_Uart_SetRxCallback(uint8_t port, void (*callback)(void*, uint8_t), void *param)
+void Map_Uart_SetRxCallback(uint8_t port, void (*callback)(uint8_t, void*, uint8_t), void *param)
 {
     hal_assert(IS_UART_PORT_INVAILD(port));
     
@@ -737,7 +737,7 @@ void USART1_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartTxCallback[MCU_UART_1].Tx))
         {
-            UartTxCallback[MCU_UART_1].Tx(UartTxCallback[MCU_UART_1].Param);
+            UartTxCallback[MCU_UART_1].Tx(HAL_DEVICE_TX_EVENT, UartTxCallback[MCU_UART_1].Param);
         }
     }
     
@@ -745,7 +745,7 @@ void USART1_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartRxCallback[MCU_UART_1].Rx))
         {
-            UartRxCallback[MCU_UART_1].Rx(UartRxCallback[MCU_UART_1].Param, Uart[MCU_UART_1]->DR);
+            UartRxCallback[MCU_UART_1].Rx(HAL_DEVICE_RX_EVENT, UartRxCallback[MCU_UART_1].Param, Uart[MCU_UART_1]->DR);
         }
     }
 }
@@ -766,7 +766,7 @@ void USART2_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartTxCallback[MCU_UART_2].Tx))
         {
-            UartTxCallback[MCU_UART_2].Tx(UartTxCallback[MCU_UART_2].Param);
+            UartTxCallback[MCU_UART_2].Tx(HAL_DEVICE_TX_EVENT, UartTxCallback[MCU_UART_2].Param);
         }
     }
     
@@ -774,7 +774,7 @@ void USART2_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartRxCallback[MCU_UART_2].Rx))
         {
-            UartRxCallback[MCU_UART_2].Rx(UartRxCallback[MCU_UART_2].Param, Uart[MCU_UART_2]->DR);
+            UartRxCallback[MCU_UART_2].Rx(HAL_DEVICE_RX_EVENT, UartRxCallback[MCU_UART_2].Param, Uart[MCU_UART_2]->DR);
         }
     }
 }
@@ -795,7 +795,7 @@ void USART3_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartTxCallback[MCU_UART_3].Tx))
         {
-            UartTxCallback[MCU_UART_3].Tx(UartTxCallback[MCU_UART_3].Param);
+            UartTxCallback[MCU_UART_3].Tx(HAL_DEVICE_TX_EVENT, UartTxCallback[MCU_UART_3].Param);
         }
     }
     
@@ -803,7 +803,7 @@ void USART3_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartRxCallback[MCU_UART_3].Rx))
         {
-            UartRxCallback[MCU_UART_3].Rx(UartRxCallback[MCU_UART_3].Param, Uart[MCU_UART_3]->DR);
+            UartRxCallback[MCU_UART_3].Rx(HAL_DEVICE_RX_EVENT, UartRxCallback[MCU_UART_3].Param, Uart[MCU_UART_3]->DR);
         }
     }
 }
@@ -824,7 +824,7 @@ void UART4_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartTxCallback[MCU_UART_4].Tx))
         {
-            UartTxCallback[MCU_UART_4].Tx(UartTxCallback[MCU_UART_4].Param);
+            UartTxCallback[MCU_UART_4].Tx(HAL_DEVICE_TX_EVENT, UartTxCallback[MCU_UART_4].Param);
         }
     }
     
@@ -832,7 +832,7 @@ void UART4_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartRxCallback[MCU_UART_4].Rx))
         {
-            UartRxCallback[MCU_UART_4].Rx(UartRxCallback[MCU_UART_4].Param, Uart[MCU_UART_4]->DR);
+            UartRxCallback[MCU_UART_4].Rx(HAL_DEVICE_RX_EVENT, UartRxCallback[MCU_UART_4].Param, Uart[MCU_UART_4]->DR);
         }
     }  
 }
@@ -853,7 +853,7 @@ void UART5_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartTxCallback[MCU_UART_5].Tx))
         {
-            UartTxCallback[MCU_UART_5].Tx(UartTxCallback[MCU_UART_5].Param);
+            UartTxCallback[MCU_UART_5].Tx(HAL_DEVICE_TX_EVENT, UartTxCallback[MCU_UART_5].Param);
         }
     }
     
@@ -861,7 +861,7 @@ void UART5_IRQHandler(void)
     {
         if(!IS_PTR_NULL(UartRxCallback[MCU_UART_5].Rx))
         {
-            UartRxCallback[MCU_UART_5].Rx(UartRxCallback[MCU_UART_5].Param, Uart[MCU_UART_5]->DR);
+            UartRxCallback[MCU_UART_5].Rx(HAL_DEVICE_RX_EVENT, UartRxCallback[MCU_UART_5].Param, Uart[MCU_UART_5]->DR);
         }
     }
 }

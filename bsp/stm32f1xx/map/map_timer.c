@@ -535,12 +535,12 @@ void Map_Timer_Close(uint8_t port)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTickMode_Init(Hal_Timer_Handle *param)
+void _TimerTickMode_Init(Hal_Device_Timer *param)
 {
 	uint32_t tick = MCU_CLOCK_FREQ/8000;
 
 	//< unit: ms
-	tick = tick * param->Period;
+	tick = tick * param->Config.Period;
 	
 	SysTick->LOAD = tick - 1;  
     _CLEAR_REG(SysTick->VAL);                                              
@@ -563,14 +563,14 @@ void _TimerTickMode_Init(Hal_Timer_Handle *param)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTimeMode_Init(uint8_t port, Hal_Timer_Handle *param)
+void _TimerTimeMode_Init(uint8_t port, Hal_Device_Timer *param)
 {
 	LL_TIM_InitTypeDef LL_TIM_InitStructure;
 
-    LL_TIM_InitStructure.Autoreload = param->Period;
+    LL_TIM_InitStructure.Autoreload = param->Config.Period;
     LL_TIM_InitStructure.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
     LL_TIM_InitStructure.CounterMode = LL_TIM_COUNTERMODE_UP;
-    LL_TIM_InitStructure.Prescaler = param->Prescaler;
+    LL_TIM_InitStructure.Prescaler = param->Config.Prescaler;
 
     LL_TIM_DeInit(Timer[port]);
     LL_TIM_Init(Timer[port], &LL_TIM_InitStructure);
@@ -579,7 +579,7 @@ void _TimerTimeMode_Init(uint8_t port, Hal_Timer_Handle *param)
     LL_TIM_EnableIT_UPDATE(Timer[port]);
     
     NVIC_EnableIRQ(TimerIrqn[port]); 
-    NVIC_SetPriority(TimerIrqn[port], param->Priority);  
+    NVIC_SetPriority(TimerIrqn[port], param->Config.Priority);  
 
 	TimerUpCallback[port].TimeOut = param->Callback.TimeOut;
 	TimerUpCallback[port].Param    = param->Callback.Param;
@@ -602,9 +602,9 @@ void Map_Timer_Init(uint8_t port, void *param)
 	hal_assert(IS_TIMER_PORT_INVAILD(port));
 	hal_assert(IS_PTR_NULL(param));
     
-    Hal_Timer_Handle *config = (Hal_Timer_Handle *)param;
+    Hal_Device_Timer *config = (Hal_Device_Timer *)param;
 	
-    switch(config->Mode)
+    switch(config->Config.Mode)
 	{
 		case TIMER_TICK_MODE:
 			_TimerTickMode_Init(config);

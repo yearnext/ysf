@@ -120,16 +120,18 @@ enum
 struct Hal_Timer_Opera;
 typedef struct
 {
-    uint8_t Port;
-    uint8_t Priority;
-    uint8_t Mode;
-	uint16_t Period;
-	uint16_t Prescaler;
-
+    struct
+    {
+        uint8_t Port;
+        uint8_t Priority;
+        uint8_t Mode;
+        uint16_t Period;
+        uint16_t Prescaler;
+    }Config;
     Hal_Callback_t Callback;
     
     struct Hal_Timer_Opera *Opera;
-}Hal_Timer_Handle;
+}Hal_Device_Timer;
 
 /**
  *******************************************************************************
@@ -138,16 +140,16 @@ typedef struct
  */ 
 struct Hal_Timer_Opera
 {
-    void (*Open)(Hal_Timer_Handle*);
-    void (*Close)(Hal_Timer_Handle*);
+    void (*Open)(Hal_Device_Timer*);
+    void (*Close)(Hal_Device_Timer*);
     
-    void (*Init)(Hal_Timer_Handle*);
-    void (*Fini)(Hal_Timer_Handle*);
+    void (*Init)(Hal_Device_Timer*);
+    void (*Fini)(Hal_Device_Timer*);
     
-    void (*SetTimeOutCallback)(Hal_Timer_Handle*, void*);
+    void (*SetTimeOutCallback)(Hal_Device_Timer*, void*);
     
-    void (*Start)(Hal_Timer_Handle*);
-    void (*Stop)(Hal_Timer_Handle*);
+    void (*Start)(Hal_Device_Timer*);
+    void (*Stop)(Hal_Device_Timer*);
 };
 
 /**
@@ -170,6 +172,15 @@ struct Map_Timer_Opera
 };
 
 /* Exported constants --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define common uart option interface
+ *******************************************************************************
+ */ 
+#ifdef USE_HAL_DEVICE_COMPONENT
+extern const struct Hal_Interface Hal_Timer_Interface;;
+#endif
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -178,13 +189,13 @@ struct Map_Timer_Opera
  */
 #if USE_TIMER_COMPONENT
 extern void Hal_Timer_Module_Register(void);
-extern void Hal_Timer_Open(Hal_Timer_Handle*);
-extern void Hal_Timer_Close(Hal_Timer_Handle*);
-extern void Hal_Timer_Init(Hal_Timer_Handle*);
-extern void Hal_Timer_Fini(Hal_Timer_Handle*);
-extern void Hal_Timer_SetTimeOutCallback(Hal_Timer_Handle*, void*);
-extern void Hal_Timer_Start(Hal_Timer_Handle*);
-extern void Hal_Timer_Stop(Hal_Timer_Handle*);
+extern void Hal_Timer_Open(Hal_Device_Timer*);
+extern void Hal_Timer_Close(Hal_Device_Timer*);
+extern void Hal_Timer_Init(Hal_Device_Timer*);
+extern void Hal_Timer_Fini(Hal_Device_Timer*);
+extern void Hal_Timer_SetTimeOutCallback(Hal_Device_Timer*, void*);
+extern void Hal_Timer_Start(Hal_Device_Timer*);
+extern void Hal_Timer_Stop(Hal_Device_Timer*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

@@ -131,10 +131,11 @@ fw_err_t Fw_Timer_Init(struct Fw_Timer *timer, char *str)
     Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,
                         (struct Fw_dLinkList*)&timer->LinkList);
     
-    memset(timer, 0, sizeof(timer));
-    
+    memset(timer, 0, sizeof(struct Fw_Timer));
+
     timer->String = str;
-	
+    timer->HandleType = FW_TIMER_EMPTY_HANDLE_TYPE;    
+    
     return FW_ERR_NONE;
 }
 
@@ -151,7 +152,7 @@ fw_err_t Fw_Timer_Fini(struct Fw_Timer *timer)
     _FW_ASSERT(IS_PTR_NULL(timer));
 
     Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,
-                    (struct Fw_dLinkList*)&timer->LinkList);
+                        (struct Fw_dLinkList*)&timer->LinkList);
         
     memset(timer, 0, sizeof(struct Fw_Timer));
     
@@ -168,14 +169,40 @@ fw_err_t Fw_Timer_Fini(struct Fw_Timer *timer)
  * @note        None
  *******************************************************************************
  */
-__INLINE fw_err_t Fw_Timer_SetEvent(struct Fw_Timer *timer, struct Fw_Task *task, uint8_t taskEvent, void *taskParam)
+__INLINE fw_err_t Fw_Timer_SetTaskHandle(struct Fw_Timer *timer, struct Fw_Task *task, uint8_t taskEvent, void *taskParam)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     
     timer->Task      = task;
-    timer->TaskEvent = taskEvent;
+    timer->Event     = taskEvent;
     timer->TaskParam = taskParam;
 
+    timer->HandleType = FW_TIMER_CALL_BACK_HANDLE_TYPE;    
+    
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       set timer event handle
+ * @param       [in/out]  *timer         timer block
+ * @param       [in/out]  *evtHandle     event handle function
+ * @param       [in/out]  *param         event handle param
+ * @param       [in/out]  event          handle event
+ * @return      [in/out]  FW_ERR_NONE    create success
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE fw_err_t Fw_Timer_SetEventHandle(struct Fw_Timer *timer, void (*evtHandle)(uint8_t, void*), void *param, uint8_t event)
+{
+    _FW_ASSERT(IS_PTR_NULL(timer));
+
+    timer->EventHandle = evtHandle;
+    timer->EventParam  = param;
+    timer->Event       = event;
+    
+    timer->HandleType  = FW_TIMER_EVENT_HANDLE_TYPE;
+    
     return FW_ERR_NONE;
 }
 
@@ -196,6 +223,8 @@ __INLINE fw_err_t Fw_Timer_SetCallback(struct Fw_Timer *timer, void (*callback)(
     timer->CallbackParam = callbackParam;
 	timer->Callback      = callback;
     
+    timer->HandleType = FW_TIMER_CALL_BACK_HANDLE_TYPE;
+    
     return FW_ERR_NONE;
 }
 
@@ -213,15 +242,53 @@ fw_err_t Fw_Timer_Start(struct Fw_Timer *timer, uint32_t tick, int16_t count)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     
+    if(timer->Cycle != 0)
+    {
+        timer->InitTick    = tick;
+        timer->TimeOutTick = tick + Fw_Tick_GetInfo();
+        timer->Cycle       = count;
+        
+        if (Fw_dLinkList_Push((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,    \
+                              (struct Fw_dLinkList*)&timer->LinkList)               \
+            == FW_ERR_NONE)
+        {
+            if(TimerBlock.Num < 255)
+            {
+                TimerBlock.Num++;
+            }
+        }
+    }
+    return FW_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       start timer function
+ * @param       [in/out]  *timer         timer block
+ * @param       [in/out]  tick           timing
+ * @param       [in/out]  count          cycle count
+ * @return      [in/out]  FW_ERR_NONE    create success
+ * @note        None
+ *******************************************************************************
+ */
+fw_err_t Fw_Timer_ForceStart(struct Fw_Timer *timer, uint32_t tick, int16_t count)
+{
+    _FW_ASSERT(IS_PTR_NULL(timer));
+    
     timer->InitTick    = tick;
     timer->TimeOutTick = tick + Fw_Tick_GetInfo();
     timer->Cycle       = count;
-    
-    Fw_dLinkList_Push((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,\
-                      (struct Fw_dLinkList*)&timer->LinkList);
 
-    TimerBlock.Num++;
-    
+    if (Fw_dLinkList_Push((struct Fw_dLinkList_Block *)&TimerBlock.LinkList,    \
+                          (struct Fw_dLinkList*)&timer->LinkList)               \
+        == FW_ERR_NONE)
+    {
+        if(TimerBlock.Num < 255)
+        {
+            TimerBlock.Num++;
+        }
+    }
+        
     return FW_ERR_NONE;
 }
 
@@ -241,7 +308,9 @@ fw_err_t Fw_Timer_Stop(struct Fw_Timer *timer)
                            (struct Fw_dLinkList*)&timer->LinkList)            \
        == FW_ERR_NONE)
     {
-        memset(timer, 0, sizeof(struct Fw_Timer));
+        timer->InitTick    = 0;
+        timer->TimeOutTick = 0;
+        timer->Cycle       = 0;
         
         if(TimerBlock.Num > 0)
         {
@@ -295,6 +364,38 @@ void TimerDelete(struct Fw_Timer *timer)
 
 /**
  *******************************************************************************
+ * @brief       timer handle
+ * @param       [in/out]  *timer         timer block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+void TimerHandle(struct Fw_Timer *timer)
+{
+    if(IS_PTR_NULL(timer->Function) || timer->HandleType == FW_TIMER_EMPTY_HANDLE_TYPE)
+    {
+        return;
+    }
+    
+    switch(timer->HandleType)
+    {
+        case FW_TIMER_CALL_BACK_HANDLE_TYPE:
+            timer->Callback(timer->CallbackParam);
+            break;
+        case FW_TIMER_EVENT_HANDLE_TYPE:
+            timer->EventHandle(timer->Event, timer->EventParam);
+            break;
+        case FW_TIMER_TASK_HANDLE_TYPE:
+            Fw_Task_PostMessage(timer->Task, timer->Event, timer->TaskParam);
+            break;
+        default:
+            break;
+    }
+}
+
+/**
+ *******************************************************************************
  * @brief       timer poll function
  * @param       [in/out]  *tickPtr       now tick pointer
  * @return      [in/out]  FW_ERR_NONE    create success
@@ -333,20 +434,11 @@ fw_err_t Fw_Timer_Poll(void *tickPtr)
                 TimerDelete(timer);
             }
             
-            //< 6. called call back function
-            if(!IS_PTR_NULL(timer->Callback))
-            {
-                timer->Callback(timer->CallbackParam);
-            }
-            
-            //< 7. post event to task
-            if(!IS_PTR_NULL(timer->Task))
-            {
-                Fw_Task_PostMessage(timer->Task, timer->TaskEvent, timer->TaskParam);
-            }
+            //< 6. timer handle
+            TimerHandle(timer);
         }
         
-        //< 8. poll timer link list
+        //< 7. poll timer link list
         timer = timer->LinkList.Next;
     }
     

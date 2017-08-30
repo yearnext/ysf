@@ -476,6 +476,38 @@ __INLINE void Fw_dLinkList_Init(struct Fw_dLinkList *node)
 
 /**
  *******************************************************************************
+ * @brief       check this link list node is exist
+ * @param       [in/out]  *block       link list management block address
+ * @param       [in/out]  *node        node address
+ * @return      [in/out]  false        the node isn't exist in link list table
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+bool Fw_dLinkList_IsExist(struct Fw_dLinkList_Block *block, struct Fw_dLinkList *node)
+{
+    struct Fw_dLinkList *now = block->Head;
+    
+    if(now == NULL)
+    {
+        return false;
+    }
+    
+    do
+    {
+        if(now == node)
+        {
+            return true;
+        }
+        
+        now = now->Next;
+    }while(!IS_PTR_NULL(now));
+    
+    return false;
+}
+
+/**
+ *******************************************************************************
  * @brief       add node to link list tail
  * @param       [in/out]  *block       link list management block address
  * @param       [in/out]  *node        node address
@@ -491,6 +523,11 @@ __INLINE fw_err_t Fw_dLinkList_Push(struct Fw_dLinkList_Block *block, struct Fw_
     _FW_ASSERT(!IS_PTR_NULL(node->Next));
     _FW_ASSERT(!IS_PTR_NULL(node->Last));
 
+    if(Fw_dLinkList_IsExist(block, node) == true)
+    {
+        return FW_ERR_NONE;
+    }
+    
     if(IS_PTR_NULL(block->Head))
     {
         block->Tail = node;                                                  

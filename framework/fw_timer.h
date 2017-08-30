@@ -95,18 +95,37 @@ struct Fw_Timer
         struct Fw_Timer *Next;
     }LinkList;
     
-    char              *String;
+    char *String;
 
-    void              (*Callback)(void*);
-    void              *CallbackParam;
-
-    struct Fw_Task    *Task;
-	void              *TaskParam;
-    uint32_t           TaskEvent;
+    union
+    {
+        void (*Callback)(void*);
+        void (*EventHandle)(uint8_t, void*);
+        struct Fw_Task *Task;
+        void *Function;
+    };
     
-    uint32_t          InitTick;
-    uint32_t          TimeOutTick;
-    int16_t           Cycle;
+    union
+    {
+        void *CallbackParam;
+        void *TaskParam;
+        void *EventParam;
+    };
+    
+    enum
+    {
+        FW_TIMER_EMPTY_HANDLE_TYPE = 0,
+        FW_TIMER_CALL_BACK_HANDLE_TYPE,
+        FW_TIMER_EVENT_HANDLE_TYPE,
+        FW_TIMER_TASK_HANDLE_TYPE,
+    }HandleType;
+
+    uint8_t Event;
+    
+    int16_t  Cycle;
+    
+    uint32_t InitTick;
+    uint32_t TimeOutTick;
 };
 
 /* Exported constants --------------------------------------------------------*/
@@ -121,9 +140,11 @@ extern fw_err_t Fw_Timer_InitComponent(void);
 extern __INLINE struct Fw_Timer *Fw_Timer_Create(void);
 extern fw_err_t Fw_Timer_Init(struct Fw_Timer*, char*);
 extern fw_err_t Fw_Timer_Fini(struct Fw_Timer*);
-extern __INLINE fw_err_t Fw_Timer_SetEvent(struct Fw_Timer*, struct Fw_Task*, uint8_t, void*);
+extern __INLINE fw_err_t Fw_Timer_SetTaskHandle(struct Fw_Timer*, struct Fw_Task*, uint8_t, void*);
+extern __INLINE fw_err_t Fw_Timer_SetEventHandle(struct Fw_Timer*, void (*)(uint8_t, void*), void*, uint8_t);
 extern __INLINE fw_err_t Fw_Timer_SetCallback(struct Fw_Timer*, void (*)(void*), void*);
 extern fw_err_t Fw_Timer_Start(struct Fw_Timer*, uint32_t, int16_t);
+extern fw_err_t Fw_Timer_ForceStart(struct Fw_Timer*, uint32_t, int16_t);
 extern fw_err_t Fw_Timer_Stop(struct Fw_Timer*);
 extern fw_err_t Fw_Timer_Poll(void *);
 #endif

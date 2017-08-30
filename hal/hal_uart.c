@@ -24,7 +24,7 @@
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
- *                 GCC                                                         * 
+ *                 GCC                                                         *
  *******************************************************************************
  * @note                                                                       *
  * 1.XXXXX                  						                           *
@@ -73,15 +73,13 @@ static const struct Hal_Uart_Opera uart_ops =
 #ifdef USE_HAL_DEVICE_COMPONENT
 static hal_err_t Hal_Uart_Interface_Init(void*);
 static hal_err_t Hal_Uart_Interface_Fini(void*);
-static hal_err_t Hal_Uart_Interface_Write(void*, uint8_t*, uint8_t);
-static hal_err_t Hal_Uart_Interface_Read(void*, uint8_t*, uint8_t);
 static hal_err_t Hal_Uart_Interface_Control(void*, uint8_t, va_list);
 const struct Hal_Interface Hal_Uart_Interface = 
 {
     .Init = Hal_Uart_Interface_Init, 
     .Fini = Hal_Uart_Interface_Fini, 
-    .Write = Hal_Uart_Interface_Write, 
-    .Read = Hal_Uart_Interface_Read,
+    .Write = NULL, 
+    .Read = NULL,
     .Control = Hal_Uart_Interface_Control,
 };
 #endif
@@ -91,9 +89,6 @@ const struct Hal_Interface Hal_Uart_Interface =
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 #ifdef USE_HAL_DEVICE_COMPONENT
-static void Hal_Uart_SendData(void *drv);
-static void Hal_Uart_ReceiveData(void *drv, uint8_t recData);
-
 /**
  *******************************************************************************
  * @brief       hal api : init device
@@ -111,10 +106,6 @@ static hal_err_t Hal_Uart_Interface_Init(void *drv)
     //< init device
     map_uart_api.Open(uart->Config.Port);
     map_uart_api.Init(uart->Config.Port, (void *)uart);
-    
-    //< set uart call back
-    map_uart_api.SetTxCallback(uart->Config.Port, Hal_Uart_SendData, drv);
-    map_uart_api.SetRxCallback(uart->Config.Port, Hal_Uart_ReceiveData, drv);
     
     //< set hal device opera
     uart->Opera = (struct Hal_Uart_Opera *)&uart_ops;
@@ -145,66 +136,6 @@ static hal_err_t Hal_Uart_Interface_Fini(void *drv)
 
 /**
  *******************************************************************************
- * @brief       hal api : write data to device
- * @param       [in/out]  *drv            device block
- * @param       [in/out]  *buf            write data buffer
- * @param       [in/out]  size            write size
- * @return      [in/out]  HAL_ERR_NONE    result
- * @note        None
- *******************************************************************************
- */
-static hal_err_t Hal_Uart_Interface_Write(void *drv, uint8_t *buf, uint8_t size)
-{
-    Hal_Device_Uart *uart = (Hal_Device_Uart *)drv;
-    
-    hal_assert(IS_PTR_NULL(uart));
-    hal_assert(IS_PTR_NULL(uart->TxBuffer));
-    hal_assert(IS_PTR_NULL(buf));
-    hal_assert(size == 0);
-    
-    if(uart->TxFlag == MCU_UART_PIPE_DISCONNECT)
-    {
-        return HAL_ERR_NONE;
-    }
-    
-    Fw_Buffer_Write(uart->TxBuffer, buf, size);
-    
-    Hal_Uart_SendData(drv);
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : read data from device
- * @param       [in/out]  *drv            device block
- * @param       [in/out]  *buf            read data buffer
- * @param       [in/out]  size            read size
- * @return      [in/out]  HAL_ERR_NONE    result
- * @note        None
- *******************************************************************************
- */
-static hal_err_t Hal_Uart_Interface_Read(void *drv, uint8_t *buf, uint8_t size)
-{
-    Hal_Device_Uart *uart = (Hal_Device_Uart *)drv;
-    
-    hal_assert(IS_PTR_NULL(uart));
-    hal_assert(IS_PTR_NULL(uart->RxBuffer));
-    hal_assert(IS_PTR_NULL(buf));
-    hal_assert(size == 0);
-    
-    if(uart->RxFlag == MCU_UART_PIPE_DISCONNECT)
-    {
-        return HAL_ERR_NONE;
-    }
-    
-    Fw_Buffer_Read(uart->RxBuffer, buf, size);
-    
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
  * @brief       hal api : device control
  * @param       [in/out]  *drv            device block
  * @param       [in/out]  cmd             control cmd
@@ -227,10 +158,6 @@ static hal_err_t Hal_Uart_Interface_Control(void *drv, uint8_t cmd, va_list args
             map_uart_api.Open(uart->Config.Port);
             map_uart_api.Init(uart->Config.Port, (void *)uart);
             
-            //< set uart call back
-            map_uart_api.SetTxCallback(uart->Config.Port, Hal_Uart_SendData, drv);
-            map_uart_api.SetRxCallback(uart->Config.Port, Hal_Uart_ReceiveData, drv);
-            
             //< set hal device opera
             uart->Opera = (struct Hal_Uart_Opera *)&uart_ops;
             
@@ -247,29 +174,21 @@ static hal_err_t Hal_Uart_Interface_Control(void *drv, uint8_t cmd, va_list args
         case HAL_CONNECT_TX_CMD:
         {
             map_uart_api.TxConnect(uart->Config.Port);
-
-            uart->TxFlag = MCU_UART_PIPE_CONNECT_WITH_IDLE;
             break;
         }
         case HAL_DISCONNECT_TX_CMD:
         {
             map_uart_api.TxDisconnect(uart->Config.Port);
-    
-            uart->TxFlag = MCU_UART_PIPE_DISCONNECT;
             break;
         }
         case HAL_CONNECT_RX_CMD:
         {
             map_uart_api.RxConnect(uart->Config.Port);
-
-            uart->RxFlag = MCU_UART_PIPE_CONNECT_WITH_IDLE;
             break;
         }
         case HAL_DISCONNECT_RX_CMD:
         {
             map_uart_api.RxDisconnect(uart->Config.Port);
-    
-            uart->RxFlag = MCU_UART_PIPE_DISCONNECT;
             break;
         }
         case HAL_SEND_BYTE_CMD:
@@ -305,85 +224,6 @@ static hal_err_t Hal_Uart_Interface_Control(void *drv, uint8_t cmd, va_list args
     }
     
     return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : send data
- * @param       [in/out]  *drv            device block
- * @return      [in/out]  HAL_ERR_NONE    result
- * @note        None
- *******************************************************************************
- */
-static void Hal_Uart_SendData(void *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-
-    Hal_Device_Uart *uart = (Hal_Device_Uart *)drv;
-    
-    uint8_t sendData = 0;
-
-    //< is disconnect uart tx
-    if(uart->TxFlag == MCU_UART_PIPE_DISCONNECT)
-    {
-        return;
-    }
-    
-    //< 1. set uart tx flag
-    uart->TxFlag = MCU_UART_PIPE_CONNECT_WITH_IDLE;
-    
-    //< 2. run uart tx call back
-    if(!IS_PTR_NULL(uart->TxCallback.Tx))
-    {
-        uart->TxCallback.Tx(uart->TxCallback.Param);
-    }
-        
-    //< 3. read send data from send buffer
-    if (Fw_Buffer_Read(uart->RxBuffer, &sendData, 1) != 1)
-    {    
-        uart->TxFlag = MCU_UART_PIPE_CONNECT_WITH_IDLE;
-        return;
-    }
-    
-    //< 4. send data
-    map_uart_api.Send(uart->Config.Port, sendData);
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : receive data
- * @param       [in/out]  *drv            device block
- * @param       [in/out]  recData         receive data
- * @return      [in/out]  HAL_ERR_NONE    result
- * @note        None
- *******************************************************************************
- */
-static void Hal_Uart_ReceiveData(void *drv, uint8_t recData)
-{
-    hal_assert(IS_PTR_NULL(drv));
-    
-    Hal_Device_Uart *uart = (Hal_Device_Uart *)drv;
-   
-    //< is disconnect uart rx
-    if(uart->RxFlag == MCU_UART_PIPE_DISCONNECT)
-    {
-        return;
-    }
-    
-    //< 1. set uart rx flag
-    uart->RxFlag = MCU_UART_CONNECT_WITH_WORK;
-        
-    //< 2. write data to receive buffer
-    if (Fw_Buffer_Write(uart->RxBuffer, &recData, 1) != 1)
-    {
-        uart->RxFlag = MCU_UART_PIPE_CONNECT_WITH_IDLE;
-    }
-    
-    //< 3. run uart rx call back
-    if(!IS_PTR_NULL(uart->RxCallback.Rx))
-    {
-        uart->RxCallback.Rx(uart->RxCallback.Param, recData);
-    }
 }
 #endif
 
@@ -536,8 +376,6 @@ void Hal_Uart_TxConnect(Hal_Device_Uart *drv)
     hal_assert(IS_PTR_NULL(drv));
 
     map_uart_api.TxConnect(drv->Config.Port);
-    
-    drv->TxFlag = MCU_UART_PIPE_CONNECT_WITH_IDLE;
 }
 
 /**
@@ -553,8 +391,6 @@ void Hal_Uart_TxDisconnect(Hal_Device_Uart *drv)
     hal_assert(IS_PTR_NULL(drv));
 
     map_uart_api.TxDisconnect(drv->Config.Port);
-    
-    drv->TxFlag = MCU_UART_PIPE_DISCONNECT;
 }
 
 /**
@@ -570,8 +406,6 @@ void Hal_Uart_RxConnect(Hal_Device_Uart *drv)
     hal_assert(IS_PTR_NULL(drv));
 
     map_uart_api.RxConnect(drv->Config.Port);
-    
-    drv->RxFlag = MCU_UART_PIPE_CONNECT_WITH_IDLE;
 }
 
 /**
@@ -587,8 +421,6 @@ void Hal_Uart_RxDisconnect(Hal_Device_Uart *drv)
     hal_assert(IS_PTR_NULL(drv));
 
     map_uart_api.RxDisconnect(drv->Config.Port);
-    
-    drv->RxFlag = MCU_UART_PIPE_DISCONNECT;
 }
 
 /**

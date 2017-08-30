@@ -16,21 +16,21 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_stream.h
- * @author     yearnext
- * @version    1.0.0
- * @date       2017-07-30
- * @brief      framework stream component head files
- * @par        paltform                                  
- *                 Windows
- * @par        compiler									                         
- * 				   GCC
+ * @file       fw_stream.h                                                     *
+ * @author     yearnext                                                        *
+ * @version    1.0.0                                                           *
+ * @date       2017-07-30                                                      *
+ * @brief      framework stream component head files                           *
+ * @par        work platform                                                   *
+ *                 Windows                                                     *
+ * @par        compiler                                                        *
+ *                 GCC                                                         *
  *******************************************************************************
- * @note
- * 1.XXXXX                  						                     
+ * @note                                                                       *
+ * 1.XXXXX                  						                           *
  *******************************************************************************
  */
-
+ 
 /**
  * @defgroup framework stream component
  * @{
@@ -48,6 +48,7 @@ extern "C"
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_path.h"
+#include "fw_pipe.h"
 #include "fw_buffer.h"
 #include "fw_timer.h"
 #include "hal_device.h"
@@ -74,35 +75,14 @@ extern "C"
 #define USE_STREAM_COMPONENT                                                 (1)
 #endif
    
-/**
- *******************************************************************************
- * @brief       define stream block size
- *******************************************************************************
- */
-#define BLOCK_STREAM_BUFFER_SIZE                                           (128)
+///**
+// *******************************************************************************
+// * @brief       define stream block size
+// *******************************************************************************
+// */
+//#define BLOCK_STREAM_BUFFER_SIZE                                           (128)
 
 /* Exported types ------------------------------------------------------------*/
-struct Fw_Stream_Pool_Interface
-{
-    void (*Init)(void*);
-    void (*Fini)(void*);
-    uint16_t (*Write)(void*, uint8_t*, uint8_t);
-    uint16_t (*Read)(void*, uint8_t*, uint8_t);
-};
-
-/**
- *******************************************************************************
- * @brief       define stream comm pipe
- *******************************************************************************
- */
-struct Fw_Stream_Pipe
-{
-	bool IsReady;
-    uint8_t Status;
-    uint16_t TimeOutTick;
-    struct Fw_Timer Timer;
-};
-
 /**
  *******************************************************************************
  * @brief       stream hardware call back function
@@ -110,13 +90,10 @@ struct Fw_Stream_Pipe
  */
 struct Fw_Stream
 {
-    void *Pool;
-    struct Fw_Stream_Pool_Interface *Interface;
-     
     Hal_Device_t *Device;
     
-	struct Fw_Stream_Pipe Tx;
-	struct Fw_Stream_Pipe Rx;
+    Fw_Pipe_t Tx;
+    Fw_Pipe_t Rx;
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -129,12 +106,13 @@ struct Fw_Stream
 #if USE_STREAM_COMPONENT
 extern __INLINE void Fw_Stream_Init(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_Fini(struct Fw_Stream*);
-extern __INLINE void Fw_Stream_TxConnect(struct Fw_Stream*);
-extern __INLINE void Fw_Stream_TxDisconnect(struct Fw_Stream*);
-extern __INLINE void Fw_Stream_RxConnect(struct Fw_Stream*);
-extern __INLINE void Fw_Stream_RxDisconnect(struct Fw_Stream*);
-extern __INLINE uint16_t Fw_Stream_Write(struct Fw_Stream*, uint8_t*, uint8_t);
-extern __INLINE uint16_t Fw_Stream_Read(struct Fw_Stream*, uint8_t*, uint8_t);
+extern __INLINE void Fw_Stream_Connect(Fw_Pipe_t*);
+extern __INLINE void Fw_Stream_Disconnect(Fw_Pipe_t*);
+extern __INLINE uint16_t Fw_Stream_Write(Fw_Pipe_t*, uint8_t*, uint16_t);
+extern __INLINE uint16_t Fw_Stream_Read(Fw_Pipe_t*, uint8_t*, uint16_t);
+
+extern void Fw_Stream_Tx_Handle(uint8_t, void*);
+extern void Fw_Stream_Rx_Handle(uint8_t, void*, uint8_t);
 
 #endif
 

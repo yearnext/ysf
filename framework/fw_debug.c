@@ -16,33 +16,36 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_debug.c
- * @author     yearnext
- * @version    1.0.0
- * @date       2017-01-10
- * @brief      framework debug component source files
- * @par        paltform                                  
- *                 Windows
- * @par        compiler									                         
- * 				   GCC
+ * @file       fw_debug.c                                                      *
+ * @author     yearnext                                                        *
+ * @version    1.0.0                                                           *
+ * @date       2017-01-10                                                      *
+ * @brief      framework debug component source files                          *
+ * @par        work platform                                                   *
+ *                 Windows                                                     *
+ * @par        compiler                                                        *
+ *                 GCC                                                         *
  *******************************************************************************
- * @note
- * 1.XXXXX                  						                     
+ * @note                                                                       *
+ * 1.XXXXX                  						                           *
  *******************************************************************************
  */
-
+ 
 /**
  * @defgroup framework debug component
  * @{
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>
+#include <stdio.h>
 #include "fw_debug.h"
 #include "fw_tick.h"
 #include "fw_timer.h"
-#include "fw_fifostream.h"
-#include <string.h>
-#include <stdio.h>
+#include "fw_stream.h"
+#include "fw_pipe.h"
+#include "hal_device.h"
+#include "hal_uart.h"
 
 /* Private define ------------------------------------------------------------*/
 /**
@@ -54,87 +57,92 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+#if USE_DEBUG_COMPONENT
 /**
  *******************************************************************************
- * @brief       event handler
- * @note        user config
+ * @brief       buffer cache
  *******************************************************************************
  */
-#if USE_DEBUG_COMPONENT
-//< buffer init cache
 static uint8_t BufferCache[FW_DEBUG_BUFFER_SIZE];
 
-//< define debug component init flag
+/**
+ *******************************************************************************
+ * @brief       debug component init flag
+ *******************************************************************************
+ */
 static bool FwDebugInitFlag = false;
 
-//< define stream buffer
+/**
+ *******************************************************************************
+ * @brief       define stream buffer
+ *******************************************************************************
+ */
 static uint8_t TxBuffer[FW_DEBUG_BUFFER_SIZE];
 static uint8_t RxBuffer[FW_DEBUG_BUFFER_SIZE];
 
-//< define stream fifo management block
+/**
+ *******************************************************************************
+ * @brief       define stream fifo management block
+ *******************************************************************************
+ */
 static Fw_Fifo_t TxFifo = {.Buffer = TxBuffer, .Size = FW_DEBUG_BUFFER_SIZE};
 static Fw_Fifo_t RxFifo = {.Buffer = RxBuffer, .Size = FW_DEBUG_BUFFER_SIZE};
 
-//< define hal device
-
-
-//< config debug stream param
-static Fw_FifoStream_t DebugStream = 
+/**
+ *******************************************************************************
+ * @brief       define stream debug hardware block
+ *******************************************************************************
+ */
+extern struct Fw_Stream DebugStream;
+static Hal_Device_Uart DebugHardware = 
 {
-//    //< uart stream hardware param init
-//    .Device.Port = MCU_UART_1,
-//    .Device.Group = 0,
-//    .Device.Baud = 115200,
-//    .Device.WordLen = MCU_UART_WORD_LEN_8B,
-//    .Device.Priority = MCU_UART_PARTY_NONE,
-//    .Device.StopBits = MCU_UART_STOP_BITS_1,
-//    .Device.TxConfig = MCU_UART_ENABLE_TX_ISR,
-//    .Device.RxConfig = MCU_UART_ENABLE_RX_ISR,
-//    .Device.Parity = 1,
-
-//    //< uart stream hardware call back config
-//    .Device.RxCallback.Rx    = Fw_UartStream_Receive,
-//    .Device.RxCallback.Param = (void *)&DebugStream,
-//        
-//    .Device.TxCallback.Tx    = Fw_UartStream_Send,
-//    .Device.TxCallback.Param = (void *)&DebugStream,
+    //< uart stream hardware param init
+    .Config.Port = MCU_UART_1,
+    .Config.Group = 0,
+    .Config.Baud = 115200,
+    .Config.WordLen = MCU_UART_WORD_LEN_8B,
+    .Config.Priority = MCU_UART_PARTY_NONE,
+    .Config.StopBits = MCU_UART_STOP_BITS_1,
+    .Config.TxConfig = MCU_UART_ENABLE_TX_ISR,
+    .Config.RxConfig = MCU_UART_ENABLE_RX_ISR,
+    .Config.Parity = 1,
     
-    //< uart stream tx pipe config
-    .Tx.Buffer = (void *)&TxFifo,
-    .Tx.Buf_Ops = (struct Fw_StreamBuffer_Ops *)&Fw_FifoStream_Ops,
-    .Tx.Callback = NULL,
+    //< uart stream hardware call back config
+    .RxCallback.Rx    = Fw_Stream_Rx_Handle,
+    .RxCallback.Param = (void *)&DebugStream,
         
-    .Tx.Rx.Connect = Fw_FifoStream_ConnectTx,
-    .Tx.Rx.Disconnect = Fw_FifoStream_DisconnectTx,
-    .Tx.Rx.InOut = Fw_FifoStream_TxOut,
-    .Tx.Rx.IsReady = true,
-    .Tx.Rx.Param = (void *)&DebugStream,
-        
-    .Tx.Tx.Connect = NULL,
-    .Tx.Tx.Disconnect = NULL,
-    .Tx.Tx.InOut = NULL,
-    .Tx.Tx.IsReady = true,
-    .Tx.Tx.Param = (void *)&DebugStream,
-        
-    //< uart stream tx pipe config
-    .Rx.Buffer = (void *)&RxFifo,
-    .Rx.Buf_Ops = (struct Fw_StreamBuffer_Ops *)&Fw_FifoStream_Ops,
-    .Rx.Callback = NULL,
-        
-    .Rx.Rx.Connect = NULL,
-    .Rx.Rx.Disconnect = NULL,
-    .Rx.Rx.InOut = NULL,
-    .Rx.Rx.IsReady = true,
-    .Rx.Rx.Param = (void *)&DebugStream,
-        
-    .Rx.Tx.Connect = Fw_FifoStream_ConnectRx,
-    .Rx.Tx.Disconnect = Fw_FifoStream_DisconnectRx,
-    .Rx.Tx.InOut = Fw_FifoStream_RxIn,
-    .Rx.Tx.IsReady = true,
-    .Rx.Tx.Param = (void *)&DebugStream,
-        
-    .State = FIFO_STREAM_INIT_STATE,
+    .TxCallback.Tx    = Fw_Stream_Tx_Handle,
+    .TxCallback.Param = (void *)&DebugStream,
 };
+
+/**
+ *******************************************************************************
+ * @brief       define common device operate block
+ *******************************************************************************
+ */
+static Hal_Device_t DebugDevice = 
+{
+    .Device = (void *)&DebugHardware,
+    .Interface = (struct Hal_Interface *)&Hal_Uart_Interface,
+};
+
+/**
+ *******************************************************************************
+ * @brief       define debug stream block
+ *******************************************************************************
+ */
+static struct Fw_Stream DebugStream = 
+{
+    .Device = (void *)&DebugDevice,
+        
+    .Tx.Pool = (void *)&TxFifo,
+    .Tx.Interface = (struct Fw_Pipe_Pool_Interface *)&PipeFifoInterface,
+    .Tx.Param = NULL,
+        
+    .Rx.Pool = (void *)&RxFifo,
+    .Rx.Interface = (struct Fw_Pipe_Pool_Interface *)&PipeFifoInterface,
+    .Rx.Param = NULL,
+}; 
 #endif
 
 /* Exported variables --------------------------------------------------------*/
@@ -151,8 +159,8 @@ static Fw_FifoStream_t DebugStream =
  */
 void Fw_Debug_InitComponent(void)
 {
-    Fw_FifoStream_Init(&DebugStream);
-
+    Fw_Stream_Init(&DebugStream);
+    
     FwDebugInitFlag = true;
 }
 

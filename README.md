@@ -1,6 +1,6 @@
 # ysf——yearnext software framework
 
-[![GitHub release](https://img.shields.io/badge/version-0.0.3-red.svg)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-debug)  [![AUR](http://progressed.io/bar/10?title=debug)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-debug)  [![AUR](https://img.shields.io/badge/license-GPL%20V2-blue.svg)](https://coding.net/u/yearnext/p/ysf/git/blob/ysf-stm32f1xx-debug/LICENSE)  [![AUR](https://img.shields.io/badge/language-c-blue.svg)]()  [![AUR](https://img.shields.io/badge/platform-stm8-green.svg)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm8-alpha)  [![AUR](https://img.shields.io/badge/platform-stm32-green.svg)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha)
+[![GitHub release](https://img.shields.io/badge/version-0.0.3-red.svg)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-debug)  [![AUR](http://progressed.io/bar/23?title=debug)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-debug)  [![AUR](https://img.shields.io/badge/license-GPL%20V2-blue.svg)](https://coding.net/u/yearnext/p/ysf/git/blob/ysf-stm32f1xx-debug/LICENSE)  [![AUR](https://img.shields.io/badge/language-c-blue.svg)]()  [![AUR](https://img.shields.io/badge/platform-stm8-green.svg)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm8-alpha)  [![AUR](https://img.shields.io/badge/platform-stm32-green.svg)](https://coding.net/u/yearnext/p/ysf/git/tree/ysf-stm32f1xx-alpha)
 
 ## 目录
 * [框架简介](#1)

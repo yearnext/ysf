@@ -179,15 +179,6 @@ typedef struct
     Hal_Callback_t TxCallback;
     Hal_Callback_t RxCallback;
     
-    Fw_Fifo_t *TxBuffer;
-    Fw_Fifo_t *RxBuffer;
-    
-    //< 0: disable connect
-    //< 1: connect with idle
-    //< 2: working with busy
-    uint8_t TxFlag;
-    uint8_t RxFlag;
-    
     struct Hal_Uart_Opera *Opera;
 }Hal_Device_Uart;
 
@@ -233,8 +224,8 @@ struct Map_Uart_Opera
     void (*Init)(uint8_t, void*);
     void (*Fini)(uint8_t);
     
-    void (*SetTxCallback)(uint8_t, void (*)(void*), void*);
-    void (*SetRxCallback)(uint8_t, void (*)(void*, uint8_t), void*);
+    void (*SetTxCallback)(uint8_t, void (*)(uint8_t, void*), void*);
+    void (*SetRxCallback)(uint8_t, void (*)(uint8_t, void*, uint8_t), void*);
 
     void (*Send)(uint8_t, uint8_t);
     uint8_t (*Receive)(uint8_t);

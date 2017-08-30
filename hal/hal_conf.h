@@ -197,6 +197,17 @@ extern "C"
 
 #endif
 
+/**
+ *******************************************************************************
+ * @brief      define hal device event
+ *******************************************************************************
+ */
+enum _HAL_DEVICE_EVENT
+{
+    HAL_DEVICE_TX_EVENT,
+    HAL_DEVICE_RX_EVENT,
+};
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

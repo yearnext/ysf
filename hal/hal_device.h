@@ -108,8 +108,8 @@ typedef enum
 
 typedef enum
 {
-    HAL_DEVICE_LOCK,
     HAL_DEVICE_UNLOCK,
+    HAL_DEVICE_LOCK,
 }Hal_Device_Lock_State;
 
 typedef enum
