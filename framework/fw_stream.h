@@ -106,10 +106,14 @@ struct Fw_Stream
 #if USE_STREAM_COMPONENT
 extern __INLINE void Fw_Stream_Init(struct Fw_Stream*);
 extern __INLINE void Fw_Stream_Fini(struct Fw_Stream*);
-extern __INLINE void Fw_Stream_Connect(Fw_Pipe_t*);
-extern __INLINE void Fw_Stream_Disconnect(Fw_Pipe_t*);
-extern __INLINE uint16_t Fw_Stream_Write(Fw_Pipe_t*, uint8_t*, uint16_t);
-extern __INLINE uint16_t Fw_Stream_Read(Fw_Pipe_t*, uint8_t*, uint16_t);
+
+extern __INLINE void Fw_Stream_ConnectTx(Fw_Pipe_t*);
+extern __INLINE void Fw_Stream_DisconnectTx(Fw_Pipe_t*);
+extern __INLINE void Fw_Stream_ConnectRx(Fw_Pipe_t*);
+extern __INLINE void Fw_Stream_DisconnectRx(Fw_Pipe_t*);
+
+extern __INLINE uint16_t Fw_Stream_Write(struct Fw_Stream*, uint8_t*, uint16_t);
+extern __INLINE uint16_t Fw_Stream_Read(struct Fw_Stream*, uint8_t*, uint16_t);
 
 extern void Fw_Stream_Tx_Handle(uint8_t, void*);
 extern void Fw_Stream_Rx_Handle(uint8_t, void*, uint8_t);

@@ -128,29 +128,9 @@ typedef struct
         uint16_t Period;
         uint16_t Prescaler;
     }Config;
+    
     Hal_Callback_t Callback;
-    
-    struct Hal_Timer_Opera *Opera;
 }Hal_Device_Timer;
-
-/**
- *******************************************************************************
- * @brief      define timer opera interface
- *******************************************************************************
- */ 
-struct Hal_Timer_Opera
-{
-    void (*Open)(Hal_Device_Timer*);
-    void (*Close)(Hal_Device_Timer*);
-    
-    void (*Init)(Hal_Device_Timer*);
-    void (*Fini)(Hal_Device_Timer*);
-    
-    void (*SetTimeOutCallback)(Hal_Device_Timer*, void*);
-    
-    void (*Start)(Hal_Device_Timer*);
-    void (*Stop)(Hal_Device_Timer*);
-};
 
 /**
  *******************************************************************************

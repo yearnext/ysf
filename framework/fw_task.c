@@ -341,14 +341,23 @@ __STATIC_INLINE
 void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
 {
     __ATOM_ACTIVE_BEGIN();
-    
-    //< 1. check param
-    struct Fw_Task_Event *nowNode = EventAlloc();
+
+    struct Fw_Task_Event *nowNode;
     struct Fw_TaskMgr *queue;
     
-    _FW_ASSERT(IS_PTR_NULL(nowNode));
-    _FW_ASSERT(IS_TASK_PRIORITY_INVAILD(task->Priority));
+    //< 1. check param
+    if (IS_TASK_PRIORITY_INVAILD(task->Priority))
+    {
+        return;
+    }
     
+    nowNode = EventAlloc();
+    
+    if(IS_PTR_NULL(nowNode))
+    {
+        return;
+    }
+
     //< 2. init queue
     queue = &TaskBlock.TaskMgrBlock[task->Priority];
     
@@ -368,6 +377,10 @@ void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
         {
             queue->Num++;
         }
+    }
+    else
+    {
+        EventFree(nowNode);
     }
     
     __ATOM_ACTIVE_END();
@@ -425,7 +438,10 @@ fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event **event)
  */
 __INLINE void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
 {
-    _FW_ASSERT(IS_PTR_NULL(task));
+    if (IS_PTR_NULL(task))
+    {
+        return;
+    }
 
     if(task->Status == 0)
     {
@@ -445,7 +461,10 @@ __INLINE void Fw_Task_PostEvent(struct Fw_Task *task, uint32_t event)
  */
 __INLINE void Fw_Task_PostMessage(struct Fw_Task *task, uint32_t event, void *message)
 {
-    _FW_ASSERT(IS_PTR_NULL(task));
+    if (IS_PTR_NULL(task))
+    {
+        return;
+    }
     
     if(task->Status)
     {

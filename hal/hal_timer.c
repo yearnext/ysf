@@ -41,26 +41,6 @@
 #include "map_timer.h"
 
 /* Exported constants --------------------------------------------------------*/
-#if USE_TIMER_COMPONENT
-/**
- *******************************************************************************
- * @brief      define timer opera interface
- *******************************************************************************
- */ 
-static const struct Hal_Timer_Opera timer_ops = 
-{
-    .Open = Hal_Timer_Open,
-    .Close = Hal_Timer_Close, 
-    
-    .Init = Hal_Timer_Init,
-    .Fini = Hal_Timer_Fini,
-    .SetTimeOutCallback = Hal_Timer_SetTimeOutCallback,
-    
-    .Start = Hal_Timer_Start,
-    .Stop = Hal_Timer_Stop,
-};
-#endif
-
 /**
  *******************************************************************************
  * @brief      define common uart option interface
@@ -102,10 +82,7 @@ static hal_err_t Hal_Timer_Interface_Init(void *drv)
     //< init device
     map_timer_api.Open(timer->Config.Port);
     map_timer_api.Init(timer->Config.Port, drv);
-    
-    //< set hal device opera
-    timer->Opera = (struct Hal_Timer_Opera *)&timer_ops;
-    
+
     return HAL_ERR_NONE;
 }
 
@@ -125,8 +102,6 @@ static hal_err_t Hal_Timer_Interface_Fini(void *drv)
     
     map_timer_api.Fini(timer->Config.Port);   
 
-    timer->Opera = NULL;
-    
     return HAL_ERR_NONE;
 }
 
@@ -200,9 +175,7 @@ void Hal_Timer_Close(Hal_Device_Timer *drv)
 void Hal_Timer_Init(Hal_Device_Timer *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
-     
-    drv->Opera = (struct Hal_Timer_Opera *)&timer_ops;
-    
+
     map_timer_api.Open(drv->Config.Port);
     map_timer_api.Init(drv->Config.Port, (void *)drv);
 }
@@ -220,8 +193,7 @@ void Hal_Timer_Fini(Hal_Device_Timer *drv)
     hal_assert(IS_PTR_NULL(drv));
 
     map_timer_api.Fini(drv->Config.Port); 
-    
-    drv->Opera = NULL;
+
     drv->Config.Port = 0;
 }
 

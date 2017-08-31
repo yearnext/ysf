@@ -41,40 +41,12 @@
 #include "map_gpio.h"
 
 /* Exported constants --------------------------------------------------------*/
-#if USE_GPIO_COMPONENT
-/**
- *******************************************************************************
- * @brief      define gpio opera interface
- *******************************************************************************
- */ 
-static const struct Hal_GPIO_Opera gpio_ops = 
-{
-    .Open = Hal_GPIO_Open,
-    .Close = Hal_GPIO_Close,
-    
-    .Init = Hal_GPIO_Init,
-    .Fini = Hal_GPIO_Fini,
-    
-    .Set = Hal_GPIO_Set,
-    .Clr = Hal_GPIO_Clr,
-    .Toggle = Hal_GPIO_Toggle,
-
-    .GetIntput = Hal_GPIO_GetIntputStatus,
-    .GetOutput = Hal_GPIO_GetOutputStatus,
-        
-    .Write = Hal_GPIO_Write,
-    .Read = Hal_GPIO_Read,
-    
-    .Control = Hal_GPIO_Control,
-};
-#endif
-
-#ifdef USE_HAL_DEVICE_COMPONENT
 /**
  *******************************************************************************
  * @brief      define hal gpio interface
  *******************************************************************************
  */ 
+#ifdef USE_HAL_DEVICE_COMPONENT
 static hal_err_t Hal_GPIO_Interface_Init(void *drv);
 static hal_err_t Hal_GPIO_Interface_Fini(void *drv);
 static hal_err_t Hal_GPIO_Interface_Write(void*, uint8_t*, uint8_t);
@@ -112,8 +84,8 @@ static hal_err_t Hal_GPIO_Interface_Init(void *drv)
     
     Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)drv;
     
-    map_gpio_api.Open(gpio->Port);
-    map_gpio_api.Init(gpio->Port, gpio->Pin, gpio->Dir, gpio->Mode); 
+    map_gpio_api.Open(gpio->Config.Port);
+    map_gpio_api.Init(gpio->Config.Port, gpio->Config.Pin, gpio->Config.Dir, gpio->Config.Mode); 
     
     return HAL_ERR_NONE;
 }
@@ -132,7 +104,7 @@ static hal_err_t Hal_GPIO_Interface_Fini(void *drv)
     
     Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)drv;
     
-    map_gpio_api.Fini(gpio->Port, gpio->Pin);
+    map_gpio_api.Fini(gpio->Config.Port, gpio->Config.Pin);
     
     return HAL_ERR_NONE;
 }
@@ -155,7 +127,7 @@ static hal_err_t Hal_GPIO_Interface_Write(void *drv, uint8_t *cfg, uint8_t num)
     Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)drv;
     struct Hal_GPIO_Param *param = (struct Hal_GPIO_Param *)cfg;
     
-    map_gpio_api.Write(gpio->Port, gpio->Pin, param->RW_Data, num); 
+    map_gpio_api.Write(gpio->Config.Port, gpio->Config.Pin, param->RW_Data, num); 
     
     return HAL_ERR_NONE;
 }
@@ -178,7 +150,7 @@ static hal_err_t Hal_GPIO_Interface_Read(void *drv, uint8_t *cfg, uint8_t num)
     Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)drv;
     struct Hal_GPIO_Param *param = (struct Hal_GPIO_Param *)cfg;
     
-    map_gpio_api.Read(gpio->Port, gpio->Pin, param->Dir, &param->RW_Data, num); 
+    map_gpio_api.Read(gpio->Config.Port, gpio->Config.Pin, param->Dir, &param->RW_Data, num); 
     
     return HAL_ERR_NONE;
 }
@@ -228,29 +200,29 @@ static hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args
             uint8_t dir = *va_arg(args, uint8_t *);
             uint8_t mode = *va_arg(args, uint8_t *);
 
-            map_gpio_api.Init(gpio->Port, gpio->Pin, dir, mode);
+            map_gpio_api.Init(gpio->Config.Port, gpio->Config.Pin, dir, mode);
             break;
         }
         case HAL_DEVICE_FINI_CMD:
         {
-            map_gpio_api.Fini(gpio->Port, gpio->Pin);
+            map_gpio_api.Fini(gpio->Config.Port, gpio->Config.Pin);
             break;
         }
         case HAL_GPIO_SET_CMD:
         {
-            map_gpio_api.Write(gpio->Port, gpio->Pin, 1, 1);
+            map_gpio_api.Write(gpio->Config.Port, gpio->Config.Pin, 1, 1);
             break;
         }
         case HAL_GPIO_CLR_CMD:
         {
-            map_gpio_api.Write(gpio->Port, gpio->Pin, 0, 1);
+            map_gpio_api.Write(gpio->Config.Port, gpio->Config.Pin, 0, 1);
             break;
         }
         case HAL_GPIO_WRITE_CMD:
         {
             uint16_t value = (uint16_t)va_arg(args, int);
             uint16_t num = (uint16_t)va_arg(args, int);
-            map_gpio_api.Write(gpio->Port, gpio->Pin, value, num);
+            map_gpio_api.Write(gpio->Config.Port, gpio->Config.Pin, value, num);
             break;
         }
         case HAL_GPIO_READ_CMD:
@@ -258,19 +230,19 @@ static hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args
             uint8_t dir = *va_arg(args, uint8_t *);
             uint16_t *value = va_arg(args, uint16_t *);
             uint16_t num = *va_arg(args, uint16_t *);
-            map_gpio_api.Read(gpio->Port, gpio->Pin, dir, value, 1);
+            map_gpio_api.Read(gpio->Config.Port, gpio->Config.Pin, dir, value, 1);
             break;
         }
         case HAL_GPIO_GET_OUTPUT_CMD:
         {
             uint16_t *status = va_arg(args, uint16_t *);
-            map_gpio_api.Read(gpio->Port, gpio->Pin, GPIO_DIR_INTPUT, status, 1); 
+            map_gpio_api.Read(gpio->Config.Port, gpio->Config.Pin, GPIO_DIR_INTPUT, status, 1); 
             break;
         }
         case HAL_GPIO_GET_INTPUT_CMD:
         {
             uint16_t *status = va_arg(args, uint16_t *);
-            map_gpio_api.Read(gpio->Port, gpio->Pin, GPIO_DIR_INTPUT, status, 1); 
+            map_gpio_api.Read(gpio->Config.Port, gpio->Config.Pin, GPIO_DIR_INTPUT, status, 1); 
             break;
         }
         case HAL_GPIO_TOGGLE_CMD:
@@ -299,7 +271,7 @@ void Hal_GPIO_Open(Hal_Device_GPIO *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    map_gpio_api.Open(drv->Port);
+    map_gpio_api.Open(drv->Config.Port);
 }
 
 /**
@@ -314,7 +286,7 @@ void Hal_GPIO_Close(Hal_Device_GPIO *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     
-    map_gpio_api.Close(drv->Port); 
+    map_gpio_api.Close(drv->Config.Port); 
 }
 
 /**
@@ -330,10 +302,8 @@ void Hal_GPIO_Init(Hal_Device_GPIO *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    drv->Opera = (struct Hal_GPIO_Opera *)&gpio_ops;
-    
-    map_gpio_api.Open(drv->Port);
-    map_gpio_api.Init(drv->Port, drv->Pin, drv->Dir, drv->Mode); 
+    map_gpio_api.Open(drv->Config.Port);
+    map_gpio_api.Init(drv->Config.Port, drv->Config.Pin, drv->Config.Dir, drv->Config.Mode); 
 }
 
 /**
@@ -348,11 +318,10 @@ void Hal_GPIO_Fini(Hal_Device_GPIO *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
     
-    map_gpio_api.Fini(drv->Port, drv->Pin); 
-    
-    drv->Opera = NULL;
-    drv->Port = 0;
-    drv->Pin = 0;
+    map_gpio_api.Fini(drv->Config.Port, drv->Config.Pin); 
+
+    drv->Config.Port = 0;
+    drv->Config.Pin = 0;
 }
 
 /**
@@ -369,7 +338,7 @@ hal_err_t Hal_GPIO_Write(Hal_Device_GPIO *drv, uint8_t *wrData, uint8_t wrNum)
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(wrData));
 
-    return map_gpio_api.Write(drv->Port, drv->Pin, *((uint16_t *)wrData), wrNum); 
+    return map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, *((uint16_t *)wrData), wrNum); 
 }
 
 /**
@@ -386,7 +355,7 @@ hal_err_t Hal_GPIO_Read(Hal_Device_GPIO *drv, uint8_t *rdData, uint8_t rdNum)
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(rdData));
 
-    return map_gpio_api.Read(drv->Port, drv->Pin, GPIO_DIR_INTPUT, (uint16_t *)rdData, rdNum); 
+    return map_gpio_api.Read(drv->Config.Port, drv->Config.Pin, GPIO_DIR_INTPUT, (uint16_t *)rdData, rdNum); 
 }
 
 /**
@@ -401,7 +370,7 @@ void Hal_GPIO_Set(Hal_Device_GPIO *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    map_gpio_api.Write(drv->Port, drv->Pin, 1, 1); 
+    map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, 1, 1); 
 }
 
 /**
@@ -416,7 +385,7 @@ void Hal_GPIO_Clr(Hal_Device_GPIO *drv)
 {
     hal_assert(IS_PTR_NULL(drv));
 
-    map_gpio_api.Write(drv->Port, drv->Pin, 0, 1); 
+    map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, 0, 1); 
 }
 
 /**
@@ -433,7 +402,7 @@ bool Hal_GPIO_GetIntputStatus(Hal_Device_GPIO *drv)
 
     uint16_t status = 0;
     
-    map_gpio_api.Read(drv->Port, drv->Pin, GPIO_DIR_INTPUT, &status, 1); 
+    map_gpio_api.Read(drv->Config.Port, drv->Config.Pin, GPIO_DIR_INTPUT, &status, 1); 
     
     return (status == 0) ? (false) : (true);
 }
@@ -452,7 +421,7 @@ bool Hal_GPIO_GetOutputStatus(Hal_Device_GPIO *drv)
 
     uint16_t status = 0;
     
-    map_gpio_api.Read(drv->Port, GPIO_DIR_OUTPUT, drv->Pin, &status, 1); 
+    map_gpio_api.Read(drv->Config.Port, GPIO_DIR_OUTPUT, drv->Config.Pin, &status, 1); 
     
     return (status == 0) ? (false) : (true);
 }
@@ -471,15 +440,15 @@ void Hal_GPIO_Toggle(Hal_Device_GPIO *drv)
 
     uint16_t status = 0;
     
-    map_gpio_api.Read(drv->Port, drv->Pin, GPIO_DIR_OUTPUT, &status, 1); 
+    map_gpio_api.Read(drv->Config.Port, drv->Config.Pin, GPIO_DIR_OUTPUT, &status, 1); 
     
     if(status == 1)
     {
-        map_gpio_api.Write(drv->Port, drv->Pin, 0, 1); 
+        map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, 0, 1); 
     }
     else
     {
-        map_gpio_api.Write(drv->Port, drv->Pin, 1, 1); 
+        map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, 1, 1); 
     }
 }
 
@@ -502,44 +471,44 @@ void Hal_GPIO_Control(Hal_Device_GPIO *drv, uint8_t cmd, void *param)
     {
         case HAL_GPIO_CMD_OPEN:
         {
-            map_gpio_api.Open(drv->Port);
+            map_gpio_api.Open(drv->Config.Port);
             break;
         }
         case HAL_GPIO_CMD_CLOSE:
         {
-            map_gpio_api.Close(drv->Port);
+            map_gpio_api.Close(drv->Config.Port);
             break;
         }
         case HAL_GPIO_CMD_INIT:
         {
             Hal_Device_GPIO *config = (Hal_Device_GPIO *)param;
             
-            map_gpio_api.Init(drv->Port, drv->Pin, config->Dir, config->Mode);
+            map_gpio_api.Init(drv->Config.Port, drv->Config.Pin, config->Config.Dir, config->Config.Mode);
             break;
         }
         case HAL_GPIO_CMD_FINI:
         {
-            map_gpio_api.Fini(drv->Port, drv->Pin);
+            map_gpio_api.Fini(drv->Config.Port, drv->Config.Pin);
             break;
         }
         case HAL_GPIO_CMD_SET:
         {
-            map_gpio_api.Write(drv->Port, drv->Pin, 1, 1);
+            map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, 1, 1);
             break;
         }
         case HAL_GPIO_CMD_CLEAR:
         {
-            map_gpio_api.Write(drv->Port, drv->Pin, 0, 1);
+            map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, 0, 1);
             break;
         }
         case HAL_GPIO_CMD_GET_INTPUT:
         {   
-            map_gpio_api.Read(drv->Port, drv->Pin, GPIO_DIR_INTPUT, (uint16_t *)param, 1);
+            map_gpio_api.Read(drv->Config.Port, drv->Config.Pin, GPIO_DIR_INTPUT, (uint16_t *)param, 1);
             break;
         }
         case HAL_GPIO_CMD_GET_OUTPUT:
         {
-            map_gpio_api.Read(drv->Port, drv->Pin, GPIO_DIR_OUTPUT, (uint16_t *)param, 1);
+            map_gpio_api.Read(drv->Config.Port, drv->Config.Pin, GPIO_DIR_OUTPUT, (uint16_t *)param, 1);
             break;
         }
         case HAL_GPIO_CMD_TOGGLE:
@@ -551,14 +520,14 @@ void Hal_GPIO_Control(Hal_Device_GPIO *drv, uint8_t cmd, void *param)
         {
             struct Hal_GPIO_Param *config = (struct Hal_GPIO_Param *)param;
             
-            map_gpio_api.Write(drv->Port, drv->Pin, config->RW_Data, config->Num);
+            map_gpio_api.Write(drv->Config.Port, drv->Config.Pin, config->RW_Data, config->Num);
             break;
         }
         case HAL_GPIO_CMD_READ:
         {
             struct Hal_GPIO_Param *config = (struct Hal_GPIO_Param *)param;
             
-            map_gpio_api.Read(drv->Port, config->Dir, drv->Pin, &config->RW_Data, config->Num); 
+            map_gpio_api.Read(drv->Config.Port, config->Dir, drv->Config.Pin, &config->RW_Data, config->Num); 
             break;
         }
         default:

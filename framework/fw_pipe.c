@@ -90,8 +90,11 @@ __INLINE void Fw_Pipe_Init(Fw_Pipe_t *pipe)
     Fw_Timer_Init(&pipe->Timer, "Framework Pipe Timer");
     
     //< clear pipe flags
-    pipe->IsLock = false;
-    pipe->IsConnect = false;
+    pipe->IsTxConnect = true;
+    pipe->IsRxConnect = true;
+    
+    pipe->IsDeviceLock = false;
+    pipe->IsLock       = false;
 }
 
 /**
@@ -112,9 +115,12 @@ __INLINE void Fw_Pipe_Fini(Fw_Pipe_t *pipe)
         pipe->Interface->Fini(pipe);
     }
     
-    //< clear pipe falgs
-    pipe->IsLock = false;
-    pipe->IsConnect = false;
+    //< clear pipe flags
+    pipe->IsTxConnect = false;
+    pipe->IsRxConnect = false;
+    
+    pipe->IsDeviceLock = false;
+    pipe->IsLock       = false;
 }
 
 /**
@@ -151,7 +157,7 @@ __STATIC_INLINE void Fw_Pipe_Unlock(Fw_Pipe_t *pipe)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Fw_Pipe_Connect(Fw_Pipe_t *pipe)
+__INLINE void Fw_Pipe_ConnectTx(Fw_Pipe_t *pipe)
 {
     _FW_ASSERT(IS_PTR_NULL(pipe));
 
@@ -161,16 +167,65 @@ __INLINE void Fw_Pipe_Connect(Fw_Pipe_t *pipe)
         return;
     }
     
-    //< 2. lock pipe
-    Fw_Pipe_Lock(pipe);
-    
-    //< 3. connect pipe
-    if(pipe->IsConnect == false)
+    //< 2. check tx is connect
+    if(pipe->IsTxConnect == true)
     {
-        pipe->IsConnect = true;
+        return;
     }
     
-   //< 4. unlock pipe
+    //< 3. lock pipe
+    Fw_Pipe_Lock(pipe);
+    
+    //< 4. connect pipe
+    if(!IS_PTR_NULL(pipe->Callback.Tx))
+    {
+        //< 5. hardware connect tx
+        pipe->Callback.Tx(FW_STREAM_CONNECT_TX_EVENT, pipe->Param);
+    }
+    
+    pipe->IsTxConnect = true;
+    
+   //< 6. unlock pipe
+    Fw_Pipe_Unlock(pipe);
+}
+
+/**
+ *******************************************************************************
+ * @brief       connect pipe
+ * @param       [in/out]  *pipe           pipe block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE void Fw_Pipe_ConnectRx(Fw_Pipe_t *pipe)
+{
+    _FW_ASSERT(IS_PTR_NULL(pipe));
+
+    //< 1. check pipe is lock 
+    if(pipe->IsLock == true)
+    {
+        return;
+    }
+    
+    //< 2. check rx is connect
+    if(pipe->IsRxConnect == true)
+    {
+        return;
+    }
+    
+    //< 3. lock pipe
+    Fw_Pipe_Lock(pipe);
+    
+    //< 4. connect pipe
+    if(!IS_PTR_NULL(pipe->Callback.Rx))
+    {
+        //< 5. hardware connect tx
+        pipe->Callback.Rx(FW_STREAM_CONNECT_RX_EVENT, pipe->Param, 0);
+    }
+    
+    pipe->IsRxConnect = true;
+    
+   //< 6. unlock pipe
     Fw_Pipe_Unlock(pipe);
 }
 
@@ -182,7 +237,7 @@ __INLINE void Fw_Pipe_Connect(Fw_Pipe_t *pipe)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Fw_Pipe_Disconnect(Fw_Pipe_t *pipe)
+__INLINE void Fw_Pipe_DisconnectTx(Fw_Pipe_t *pipe)
 {
     _FW_ASSERT(IS_PTR_NULL(pipe));
 
@@ -192,16 +247,65 @@ __INLINE void Fw_Pipe_Disconnect(Fw_Pipe_t *pipe)
         return;
     }
     
-    //< 2. lock pipe
-    Fw_Pipe_Lock(pipe);
-    
-    //< 3. disconnect pipe
-    if(pipe->IsConnect == true)
+    //< 2. check tx is disconnect
+    if(pipe->IsTxConnect == false)
     {
-        pipe->IsConnect = false;
+        return;
     }
     
-    //< 4. unlock pipe
+    //< 3. lock pipe
+    Fw_Pipe_Lock(pipe);
+    
+    //< 4. connect pipe
+    if(!IS_PTR_NULL(pipe->Callback.Tx))
+    {
+        //< 5. hardware connect tx
+        pipe->Callback.Tx(FW_STREAM_DISCONNECT_TX_EVENT, pipe->Param);
+    }
+    
+    pipe->IsTxConnect = true;
+    
+   //< 6. unlock pipe
+    Fw_Pipe_Unlock(pipe);
+}
+
+/**
+ *******************************************************************************
+ * @brief       disconnect pipe
+ * @param       [in/out]  *pipe           pipe block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE void Fw_Pipe_DisconnectRx(Fw_Pipe_t *pipe)
+{
+    _FW_ASSERT(IS_PTR_NULL(pipe));
+
+    //< 1. check pipe is lock 
+    if(pipe->IsLock == true)
+    {
+        return;
+    }
+    
+    //< 2. check rx is disconnect
+    if(pipe->IsRxConnect == false)
+    {
+        return;
+    }
+    
+    //< 3. lock pipe
+    Fw_Pipe_Lock(pipe);
+    
+    //< 4. connect pipe
+    if(!IS_PTR_NULL(pipe->Callback.Rx))
+    {
+        //< 5. hardware connect tx
+        pipe->Callback.Rx(FW_STREAM_DISCONNECT_RX_EVENT, pipe->Param, 0);
+    }
+    
+    pipe->IsRxConnect = true;
+    
+   //< 6. unlock pipe
     Fw_Pipe_Unlock(pipe);
 }
 
@@ -217,7 +321,7 @@ __INLINE void Fw_Pipe_LockDevice(Fw_Pipe_t *pipe)
 {
     _FW_ASSERT(IS_PTR_NULL(pipe));
     
-    pipe->DeviceLock = true;
+    pipe->IsDeviceLock = true;
 }
 
 /**
@@ -232,7 +336,7 @@ __INLINE void Fw_Pipe_UnlockDevice(Fw_Pipe_t *pipe)
 {
     _FW_ASSERT(IS_PTR_NULL(pipe));
 
-    pipe->DeviceLock = false;
+    pipe->IsDeviceLock = false;
 }
 
 /**
@@ -247,7 +351,7 @@ __INLINE bool Fw_Pipe_GetDeviceLock(Fw_Pipe_t *pipe)
 {
     _FW_ASSERT(IS_PTR_NULL(pipe));
 
-    return pipe->DeviceLock;
+    return pipe->IsDeviceLock;
 }
 
 /**
@@ -306,7 +410,7 @@ __INLINE uint16_t Fw_Pipe_Write(Fw_Pipe_t *pipe, uint8_t *buffer, uint16_t size)
     }
     
     //< 2. check pipe is connect device
-    if(pipe->IsConnect == false)
+    if(pipe->IsTxConnect == false)
     {
         return 0;
     }
@@ -324,9 +428,9 @@ __INLINE uint16_t Fw_Pipe_Write(Fw_Pipe_t *pipe, uint8_t *buffer, uint16_t size)
     Fw_Pipe_Unlock(pipe);
     
     //< 6. start transfer
-    if(!IS_PTR_NULL(pipe->InOut))
+    if(!IS_PTR_NULL(pipe->Callback.Tx))
     {
-        pipe->InOut(FW_STREAM_TX_EVENT, pipe->Stream);
+        pipe->Callback.Tx(FW_STREAM_TX_EVENT, pipe->Param);
     }
 
     return wrSize;
@@ -359,7 +463,7 @@ __INLINE uint16_t Fw_Pipe_Read(Fw_Pipe_t *pipe, uint8_t *buffer, uint16_t size)
     }
     
     //< 2. check pipe is connect device
-    if(pipe->IsConnect == false)
+    if(pipe->IsRxConnect == false)
     {
         return 0;
     }
@@ -375,6 +479,12 @@ __INLINE uint16_t Fw_Pipe_Read(Fw_Pipe_t *pipe, uint8_t *buffer, uint16_t size)
         
     //< 5. unlock pipe
     Fw_Pipe_Unlock(pipe);
+    
+    //< 6. start transfer
+    if(!IS_PTR_NULL(pipe->Callback.Rx))
+    {
+        pipe->Callback.Rx(FW_STREAM_RX_EVENT, pipe->Param, 0);
+    }
     
     return rdSize;
 }

@@ -65,15 +65,9 @@ __INLINE void Fw_Stream_Init(struct Fw_Stream *stream)
     _FW_ASSERT(IS_PTR_NULL(stream));
     
     //< init pipe
-    stream->Tx.InOut = Fw_Stream_Tx_Handle;
-    stream->Tx.Stream = (void *)stream;
     Fw_Pipe_Init(&stream->Tx);
-    Fw_Pipe_Connect(&stream->Tx);
-    
-    stream->Rx.In = NULL;
     Fw_Pipe_Init(&stream->Rx);
-    Fw_Pipe_Connect(&stream->Rx);
-    
+
     //< init hardware
     if(!IS_PTR_NULL(stream->Device))
     {
@@ -100,10 +94,7 @@ __INLINE void Fw_Stream_Fini(struct Fw_Stream *stream)
     }
     
     //< deinit stream buffer
-    Fw_Pipe_Disconnect(&stream->Tx);
     Fw_Pipe_Fini(&stream->Tx);
-    
-    Fw_Pipe_Disconnect(&stream->Rx);
     Fw_Pipe_Fini(&stream->Rx);
 }
 
@@ -115,9 +106,26 @@ __INLINE void Fw_Stream_Fini(struct Fw_Stream *stream)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Fw_Stream_Connect(Fw_Pipe_t *pipe)
+__INLINE void Fw_Stream_ConnectTx(Fw_Pipe_t *pipe)
 {
-    Fw_Pipe_Connect(pipe);
+    _FW_ASSERT(IS_PTR_NULL(pipe));
+    
+    Fw_Pipe_ConnectTx(pipe);
+}
+
+/**
+ *******************************************************************************
+ * @brief       connect pipe
+ * @param       [in/out]  *pipe           pipe block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE void Fw_Stream_ConnectRx(Fw_Pipe_t *pipe)
+{
+    _FW_ASSERT(IS_PTR_NULL(pipe));
+    
+    Fw_Pipe_ConnectRx(pipe);
 }
 
 /**
@@ -128,9 +136,26 @@ __INLINE void Fw_Stream_Connect(Fw_Pipe_t *pipe)
  * @note        None
  *******************************************************************************
  */
-__INLINE void Fw_Stream_Disconnect(Fw_Pipe_t *pipe)
+__INLINE void Fw_Stream_DisconnectTx(Fw_Pipe_t *pipe)
 {
-    Fw_Pipe_Disconnect(pipe);
+    _FW_ASSERT(IS_PTR_NULL(pipe));
+    
+    Fw_Pipe_DisconnectTx(pipe);
+}
+
+/**
+ *******************************************************************************
+ * @brief       disconnect pipe
+ * @param       [in/out]  *pipe           pipe block
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE void Fw_Stream_DisconnectRx(Fw_Pipe_t *pipe)
+{
+    _FW_ASSERT(IS_PTR_NULL(pipe));
+    
+    Fw_Pipe_DisconnectRx(pipe);
 }
 
 /**
@@ -143,9 +168,11 @@ __INLINE void Fw_Stream_Disconnect(Fw_Pipe_t *pipe)
  * @note        None
  *******************************************************************************
  */
-__INLINE uint16_t Fw_Stream_Write(Fw_Pipe_t *pipe, uint8_t *buf, uint16_t size)
+__INLINE uint16_t Fw_Stream_Write(struct Fw_Stream *stream, uint8_t *buf, uint16_t size)
 {
-    return Fw_Pipe_Write(pipe, buf, size);
+    _FW_ASSERT(IS_PTR_NULL(stream));
+    
+    return Fw_Pipe_Write(&stream->Tx, buf, size);
 }
 
 /**
@@ -158,9 +185,11 @@ __INLINE uint16_t Fw_Stream_Write(Fw_Pipe_t *pipe, uint8_t *buf, uint16_t size)
  * @note        None
  *******************************************************************************
  */
-__INLINE uint16_t Fw_Stream_Read(Fw_Pipe_t *pipe, uint8_t *buf, uint16_t size)
+__INLINE uint16_t Fw_Stream_Read(struct Fw_Stream *stream, uint8_t *buf, uint16_t size)
 {
-    return Fw_Pipe_Read(pipe, buf, size);
+    _FW_ASSERT(IS_PTR_NULL(stream));
+    
+    return Fw_Pipe_Read(&stream->Rx, buf, size);
 }
 
 /**
@@ -172,7 +201,7 @@ __INLINE uint16_t Fw_Stream_Read(Fw_Pipe_t *pipe, uint8_t *buf, uint16_t size)
  *******************************************************************************
  */
 __STATIC_INLINE
-void Stream_Send(struct Fw_Stream *stream)
+void Stream_Send_Handle(struct Fw_Stream *stream)
 {
     void Fw_Stream_Tx_Handle(uint8_t event, void *param);
     uint8_t txData = 0;
@@ -180,14 +209,18 @@ void Stream_Send(struct Fw_Stream *stream)
     //< get tx buffer data
     if (Fw_Pipe_Read(&stream->Tx, &txData, 1) != 1)
     {
-        //< unlock device
-        Fw_Pipe_UnlockDevice(&stream->Tx);
-        
         //< disable pipe timer
         Fw_Timer_Stop(&stream->Tx.Timer);
         
         //< post transfer complet event
-        Fw_Task_PostMessage(stream->Tx.Param, FW_TRANSFER_COMPLET_EVENT, (void *)stream);
+        if(!IS_PTR_NULL(stream->Tx.Task))
+        {
+            Fw_Task_PostMessage(stream->Tx.Task, FW_STREAM_TX_COMPLET_EVENT, (void *)stream);
+        }
+        
+        //< unlock device
+        Fw_Pipe_UnlockDevice(&stream->Tx);
+        
         return;
     }
     
@@ -225,25 +258,49 @@ void Fw_Stream_Tx_Handle(uint8_t event, void *param)
     {
         case FW_DEVICE_TX_EVENT:
         {
-            Stream_Send(stream);
+            //< device tx disconnent option
+            if(stream->Tx.IsRxConnect == false)
+            {
+                break;
+            }
+            
+            //< stream send handle
+            Stream_Send_Handle(stream);
             break;
         }
         case FW_STREAM_TX_EVENT:
         {
             if(Fw_Pipe_GetDeviceLock(&stream->Tx) == false)
             {
-                Stream_Send(stream);
+                //< device tx connect option
+                if(stream->Tx.IsRxConnect == false)
+                {
+                    break;
+                }
+                
+                //< stream send handle
+                Stream_Send_Handle(stream);
             }
             break;
         }
         case FW_TIMEOUT_EVENT:
         {
-            if(!IS_PTR_NULL(stream->Tx.Param))
+            if(!IS_PTR_NULL(stream->Tx.Task))
             {
-                Fw_Task_PostMessage(stream->Tx.Param, FW_TRANSFER_TX_TIMEOUT_EVENT, (void *)stream);
+                Fw_Task_PostMessage(stream->Tx.Task, FW_STREAM_TX_TIMEOUT_EVENT, (void *)stream);
             }
             
-            Stream_Send(stream);
+            Stream_Send_Handle(stream);
+            break;
+        }
+        case FW_STREAM_CONNECT_TX_EVENT:
+        {
+            Hal_Device_Control(stream->Device, HAL_CONNECT_TX_CMD);
+            break;
+        }
+        case FW_STREAM_DISCONNECT_TX_EVENT:
+        {
+            Hal_Device_Control(stream->Device, HAL_DISCONNECT_TX_CMD);
             break;
         }
         default:
@@ -268,11 +325,14 @@ static void Stream_Receive_Timeout_Handle(void *param)
     //< unlock device
     Fw_Pipe_UnlockDevice(&stream->Rx);
     
-    //< disable pipe timer
-    Fw_Timer_Stop(&stream->Rx.Timer);
+//    //< disable pipe timer
+//    Fw_Timer_Stop(&stream->Rx.Timer);
     
     //< set stream rx timeout event
-    Fw_Task_PostMessage(stream->Rx.Param, FW_TRANSFER_RX_TIMEOUT_EVENT, (void *)stream);
+    if(!IS_PTR_NULL(stream->Rx.Task))
+    {
+        Fw_Task_PostMessage(stream->Rx.Task, FW_STREAM_RX_TIMEOUT_EVENT, (void *)stream);
+    }
 }
 
 /**
@@ -285,16 +345,22 @@ static void Stream_Receive_Timeout_Handle(void *param)
  *******************************************************************************
  */
 __STATIC_INLINE
-void Stream_Receive(struct Fw_Stream *stream, uint8_t rxData)
+void Stream_Receive_Handle(struct Fw_Stream *stream, uint8_t rxData)
 {
     //< get tx buffer data
     if (Fw_Pipe_Write(&stream->Rx, &rxData, 1) != 1)
     {
-        //< unlock device
-        Fw_Pipe_UnlockDevice(&stream->Rx);
-        
         //< disable pipe timer
         Fw_Timer_Stop(&stream->Rx.Timer);
+        
+        //< post transfer complet event
+        if(!IS_PTR_NULL(stream->Rx.Task))
+        {
+            Fw_Task_PostMessage(stream->Rx.Task, FW_STREAM_RX_OVERFLOW_EVENT, (void *)stream);
+        }
+            
+        //< unlock device
+        Fw_Pipe_UnlockDevice(&stream->Rx);
         return;
     }
     
@@ -326,15 +392,34 @@ void Fw_Stream_Rx_Handle(uint8_t event, void *param, uint8_t recData)
     {
         case FW_DEVICE_RX_EVENT:
         {
+            //< device tx connect option
+            if(stream->Rx.IsTxConnect == false)
+            {
+                break;
+            }
+                
             //< packet receive handle
-            Stream_Receive(stream, recData);
+            Stream_Receive_Handle(stream, recData);
             
             //< post packet resolv event
-            Fw_Task_PostMessage(stream->Rx.Param, FW_TRANSFER_PARSE_EVENT, (void *)stream);
+            if(!IS_PTR_NULL(stream->Rx.Task))
+            {
+                Fw_Task_PostMessage(stream->Rx.Task, FW_STREAM_RX_PARSE_EVENT, (void *)stream);
+            }
             break;
         }
         case FW_STREAM_RX_EVENT:
         {
+            break;
+        }
+        case FW_STREAM_CONNECT_RX_EVENT:
+        {
+            Hal_Device_Control(stream->Device, HAL_CONNECT_RX_CMD);
+            break;
+        }
+        case FW_STREAM_DISCONNECT_RX_EVENT:
+        {
+            Hal_Device_Control(stream->Device, HAL_DISCONNECT_RX_CMD);
             break;
         }
         default:

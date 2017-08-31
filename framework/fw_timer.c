@@ -177,7 +177,7 @@ __INLINE fw_err_t Fw_Timer_SetTaskHandle(struct Fw_Timer *timer, struct Fw_Task 
     timer->Event     = taskEvent;
     timer->TaskParam = taskParam;
 
-    timer->HandleType = FW_TIMER_CALL_BACK_HANDLE_TYPE;    
+    timer->HandleType = FW_TIMER_TASK_HANDLE_TYPE;    
     
     return FW_ERR_NONE;
 }
@@ -242,7 +242,7 @@ fw_err_t Fw_Timer_Start(struct Fw_Timer *timer, uint32_t tick, int16_t count)
 {
     _FW_ASSERT(IS_PTR_NULL(timer));
     
-    if(timer->Cycle != 0)
+    if(timer->Cycle == 0)
     {
         timer->InitTick    = tick;
         timer->TimeOutTick = tick + Fw_Tick_GetInfo();
@@ -334,31 +334,14 @@ fw_err_t Fw_Timer_Stop(struct Fw_Timer *timer)
 __STATIC_INLINE
 void TimerDelete(struct Fw_Timer *timer)
 {
-    //< 1. remove timer link list
-    struct Fw_Timer **ctxTimer;
-
-    if(TimerBlock.LinkList.Head == timer)
+    if (Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&TimerBlock.LinkList, 
+                            (struct Fw_dLinkList *)timer)
+        == FW_ERR_NONE)
     {
-        TimerBlock.LinkList.Head = timer->LinkList.Next;
-    }
-    else if(TimerBlock.LinkList.Tail == timer)
-    {
-        TimerBlock.LinkList.Tail = timer->LinkList.Last;
-    }
-    else
-    {
-        ctxTimer = (struct Fw_Timer **)&timer->LinkList.Last->LinkList.Next;
-        *ctxTimer = timer->LinkList.Next;
-    }
-
-    //< 2. clear block link list param
-	timer->LinkList.Last = NULL;
-	timer->LinkList.Next = NULL;
-	
-    //< 3. sub timer num
-    if(TimerBlock.Num > 0)
-    {
-        TimerBlock.Num--;
+        if(TimerBlock.Num > 0)
+        {
+            TimerBlock.Num--;
+        }
     }
 }
 

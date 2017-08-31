@@ -71,14 +71,14 @@ extern "C"
 #else
     #define USE_UART_COMPONENT                                               (1)
 #endif
-
+    
 /* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define hal uart id
  *******************************************************************************
  */ 
-enum
+enum _Hal_Uart_Id
 {
     MCU_UART_1 = 0,
     MCU_UART_2,
@@ -92,7 +92,7 @@ enum
  * @brief      define hal uart wordlen
  *******************************************************************************
  */ 
-enum
+enum _Hal_UArt_Word_Len
 {
     MCU_UART_WORD_LEN_8B = 0,
     MCU_UART_WOED_LEN_9B,
@@ -103,7 +103,7 @@ enum
  * @brief      define hal uart stop bits
  *******************************************************************************
  */ 
-enum
+enum _Hal_Uart_Stop_Bits
 {
     MCU_UART_STOP_BITS_0_5 = 0,
     MCU_UART_STOP_BITS_1,
@@ -116,7 +116,7 @@ enum
  * @brief      define hal uart parity
  *******************************************************************************
  */ 
-enum
+enum _Hal_Uart_Party
 {
     MCU_UART_PARTY_NONE = 0,
     MCU_UART_PARTY_EVEN,
@@ -128,7 +128,7 @@ enum
  * @brief      define hal uart Transfer Direction
  *******************************************************************************
  */ 
-enum
+enum _Hal_Uart_Transfer_Config
 {
     MCU_UART_DISABLE_TX = 0,
     MCU_UART_ENABLE_TX = 1,
@@ -141,24 +141,15 @@ enum
 
 /**
  *******************************************************************************
- * @brief      uart pipe status
- *******************************************************************************
- */ 
-enum
-{
-    MCU_UART_PIPE_DISCONNECT = 0,
-    MCU_UART_PIPE_CONNECT_WITH_IDLE,
-    MCU_UART_CONNECT_WITH_WORK,
-};
-
-/**
- *******************************************************************************
  * @brief      define map deivce uart structure
  *******************************************************************************
  */
 struct Hal_Uart_Opera;
 typedef struct
 {
+    Hal_Callback_t TxCallback;
+    Hal_Callback_t RxCallback;
+    
     struct _Hal_Uart_Config
     {
         uint8_t Port;
@@ -175,41 +166,7 @@ typedef struct
         
         uint32_t Baud;
     }Config;
-    
-    Hal_Callback_t TxCallback;
-    Hal_Callback_t RxCallback;
-    
-    struct Hal_Uart_Opera *Opera;
 }Hal_Device_Uart;
-
-/**
- *******************************************************************************
- * @brief      define hal uart opera api
- *******************************************************************************
- */
-struct Hal_Uart_Opera
-{
-    void (*Open)(Hal_Device_Uart*);
-    void (*Close)(Hal_Device_Uart*);
-    
-    void (*Init)(Hal_Device_Uart*);
-    void (*Fini)(Hal_Device_Uart*);
-    
-    void (*SetTxCallback)(Hal_Device_Uart*, void*);
-    void (*SetRxCallback)(Hal_Device_Uart*, void*);
-
-    void (*Send)(Hal_Device_Uart*, uint8_t);
-    uint8_t (*Receive)(Hal_Device_Uart*);
-    
-    void (*TxConnect)(Hal_Device_Uart*);
-    void (*TxDisconnect)(Hal_Device_Uart*);
-    
-    void (*RxConnect)(Hal_Device_Uart*);
-    void (*RxDisconnect)(Hal_Device_Uart*);
-    
-    bool (*IsTxComplet)(Hal_Device_Uart*);
-    bool (*IsRxComplet)(Hal_Device_Uart*);
-};
 
 /**
  *******************************************************************************

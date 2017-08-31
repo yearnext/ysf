@@ -43,33 +43,9 @@
 /* Exported constants --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define gpio opera interface
+ * @brief      define uart opera interface
  *******************************************************************************
  */ 
-static const struct Hal_Uart_Opera uart_ops = 
-{
-    .Open = Hal_Uart_Open,
-    .Close = Hal_Uart_Close,
-    
-    .Init = Hal_Uart_Init,
-    .Fini = Hal_Uart_Fini,
-
-    .SetTxCallback = Hal_Uart_SetTxCallback,
-    .SetRxCallback = Hal_Uart_SetRxCallback,
-    
-    .Send = Hal_Uart_Send,
-    .Receive = Hal_Uart_Receive,
-    
-    .TxConnect = Hal_Uart_TxConnect,
-    .TxDisconnect = Hal_Uart_TxDisconnect,
-    
-    .RxConnect = Hal_Uart_RxConnect,
-    .RxDisconnect = Hal_Uart_RxDisconnect,
-    
-    .IsTxComplet = Hal_Uart_IsTxComplet,
-    .IsRxComplet = Hal_Uart_IsRxComplet,
-};
-
 #ifdef USE_HAL_DEVICE_COMPONENT
 static hal_err_t Hal_Uart_Interface_Init(void*);
 static hal_err_t Hal_Uart_Interface_Fini(void*);
@@ -107,9 +83,6 @@ static hal_err_t Hal_Uart_Interface_Init(void *drv)
     map_uart_api.Open(uart->Config.Port);
     map_uart_api.Init(uart->Config.Port, (void *)uart);
     
-    //< set hal device opera
-    uart->Opera = (struct Hal_Uart_Opera *)&uart_ops;
-    
     return HAL_ERR_NONE;
 }
 
@@ -129,8 +102,6 @@ static hal_err_t Hal_Uart_Interface_Fini(void *drv)
     
     map_uart_api.Fini(uart->Config.Port);   
 
-    uart->Opera = NULL;
-    
     return HAL_ERR_NONE;
 }
 
@@ -157,18 +128,11 @@ static hal_err_t Hal_Uart_Interface_Control(void *drv, uint8_t cmd, va_list args
             //< init device
             map_uart_api.Open(uart->Config.Port);
             map_uart_api.Init(uart->Config.Port, (void *)uart);
-            
-            //< set hal device opera
-            uart->Opera = (struct Hal_Uart_Opera *)&uart_ops;
-            
             break;
         }
         case HAL_DEVICE_FINI_CMD:
         {
             map_uart_api.Fini(uart->Config.Port);   
-
-            uart->Opera = NULL;
-            
             break;
         }
         case HAL_CONNECT_TX_CMD:
@@ -273,8 +237,6 @@ void Hal_Uart_Init(Hal_Device_Uart *drv)
     hal_assert(IS_PTR_NULL(drv));
     hal_assert(IS_PTR_NULL(param));
     
-    drv->Opera = (struct Hal_Uart_Opera *)&uart_ops;
-    
     map_uart_api.Open(drv->Config.Port);
     map_uart_api.Init(drv->Config.Port, (void *)drv); 
 }
@@ -292,8 +254,6 @@ void Hal_Uart_Fini(Hal_Device_Uart *drv)
     hal_assert(IS_PTR_NULL(drv));
 
     map_uart_api.Fini(drv->Config.Port);   
-    
-    drv->Opera = NULL;
 }
 
 /**

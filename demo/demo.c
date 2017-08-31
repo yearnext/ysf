@@ -35,10 +35,10 @@
  */  
 static Hal_Device_GPIO LedPort = 
 {
-    .Port = MCU_PORT_B,
-    .Pin  = MCU_PIN_2,
-    .Dir  = GPIO_DIR_HS_OUTPUT,
-    .Mode = GPIO_PUSH_PULL_MODE,
+    .Config.Port = MCU_PORT_D,
+    .Config.Pin  = MCU_PIN_13,
+    .Config.Dir  = GPIO_DIR_HS_OUTPUT,
+    .Config.Mode = GPIO_PUSH_PULL_MODE,
 };
  
 static Hal_Device_t Led = 

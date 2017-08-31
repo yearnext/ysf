@@ -137,11 +137,14 @@ static struct Fw_Stream DebugStream =
         
     .Tx.Pool = (void *)&TxFifo,
     .Tx.Interface = (struct Fw_Pipe_Pool_Interface *)&PipeFifoInterface,
-    .Tx.Param = NULL,
-        
+    .Tx.Task = NULL,
+    .Tx.TimeOutTick = CAL_SET_TIME(10),
+    .Tx.Callback = Fw_Stream_Tx_Handle,
+    .Tx.Param = (void *)&DebugStream,
+    
     .Rx.Pool = (void *)&RxFifo,
     .Rx.Interface = (struct Fw_Pipe_Pool_Interface *)&PipeFifoInterface,
-    .Rx.Param = NULL,
+    .Rx.TimeOutTick = CAL_SET_TIME(10),
 }; 
 #endif
 
@@ -219,7 +222,7 @@ void Fw_Debug_Write(enum _DEBUG_MESSAGE_TYPE type, const char *str, ...)
     len += (uint8_t)vsprintf((char *)&BufferCache[len], str, args);
     va_end(args);
     
-    Fw_Stream_Write(&DebugStream.Tx, BufferCache, len);
+    Fw_Stream_Write(&DebugStream, BufferCache, len);
 }
 
 /**

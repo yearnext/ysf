@@ -174,12 +174,13 @@ enum
 struct Hal_GPIO_Opera;
 typedef struct
 {
-    uint8_t Port;
-    uint8_t Pin;
-    uint8_t Dir;
-    uint8_t Mode;
-    
-    struct Hal_GPIO_Opera *Opera;
+    struct
+    {
+        uint8_t Port;
+        uint8_t Pin;
+        uint8_t Dir;
+        uint8_t Mode;
+    }Config;
 }Hal_Device_GPIO;
 
 /**
@@ -193,32 +194,6 @@ struct Hal_GPIO_Param
     uint8_t Mode;
     uint8_t Num;
     uint16_t RW_Data;
-};
-
-/**
- *******************************************************************************
- * @brief      define gpio opera interface
- *******************************************************************************
- */ 
-struct Hal_GPIO_Opera
-{
-    void (*Open)(Hal_Device_GPIO*);
-    void (*Close)(Hal_Device_GPIO*);
-    
-    void (*Init)(Hal_Device_GPIO*);
-    void (*Fini)(Hal_Device_GPIO*);
-    
-    void (*Set)(Hal_Device_GPIO*);
-    void (*Clr)(Hal_Device_GPIO*);
-    void (*Toggle)(Hal_Device_GPIO*);
-
-    bool (*GetIntput)(Hal_Device_GPIO*);
-    bool (*GetOutput)(Hal_Device_GPIO*);
-        
-    hal_err_t (*Write)(Hal_Device_GPIO*, uint8_t*, uint8_t);
-    hal_err_t (*Read)(Hal_Device_GPIO*, uint8_t*, uint8_t);
-    
-    void (*Control)(Hal_Device_GPIO*, uint8_t, void*);
 };
 
 /**

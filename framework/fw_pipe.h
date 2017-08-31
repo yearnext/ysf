@@ -101,27 +101,28 @@ typedef struct Fw_Pipe
     struct Fw_Pipe_Pool_Interface *Interface;
     
     //< pipe task call back
-    struct Fw_Task *Param;
+    struct Fw_Task *Task;
     
     //< pipe in out handle
-    union
+    union _Fw_Pipe_Callback
     {
-        void (*Out)(uint8_t, void*);
-        void (*In)(uint8_t, void*, uint8_t);
-        void (*InOut)(uint8_t, void*);
-    };
-        
-    void *Stream;
+        void (*Tx)(uint8_t, void*);
+        void (*Rx)(uint8_t, void*, uint8_t);
+    }Callback;
     
-    //< pipe status
-	bool IsConnect;
+    void *Param;
+    
+    //< pipe connect status
+	bool IsTxConnect;
+    bool IsRxConnect;
+    
+    //< pipe lock Status
     bool IsLock;
+    bool IsDeviceLock;
     
     //< pipe timer
-    uint16_t TimeOutTick;
     struct Fw_Timer Timer;
-
-    bool DeviceLock;
+    uint16_t TimeOutTick;
 }Fw_Pipe_t;
 
 /* Exported variables --------------------------------------------------------*/
@@ -143,12 +144,18 @@ extern const struct Fw_Pipe_Pool_Interface PipeFifoInterface;
 #if USE_PIPE_COMPONENT
 extern __INLINE void Fw_Pipe_Init(Fw_Pipe_t*);
 extern __INLINE void Fw_Pipe_Fini(Fw_Pipe_t*);
-extern __INLINE void Fw_Pipe_Connect(Fw_Pipe_t*);
-extern __INLINE void Fw_Pipe_Disconnect(Fw_Pipe_t*);
+
+extern __INLINE void Fw_Pipe_ConnectTx(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_ConnectRx(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_DisconnectTx(Fw_Pipe_t*);
+extern __INLINE void Fw_Pipe_DisconnectRx(Fw_Pipe_t*);
+
 extern __INLINE void Fw_Pipe_LockDevice(Fw_Pipe_t*);
 extern __INLINE void Fw_Pipe_UnlockDevice(Fw_Pipe_t*);
 extern __INLINE bool Fw_Pipe_GetDeviceLock(Fw_Pipe_t*);
+
 extern __INLINE void Fw_Pipe_SetTimeOut(Fw_Pipe_t*, uint16_t);
+
 extern __INLINE uint16_t Fw_Pipe_Write(Fw_Pipe_t*, uint8_t*, uint16_t);
 extern __INLINE uint16_t Fw_Pipe_Read(Fw_Pipe_t*, uint8_t*, uint16_t);
 #endif
