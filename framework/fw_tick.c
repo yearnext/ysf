@@ -81,7 +81,7 @@ void Fw_Tick_InitComponent(void)
     timer.Callback.TimeOut = Fw_Tick_Handle;
     timer.Callback.Param = NULL;
     timer.Config.Mode = TIMER_TICK_MODE;
-    timer.Config.Period = 1;
+    timer.Config.Period = FW_TICK_PERIOD;
     timer.Config.Prescaler = 1;
     timer.Config.Priority = 1;
 
