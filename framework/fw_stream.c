@@ -256,7 +256,8 @@ void Fw_Stream_Tx_Handle(uint8_t event, void *param)
     
     switch(event)
     {
-        case FW_DEVICE_TX_EVENT:
+//        case FW_DEVICE_TX_EVENT:
+        case HAL_DEVICE_TX_EVENT:
         {
             //< device tx disconnent option
             if(stream->Tx.IsRxConnect == false)
@@ -390,7 +391,8 @@ void Fw_Stream_Rx_Handle(uint8_t event, void *param, uint8_t recData)
     
     switch(event)
     {
-        case FW_DEVICE_RX_EVENT:
+//        case FW_DEVICE_RX_EVENT:
+        case HAL_DEVICE_TX_EVENT:
         {
             //< device tx connect option
             if(stream->Rx.IsTxConnect == false)
