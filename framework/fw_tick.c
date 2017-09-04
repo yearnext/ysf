@@ -40,6 +40,7 @@
 #include "fw_tick.h"
 #include "fw_task.h"
 #include "fw_timer.h"
+#include "hal_device.h"
 #include "hal_timer.h"
 
 /* Private define ------------------------------------------------------------*/
@@ -72,7 +73,8 @@ static void Fw_Tick_Handle(void *param);
 void Fw_Tick_InitComponent(void)
 {
     Hal_Device_Timer timer;
-        
+    Hal_Device_t device;    
+    
     SystemTick = 0;
     
     Fw_Task_Init(&Fw_Tick_Task, "Framework Tick Task", 0, (void *)Fw_Timer_Poll, FW_CALL_BACK_TYPE_TASK);
@@ -80,13 +82,16 @@ void Fw_Tick_InitComponent(void)
     timer.Config.Port = MCU_TICK_TIMER;
     timer.Callback.TimeOut = Fw_Tick_Handle;
     timer.Callback.Param = NULL;
-    timer.Config.Mode = TIMER_TICK_MODE;
+    timer.Config.Mode = MCU_TIMER_TICK_MODE;
     timer.Config.Period = FW_TICK_PERIOD;
     timer.Config.Prescaler = 1;
     timer.Config.Priority = 1;
-
-    Hal_Timer_Init(&timer);
-    Hal_Timer_Start(&timer);
+    
+    device.Device = (void*)&timer;
+    device.Interface = (struct Hal_Interface *)&Hal_Timer_Interface;
+    
+    Hal_Device_Init(&device);
+    Hal_Device_Control(&device, HAL_TIMER_START_CMD);
 }
 
 /**

@@ -47,7 +47,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_core.h"
+#include "hal_path.h"
 #include "hal_device.h"
 
 /* Exported macro ------------------------------------------------------------*/
@@ -78,7 +78,7 @@ extern "C"
  * @brief      define gpio port
  *******************************************************************************
  */  
-enum
+enum _Hal_GPIO_Port
 {
 	MCU_PORT_A,
 	MCU_PORT_B,
@@ -94,7 +94,7 @@ enum
  * @brief      define gpio pin
  *******************************************************************************
  */
-enum
+enum _Hal_GPIO_Pin
 {
 	MCU_PIN_0 = 0,
 	MCU_PIN_1,
@@ -114,13 +114,12 @@ enum
 	MCU_PIN_15,
 };
 
-/* Exported types ------------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define gpio dir
  *******************************************************************************
  */ 
-enum
+enum _Hal_GPIO_Dir
 {
     GPIO_DIR_INTPUT = 0,
     GPIO_DIR_OUTPUT,
@@ -134,7 +133,7 @@ enum
  * @brief      define gpio mode
  *******************************************************************************
  */ 
-enum
+enum _Hal_GPIO_Mode
 {
 	GPIO_INIT_MODE = 0,
 	GPIO_ANALOG_MODE,
@@ -148,53 +147,16 @@ enum
 
 /**
  *******************************************************************************
- * @brief      define gpio cmd
- *******************************************************************************
- */ 
-enum
-{
-    HAL_GPIO_CMD_OPEN = 0,
-    HAL_GPIO_CMD_CLOSE,
-    HAL_GPIO_CMD_INIT,
-    HAL_GPIO_CMD_FINI,
-    HAL_GPIO_CMD_SET,
-    HAL_GPIO_CMD_CLEAR,
-    HAL_GPIO_CMD_GET_INTPUT,
-    HAL_GPIO_CMD_GET_OUTPUT,
-    HAL_GPIO_CMD_TOGGLE,
-    HAL_GPIO_CMD_WRITE,
-    HAL_GPIO_CMD_READ,
-};
-
-/**
- *******************************************************************************
  * @brief      define gpio device class
  *******************************************************************************
  */ 
-struct Hal_GPIO_Opera;
 typedef struct
 {
-    struct
-    {
-        uint8_t Port;
-        uint8_t Pin;
-        uint8_t Dir;
-        uint8_t Mode;
-    }Config;
-}Hal_Device_GPIO;
-
-/**
- *******************************************************************************
- * @brief      define gpio read write opera param
- *******************************************************************************
- */ 
-struct Hal_GPIO_Param
-{
+    uint8_t Port;
+    uint8_t Pin;
     uint8_t Dir;
     uint8_t Mode;
-    uint8_t Num;
-    uint16_t RW_Data;
-};
+}Hal_Device_GPIO;
 
 /**
  *******************************************************************************
@@ -211,6 +173,8 @@ struct Map_GPIO_Opera
    
     hal_err_t (*Write)(uint8_t, uint8_t, uint16_t, uint8_t);
     hal_err_t (*Read)(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
+    
+    void (*Toggle)(uint8_t, uint8_t);
 };
 
 /* Exported constants --------------------------------------------------------*/
@@ -230,18 +194,9 @@ extern const struct Hal_Interface Hal_GPIO_Interface;
  *******************************************************************************
  */
 #if USE_GPIO_COMPONENT
-extern void Hal_GPIO_Open(Hal_Device_GPIO*);
-extern void Hal_GPIO_Close(Hal_Device_GPIO*);
-extern void Hal_GPIO_Init(Hal_Device_GPIO*);
-extern void Hal_GPIO_Fini(Hal_Device_GPIO*);
-extern hal_err_t Hal_GPIO_Write(Hal_Device_GPIO*, uint8_t*, uint8_t);
-extern hal_err_t Hal_GPIO_Read(Hal_Device_GPIO*, uint8_t*, uint8_t);
-extern void Hal_GPIO_Set(Hal_Device_GPIO*);
-extern void Hal_GPIO_Clr(Hal_Device_GPIO*);
-extern bool Hal_GPIO_GetIntputStatus(Hal_Device_GPIO*);
-extern bool Hal_GPIO_GetOutputStatus(Hal_Device_GPIO*);
-extern void Hal_GPIO_Toggle(Hal_Device_GPIO*);
-extern void Hal_GPIO_Control(Hal_Device_GPIO*, uint8_t, void*);
+extern hal_err_t Hal_GPIO_Interface_Init(void*);
+extern hal_err_t Hal_GPIO_Interface_Fini(void*);
+extern hal_err_t Hal_GPIO_Interface_Control(void*, uint8_t, va_list);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

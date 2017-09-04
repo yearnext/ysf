@@ -224,10 +224,10 @@ void Stream_Send_Handle(struct Fw_Stream *stream)
         return;
     }
     
-    __ATOM_ACTIVE_BEGIN();
+    Atom_Active_Begin();
     
     //< start send data
-    Hal_Device_Control(stream->Device, HAL_SEND_BYTE_CMD, txData);
+    Hal_Device_Control(stream->Device, HAL_DEVICE_SEND_BYTE_CMD, txData);
     
     //< set tx time out
     Fw_Timer_SetEventHandle(&stream->Tx.Timer, Fw_Stream_Tx_Handle, (void *)stream, FW_TIMEOUT_EVENT);
@@ -236,7 +236,7 @@ void Stream_Send_Handle(struct Fw_Stream *stream)
     //< lock device
     Fw_Pipe_LockDevice(&stream->Tx);
     
-    __ATOM_ACTIVE_END();
+    Atom_Active_End();
 }
 
 /**
@@ -296,12 +296,12 @@ void Fw_Stream_Tx_Handle(uint8_t event, void *param)
         }
         case FW_STREAM_CONNECT_TX_EVENT:
         {
-            Hal_Device_Control(stream->Device, HAL_CONNECT_TX_CMD);
+            Hal_Device_Control(stream->Device, HAL_DEVICE_CONNECT_TX_CMD);
             break;
         }
         case FW_STREAM_DISCONNECT_TX_EVENT:
         {
-            Hal_Device_Control(stream->Device, HAL_DISCONNECT_TX_CMD);
+            Hal_Device_Control(stream->Device, HAL_DEVICE_DISCONNECT_TX_CMD);
             break;
         }
         default:
@@ -416,12 +416,12 @@ void Fw_Stream_Rx_Handle(uint8_t event, void *param, uint8_t recData)
         }
         case FW_STREAM_CONNECT_RX_EVENT:
         {
-            Hal_Device_Control(stream->Device, HAL_CONNECT_RX_CMD);
+            Hal_Device_Control(stream->Device, HAL_DEVICE_CONNECT_RX_CMD);
             break;
         }
         case FW_STREAM_DISCONNECT_RX_EVENT:
         {
-            Hal_Device_Control(stream->Device, HAL_DISCONNECT_RX_CMD);
+            Hal_Device_Control(stream->Device, HAL_DEVICE_DISCONNECT_RX_CMD);
             break;
         }
         default:

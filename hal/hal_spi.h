@@ -47,7 +47,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_core.h"
+#include "hal_path.h"
+#include "hal_device.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -77,7 +78,7 @@ extern "C"
  * @brief      define hal SPI id
  *******************************************************************************
  */ 
-enum
+enum _Hal_SPI_Port
 {
     MCU_SPI_1 = 0,
     MCU_SPI_2,
@@ -91,7 +92,7 @@ enum
  * @brief      define hal SPI wordlen
  *******************************************************************************
  */ 
-enum
+enum _Hal_SPI_Word_Len
 {
     MCU_SPI_WORD_LEN_8B = 0,
     MCU_SPI_WOED_LEN_9B,
@@ -102,7 +103,7 @@ enum
  * @brief      define hal SPI stop bits
  *******************************************************************************
  */ 
-enum
+enum _Hal_SPI_Stop_Bit
 {
     MCU_SPI_STOP_BITS_0_5 = 0,
     MCU_SPI_STOP_BITS_1,
@@ -115,7 +116,7 @@ enum
  * @brief      define hal SPI parity
  *******************************************************************************
  */ 
-enum
+enum _Hal_SPI_Party
 {
     MCU_SPI_PARTY_NONE = 0,
     MCU_SPI_PARTY_EVEN,
@@ -124,40 +125,21 @@ enum
 
 /**
  *******************************************************************************
- * @brief      define hal SPI Transfer Direction
- *******************************************************************************
- */ 
-enum
-{
-    MCU_SPI_DISABLE_TX = 0,
-    MCU_SPI_ENABLE_TX = 1,
-    MCU_SPI_ENABLE_TX_ISR = 2,
-    
-    MCU_SPI_DISABLE_RX = 0,
-    MCU_SPI_ENABLE_RX = 1,
-    MCU_SPI_ENABLE_RX_ISR = 2,
-    
-    MCU_SPI_DISABLE_SCK = 0,
-    MCU_SPI_ENABLE_SCK = 1,
-    MCU_SPI_ENABLE_SCK_ISR = 2,
-    
-    MCU_SPI_DISABLE_CSS = 0,
-    MCU_SPI_ENABLE_CSS = 1,
-    MCU_SPI_ENABLE_CSS_ISR = 2,
-};
-
-/**
- *******************************************************************************
  * @brief      define hal SPI work mode
  *******************************************************************************
  */ 
-enum
+enum _Hal_SPI_Mode
 {
     MCU_SPI_MASTER_MODE = 0,
     MCU_SPI_SLAVE_MODE,
 };
 
-enum
+/**
+ *******************************************************************************
+ * @brief      define hal SPI order mode
+ *******************************************************************************
+ */ 
+enum _Hal_SPI_Order
 {
     MCU_SPI_BIT_ORDER_MSB,
     MCU_SPI_BIT_ORDER_LSB,
@@ -168,7 +150,6 @@ enum
  * @brief      define map deivce SPI structure
  *******************************************************************************
  */
-struct Hal_SPI_Opera;
 typedef struct
 {
     struct
@@ -192,35 +173,6 @@ typedef struct
 
     struct Hal_SPI_Opera *Opera;
 }Hal_Device_SPI;
-
-/**
- *******************************************************************************
- * @brief      define hal SPI opera api
- *******************************************************************************
- */
-struct Hal_SPI_Opera
-{
-    void (*Open)(Hal_Device_SPI*);
-    void (*Close)(Hal_Device_SPI*);
-    
-    void (*Init)(Hal_Device_SPI*);
-    void (*Fini)(Hal_Device_SPI*);
-    
-    void (*SetTxCallback)(Hal_Device_SPI*, void*);
-    void (*SetRxCallback)(Hal_Device_SPI*, void*);
-
-    void (*Send)(Hal_Device_SPI*, uint8_t);
-    uint8_t (*Receive)(Hal_Device_SPI*);
-    
-    void (*TxConnect)(Hal_Device_SPI*);
-    void (*TxDisconnect)(Hal_Device_SPI*);
-    
-    void (*RxConnect)(Hal_Device_SPI*);
-    void (*RxDisconnect)(Hal_Device_SPI*);
-    
-    bool (*IsTxComplet)(Hal_Device_SPI*);
-    bool (*IsRxComplet)(Hal_Device_SPI*);
-};
 
 /**
  *******************************************************************************
@@ -258,20 +210,9 @@ extern const struct Hal_Interface Hal_SPI_Interface;
 
 /* Exported functions --------------------------------------------------------*/
 #if USE_SPI_COMPONENT
-extern void Hal_SPI_Open(Hal_Device_SPI*);
-extern void Hal_SPI_Close(Hal_Device_SPI*);
-extern void Hal_SPI_Init(Hal_Device_SPI*);
-extern void Hal_SPI_Fini(Hal_Device_SPI*);
-extern void Hal_SPI_Send(Hal_Device_SPI*, uint8_t);
-extern uint8_t Hal_SPI_Receive(Hal_Device_SPI*);
-extern void Hal_SPI_SetTxCallback(Hal_Device_SPI*, void*);
-extern void Hal_SPI_SetRxCallback(Hal_Device_SPI*, void*);
-extern void Hal_SPI_TxConnect(Hal_Device_SPI*);
-extern void Hal_SPI_TxDisconnect(Hal_Device_SPI*);
-extern void Hal_SPI_RxConnect(Hal_Device_SPI*);
-extern void Hal_SPI_RxDisconnect(Hal_Device_SPI*);
-extern bool Hal_SPI_IsTxComplet(Hal_Device_SPI*);
-extern bool Hal_SPI_IsRxComplet(Hal_Device_SPI*);
+extern hal_err_t Hal_SPI_Interface_Init(void*);
+extern hal_err_t Hal_SPI_Interface_Fini(void*);
+extern hal_err_t Hal_SPI_Interface_Control(void*, uint8_t, va_list);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

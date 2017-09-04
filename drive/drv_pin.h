@@ -16,11 +16,11 @@
  *    with this program; if not, write to the Free Software Foundation, Inc.,  *
  *    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
  *******************************************************************************
- * @file       fw_core.h                                                       *
+ * @file       drv_pin.h                                                       *
  * @author     yearnext                                                        *
  * @version    1.0.0                                                           *
- * @date       2017-04-13                                                      *
- * @brief      framework core head files                                       *
+ * @date       2017-08-30                                                      *
+ * @brief      mcu gpio pin driver software head files                         *
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
@@ -31,95 +31,76 @@
  *******************************************************************************
  */
 
-/**
- * @defgroup framework core interface
- * @{
- */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __FRAMEWORK_CORE_H__
-#define __FRAMEWORK_CORE_H__
+#ifndef __DRIVER_PIN_H__
+#define __DRIVER_PIN_H__
 
-/* Add c++ compatibility -----------------------------------------------------*/
+/* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-/* Includes ------------------------------------------------------------------*/ 
-#include "fw_type.h"
-#include "fw_conf.h"
-   
-#if USE_FRAMEWORK_COMPONENT
-#ifdef USE_FRAMEWORK_BUFFER_COMPONENT
-#include "fw_buffer.h"
-#endif
-        
-#ifdef USE_FRAMEWORK_DEBUG_COMPONENT
-#include "fw_debug.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_LINK_LIST_COMPONENT 
-#include "fw_linklist.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_MEMORY_MANAGEMENT_COMPONENT 
-#include "fw_memory.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_SIGNAL_SCAN_COMPONENT 
-#include "fw_signal.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_TICK_COMPONENT 
-#include "fw_tick.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_TIMER_COMPONENT  
+/* Includes ------------------------------------------------------------------*/
+#include "hal_gpio.h"
+#include "hal_timer.h"
+#include "hal_device.h"
 #include "fw_timer.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_TASK_COMPONENT 
-#include "fw_task.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_PT_COMPONENT 
-#include "fw_pt.h"
-#endif
-    
-#ifdef USE_FRAMEWORK_STREAM_COMPONENT 
-#include "fw_stream.h"
-#endif
-     
-#else
-#warning Please Enable Framework Component Library!
-#endif
-    
-/* Exported macro ------------------------------------------------------------*/ 
+
+/* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       define framework core apis
+ * @brief      define hal pin driver
  *******************************************************************************
- */
-extern __INLINE void Fw_Core_Init(void);
-extern __INLINE void Fw_Core_Start(void);
+ */ 
+struct Hal_Drv_Pin
+{
+    Hal_Device_t Device;
+
+    //< about pwm param
+    uint16_t Duty;
+    uint16_t SetDuty;
+    
+    //< about blink param
+    uint8_t BlinkTime;
+    uint8_t BlinkTimeN;
+    uint8_t BlinkCount;
+    
+    uint8_t Mode;
+
+    struct Fw_Timer Timer;
+
+    uint8_t OperaDir;
+};
 
 /**
  *******************************************************************************
- * @brief       define user init function
+ * @brief      define driver pin mode
  *******************************************************************************
- */
-extern void App_User_Init(void);
-    
+ */ 
+enum Drv_Pin_Mode
+{
+    DRV_PIN_GPIO_MODE,
+    DRV_PIN_TIMER_MODE,
+};
+
+/* Exported constants --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define hal pin driver interface
+ *******************************************************************************
+ */ 
+extern hal_err_t Drv_Pin_Init(void*);
+extern hal_err_t Drv_Pin_Fini(void*);
+extern hal_err_t Drv_Pin_Control(void*, uint8_t, va_list);
+
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }
 #endif
-	
-#endif       /** end include define */
 
-/** @}*/     /** framework core interface  */
+#endif      /** prevent recursive inclusion */
 
 /**********************************END OF FILE*********************************/

@@ -44,6 +44,7 @@
 
 #include "map_timer.h"
 #include "comm_path.h"
+#include "hal_gpio.h"
 
 /* Private constants ---------------------------------------------------------*/
 /**
@@ -535,7 +536,7 @@ void Map_Timer_Close(uint8_t port)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTickMode_Init(Hal_Device_Timer *param)
+void _Tick_Mode_Init(Hal_Device_Timer *param)
 {
 	uint32_t tick = MCU_CLOCK_FREQ/8000;
 
@@ -563,7 +564,7 @@ void _TimerTickMode_Init(Hal_Device_Timer *param)
  *******************************************************************************
  */
 __STATIC_INLINE
-void _TimerTimeMode_Init(uint8_t port, Hal_Device_Timer *param)
+void _Timer_Mode_Init(uint8_t port, Hal_Device_Timer *param)
 {
 	LL_TIM_InitTypeDef LL_TIM_InitStructure;
 
@@ -575,16 +576,75 @@ void _TimerTimeMode_Init(uint8_t port, Hal_Device_Timer *param)
     LL_TIM_DeInit(Timer[port]);
     LL_TIM_Init(Timer[port], &LL_TIM_InitStructure);
     LL_TIM_EnableARRPreload(Timer[port]);
-    LL_TIM_ClearFlag_UPDATE(Timer[port]);
-    LL_TIM_EnableIT_UPDATE(Timer[port]);
     
-    NVIC_EnableIRQ(TimerIrqn[port]); 
-    NVIC_SetPriority(TimerIrqn[port], param->Config.Priority);  
+    if(param->Config.IsEnableIsr)
+    {
+        LL_TIM_ClearFlag_UPDATE(Timer[port]);
+        LL_TIM_EnableIT_UPDATE(Timer[port]);
+        
+        NVIC_EnableIRQ(TimerIrqn[port]); 
+        NVIC_SetPriority(TimerIrqn[port], param->Config.Priority);  
 
-	TimerUpCallback[port].TimeOut = param->Callback.TimeOut;
-	TimerUpCallback[port].Param    = param->Callback.Param;
+        TimerUpCallback[port].TimeOut = param->Callback.TimeOut;
+        TimerUpCallback[port].Param    = param->Callback.Param;
+    }
     
     LL_TIM_EnableCounter(Timer[port]);
+}
+
+__STATIC_INLINE
+void _PWM_Output_Mode_Init(uint8_t port, Hal_Device_Timer *param)
+{
+    LL_TIM_OC_InitTypeDef LL_TIM_OC_InitStructure;
+    
+    LL_TIM_OC_InitStructure.CompareValue = param->Config.Duty,
+    LL_TIM_OC_InitStructure.OCIdleState = LL_TIM_OCIDLESTATE_HIGH,
+    LL_TIM_OC_InitStructure.OCMode = LL_TIM_OCMODE_PWM1,
+    LL_TIM_OC_InitStructure.OCPolarity = LL_TIM_OCPOLARITY_LOW,
+    LL_TIM_OC_InitStructure.OCState = LL_TIM_OCSTATE_ENABLE,
+        
+    //< init timer pwm output pin
+    Hal_Device_Control(param->Config.Pin, HAL_DEVICE_INIT_CMD);
+
+    if(param->Config.Channel == 1)
+    {
+        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH1, &LL_TIM_OC_InitStructure);
+        LL_TIM_OC_SetCompareCH1(Timer[port], param->Config.Duty);
+    }
+    else if(param->Config.Channel == 2)
+    {
+        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH1N, &LL_TIM_OC_InitStructure);
+        LL_TIM_OC_SetCompareCH2(Timer[port], param->Config.Duty);
+    }
+    else if(param->Config.Channel == 3)
+    {
+        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH2, &LL_TIM_OC_InitStructure);
+        LL_TIM_OC_SetCompareCH3(Timer[port], param->Config.Duty);
+    }    
+    else if(param->Config.Channel == 4)
+    {
+        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH2N, &LL_TIM_OC_InitStructure);
+        LL_TIM_OC_SetCompareCH4(Timer[port], param->Config.Duty);
+    }
+    else if(param->Config.Channel == 5)
+    {
+        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH3, &LL_TIM_OC_InitStructure);
+        LL_TIM_OC_SetCompareCH2(Timer[port], param->Config.Duty);
+    }
+    else if(param->Config.Channel == 6)
+    {
+        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH3N, &LL_TIM_OC_InitStructure);
+        LL_TIM_OC_SetCompareCH3(Timer[port], param->Config.Duty);
+    }    
+    else if(param->Config.Channel == 7)
+    {
+        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH4, &LL_TIM_OC_InitStructure);
+        LL_TIM_OC_SetCompareCH4(Timer[port], param->Config.Duty);
+    }
+    else
+    {
+        //< do nothing!
+    }
 }
 
 /**
@@ -606,15 +666,21 @@ void Map_Timer_Init(uint8_t port, void *param)
 	
     switch(config->Config.Mode)
 	{
-		case TIMER_TICK_MODE:
-			_TimerTickMode_Init(config);
+		case MCU_TIMER_TICK_MODE:
+			_Tick_Mode_Init(config);
 			break;
-		case TIMER_TIME_MODE:
-			_TimerTimeMode_Init(port, config);
+		case MCU_TIMER_TIME_MODE:
+			_Timer_Mode_Init(port, config);
 			break;
-		case TIMER_PWM_OUTPUT_MODE:
+		case MCU_TIMER_PWM_OUTPUT_MODE:
+            if(config->Config.IsInitTimerBase)
+            {
+                _Timer_Mode_Init(port, config);
+            }
+        
+            _PWM_Output_Mode_Init(port, config);
 			break;
-		case TIMER_PWM_INTPUT_MODE:
+		case MCU_TIMER_PWM_INTPUT_MODE:
 			break;
 		default:
             break;

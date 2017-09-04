@@ -340,7 +340,7 @@ void EventFree(struct Fw_Task_Event *event)
 __STATIC_INLINE
 void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
 {
-    __ATOM_ACTIVE_BEGIN();
+    Atom_Active_Begin();
 
     struct Fw_Task_Event *nowNode;
     struct Fw_TaskMgr *queue;
@@ -383,7 +383,7 @@ void WriteTaskEventQueue(struct Fw_Task *task, uint32_t event, void *message)
         EventFree(nowNode);
     }
     
-    __ATOM_ACTIVE_END();
+    Atom_Active_End();
 }
 
 /**
@@ -402,7 +402,7 @@ fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event **event)
     _FW_ASSERT(IS_TASK_PRIORITY_INVAILD(priority));
     _FW_ASSERT(IS_PTR_NULL(event));
     
-    __ATOM_ACTIVE_BEGIN();
+    Atom_Active_Begin();
     
     //< 2. check queue is vaild
     struct Fw_TaskMgr *queue = &TaskBlock.TaskMgrBlock[priority];
@@ -422,7 +422,7 @@ fw_err_t ReadTaskEventQueue(uint8_t priority, struct Fw_Task_Event **event)
     //< 5. free memory
     EventFree((struct Fw_Task_Event *)*event);
     
-    __ATOM_ACTIVE_END();
+    Atom_Active_End();
     
     return FW_ERR_NONE;
 }

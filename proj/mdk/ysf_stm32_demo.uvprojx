@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_FULL_LL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\core;..\..\demo;..\..\framework;..\..\common;..\..\hal;..\..\bsp\stm32f1xx\map;..\..\bsp\stm32f1xx\msp\ll_lib;..\..\bsp\stm32f1xx\startup;..\..\bsp\stm32f1xx\CMSIS;..\..\bsp\stm32f1xx\msp\hal_lib;..\..\bsp\stm32f1xx\msp\hal_lib\Legacy;..\..\bsp\stm32f1xx\msp</IncludePath>
+              <IncludePath>..\..\core;..\..\demo;..\..\framework;..\..\common;..\..\hal;..\..\bsp\stm32f1xx\map;..\..\bsp\stm32f1xx\startup;..\..\bsp\stm32f1xx\CMSIS;..\..\bsp\stm32f1xx\msp;..\..\bsp\stm32f1xx\msp\ll_lib;..\..\bsp\stm32f1xx\msp\hal_lib;..\..\bsp\stm32f1xx\msp\hal_lib\Legacy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -481,14 +481,14 @@
               <FilePath>..\..\hal\hal_timer.c</FilePath>
             </File>
             <File>
-              <FileName>hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\hal\hal_uart.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\hal\hal_device.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\hal\hal_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -536,6 +536,11 @@
           <GroupName>bsp/msp</GroupName>
           <Files>
             <File>
+              <FileName>stm32f1xx.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\bsp\stm32f1xx\msp\stm32f1xx.h</FilePath>
+            </File>
+            <File>
               <FileName>stm32f1xx_ll_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_adc.c</FilePath>
@@ -559,6 +564,11 @@
               <FileName>stm32f1xx_ll_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_ll_fsmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_fsmc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f1xx_ll_gpio.c</FileName>

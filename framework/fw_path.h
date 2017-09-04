@@ -74,7 +74,15 @@ extern "C"
 //#define _FW_TIMER_COMPONENT_PATH              "../framework/fw_timer.h"
 //#define _FW_TASK_COMPONENT_PATH               "../framework/fw_task.h"
 //#define _FW_PT_COMPONENT_PATH                 "../framework/fw_pt.h"
-
+    
+/* Exported functions --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       define user init function
+ *******************************************************************************
+ */
+extern void Atom_Active_Begin(void);
+extern void Atom_Active_End(void);
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

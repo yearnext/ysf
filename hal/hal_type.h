@@ -81,6 +81,7 @@ typedef struct
         void (*TimeOut)(void*);
         void (*Tx)(uint8_t, void*);
         void (*Rx)(uint8_t, void*, uint8_t);
+        void *Function;
 	};
     
     void *Param;

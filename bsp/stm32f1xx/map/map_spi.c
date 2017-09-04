@@ -238,6 +238,8 @@ void _SPI_Port_Switch(uint8_t port, Hal_Device_SPI *dev)
             else
             {
                 LL_GPIO_AF_EnableRemap_SPI1();
+                            
+                LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_AFIO);
             }
             break;
 #endif
@@ -251,6 +253,8 @@ void _SPI_Port_Switch(uint8_t port, Hal_Device_SPI *dev)
             else
             {
                 LL_GPIO_AF_EnableRemap_SPI3();
+                                
+                LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_AFIO);
             }
             break;
 #endif
@@ -274,57 +278,57 @@ void _SPI_GPIO_Init(uint8_t port, Hal_Device_SPI *dev)
     Hal_Device_GPIO rxPort;
     Hal_Device_GPIO sckPort;
 
-    txPort.Config.Dir = GPIO_DIR_HS_OUTPUT;
-    txPort.Config.Mode = GPIO_AF_PUSH_PULL_MODE;    
-    rxPort.Config.Dir = GPIO_DIR_INTPUT;
-    rxPort.Config.Mode = GPIO_PULL_UP_DOWN_MODE;
-    sckPort.Config.Dir = GPIO_DIR_HS_OUTPUT;
-    sckPort.Config.Mode = GPIO_AF_PUSH_PULL_MODE;
+    txPort.Dir = GPIO_DIR_HS_OUTPUT;
+    txPort.Mode = GPIO_AF_PUSH_PULL_MODE;    
+    rxPort.Dir = GPIO_DIR_INTPUT;
+    rxPort.Mode = GPIO_PULL_UP_DOWN_MODE;
+    sckPort.Dir = GPIO_DIR_HS_OUTPUT;
+    sckPort.Mode = GPIO_AF_PUSH_PULL_MODE;
 
     switch (port)
     {
         case MCU_SPI_1:
-            txPort.Config.Port = MCU_PORT_A;
-            txPort.Config.Pin  = MCU_PIN_7;
+            txPort.Port = MCU_PORT_A;
+            txPort.Pin  = MCU_PIN_7;
             
-            rxPort.Config.Port = MCU_PORT_A;  
-            rxPort.Config.Pin  = MCU_PIN_6;
+            rxPort.Port = MCU_PORT_A;  
+            rxPort.Pin  = MCU_PIN_6;
             
-            sckPort.Config.Port = MCU_PORT_A;
-            sckPort.Config.Pin = MCU_PIN_5;
+            sckPort.Port = MCU_PORT_A;
+            sckPort.Pin = MCU_PIN_5;
             break;
         case MCU_SPI_2:
-            txPort.Config.Port = MCU_PORT_B;
-            txPort.Config.Pin  = MCU_PIN_14;
+            txPort.Port = MCU_PORT_B;
+            txPort.Pin  = MCU_PIN_14;
             
-            rxPort.Config.Port = MCU_PORT_B;  
-            rxPort.Config.Pin  = MCU_PIN_15; 
+            rxPort.Port = MCU_PORT_B;  
+            rxPort.Pin  = MCU_PIN_15; 
 
-            sckPort.Config.Port = MCU_PORT_B;
-            sckPort.Config.Pin = MCU_PIN_13;
+            sckPort.Port = MCU_PORT_B;
+            sckPort.Pin = MCU_PIN_13;
             break;
         case MCU_SPI_3:
-            txPort.Config.Port = MCU_PORT_B;
-            txPort.Config.Pin  = MCU_PIN_5;
+            txPort.Port = MCU_PORT_B;
+            txPort.Pin  = MCU_PIN_5;
 
-            rxPort.Config.Port = MCU_PORT_B;  
-            rxPort.Config.Pin  = MCU_PIN_4;
+            rxPort.Port = MCU_PORT_B;  
+            rxPort.Pin  = MCU_PIN_4;
 
-            sckPort.Config.Port = MCU_PORT_B;
-            sckPort.Config.Pin = MCU_PIN_3;
+            sckPort.Port = MCU_PORT_B;
+            sckPort.Pin = MCU_PIN_3;
             break;
         default:
             break;
     }
     
-    map_gpio_api.Open(txPort.Config.Port);
-    map_gpio_api.Init(txPort.Config.Port, txPort.Config.Pin, txPort.Config.Dir, txPort.Config.Mode);
+    map_gpio_api.Open(txPort.Port);
+    map_gpio_api.Init(txPort.Port, txPort.Pin, txPort.Dir, txPort.Mode);
     
-    map_gpio_api.Open(rxPort.Config.Port);
-    map_gpio_api.Init(rxPort.Config.Port, rxPort.Config.Pin, rxPort.Config.Dir, rxPort.Config.Mode);
+    map_gpio_api.Open(rxPort.Port);
+    map_gpio_api.Init(rxPort.Port, rxPort.Pin, rxPort.Dir, rxPort.Mode);
     
-    map_gpio_api.Open(sckPort.Config.Port);
-    map_gpio_api.Init(sckPort.Config.Port, sckPort.Config.Pin, sckPort.Config.Dir, sckPort.Config.Mode);
+    map_gpio_api.Open(sckPort.Port);
+    map_gpio_api.Init(sckPort.Port, sckPort.Pin, sckPort.Dir, sckPort.Mode);
     
     _SPI_Port_Switch(port, dev);
 }

@@ -52,6 +52,7 @@ void Map_GPIO_Init(uint8_t, uint8_t, uint8_t, uint8_t);
 void Map_GPIO_Fini(uint8_t, uint8_t);
 hal_err_t Map_GPIO_Write(uint8_t, uint8_t, uint16_t, uint8_t);
 hal_err_t Map_GPIO_Read(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
+void Map_GPIO_Toggle(uint8_t, uint8_t);
 
 const struct Map_GPIO_Opera map_gpio_api = 
 {
@@ -63,6 +64,8 @@ const struct Map_GPIO_Opera map_gpio_api =
     
     .Write = Map_GPIO_Write,
     .Read = Map_GPIO_Read,
+
+    .Toggle = Map_GPIO_Toggle,
 };
 
 /* Exported variables --------------------------------------------------------*/
@@ -416,6 +419,32 @@ hal_err_t Map_GPIO_Read(uint8_t port, uint8_t pos, uint8_t dir, uint16_t *rdData
     }
     
     return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       gpio pin toggle
+ * @param       [in/out]  port                    gpio port
+ * @param       [in/out]  pos                     gpio pin
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+void Map_GPIO_Toggle(uint8_t port, uint8_t pin)
+{
+    hal_assert(IS_PORT_NUM_INVAILD(port));
+    hal_assert(IS_PIN_NUM_INVAILD(pin));
+    
+    uint32_t flag = _READ_BIT(GPIO[port]->ODR, pin);
+    
+    if(flag)
+    {
+        _CLR_BIT(GPIO[port]->ODR, pin);
+    }
+    else
+    {
+        _SET_BIT(GPIO[port]->ODR, pin);
+    }
 }
 
 /** @}*/     /** map gpio component */

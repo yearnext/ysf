@@ -47,7 +47,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_core.h"
+#include "hal_path.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -55,35 +55,56 @@ extern "C"
 enum _Hal_Control_Cmd
 {
     //< hal device common cmd
+    HAL_DEVICE_OPEN_CMD,
+    HAL_DEVICE_CLOSE_CMD,
+    
     HAL_DEVICE_INIT_CMD,
     HAL_DEVICE_FINI_CMD,
     
-    HAL_CLR_TX_FLAG_CMD,
-    HAL_GET_TX_FLAG_CMD,
+    HAL_DEVICE_CLR_TX_FLAG_CMD,
+    HAL_DEVICE_GET_TX_FLAG_CMD,
     
-    HAL_CLR_RX_FLAG_CMD,
-    HAL_GET_RX_FLAG_CMD,
+    HAL_DEVICE_CLR_RX_FLAG_CMD,
+    HAL_DEVICE_GET_RX_FLAG_CMD,
     
-    HAL_CONNECT_TX_CMD,
-    HAL_DISCONNECT_TX_CMD,
+    HAL_DEVICE_CONNECT_TX_CMD,
+    HAL_DEVICE_DISCONNECT_TX_CMD,
     
-    HAL_CONNECT_RX_CMD,
-    HAL_DISCONNECT_RX_CMD,
+    HAL_DEVICE_CONNECT_RX_CMD,
+    HAL_DEVICE_DISCONNECT_RX_CMD,
     
-    HAL_SEND_BYTE_CMD,
-    HAL_RECEIVE_BYTE_CMD,
+    HAL_DEVICE_SEND_BYTE_CMD,
+    HAL_DEVICE_RECEIVE_BYTE_CMD,
     
-    //< hal device gpio cmd    
-    HAL_GPIO_SET_CMD,
-    HAL_GPIO_CLR_CMD,
+    HAL_DEVICE_SET_TX_CALLBACK_CMD,
+    HAL_DEVICE_SET_RX_CALLBACK_CMD,
+        
+    //< hal device gpio cmd
+    HAL_GPIO_SET_BIT_CMD,
+    HAL_GPIO_CLR_BIT_CMD,
+    
+    HAL_GPIO_GET_INTPUT_CMD,
+    HAL_GPIO_GET_OUTPUT_CMD,
+    
+    HAL_GPIO_TOGGLE_CMD,
     
     HAL_GPIO_WRITE_CMD,
     HAL_GPIO_READ_CMD,
     
-    HAL_GPIO_GET_OUTPUT_CMD,
-    HAL_GPIO_GET_INTPUT_CMD,
+    //< hal device timer cmd
+    HAL_TIMER_START_CMD,
+    HAL_TIMER_STOP_CMD,
     
-    HAL_GPIO_TOGGLE_CMD,
+    HAL_TIMER_SET_TIMEOUT_CALLBACK_CMD,
+    
+    HAL_TIMER_SET_DUTY,
+    
+    //< device pin driver cmd
+    HAL_DEVICE_PIN_OPEN_CMD,
+    HAL_DEVICE_PIN_CLOSE_CMD,
+    HAL_DEVICE_PIN_SET_DUTY_CMD,
+    HAL_DEVICE_PIN_SET_BLINK_CMD,
+    HAL_DEVICE_PIN_TOGGLE_CMD,
 };
     
 /**
@@ -100,18 +121,46 @@ enum _Hal_Device_Type
     HAL_DEVICE_IIC,
 };
 
+/**
+ *******************************************************************************
+ * @brief      define hal Transfer Direction
+ *******************************************************************************
+ */ 
+typedef enum
+{
+    HAL_DEVICE_TRANSFER_DISABLE = 0,
+    HAL_DEVICE_TRANSFER_ENABLE,
+    HAL_DEVICE_TRANSFER_ENABLE_ISR,
+    HAL_DEVICE_TRANSFER_ENABLE_DMA,
+}Hal_Transfer_Config;
+
+/**
+ *******************************************************************************
+ * @brief      define hal init state
+ *******************************************************************************
+ */ 
 typedef enum
 {
     HAL_DEVICE_UNINIT_STATE,
     HAL_DEVICE_INIT_STATE,
 }Hal_Device_State;
 
+/**
+ *******************************************************************************
+ * @brief      define hal device lock state
+ *******************************************************************************
+ */ 
 typedef enum
 {
     HAL_DEVICE_UNLOCK,
     HAL_DEVICE_LOCK,
 }Hal_Device_Lock_State;
 
+/**
+ *******************************************************************************
+ * @brief      define hal error code
+ *******************************************************************************
+ */ 
 typedef enum
 {
     HAL_DEVICE_ERR_CODE_NONE,
@@ -122,10 +171,22 @@ typedef enum
 
 /**
  *******************************************************************************
+ * @brief       hal device opera interface structure
+ *******************************************************************************
+ */
+struct Hal_Interface
+{
+    hal_err_t (*Init)(void*);
+    hal_err_t (*Fini)(void*);
+
+    hal_err_t (*Control)(void*, uint8_t, va_list);
+};
+
+/**
+ *******************************************************************************
  * @brief       hal device type structure
  *******************************************************************************
  */
-struct Hal_Interface;
 typedef struct
 {
     void *Device;
@@ -136,22 +197,6 @@ typedef struct
     Hal_Device_ErrCode    ErrCode;
 }Hal_Device_t;
 
-/**
- *******************************************************************************
- * @brief       hal device opera interface structure
- *******************************************************************************
- */
-struct Hal_Interface
-{
-    hal_err_t (*Init)(void*);
-    hal_err_t (*Fini)(void*);
-    
-    hal_err_t (*Write)(void*, uint8_t*, uint8_t);
-    hal_err_t (*Read)(void*, uint8_t*, uint8_t);
-    
-    hal_err_t (*Control)(void*, uint8_t, va_list);
-};
-
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /**
@@ -161,8 +206,6 @@ struct Hal_Interface
  */
 extern __INLINE hal_err_t Hal_Device_Init(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Fini(Hal_Device_t*);
-extern __INLINE hal_err_t Hal_Device_Write(Hal_Device_t*, uint8_t*, uint8_t);
-extern __INLINE hal_err_t Hal_Device_Read(Hal_Device_t*, uint8_t*, uint8_t);
 extern __INLINE hal_err_t Hal_Device_Control(Hal_Device_t*, uint8_t, ...);
 extern __INLINE hal_err_t Hal_Device_Lock(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Unlock(Hal_Device_t*);

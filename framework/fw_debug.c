@@ -103,8 +103,8 @@ static Hal_Device_Uart DebugHardware =
     .Config.WordLen = MCU_UART_WORD_LEN_8B,
     .Config.Priority = MCU_UART_PARTY_NONE,
     .Config.StopBits = MCU_UART_STOP_BITS_1,
-    .Config.TxConfig = MCU_UART_ENABLE_TX_ISR,
-    .Config.RxConfig = MCU_UART_ENABLE_RX_ISR,
+    .Config.TxConfig = HAL_DEVICE_TRANSFER_ENABLE_ISR,
+    .Config.RxConfig = HAL_DEVICE_TRANSFER_ENABLE_ISR,
     .Config.Parity = 1,
     
     //< uart stream hardware call back config

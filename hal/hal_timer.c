@@ -47,156 +47,29 @@
  *******************************************************************************
  */ 
 #ifdef USE_HAL_DEVICE_COMPONENT
-static hal_err_t Hal_Timer_Interface_Init(void*);
-static hal_err_t Hal_Timer_Interface_Fini(void*);
-static hal_err_t Hal_Timer_Interface_Control(void*, uint8_t, va_list);
 const struct Hal_Interface Hal_Timer_Interface = 
 {
     .Init = Hal_Timer_Interface_Init, 
     .Fini = Hal_Timer_Interface_Fini, 
-    .Write = NULL, 
-    .Read = NULL,
     .Control = Hal_Timer_Interface_Control,
 };
 #endif
 
 /* Exported variables --------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define uart opera interface
+ *******************************************************************************
+ */ 
+#if USE_TIMER_COMPONENT
+static const struct Map_Timer_Opera *map_api = (struct Map_Timer_Opera *)&map_timer_api;
+#endif
+
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-#ifdef USE_HAL_DEVICE_COMPONENT
-/**
- *******************************************************************************
- * @brief       hal api : init device
- * @param       [in/out]  *drv            device block
- * @return      [in/out]  HAL_ERR_NONE    result
- * @note        None
- *******************************************************************************
- */
-static hal_err_t Hal_Timer_Interface_Init(void *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-    
-    Hal_Device_Timer *timer = (Hal_Device_Timer *)drv;
-    
-    //< init device
-    map_timer_api.Open(timer->Config.Port);
-    map_timer_api.Init(timer->Config.Port, drv);
-
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : deinit device
- * @param       [in/out]  *drv            device block
- * @return      [in/out]  HAL_ERR_NONE    result
- * @note        None
- *******************************************************************************
- */
-static hal_err_t Hal_Timer_Interface_Fini(void *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-    
-    Hal_Device_Timer *timer = (Hal_Device_Timer *)drv;
-    
-    map_timer_api.Fini(timer->Config.Port);   
-
-    return HAL_ERR_NONE;
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : device control
- * @param       [in/out]  *drv            device block
- * @param       [in/out]  cmd             control cmd
- * @param       [in/out]  args            control param
- * @return      [in/out]  HAL_ERR_NONE    result
- * @note        None
- *******************************************************************************
- */
-static hal_err_t Hal_Timer_Interface_Control(void *drv, uint8_t cmd, va_list args)
-{
-    hal_assert(IS_PTR_NULL(drv));
-    
-//    Hal_Device_Timer *timer = (Hal_Device_Timer *)drv;
-    
-    switch(cmd)
-    {
-        default:
-            break;
-    }
-    
-    return HAL_ERR_NONE;
-}
-#endif
-
 /* Exported functions --------------------------------------------------------*/
 #if USE_TIMER_COMPONENT
-/**
- *******************************************************************************
- * @brief       hal api : open device
- * @param       [in/out]  *drv        device block
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Hal_Timer_Open(Hal_Device_Timer *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-
-    map_timer_api.Open(drv->Config.Port);
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : close device
- * @param       [in/out]  *drv        device block
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Hal_Timer_Close(Hal_Device_Timer *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-
-    map_timer_api.Close(drv->Config.Port);
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : init device
- * @param       [in/out]  *drv        device block
- * @param       [in/out]  *param      device config param
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Hal_Timer_Init(Hal_Device_Timer *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-
-    map_timer_api.Open(drv->Config.Port);
-    map_timer_api.Init(drv->Config.Port, (void *)drv);
-}
-
-/**
- *******************************************************************************
- * @brief       hal api : deinit device
- * @param       [in/out]  *drv        device block
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Hal_Timer_Fini(Hal_Device_Timer *drv)
-{
-    hal_assert(IS_PTR_NULL(drv));
-
-    map_timer_api.Fini(drv->Config.Port); 
-
-    drv->Config.Port = 0;
-}
-
 /**
  *******************************************************************************
  * @brief       hal api : set timer up isr call back
@@ -243,6 +116,164 @@ void Hal_Timer_Stop(Hal_Device_Timer *drv)
     hal_assert(IS_PTR_NULL(drv));
 
     map_timer_api.Stop(drv->Config.Port);
+}
+#endif
+
+#if USE_TIMER_COMPONENT
+/**
+ *******************************************************************************
+ * @brief       hal api : init device
+ * @param       [in/out]  *drv            device block
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t Hal_Timer_Interface_Init(void *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_Timer *timer = (Hal_Device_Timer *)drv;
+    
+    //< init device
+    map_timer_api.Open(timer->Config.Port);
+    map_timer_api.Init(timer->Config.Port, drv);
+
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : deinit device
+ * @param       [in/out]  *drv            device block
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t Hal_Timer_Interface_Fini(void *drv)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_Timer *timer = (Hal_Device_Timer *)drv;
+    
+    map_timer_api.Fini(timer->Config.Port);   
+
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       hal api : device control
+ * @param       [in/out]  *drv            device block
+ * @param       [in/out]  cmd             control cmd
+ * @param       [in/out]  args            control param
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t Hal_Timer_Interface_Control(void *drv, uint8_t cmd, va_list args)
+{
+    hal_assert(IS_PTR_NULL(drv));
+    
+    Hal_Device_Timer *timer = (Hal_Device_Timer *)drv;
+    
+    switch(cmd)
+    {
+        case HAL_DEVICE_OPEN_CMD:
+        {
+            if(!IS_PTR_NULL(map_api->Open))
+            {
+                map_api->Open(timer->Config.Port);
+            }
+            else
+            {
+                return HAL_ERR_FAIL;
+            }
+            break;
+        }
+        case HAL_DEVICE_CLOSE_CMD:
+        {
+            if(!IS_PTR_NULL(map_api->Close))
+            {
+                map_api->Close(timer->Config.Port); 
+            }
+            else
+            {
+                return HAL_ERR_FAIL;
+            }
+            break;
+        }
+        case HAL_DEVICE_INIT_CMD:
+        {
+            if(!IS_PTR_NULL(map_api->Open) && !IS_PTR_NULL(map_api->Init))
+            {
+                map_api->Open(timer->Config.Port);
+                map_api->Init(timer->Config.Port, &timer->Config);
+            }
+            else
+            {
+                return HAL_ERR_FAIL;
+            }
+            break;
+        }
+        case HAL_DEVICE_FINI_CMD:
+        {
+            if(!IS_PTR_NULL(map_api->Fini))
+            {
+                map_api->Fini(timer->Config.Port);
+            }
+            else
+            {
+                return HAL_ERR_FAIL;
+            }
+            break;
+        }
+        case HAL_TIMER_START_CMD:
+        {
+            if(!IS_PTR_NULL(map_api->Start))
+            {
+                map_api->Start(timer->Config.Port);
+            }
+            else
+            {
+                return HAL_ERR_FAIL;
+            }
+            break;
+        }
+        case HAL_TIMER_STOP_CMD:
+        {
+            if(!IS_PTR_NULL(map_api->Stop))
+            {
+                map_api->Stop(timer->Config.Port);
+            }
+            else
+            {
+                return HAL_ERR_FAIL;
+            }
+            break;
+        }
+        case HAL_TIMER_SET_TIMEOUT_CALLBACK_CMD:
+        {
+            if(!IS_PTR_NULL(map_api->SetTimeOutCallback))
+            {
+                Hal_Callback_t callback;
+                
+                callback.Function = va_arg(args, void*);
+                callback.Param = va_arg(args, void*);
+                
+                map_api->SetTimeOutCallback(timer->Config.Port, callback.TimeOut, callback.Param);
+            }
+            else
+            {
+                return HAL_ERR_FAIL;
+            }
+            
+            break;
+        }
+        default:
+            break;
+    }
+    
+    return HAL_ERR_NONE;
 }
 #endif
 

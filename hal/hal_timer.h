@@ -47,7 +47,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_core.h"
+#include "hal_path.h"
+#include "hal_device.h"
 
 /* Exported macro ------------------------------------------------------------*/ 
 /**
@@ -77,7 +78,7 @@ extern "C"
  * @brief      define mcu timer id
  *******************************************************************************
  */ 
-enum
+enum _Hal_Timer_Port
 {
     MCU_TICK_TIMER = 0,
     MCU_TIMER_1,
@@ -104,12 +105,12 @@ enum
  * @brief      define timer mode
  *******************************************************************************
  */ 
-enum
+enum _Hal_Timer_Mode
 {
-	TIMER_TICK_MODE,
-	TIMER_TIME_MODE,
-	TIMER_PWM_OUTPUT_MODE,
-	TIMER_PWM_INTPUT_MODE,
+	MCU_TIMER_TICK_MODE,
+	MCU_TIMER_TIME_MODE,
+	MCU_TIMER_PWM_OUTPUT_MODE,
+	MCU_TIMER_PWM_INTPUT_MODE,
 };
 
 /**
@@ -117,16 +118,24 @@ enum
  * @brief      define map deivce timer structure
  *******************************************************************************
  */ 
-struct Hal_Timer_Opera;
 typedef struct
 {
     struct
     {
         uint8_t Port;
+        uint8_t Group;
+        uint8_t Channel;
         uint8_t Priority;
         uint8_t Mode;
+        
+        uint8_t IsEnableIsr;
+        uint8_t IsInitTimerBase;
+        
         uint16_t Period;
         uint16_t Prescaler;
+        uint16_t Duty;
+        
+        Hal_Device_t *Pin;
     }Config;
     
     Hal_Callback_t Callback;
@@ -158,7 +167,7 @@ struct Map_Timer_Opera
  *******************************************************************************
  */ 
 #ifdef USE_HAL_DEVICE_COMPONENT
-extern const struct Hal_Interface Hal_Timer_Interface;;
+extern const struct Hal_Interface Hal_Timer_Interface;
 #endif
 
 /* Exported functions --------------------------------------------------------*/
@@ -168,14 +177,9 @@ extern const struct Hal_Interface Hal_Timer_Interface;;
  *******************************************************************************
  */
 #if USE_TIMER_COMPONENT
-extern void Hal_Timer_Module_Register(void);
-extern void Hal_Timer_Open(Hal_Device_Timer*);
-extern void Hal_Timer_Close(Hal_Device_Timer*);
-extern void Hal_Timer_Init(Hal_Device_Timer*);
-extern void Hal_Timer_Fini(Hal_Device_Timer*);
-extern void Hal_Timer_SetTimeOutCallback(Hal_Device_Timer*, void*);
-extern void Hal_Timer_Start(Hal_Device_Timer*);
-extern void Hal_Timer_Stop(Hal_Device_Timer*);
+extern hal_err_t Hal_Timer_Interface_Init(void*);
+extern hal_err_t Hal_Timer_Interface_Fini(void*);
+extern hal_err_t Hal_Timer_Interface_Control(void*, uint8_t, va_list);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

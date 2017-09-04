@@ -39,12 +39,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fw_core.h"
 
-/* Private functions ---------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private typedef -----------------------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+static volatile uint16_t SystemIsrLock = 0;
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -69,7 +68,10 @@ __WEAK void App_User_Init(void)
  */
 __INLINE void Fw_Core_Init(void)
 {   
-    __ATOM_ACTIVE_BEGIN();
+    //< init system isr lock
+    SystemIsrLock = 0;
+    
+    Atom_Active_Begin();
     
 #ifdef USE_FRAMEWORK_TASK_COMPONENT 
     Fw_Task_InitComponent();
@@ -92,9 +94,10 @@ __INLINE void Fw_Core_Init(void)
     Fw_Debug_PutMcuInfo();
 #endif
 
+    //< init user application
     App_User_Init();
     
-    __ATOM_ACTIVE_END();
+    Atom_Active_End();
 }
 
 /**
@@ -115,6 +118,58 @@ __INLINE void Fw_Core_Start(void)
     }
 }
 
+/**
+ *******************************************************************************
+ * @brief       enter critical
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+void Atom_Active_Begin(void)
+{
+    if(SystemIsrLock == 0)
+    {
+        __ATOM_ACTIVE_BEGIN();
+        
+        SystemIsrLock++;
+    }
+    else if(SystemIsrLock < 0xFFFF)
+    {
+        SystemIsrLock++;
+    }
+    else
+    {
+        //< do nothing!
+    }
+}
+
+/**
+ *******************************************************************************
+ * @brief       exit critical
+ * @param       [in/out]  void
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+void Atom_Active_End(void)
+{
+    if(SystemIsrLock == 1)
+    {
+        SystemIsrLock--;
+        
+        __ATOM_ACTIVE_END();
+    }
+    else if(SystemIsrLock > 0)
+    {
+        SystemIsrLock--;
+    }
+    else
+    {
+        //< do nothing!
+    }
+}
+
 #if USE_FRAMEWORK_COMPONENT
 /**
  *******************************************************************************
@@ -132,13 +187,12 @@ int main(void)
     
     return 0;
 }
+#endif
 
 void HardFault_Handler(void)
 {
     return;
 }
-
-#endif
 
 /** @}*/     /** framework core interface */
 

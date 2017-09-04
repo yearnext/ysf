@@ -47,8 +47,8 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/  
-#include "hal_core.h"
-#include "fw_buffer.h"
+#include "hal_path.h"
+#include "hal_device.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -125,26 +125,9 @@ enum _Hal_Uart_Party
 
 /**
  *******************************************************************************
- * @brief      define hal uart Transfer Direction
- *******************************************************************************
- */ 
-enum _Hal_Uart_Transfer_Config
-{
-    MCU_UART_DISABLE_TX = 0,
-    MCU_UART_ENABLE_TX = 1,
-    MCU_UART_ENABLE_TX_ISR = 2,
-    
-    MCU_UART_DISABLE_RX = 0,
-    MCU_UART_ENABLE_RX = 1,
-    MCU_UART_ENABLE_RX_ISR = 2,
-};
-
-/**
- *******************************************************************************
  * @brief      define map deivce uart structure
  *******************************************************************************
  */
-struct Hal_Uart_Opera;
 typedef struct
 {
     Hal_Callback_t TxCallback;
@@ -214,20 +197,9 @@ extern const struct Hal_Interface Hal_Uart_Interface;
  *******************************************************************************
  */ 
 #if USE_UART_COMPONENT
-extern void Hal_Uart_Open(Hal_Device_Uart*);
-extern void Hal_Uart_Close(Hal_Device_Uart*);
-extern void Hal_Uart_Init(Hal_Device_Uart*);
-extern void Hal_Uart_Fini(Hal_Device_Uart*);
-extern void Hal_Uart_Send(Hal_Device_Uart*, uint8_t);
-extern uint8_t Hal_Uart_Receive(Hal_Device_Uart*);
-extern void Hal_Uart_SetTxCallback(Hal_Device_Uart*, void*);
-extern void Hal_Uart_SetRxCallback(Hal_Device_Uart*, void*);
-extern void Hal_Uart_TxConnect(Hal_Device_Uart*);
-extern void Hal_Uart_TxDisconnect(Hal_Device_Uart*);
-extern void Hal_Uart_RxConnect(Hal_Device_Uart*);
-extern void Hal_Uart_RxDisconnect(Hal_Device_Uart*);
-extern bool Hal_Uart_IsTxComplet(Hal_Device_Uart*);
-extern bool Hal_Uart_IsRxComplet(Hal_Device_Uart*);
+extern hal_err_t Hal_Uart_Interface_Init(void*);
+extern hal_err_t Hal_Uart_Interface_Fini(void*);
+extern hal_err_t Hal_Uart_Interface_Control(void*, uint8_t, va_list);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
