@@ -86,8 +86,8 @@ hal_err_t Hal_GPIO_Interface_Init(void *drv)
     
     if(!IS_PTR_NULL(map_api->Open) && !IS_PTR_NULL(map_api->Init))
     {
-        map_api->Open(gpio->Port);
-        map_api->Init(gpio->Port, gpio->Pin, gpio->Dir, gpio->Mode);
+        map_api->Open(gpio->Config.Port);
+        map_api->Init(gpio->Config.Port, gpio->Config.Pin, gpio->Config.Dir, gpio->Config.Mode);
     }
     else
     {
@@ -113,7 +113,7 @@ hal_err_t Hal_GPIO_Interface_Fini(void *drv)
 
     if(!IS_PTR_NULL(map_api->Fini))
     {
-        map_api->Fini(gpio->Port, gpio->Pin);
+        map_api->Fini(gpio->Config.Port, gpio->Config.Pin);
     }
     else
     {
@@ -167,7 +167,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Open))
             {
-                map_api->Open(gpio->Port);
+                map_api->Open(gpio->Config.Port);
             }
             else
             {
@@ -179,7 +179,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Close))
             {
-                map_api->Close(gpio->Port); 
+                map_api->Close(gpio->Config.Port); 
             }
             else
             {
@@ -191,8 +191,8 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Open) && !IS_PTR_NULL(map_api->Init))
             {
-                map_api->Open(gpio->Port);
-                map_api->Init(gpio->Port, gpio->Pin, gpio->Dir, gpio->Mode);
+                map_api->Open(gpio->Config.Port);
+                map_api->Init(gpio->Config.Port, gpio->Config.Pin, gpio->Config.Dir, gpio->Config.Mode);
             }
             else
             {
@@ -204,7 +204,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Fini))
             {
-                map_api->Fini(gpio->Port, gpio->Pin);
+                map_api->Fini(gpio->Config.Port, gpio->Config.Pin);
             }
             else
             {
@@ -216,7 +216,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Write))
             {
-                map_api->Write(gpio->Port, gpio->Pin, 1, 1);
+                map_api->Write(gpio->Config.Port, gpio->Config.Pin, 1, 1);
             }
             else
             {
@@ -228,7 +228,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Write))
             {
-                map_api->Write(gpio->Port, gpio->Pin, 0, 1);
+                map_api->Write(gpio->Config.Port, gpio->Config.Pin, 0, 1);
             }
             else
             {
@@ -242,7 +242,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
             {
                 uint16_t value = (uint16_t)va_arg(args, int);
                 uint16_t num = (uint16_t)va_arg(args, int);
-                map_api->Write(gpio->Port, gpio->Pin, value, num);
+                map_api->Write(gpio->Config.Port, gpio->Config.Pin, value, num);
             }
             else
             {
@@ -257,7 +257,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
                 uint8_t dir = *va_arg(args, uint8_t *);
                 uint16_t *value = va_arg(args, uint16_t *);
                 uint16_t num = *va_arg(args, uint16_t *);
-                map_api->Read(gpio->Port, gpio->Pin, dir, value, 1);
+                map_api->Read(gpio->Config.Port, gpio->Config.Pin, dir, value, 1);
             }
             else
             {
@@ -270,7 +270,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
             if(!IS_PTR_NULL(map_api->Read))
             {
                 uint16_t *status = va_arg(args, uint16_t *);
-                map_api->Read(gpio->Port, gpio->Pin, GPIO_DIR_INTPUT, status, 1); 
+                map_api->Read(gpio->Config.Port, gpio->Config.Pin, GPIO_DIR_INTPUT, status, 1); 
             }
             else
             {
@@ -283,7 +283,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
             if(!IS_PTR_NULL(map_api->Read))
             {
                 uint16_t *status = va_arg(args, uint16_t *);
-                map_api->Read(gpio->Port, gpio->Pin, GPIO_DIR_INTPUT, status, 1); 
+                map_api->Read(gpio->Config.Port, gpio->Config.Pin, GPIO_DIR_INTPUT, status, 1); 
             }
             else
             {
@@ -295,7 +295,7 @@ hal_err_t Hal_GPIO_Interface_Control(void *drv, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Toggle))
             {
-                map_api->Toggle(gpio->Port, gpio->Pin); 
+                map_api->Toggle(gpio->Config.Port, gpio->Config.Pin); 
             }
             else
             {

@@ -49,6 +49,7 @@ extern "C"
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -68,7 +69,7 @@ extern "C"
 extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
 
 #define __HEAP_HEAD_ADDR             ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
-    
+
 #define USE_COMPILER_HEAP_ADDR                                               (1)
 
 /**

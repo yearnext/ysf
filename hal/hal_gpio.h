@@ -152,10 +152,13 @@ enum _Hal_GPIO_Mode
  */ 
 typedef struct
 {
-    uint8_t Port;
-    uint8_t Pin;
-    uint8_t Dir;
-    uint8_t Mode;
+    struct
+    {
+        uint8_t Port;
+        uint8_t Pin;
+        uint8_t Dir;
+        uint8_t Mode;
+    }Config;
 }Hal_Device_GPIO;
 
 /**

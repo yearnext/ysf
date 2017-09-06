@@ -179,6 +179,9 @@ struct Hal_Interface
     hal_err_t (*Init)(void*);
     hal_err_t (*Fini)(void*);
 
+    hal_err_t (*Write)(void*, uint8_t, uint8_t*, uint8_t);
+    hal_err_t (*Read)(void*, uint8_t, uint8_t*, uint8_t);
+    
     hal_err_t (*Control)(void*, uint8_t, va_list);
 };
 
@@ -191,7 +194,7 @@ typedef struct
 {
     void *Device;
     struct Hal_Interface *Interface;
-    
+
     Hal_Device_Lock_State Lock;
     Hal_Device_State      State;
     Hal_Device_ErrCode    ErrCode;
@@ -204,8 +207,12 @@ typedef struct
  * @brief       hal device opera interface
  *******************************************************************************
  */
+extern __INLINE hal_err_t Hal_Device_Register(Hal_Device_t*, void*, struct Hal_Interface*);
+extern __INLINE hal_err_t Hal_Device_Unregister(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Init(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Fini(Hal_Device_t*);
+extern __INLINE hal_err_t Hal_Device_Write(Hal_Device_t*, uint8_t, uint8_t*, uint8_t);
+extern __INLINE hal_err_t Hal_Device_Read(Hal_Device_t*, uint8_t, uint8_t*, uint8_t);
 extern __INLINE hal_err_t Hal_Device_Control(Hal_Device_t*, uint8_t, ...);
 extern __INLINE hal_err_t Hal_Device_Lock(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Unlock(Hal_Device_t*);

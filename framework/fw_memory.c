@@ -24,10 +24,11 @@
  * @par        work platform                                                   *
  *                 Windows                                                     *
  * @par        compiler                                                        *
- *                 GCC                                                         * 
+ *                 GCC                                                         *
  *******************************************************************************
  * @note                                                                       *
- * 1.XXXXX                                                                     *
+ * 1. The implementation of the function "plug_holes","_heap_init","_malloc",  *
+ *    "_free", "_realloc","_calloc" comes from the Internet.                   *
  *******************************************************************************
  */
 
@@ -38,13 +39,48 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_memory.h"
-
-#ifdef USE_STD_LIBRARY
-#include <stdlib.h>
-#endif
+#include "fw_debug.h"
+#include "hal_path.h"
+#include <string.h>
 
 /* Private define ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        memory heap magic value
+ *******************************************************************************
+ */
+#define HEAP_MAGIC 0x1ea0
+
+/**
+ *******************************************************************************
+ * @brief        define min memory block size 
+ *******************************************************************************
+ */
+#define MIN_SIZE                                                            (16)
+#define MIN_SIZE_ALIGNED                 __ALIGN(MIN_SIZE, FW_MEMORY_ALIGN_SIZE)
+
+/**
+ *******************************************************************************
+ * @brief        define memory block size
+ *******************************************************************************
+ */
+#define SIZEOF_STRUCT_MEM __ALIGN(sizeof(struct heap_mem), FW_MEMORY_ALIGN_SIZE)
+
 /* Private typedef -----------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief        heap memory structure
+ *******************************************************************************
+ */
+struct heap_mem
+{
+    /* magic and used flag */
+    uint16_t magic;
+    uint16_t used;
+
+    size_t next, prev;
+};
+
 /* Private variables ---------------------------------------------------------*/
 /**
  *******************************************************************************
@@ -52,27 +88,376 @@
  *******************************************************************************
  */
 #if USE_MEMORY_COMPONENT
-//    #if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-//        #ifndef USE_COMPILER_HEAP_ADDR            
-//            __ALIGN_HEAD(8)
-//                static uint8_t McuHeap[FRAMEWORK_MEMORY_POOL_SIZE];
-//            __ALIGN_TAIL(8)
-//            
-//            #define _HEAP_HEAD_ADDR    (&McuHeap)
-//            #define _HEAP_TAIL_ADDR    (&McuHeap[FRAMEWORK_MEMORY_POOL_SIZE-1])
-//            #define _HEAP_SIZE         FRAMEWORK_MEMORY_POOL_SIZE
-//        #else
-//            #define _HEAP_HEAD_ADDR    __HEAP_HEAD_ADDR
-//            #define _HEAP_TAIL_ADDR    MCU_SRAM_END_ADDR
-//            #define _HEAP_SIZE         (_HEAP_TAIL_ADDR - _HEAP_HEAD_ADDR)
-//        #endif
-//    
-//        static struct HeapControlBlock Managemrnt;
-//    #endif
+//< pointer to the heap: for alignment, heap_ptr is now a pointer instead of an array
+static uint8_t *heap_ptr;
+
+//< the last entry, always unused!
+static struct heap_mem *heap_end;
+
+//< pointer to the lowest free block
+static struct heap_mem *lfree;
+
+//< memory align size
+static size_t mem_size_aligned;
 #endif
 
 /* Exported variables --------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       plug holes
+ * @param       [in/out]  *mem              memory address
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE 
+void plug_holes(struct heap_mem *mem)
+{
+    struct heap_mem *nmem;
+    struct heap_mem *pmem;
+
+    _FW_ASSERT((uint8_t *)mem >= heap_ptr);
+    _FW_ASSERT((uint8_t *)mem < (uint8_t *)heap_end);
+    _FW_ASSERT(mem->used == 0);
+
+    /* plug hole forward */
+    nmem = (struct heap_mem *)&heap_ptr[mem->next];
+    
+    if (mem != nmem && nmem->used == 0 && (uint8_t *)nmem != (uint8_t *)heap_end)
+    {
+        /* if mem->next is unused and not end of heap_ptr,
+         * combine mem and mem->next
+         */
+        if (lfree == nmem)
+        {
+            lfree = mem;
+        }
+        
+        mem->next = nmem->next;
+        
+        ((struct heap_mem *)&heap_ptr[nmem->next])->prev = (uint8_t *)mem - heap_ptr;
+    }
+
+    /* plug hole backward */
+    pmem = (struct heap_mem *)&heap_ptr[mem->prev];
+    
+    if (pmem != mem && pmem->used == 0)
+    {
+        /* if mem->prev is unused, combine mem and mem->prev */
+        if (lfree == mem)
+        {
+            lfree = pmem;
+        }
+        
+        pmem->next = mem->next;
+        
+        ((struct heap_mem *)&heap_ptr[mem->next])->prev = (uint8_t *)pmem - heap_ptr;
+    }
+}
+
+/**
+ *******************************************************************************
+ * @brief       memory heap init
+ * @param       [in/out]  *begin_addr       heap memory begin address
+ * @param       [in/out]  *end_addr         heap memory end address
+ * @return      [in/out]  void*             alloc memory point
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+void _heap_init(void *begin_addr, void *end_addr)
+{
+    struct heap_mem *mem;
+    uint32_t begin_align = __ALIGN((uint32_t)begin_addr, FW_MEMORY_ALIGN_SIZE);
+    uint32_t end_align = __ALIGN_DOWN((uint32_t)end_addr, FW_MEMORY_ALIGN_SIZE);
+
+    /* alignment addr */
+    if ((end_align > (2 * SIZEOF_STRUCT_MEM))
+        && ((end_align - 2 * SIZEOF_STRUCT_MEM) >= begin_align))
+    {
+        /* calculate the aligned memory size */
+        mem_size_aligned = end_align - begin_align - 2 * SIZEOF_STRUCT_MEM;
+    }
+    else
+    {
+        return;
+    }
+
+    /* point to begin address of heap */
+    heap_ptr = (uint8_t *)begin_align;
+
+    /* initialize the start of the heap */
+    mem        = (struct heap_mem *)heap_ptr;
+    mem->magic = HEAP_MAGIC;
+    mem->next  = mem_size_aligned + SIZEOF_STRUCT_MEM;
+    mem->prev  = 0;
+    mem->used  = 0;
+
+    /* initialize the end of the heap */
+    heap_end        = (struct heap_mem *)&heap_ptr[mem->next];
+    heap_end->magic = HEAP_MAGIC;
+    heap_end->used  = 1;
+    heap_end->next  = mem_size_aligned + SIZEOF_STRUCT_MEM;
+    heap_end->prev  = mem_size_aligned + SIZEOF_STRUCT_MEM;
+
+    /* initialize the lowest-free pointer to the start of the heap */
+    lfree = (struct heap_mem *)heap_ptr;
+}
+
+/**
+ *******************************************************************************
+ * @brief       alloc memory
+ * @param       [in/out]  size              alloc memory size
+ * @return      [in/out]  void*             alloc memory point
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+void *_malloc(size_t size)
+{
+    size_t ptr, ptr2;
+    struct heap_mem *mem, *mem2;
+
+    if (size == 0)
+        return NULL;
+
+    /* alignment size */
+    size = __ALIGN(size, FW_MEMORY_ALIGN_SIZE);
+
+    if (size > mem_size_aligned)
+    {
+        return NULL;
+    }
+
+    /* every data block must be at least MIN_SIZE_ALIGNED long */
+    if (size < MIN_SIZE_ALIGNED)
+    {
+        size = MIN_SIZE_ALIGNED;
+    }
+
+    for (ptr = (uint8_t *)lfree - heap_ptr; ptr < mem_size_aligned - size; ptr = ((struct heap_mem *)&heap_ptr[ptr])->next)
+    {
+        mem = (struct heap_mem *)&heap_ptr[ptr];
+
+        if ((!mem->used) && (mem->next - (ptr + SIZEOF_STRUCT_MEM)) >= size)
+        {
+            /* mem is not used and at least perfect fit is possible:
+             * mem->next - (ptr + SIZEOF_STRUCT_MEM) gives us the 'user data size' of mem */
+
+            if (mem->next - (ptr + SIZEOF_STRUCT_MEM) >=
+                (size + SIZEOF_STRUCT_MEM + MIN_SIZE_ALIGNED))
+            {
+                /* (in addition to the above, we test if another struct heap_mem (SIZEOF_STRUCT_MEM) containing
+                 * at least MIN_SIZE_ALIGNED of data also fits in the 'user data space' of 'mem')
+                 * -> split large block, create empty remainder,
+                 * remainder must be large enough to contain MIN_SIZE_ALIGNED data: if
+                 * mem->next - (ptr + (2*SIZEOF_STRUCT_MEM)) == size,
+                 * struct heap_mem would fit in but no data between mem2 and mem2->next
+                 * @todo we could leave out MIN_SIZE_ALIGNED. We would create an empty
+                 *       region that couldn't hold data, but when mem->next gets freed,
+                 *       the 2 regions would be combined, resulting in more free memory
+                 */
+                ptr2 = ptr + SIZEOF_STRUCT_MEM + size;
+
+                /* create mem2 struct */
+                mem2       = (struct heap_mem *)&heap_ptr[ptr2];
+                mem2->magic = HEAP_MAGIC;
+                mem2->used = 0;
+                mem2->next = mem->next;
+                mem2->prev = ptr;
+
+                /* and insert it between mem and mem->next */
+                mem->next = ptr2;
+                mem->used = 1;
+
+                if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
+                {
+                    ((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
+                }
+            }
+            else
+            {
+                /* (a mem2 struct does no fit into the user data space of mem and mem->next will always
+                 * be used at this point: if not we have 2 unused structs in a row, plug_holes should have
+                 * take care of this).
+                 * -> near fit or excact fit: do not split, no mem2 creation
+                 * also can't move mem->next directly behind mem, since mem->next
+                 * will always be used at this point!
+                 */
+                mem->used = 1;
+            }
+            /* set memory block magic */
+            mem->magic = HEAP_MAGIC;
+
+            if (mem == lfree)
+            {
+                /* Find next free block after mem and update lowest free pointer */
+                while (lfree->used && lfree != heap_end)
+                {
+                    lfree = (struct heap_mem *)&heap_ptr[lfree->next];
+                }
+
+                _FW_ASSERT(((lfree == heap_end) || (!lfree->used)));
+            }
+
+            _FW_ASSERT((uint32_t)mem + SIZEOF_STRUCT_MEM + size <= (uint32_t)heap_end);
+            _FW_ASSERT((uint32_t)((uint8_t *)mem + SIZEOF_STRUCT_MEM) % FW_MEMORY_ALIGN_SIZE == 0);
+            _FW_ASSERT((((uint32_t)mem) & (FW_MEMORY_ALIGN_SIZE-1)) == 0);
+
+            /* return the memory data except mem struct */
+            return (uint8_t *)mem + SIZEOF_STRUCT_MEM;
+        }
+    }
+    
+    return NULL;
+}
+
+/**
+ *******************************************************************************
+ * @brief       free memory
+ * @param       [in/out]  *memory            free memory point
+ * @return      [in/out]  void
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+void _free(void *rmem)
+{
+    struct heap_mem *mem;
+
+    if (rmem == NULL)
+        return;
+    _FW_ASSERT((((uint32_t)rmem) & (FW_MEMORY_ALIGN_SIZE-1)) == 0);
+    _FW_ASSERT((uint8_t *)rmem >= (uint8_t *)heap_ptr &&
+              (uint8_t *)rmem < (uint8_t *)heap_end);
+
+    if ((uint8_t *)rmem < (uint8_t *)heap_ptr || (uint8_t *)rmem >= (uint8_t *)heap_end)
+    {
+        return;
+    }
+
+    /* Get the corresponding struct heap_mem ... */
+    mem = (struct heap_mem *)((uint8_t *)rmem - SIZEOF_STRUCT_MEM);
+
+    /* ... which has to be in a used state ... */
+    _FW_ASSERT(mem->used);
+    _FW_ASSERT(mem->magic == HEAP_MAGIC);
+    
+    /* ... and is now unused. */
+    mem->used  = 0;
+    mem->magic = HEAP_MAGIC;
+
+    if (mem < lfree)
+    {
+        /* the newly freed struct is now the lowest */
+        lfree = mem;
+    }
+
+    /* finally, see if prev or next are free also */
+    plug_holes(mem);
+}
+
+///**
+// *******************************************************************************
+// * @brief       realloc memory
+// * @param       [in/out]  size              realloc memory size
+// * @return      [in/out]  void*             realloc memory point
+// * @note        None
+// *******************************************************************************
+// */
+//__STATIC_INLINE
+//void *_realloc(void *rmem, size_t newsize)
+//{
+//    size_t size;
+//    size_t ptr, ptr2;
+//    struct heap_mem *mem, *mem2;
+//    void *nmem;
+
+//    /* alignment size */
+//    newsize = __ALIGN(newsize, FW_MEMORY_ALIGN_SIZE);
+//    
+//    if (newsize > mem_size_aligned)
+//    {
+//        return NULL;
+//    }
+
+//    /* allocate a new memory block */
+//    if (rmem == NULL)
+//    {
+//        return _malloc(newsize);
+//    }
+
+//    if ((uint8_t *)rmem < (uint8_t *)heap_ptr || (uint8_t *)rmem >= (uint8_t *)heap_end)
+//    {
+//        return rmem;
+//    }
+
+//    mem = (struct heap_mem *)((uint8_t *)rmem - SIZEOF_STRUCT_MEM);
+
+//    ptr = (uint8_t *)mem - heap_ptr;
+//    size = mem->next - ptr - SIZEOF_STRUCT_MEM;
+//    if (size == newsize)
+//    {
+//        return rmem;
+//    }
+
+//    if (newsize + SIZEOF_STRUCT_MEM + MIN_SIZE < size)
+//    {
+//        ptr2 = ptr + SIZEOF_STRUCT_MEM + newsize;
+//        mem2 = (struct heap_mem *)&heap_ptr[ptr2];
+//        mem2->magic= HEAP_MAGIC;
+//        mem2->used = 0;
+//        mem2->next = mem->next;
+//        mem2->prev = ptr;
+//        mem->next = ptr2;
+//        if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
+//        {
+//            ((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
+//        }
+
+//        plug_holes(mem2);
+
+//        return rmem;
+//    }
+
+//    /* expand memory */
+//    nmem = _malloc(newsize);
+//    
+//    if (nmem != NULL) /* check memory */
+//    {
+//        memcpy(nmem, rmem, size < newsize ? size : newsize);
+//        _free(rmem);
+//    }
+
+//    return nmem;
+//}
+
+///**
+// *******************************************************************************
+// * @brief       calloc memory
+// * @param       [in/out]  size              calloc memory size
+// * @return      [in/out]  void*             calloc memory point
+// * @note        None
+// *******************************************************************************
+// */
+//__STATIC_INLINE
+//void *_calloc(size_t count, size_t size)
+//{
+//    void *p;
+
+//    /* allocate 'count' objects of size 'size' */
+//    p = _malloc(count * size);
+
+//    /* zero the memory */
+//    if (p)
+//    {
+//        memset(p, 0, count * size);
+//    }
+
+//    return p;
+//}
+
 /* Exported functions --------------------------------------------------------*/
 #if USE_MEMORY_COMPONENT
 /**
@@ -85,9 +470,7 @@
  */
 void Fw_Mem_InitComponent(void)
 {
-//#if !defined(USE_STD_LIBRARY) || !USE_STD_LIBRARY
-//    InitHeapMemory(&Managemrnt, (uint8_t *)_HEAP_HEAD_ADDR, _HEAP_SIZE);
-//#endif
+    _heap_init((void *)__HEAP_HEAD_ADDR, (void *)__HEAR_END_ADDR);
 }
 
 /**
@@ -98,337 +481,50 @@ void Fw_Mem_InitComponent(void)
  * @note        None
  *******************************************************************************
  */
-void *Fw_Mem_Alloc(uint32_t size)
+void *Fw_Mem_Alloc(size_t size)
 {
-//    return malloc(size);
-    return NULL;
+    return _malloc(size);
 }
 
 /**
  *******************************************************************************
  * @brief       free memory
- * @param       [in/out]  void*              allocated memory size
+ * @param       [in/out]  *memory            free memory pointer
  * @return      [in/out]  void
  * @note        None
  *******************************************************************************
  */
 void Fw_Mem_Free(void *memory)
 {
-//#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
-//    free(memory);
-//#else
-////    FreeHeapMemory(&Managemrnt, memory);
-//#endif
+    _free(memory);
 }
 
-///**
-// *******************************************************************************
-// * @brief       detecting the memory is in memory pool
-// * @param       [in/out]  void*             wait detect memory
-// * @return      [in/out]  false             the memory not in memory pool
-// * @return      [in/out]  true              the memory is in memory pool
-// * @note        None
-// *******************************************************************************
-// */
-//bool IsInMemory(void *memory)
-//{
-//#ifdef USE_STD_LIBRARY_IN_FRAMEWORK_COMPONENT
-//    return true;
-//#else
-////    return IsInHeapMemory(&Managemrnt, memory);
-//#endif
-//}
+/**
+ *******************************************************************************
+ * @brief       detecting the memory is in memory pool
+ * @param       [in/out]  void*             wait detect memory
+ * @return      [in/out]  false             the memory not in memory pool
+ * @return      [in/out]  true              the memory is in memory pool
+ * @note        None
+ *******************************************************************************
+ */
+bool Fw_Mem_IsIn(void *memory)
+{
+    if(IS_PTR_NULL(heap_ptr) || IS_PTR_NULL(memory))
+    {
+        return false;
+    }
+    
+    if(memory > (void *)heap_ptr && memory < (void *)heap_end)
+    {
+        return true;
+    }
+    
+    return false;
+}
 
 #endif
 
-
-#if USE_MEMORY_COMPONENT
-//fw_err_t Fw_Mem_Init(struct _Fw_MemMgmtBlock *memMgmt, void *buffer, uint32_t len)
-//{
-//    Fw_Assert(IS_PTR_NULL(memMgmt));
-//    Fw_Assert(IS_PTR_NULL(buffer));
-//    Fw_Assert(len == 0);
-//    
-//    //< set poll address
-//    memMgmt->Poll = (struct _Fw_MemBlock *)buffer;
-//    memMgmt->Size = len;
-//    
-//    memMgmt->Poll->Last = NULL;
-//    memMgmt->Poll->Next = NULL;
-//    memMgmt->Poll->Size = memMgmt->Size - sizeof(struct _Fw_MemBlock);
-//    memMgmt->Poll->Status = false;
-//    
-//    //< init list
-//    memMgmt->FreeListHead = memMgmt->Poll;
-//    memMgmt->FreeListTail = NULL;
-//    
-//    memMgmt->UseListHead = NULL;
-//    memMgmt->UseListTail = NULL;
-//    
-//    return FW_ERR_NONE;
-//}
-
-//#define CalNeedMemorySize(len) (len + sizeof(struct _Fw_MemBlock))
-//#define CalNeedMemoryBlockSize(len) (len + sizeof(struct _Fw_MemBlock))
-
-//void *Fw_Mem_Alloc(struct _Fw_MemMgmtBlock *memMgmt, uint32_t len)
-//{
-//    Fw_Assert(IS_PTR_NULL(memMgmt));
-//    Fw_Assert(len == 0);
-//    
-//    uint32_t needSize = CalNeedMemorySize(len);
-//    uint32_t needBlockSize = CalNeedMemoryBlockSize(len);
-//    struct _Fw_MemBlock *ptr = memMgmt->FreeListHead;
-//    uint8_t *nextBlock;
-//    
-//    while(1)
-//    {
-//        if(ptr->Size > needSize)
-//        {
-//            ptr->
-//        }
-//        else
-//        {
-//            
-//        }
-//    }
-//        
-//    return NULL;
-//}
-
-//void Fw_Mem_Free(struct _Fw_MemMgmtBlock *memMgmt, void *mem)
-//{
-//    
-//}
-
-///**
-// *******************************************************************************
-// * @brief       cal need memory size
-// * @param       [in/out]  size                memory control block
-// * @param       [in/out]  alignment           memory alignment size
-// * @return      [in/out]  value               need block size
-// * @note        None
-// *******************************************************************************
-// */
-//__STATIC_INLINE
-//uint32_t cal_need_memory_size(uint32_t useSize)
-//{
-//	uint32_t needSize = useSize + 16;
-//    
-//    needSize >>= HEAP_MEMORY_ALIGNMENT_POS;
-//    
-//    if(needSize % HEAP_MEMORY_ALIGNMENT_SIZE)
-//    {
-//        needSize++;
-//    }
-
-//	return needSize;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       memory init
-// * @param       [in/out]  **mem              memory control block
-// * @param       [in/out]  *buffer            memory buffer address
-// * @param       [in/out]  rbSize             memory buffer size
-// * @return      [in/out]  FW_ERR_NONE        memory init success
-// * @return      [in/out]  FW_ERR_FAIL        memory init failed
-// * @note        None
-// *******************************************************************************
-// */
-//fw_err_t InitHeapMemory(struct HeapControlBlock *mem, uint8_t *heapHeadAddr, uint32_t heapSize)
-//{
-//    Fw_Assert(IS_PTR_NULL(mem));
-//    Fw_Assert(IS_PTR_NULL(heapHeadAddr));
-//    Fw_Assert(heapSize < HEAP_MEMORY_ALIGNMENT_SIZE);
-//    
-//    struct HeapMemoryBlock *now, *last;
-//    uint32_t blockSize = heapSize / HEAP_MEMORY_ALIGNMENT_SIZE;
-//    uint32_t i;
-//    
-//    mem->Buffer       = heapHeadAddr;
-//    mem->Size         = heapSize;
-
-//    for(i=1, last=NULL, now=mem->Head; i<blockSize; i++)
-//    {
-//        now->Management.Last   = last;
-//        now->Management.Next   = now + 1;
-//        now->Management.Size   = 1;
-//        now->Management.Status = 0;
-//        
-//        last = now;
-//        now  = now->Management.Next;
-//    }
-//    
-//    now->Management.Last   = last;
-//    now->Management.Next   = NULL;
-//    now->Management.Size   = 1;
-//    now->Management.Status = 0;
-//    
-//    return FW_ERR_NONE;
-//}
-
-/////**
-//// *******************************************************************************
-//// * @brief       memory deinit
-//// * @param       [in/out]  **mem              memory control block
-//// * @return      [in/out]  FW_ERR_NONE        ring buffer read success
-//// * @return      [in/out]  FW_ERR_FAIL        ring buffer read failed
-//// * @note        None
-//// *******************************************************************************
-//// */
-////fw_err_t ysf_mem_deinit(struct HeapControlBlock *mem)
-////{
-////    Fw_Assert(IS_PTR_NULL(mem));
-////    
-////	mem->Buffer = NULL;
-////    mem->Size   = 0;
-////    
-////    return FW_ERR_NONE;
-////}
-
-///**
-// *******************************************************************************
-// * @brief       memory alloc 
-// * @param       [in/out]  *mem                memory control block
-// * @param       [in/out]  size                alloc memory size
-// * @param       [in/out]  void*               alloc memory address
-// * @return      [in/out]  FW_ERR_NONE         alloc success
-// * @return      [in/out]  FW_ERR_FAIL         alloc failed
-// * @note        None
-// *******************************************************************************
-// */
-//fw_err_t AllocHeapMemory(struct HeapControlBlock *mem, uint32_t needSize, void **allocAddr)
-//{
-//    Fw_Assert(IS_PTR_NULL(mem));
-//    Fw_Assert(needSize == 0);
-//    
-//    uint32_t useSize = cal_need_memory_size(needSize);
-//    uint32_t count   = 0;
-//    
-//    struct HeapMemoryBlock *now, *begin;
-//    
-//    now = mem->Head;
-//    
-//    while(1)
-//    {
-//        if(now == NULL)
-//        {
-//            *allocAddr = NULL;
-//            break;
-//        }
-//        else
-//        {
-//            if(now->Management.Status == 0)
-//            {
-//                if(count == 0)
-//                {
-//                    begin = now;
-//                    count++;
-//                }
-//                else
-//                {
-//                    if(++count >= useSize)
-//                    {
-//                        *allocAddr = (void *)&begin->data;
-//                        begin->Management.Next = begin + useSize;
-//                        begin->Management.Size = useSize;
-//                        begin->Management.Status = 1;
-//                        
-//                        return FW_ERR_NONE;
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                count = 0;
-//            }
-//        }
-//        
-//        now = now->Management.Next;
-//    }
-//    
-//    return FW_ERR_FAIL;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       memory free 
-// * @param       [in/out]  *mem                memory control block
-// * @param       [in/out]  *buffer             need free memory address
-// * @return      [in/out]  FW_ERR_NONE         free success
-// * @return      [in/out]  FW_ERR_FAIL         free failed
-// * @note        None
-// *******************************************************************************
-// */
-//fw_err_t FreeHeapMemory(struct HeapControlBlock *mem, void *freeBuffer)
-//{
-//    Fw_Assert(IS_PTR_NULL(mem));
-//    Fw_Assert(IS_PTR_NULL(freeBuffer));
-//    
-//    struct HeapMemoryBlock *now, *last;
-//    uint32_t i;
-//    
-//    last = NULL;
-//    now = mem->Head;
-//    
-//    while(1)
-//    {
-//        if(now == NULL)
-//        {
-//            break;
-//        }
-//        else
-//        {
-//            if(now->data == freeBuffer && now->Management.Status)
-//            {
-//                for(i=now->Management.Size; i>0; i--)
-//                {
-//                    now->Management.Last = last;
-//                    now->Management.Next = now + 1;
-//                    now->Management.Size = 1;
-//                    now->Management.Status = 0;
-//                    
-//                    last = now;
-//                    now = now->Management.Next;
-//                }
-//            }
-//        }
-//        
-//        last = now;
-//        now = now->Management.Next;
-//    }
-//    
-//    return FW_ERR_FAIL;
-//}
-
-///**
-// *******************************************************************************
-// * @brief       detedt the address is in the memory buffer 
-// * @param       [in/out]  *mem                memory control block
-// * @param       [in/out]  *buffer             need free memory address
-// * @return      [in/out]  true                is in
-// * @return      [in/out]  false               not in
-// * @note        None
-// *******************************************************************************
-// */
-//bool IsInHeapMemory(struct HeapControlBlock *mem, void *buffer)
-//{
-//    Fw_Assert(IS_PTR_NULL(mem));
-//    Fw_Assert(IS_PTR_NULL(buffer));
-//    
-//    void *end_addr = (void *)((uint8_t *)mem->Buffer + mem->Size - 1);
-//    
-//    if( buffer >= mem->Buffer && buffer <= end_addr)
-//    {
-//        return true;
-//    }
-//    
-//    return false;
-//}
-
-#endif
-
-/** @}*/     /** memory component */
+/** @}*/     /** framework memory component */
 
 /**********************************END OF FILE*********************************/

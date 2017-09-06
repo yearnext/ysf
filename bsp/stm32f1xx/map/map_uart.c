@@ -316,11 +316,11 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Device_Uart *drv)
     Hal_Device_GPIO txPort;
     Hal_Device_GPIO rxPort;
 
-    txPort.Dir = GPIO_DIR_HS_OUTPUT;
-    txPort.Mode = GPIO_AF_PUSH_PULL_MODE;
+    txPort.Config.Dir = GPIO_DIR_HS_OUTPUT;
+    txPort.Config.Mode = GPIO_AF_PUSH_PULL_MODE;
 
-    rxPort.Dir = GPIO_DIR_INTPUT;
-    rxPort.Mode = GPIO_FLOAT_MODE;
+    rxPort.Config.Dir = GPIO_DIR_INTPUT;
+    rxPort.Config.Mode = GPIO_FLOAT_MODE;
     
     switch (port)
     {
@@ -328,19 +328,19 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Device_Uart *drv)
         case MCU_UART_1:
             if (drv->Config.Group == 0)
             {
-                txPort.Port = MCU_PORT_A;
-                txPort.Pin  = MCU_PIN_9;
+                txPort.Config.Port = MCU_PORT_A;
+                txPort.Config.Pin  = MCU_PIN_9;
                 
-                rxPort.Port = MCU_PORT_A;  
-                rxPort.Pin  = MCU_PIN_10;
+                rxPort.Config.Port = MCU_PORT_A;  
+                rxPort.Config.Pin  = MCU_PIN_10;
             }
             else
             {
-                txPort.Port = MCU_PORT_B;
-                txPort.Pin  = MCU_PIN_6;
+                txPort.Config.Port = MCU_PORT_B;
+                txPort.Config.Pin  = MCU_PIN_6;
                 
-                rxPort.Port = MCU_PORT_B;  
-                rxPort.Pin  = MCU_PIN_7;
+                rxPort.Config.Port = MCU_PORT_B;  
+                rxPort.Config.Pin  = MCU_PIN_7;
             }
             break;
 #endif
@@ -349,19 +349,19 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Device_Uart *drv)
         case MCU_UART_2:
             if (drv->Config.Group == 0)
             {
-                txPort.Port = MCU_PORT_A;
-                txPort.Pin  = MCU_PIN_2;
+                txPort.Config.Port = MCU_PORT_A;
+                txPort.Config.Pin  = MCU_PIN_2;
                 
-                rxPort.Port = MCU_PORT_A;  
-                rxPort.Pin  = MCU_PIN_3;
+                rxPort.Config.Port = MCU_PORT_A;  
+                rxPort.Config.Pin  = MCU_PIN_3;
             }
             else
             {
-                txPort.Port = MCU_PORT_D;
-                txPort.Pin  = MCU_PIN_5;
+                txPort.Config.Port = MCU_PORT_D;
+                txPort.Config.Pin  = MCU_PIN_5;
                 
-                rxPort.Port = MCU_PORT_D;  
-                rxPort.Pin  = MCU_PIN_6;
+                rxPort.Config.Port = MCU_PORT_D;  
+                rxPort.Config.Pin  = MCU_PIN_6;
             }
             break;
 #endif
@@ -370,27 +370,27 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Device_Uart *drv)
         case MCU_UART_3:
             if (drv->Config.Group == 0)
             {
-                txPort.Port = MCU_PORT_B;
-                txPort.Pin  = MCU_PIN_10;
+                txPort.Config.Port = MCU_PORT_B;
+                txPort.Config.Pin  = MCU_PIN_10;
                 
-                rxPort.Port = MCU_PORT_B;  
-                rxPort.Pin  = MCU_PIN_11;
+                rxPort.Config.Port = MCU_PORT_B;  
+                rxPort.Config.Pin  = MCU_PIN_11;
             }
             else if (drv->Config.Group == 1)
             {
-                txPort.Port = MCU_PORT_C;
-                txPort.Pin  = MCU_PIN_10;
+                txPort.Config.Port = MCU_PORT_C;
+                txPort.Config.Pin  = MCU_PIN_10;
                 
-                rxPort.Port = MCU_PORT_C;  
-                rxPort.Pin  = MCU_PIN_11;
+                rxPort.Config.Port = MCU_PORT_C;  
+                rxPort.Config.Pin  = MCU_PIN_11;
             }
             else
             {
-                txPort.Port = MCU_PORT_D;
-                txPort.Pin  = MCU_PIN_8;
+                txPort.Config.Port = MCU_PORT_D;
+                txPort.Config.Pin  = MCU_PIN_8;
                 
-                rxPort.Port = MCU_PORT_D;  
-                rxPort.Pin  = MCU_PIN_9;
+                rxPort.Config.Port = MCU_PORT_D;  
+                rxPort.Config.Pin  = MCU_PIN_9;
             }
             break;
 #endif
@@ -398,11 +398,11 @@ void _Uart_GPIO_Init(uint8_t port, Hal_Device_Uart *drv)
             break;
     }
     
-    map_gpio_api.Open(txPort.Port);
-    map_gpio_api.Init(txPort.Port, txPort.Pin, txPort.Dir, txPort.Mode);
+    map_gpio_api.Open(txPort.Config.Port);
+    map_gpio_api.Init(txPort.Config.Port, txPort.Config.Pin, txPort.Config.Dir, txPort.Config.Mode);
     
-    map_gpio_api.Open(rxPort.Port);
-    map_gpio_api.Init(rxPort.Port, rxPort.Pin, rxPort.Dir, rxPort.Mode);
+    map_gpio_api.Open(rxPort.Config.Port);
+    map_gpio_api.Init(rxPort.Config.Port, rxPort.Config.Pin, rxPort.Config.Dir, rxPort.Config.Mode);
     
     _Uart_Port_Switch(port, drv);
 }
@@ -888,16 +888,16 @@ void Hal_Uart_Test(void)
 {
 //    Hal_Device_Uart uart = 
 //    {
-//        .Port = MCU_UART_1,
-//        .Baud = 115200,
-//        .Parity = MCU_UART_PARTY_NONE,
-//        .StopBits = MCU_UART_STOP_BITS_1,
-//        .WordLen = MCU_UART_WORD_LEN_8B,
+//        .Config.Port = MCU_UART_1,
+//        .Config.Baud = 115200,
+//        .Config.Parity = MCU_UART_PARTY_NONE,
+//        .Config.StopBits = MCU_UART_STOP_BITS_1,
+//        .Config.WordLen = MCU_UART_WORD_LEN_8B,
 //
-//        .RxConfig = MCU_UART_ENABLE_RX,
-//        .TxConfig = MCU_UART_ENABLE_TX,
+//        .Config.RxConfig = MCU_UART_ENABLE_RX,
+//        .Config.TxConfig = MCU_UART_ENABLE_TX,
 //        
-//        .Priority = 0x02,
+//        .Config.Priority = 0x02,
 //    };
     
 //    uint16_t i;

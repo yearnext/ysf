@@ -47,34 +47,72 @@
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief       device open opera
- * @param       [in/out]  *drv            device type
+ * @brief       device register opera
+ * @param       [in/out]  *dev            device type
  * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
 __INLINE
-hal_err_t Hal_Device_Init(Hal_Device_t *drv)
+hal_err_t Hal_Device_Register(Hal_Device_t *dev, void *device, struct Hal_Interface *interface)
 {
-    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(dev));
     
-    if(drv->Lock == HAL_DEVICE_LOCK)
+    dev->Device = device;
+    dev->Interface = interface;
+    
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       device unregister opera
+ * @param       [in/out]  *dev            device type
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE 
+hal_err_t Hal_Device_Unregister(Hal_Device_t *dev)
+{
+    hal_assert(IS_PTR_NULL(dev));
+
+    dev->Device = NULL;
+    dev->Interface = NULL;
+    
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       device open opera
+ * @param       [in/out]  *dev            device type
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE
+hal_err_t Hal_Device_Init(Hal_Device_t *dev)
+{
+    hal_assert(IS_PTR_NULL(dev));
+    
+    if(dev->Lock == HAL_DEVICE_LOCK)
     {
-        drv->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
         return HAL_ERR_FAIL;
     }
     
-    if(drv->State == HAL_DEVICE_INIT_STATE)
+    if(dev->State == HAL_DEVICE_INIT_STATE)
     {
-        drv->ErrCode = HAL_DEVICE_ERR_CODE_INITED;
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_INITED;
         return HAL_ERR_FAIL;
     }
     
-    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Init))
+    if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Init))
     {
-        drv->Interface->Init(drv->Device);
+        dev->Interface->Init(dev->Device);
         
-        drv->State = HAL_DEVICE_INIT_STATE;
+        dev->State = HAL_DEVICE_INIT_STATE;
     }
     
     return HAL_ERR_NONE;
@@ -83,31 +121,103 @@ hal_err_t Hal_Device_Init(Hal_Device_t *drv)
 /**
  *******************************************************************************
  * @brief       device close opera
- * @param       [in/out]  *drv            device type
+ * @param       [in/out]  *dev            device type
  * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
 __INLINE
-hal_err_t Hal_Device_Fini(Hal_Device_t *drv)
+hal_err_t Hal_Device_Fini(Hal_Device_t *dev)
 {
-    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(dev));
     
-    if(drv->Lock == HAL_DEVICE_LOCK)
+    if(dev->Lock == HAL_DEVICE_LOCK)
     {
-        drv->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
         return HAL_ERR_FAIL;
     }
     
-    if(drv->State == HAL_DEVICE_UNINIT_STATE)
+    if(dev->State == HAL_DEVICE_UNINIT_STATE)
     {
-        drv->ErrCode = HAL_DEVICE_ERR_CODE_UNINIT;
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_UNINIT;
         return HAL_ERR_FAIL;
     }
     
-    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Fini))
+    if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Fini))
     {
-        return drv->Interface->Fini(drv->Device);
+        return dev->Interface->Fini(dev->Device);
+    }
+    
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       device write opera
+ * @param       [in/out]  *dev            device type
+ * @param       [in/out]  pos             opera pos
+ * @param       [in/out]  *buf            opera buffer
+ * @param       [in/out]  size            opera buffer size
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE
+hal_err_t Hal_Device_Write(Hal_Device_t *dev, uint8_t pos, uint8_t *buf, uint8_t size)
+{
+    hal_assert(IS_PTR_NULL(dev));
+    
+    if(dev->Lock == HAL_DEVICE_LOCK)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
+        return HAL_ERR_FAIL;
+    }
+    
+    if(dev->State != HAL_DEVICE_INIT_STATE)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_UNINIT;
+        return HAL_ERR_FAIL;
+    }
+    
+    if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Write))
+    {
+        dev->Interface->Write(dev->Device, pos, buf, size);
+    }
+    
+    return HAL_ERR_NONE;
+}
+
+/**
+ *******************************************************************************
+ * @brief       device read opera
+ * @param       [in/out]  *dev            device type
+ * @param       [in/out]  pos             opera pos
+ * @param       [in/out]  *buf            opera buffer
+ * @param       [in/out]  size            opera buffer size
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+__INLINE
+hal_err_t Hal_Device_Read(Hal_Device_t *dev, uint8_t pos, uint8_t *buf, uint8_t size)
+{
+    hal_assert(IS_PTR_NULL(dev));
+    
+    if(dev->Lock == HAL_DEVICE_LOCK)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
+        return HAL_ERR_FAIL;
+    }
+    
+    if(dev->State != HAL_DEVICE_INIT_STATE)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_UNINIT;
+        return HAL_ERR_FAIL;
+    }
+    
+    if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Read))
+    {
+        dev->Interface->Read(dev->Device, pos, buf, size);
     }
     
     return HAL_ERR_NONE;
@@ -116,7 +226,7 @@ hal_err_t Hal_Device_Fini(Hal_Device_t *drv)
 /**
  *******************************************************************************
  * @brief       hal device control
- * @param       [in/out]  *drv            device type
+ * @param       [in/out]  *dev            device type
  * @param       [in/out]  cmd             control cmd
  * @param       [in/out]  ...             expand param
  * @return      [in/out]  HAL_ERR_NONE    result
@@ -124,28 +234,28 @@ hal_err_t Hal_Device_Fini(Hal_Device_t *drv)
  *******************************************************************************
  */
 __INLINE
-hal_err_t Hal_Device_Control(Hal_Device_t *drv, uint8_t cmd, ...)
+hal_err_t Hal_Device_Control(Hal_Device_t *dev, uint8_t cmd, ...)
 {
-    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(dev));
     va_list args;
     hal_err_t retValue = HAL_ERR_FAIL;
     
-    if(drv->Lock == HAL_DEVICE_LOCK)
+    if(dev->Lock == HAL_DEVICE_LOCK)
     {
-        drv->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
         return HAL_ERR_FAIL;
     }
     
-    if(drv->State == HAL_DEVICE_UNINIT_STATE)
+    if(dev->State == HAL_DEVICE_UNINIT_STATE)
     {
-        drv->ErrCode = HAL_DEVICE_ERR_CODE_UNINIT;
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_UNINIT;
         return HAL_ERR_FAIL;
     }
     
-    if(!IS_PTR_NULL(drv->Interface) && !IS_PTR_NULL(drv->Interface->Control))
+    if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Control))
     {
         va_start(args, cmd);
-        retValue = drv->Interface->Control(drv->Device, cmd, args);
+        retValue = dev->Interface->Control(dev->Device, cmd, args);
         va_end(args);
         
         return retValue;
@@ -157,17 +267,17 @@ hal_err_t Hal_Device_Control(Hal_Device_t *drv, uint8_t cmd, ...)
 /**
  *******************************************************************************
  * @brief       hal device lock
- * @param       [in/out]  *drv            device type
+ * @param       [in/out]  *dev            device type
  * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
 __INLINE
-hal_err_t Hal_Device_Lock(Hal_Device_t *drv)
+hal_err_t Hal_Device_Lock(Hal_Device_t *dev)
 {
-    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(dev));
     
-    drv->Lock = HAL_DEVICE_LOCK;
+    dev->Lock = HAL_DEVICE_LOCK;
     
     return HAL_ERR_NONE;
 }
@@ -175,17 +285,17 @@ hal_err_t Hal_Device_Lock(Hal_Device_t *drv)
 /**
  *******************************************************************************
  * @brief       hal device unlock
- * @param       [in/out]  *drv            device type
+ * @param       [in/out]  *dev            device type
  * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
 __INLINE
-hal_err_t Hal_Device_Unlock(Hal_Device_t *drv)
+hal_err_t Hal_Device_Unlock(Hal_Device_t *dev)
 {
-    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(dev));
     
-    drv->Lock = HAL_DEVICE_UNLOCK;
+    dev->Lock = HAL_DEVICE_UNLOCK;
     
     return HAL_ERR_NONE;
 }
@@ -193,19 +303,19 @@ hal_err_t Hal_Device_Unlock(Hal_Device_t *drv)
 /**
  *******************************************************************************
  * @brief       hal get device error code
- * @param       [in/out]  *drv            device type
+ * @param       [in/out]  *dev            device type
  * @return      [in/out]  errCode         result
  * @note        None
  *******************************************************************************
  */
 __INLINE
-uint8_t Hal_Device_GetErrCode(Hal_Device_t *drv)
+uint8_t Hal_Device_GetErrCode(Hal_Device_t *dev)
 {
-    hal_assert(IS_PTR_NULL(drv));
+    hal_assert(IS_PTR_NULL(dev));
     
-    uint8_t errCode = drv->ErrCode;
+    uint8_t errCode = dev->ErrCode;
     
-    drv->ErrCode = HAL_DEVICE_ERR_CODE_NONE;
+    dev->ErrCode = HAL_DEVICE_ERR_CODE_NONE;
     
     return errCode;
 }

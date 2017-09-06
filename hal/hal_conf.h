@@ -139,6 +139,8 @@ extern "C"
 #define MCU_SRAM_HEAD_ADDR                                        (0x20000000UL)
 #define MCU_SRAM_END_ADDR            (MCU_SRAM_HEAD_ADDR + MCU_SRAM_SIZE * 1024)
 
+#define __HEAR_END_ADDR                                        MCU_SRAM_END_ADDR
+
 /* STM8S config --------------------------------------------------------------*/
 #elif __TARGET_CHIP__ == USE_MCU_STM8S
 #define STM8S003

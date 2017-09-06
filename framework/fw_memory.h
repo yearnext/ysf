@@ -82,7 +82,7 @@ extern "C"
 extern void  Fw_Mem_InitComponent(void);
 extern void *Fw_Mem_Alloc(uint32_t);
 extern void  Fw_Mem_Free(void*);
-
+extern bool Fw_Mem_IsIn(void*);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/
