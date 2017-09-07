@@ -80,7 +80,7 @@ typedef struct
         void (*Pin)(void*);
         void (*TimeOut)(void*);
         void (*Tx)(uint8_t, void*);
-        void (*Rx)(uint8_t, void*, uint8_t);
+        void (*Rx)(uint8_t, void*);
         void *Function;
 	};
     

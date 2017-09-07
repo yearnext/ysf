@@ -46,8 +46,6 @@
  * @brief      define map api
  *******************************************************************************
  */ 
-void Map_GPIO_Open(uint8_t);
-void Map_GPIO_Close(uint8_t);
 void Map_GPIO_Init(uint8_t, uint8_t, uint8_t, uint8_t);
 void Map_GPIO_Fini(uint8_t, uint8_t);
 hal_err_t Map_GPIO_Write(uint8_t, uint8_t, uint16_t, uint8_t);
@@ -56,9 +54,6 @@ void Map_GPIO_Toggle(uint8_t, uint8_t);
 
 const struct Map_GPIO_Opera map_gpio_api = 
 {
-    .Open = Map_GPIO_Open,
-    .Close = Map_GPIO_Close, 
-    
     .Init = Map_GPIO_Init,
     .Fini = Map_GPIO_Fini,
     
@@ -148,20 +143,20 @@ void _open(uint8_t port)
     _SET_BIT(RCC->APB2ENR, GPIO_RCC_CONTROL_POS + port);
 }
 
-/**
- *******************************************************************************
- * @brief       disable gpio
- * @param       [in/out]  port           gpio port
- * @return      [in/out]  void
- * @note        the function is static inline type
- *******************************************************************************
- */
-__STATIC_INLINE
-void _close(uint8_t port)
-{
-    _SET_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS + port);
-    _CLR_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS + port);
-}
+///**
+// *******************************************************************************
+// * @brief       disable gpio
+// * @param       [in/out]  port           gpio port
+// * @return      [in/out]  void
+// * @note        the function is static inline type
+// *******************************************************************************
+// */
+//__STATIC_INLINE
+//void _close(uint8_t port)
+//{
+//    _SET_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS + port);
+//    _CLR_BIT(RCC->APB2RSTR, GPIO_RCC_CONTROL_POS + port);
+//}
 
 /**
  *******************************************************************************
@@ -222,36 +217,6 @@ void _config(uint8_t port, uint8_t pin, uint8_t mode)
 }
 
 /* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       enable gpio
- * @param       [in/out]  port                    gpio port
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_GPIO_Open(uint8_t port)
-{
-    hal_assert(IS_PORT_NUM_INVAILD(port));
-
-    _open(port);
-}
-
-/**
- *******************************************************************************
- * @brief       disable gpio
- * @param       [in/out]  port                    gpio port
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_GPIO_Close(uint8_t port)
-{
-    hal_assert(IS_PORT_NUM_INVAILD(port));
-    
-    _close(port);
-}
-
 /**
  *******************************************************************************
  * @brief       gpio init
@@ -323,6 +288,7 @@ void Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t dir, uint8_t mode)
     }
     
     //< init port
+    _open(port);
     _config(port, pin, setMode);
 }
 

@@ -94,37 +94,6 @@ static Fw_Fifo_t RxFifo = {.Buffer = RxBuffer, .Size = FW_DEBUG_BUFFER_SIZE};
  *******************************************************************************
  */
 extern struct Fw_Stream DebugStream;
-static Hal_Device_Uart DebugHardware = 
-{
-    //< uart stream hardware param init
-    .Config.Port = MCU_UART_1,
-    .Config.Group = 0,
-    .Config.Baud = 115200,
-    .Config.WordLen = MCU_UART_WORD_LEN_8B,
-    .Config.Priority = MCU_UART_PARTY_NONE,
-    .Config.StopBits = MCU_UART_STOP_BITS_1,
-    .Config.TxConfig = HAL_DEVICE_TRANSFER_ENABLE_ISR,
-    .Config.RxConfig = HAL_DEVICE_TRANSFER_ENABLE_ISR,
-    .Config.Parity = 1,
-    
-    //< uart stream hardware call back config
-    .RxCallback.Rx    = Fw_Stream_Rx_Handle,
-    .RxCallback.Param = (void *)&DebugStream,
-        
-    .TxCallback.Tx    = Fw_Stream_Tx_Handle,
-    .TxCallback.Param = (void *)&DebugStream,
-};
-
-/**
- *******************************************************************************
- * @brief       define common device operate block
- *******************************************************************************
- */
-static Hal_Device_t DebugDevice = 
-{
-    .Device = (void *)&DebugHardware,
-    .Interface = (struct Hal_Interface *)&Hal_Uart_Interface,
-};
 
 /**
  *******************************************************************************
@@ -133,8 +102,6 @@ static Hal_Device_t DebugDevice =
  */
 static struct Fw_Stream DebugStream = 
 {
-    .Device = (void *)&DebugDevice,
-        
     .Tx.Pool = (void *)&TxFifo,
     .Tx.Interface = (struct Fw_Pipe_Pool_Interface *)&PipeFifoInterface,
     .Tx.Task = NULL,

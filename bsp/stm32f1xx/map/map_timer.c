@@ -38,925 +38,858 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx.h"
-#include "stm32f1xx_ll_rcc.h"
-#include "stm32f1xx_ll_tim.h"
-#include "stm32f1xx_ll_bus.h"
-
+#include "hal_path.h"
+#include <string.h>
 #include "map_timer.h"
-#include "comm_path.h"
-#include "hal_gpio.h"
 
 /* Private constants ---------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define timer register
- *******************************************************************************
- */
-static TIM_TypeDef * const Timer[] = 
-{
-    NULL,
-    
-#ifdef TIM1
-    TIM1,
-#endif
-    
-#ifdef TIM2
-    TIM2,
-#endif
-    
-#ifdef TIM3
-    TIM3, 
-#endif
-    
-#ifdef TIM4
-    TIM4, 
-#endif
-    
-#ifdef TIM5
-    TIM5,
-#endif
-    
-#ifdef TIM6
-    TIM6,
-#endif
-    
-#ifdef TIM7
-    TIM7,
-#endif
-    
-#ifdef TIM8
-    TIM8,
-#endif
-    
-#ifdef TIM9
-    TIM9,
-#endif
-    
-#ifdef TIM10
-    TIM10,
-#endif
-    
-#ifdef TIM11
-    TIM11,
-#endif
-    
-#ifdef TIM12
-    TIM12,
-#endif
-    
-#ifdef TIM13
-    TIM13,
-#endif
-    
-#ifdef TIM14
-    TIM14,
-#endif
-    
-#ifdef TIM15
-    TIM15,
-#endif
-    
-#ifdef TIM16
-    TIM16,
-#endif
-    
-#ifdef TIM17
-    TIM17,
-#endif
-};
-
-/**
- *******************************************************************************
- * @brief       define timer irqn
- *******************************************************************************
- */
-static const IRQn_Type TimerIrqn[] = 
-{
-	SysTick_IRQn,
-    
-#ifdef TIM1
-    TIM1_UP_IRQn, 
-#endif
-    
-#ifdef TIM2
-    TIM2_IRQn, 
-#endif
-    
-#ifdef TIM3
-    TIM3_IRQn,
-#endif
-    
-#ifdef TIM4
-    TIM4_IRQn, 
-#endif
-    
-#ifdef TIM5
-    TIM5_IRQn, 
-#endif
-    
-#ifdef TIM6
-    TIM6_IRQn, 
-#endif
-    
-#ifdef TIM7
-    TIM7_IRQn,
-#endif
-    
-#ifdef TIM8
-    TIM8_UP_IRQn,
-#endif
-        
-#ifdef TIM9
-    TIM1_BRK_TIM9_IRQn,
-#endif
-        
-#ifdef TIM10
-    TIM1_UP_TIM10_IRQn,
-#endif
-        
-#ifdef TIM11
-    TIM1_TRG_COM_TIM11_IRQn,
-#endif
-        
-#ifdef TIM12
-    TIM8_BRK_TIM12_IRQn,
-#endif
-        
-#ifdef TIM13
-    TIM8_UP_TIM13_IRQn,
-#endif
-        
-#ifdef TIM14
-    TIM8_TRG_COM_TIM14_IRQn,
-#endif
-        
-#ifdef TIM15
-    TIM1_BRK_TIM15_IRQn,
-#endif
-        
-#ifdef TIM16
-    TIM1_UP_TIM16_IRQn,
-#endif
-    
-#ifdef TIM17
-    TIM1_TRG_COM_TIM17_IRQn,
-#endif
-};
-
-/**
- *******************************************************************************
- * @brief      define map api
- *******************************************************************************
- */ 
-void Map_Timer_Open(uint8_t);
-void Map_Timer_Close(uint8_t);
-void Map_Timer_Init(uint8_t, void*);
-void Map_Timer_Fini(uint8_t);
-void Map_Timer_SetTimeOutCallback(uint8_t, void (*)(void*), void*);
-void Map_Timer_Start(uint8_t);
-void Map_Timer_Stop(uint8_t);
-
-const struct Map_Timer_Opera map_timer_api = 
-{
-    .Open = Map_Timer_Open,
-    .Close = Map_Timer_Close, 
-    
-    .Init = Map_Timer_Init,
-    .Fini = Map_Timer_Fini,
-    .SetTimeOutCallback = Map_Timer_SetTimeOutCallback,
-    
-    .Start = Map_Timer_Start,
-    .Stop = Map_Timer_Stop,
-};
-
 /* Private variables ---------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define timer time mode call back
- *******************************************************************************
- */
-static Hal_Callback_t TimerUpCallback[_dimof(Timer)];
+TIM_HandleTypeDef htim1;
+Hal_Callback_t TIM1_Tick_Callback;
+
+TIM_HandleTypeDef htim2;
+Hal_Callback_t TIM2_Tick_Callback;
+TIM_HandleTypeDef htim3;
+Hal_Callback_t TIM3_Tick_Callback;
+TIM_HandleTypeDef htim4;
+Hal_Callback_t TIM4_Tick_Callback;
+TIM_HandleTypeDef htim5;
+Hal_Callback_t TIM5_Tick_Callback;
+TIM_HandleTypeDef htim6;
+Hal_Callback_t TIM6_Tick_Callback;
+TIM_HandleTypeDef htim7;
+Hal_Callback_t TIM7_Tick_Callback;
+TIM_HandleTypeDef htim8;
+Hal_Callback_t TIM8_Tick_Callback;
 
 /* Private define ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       define timer assert macro
- *******************************************************************************
- */
-#define IS_TIMER_PORT_INVAILD(n)                          ((n) >= _dimof(Timer))
-
 /* Private typedef -----------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       enable timer
- * @param       [in/out]  port            timer id
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_Open(uint8_t port)
+void Hal_TIM_Tick_Init(TIM_HandleTypeDef *htim, TIM_TypeDef *tim)
 {
-    if (port == 0)
+    TIM_MasterConfigTypeDef sMasterConfig;
+
+    htim->Instance = tim;
+    htim->Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+
+    if(tim == TIM1)
     {
-        //< open tick timer clock
+        __HAL_RCC_TIM1_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+        
+        HAL_NVIC_SetPriority(TIM1_UP_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM1_UP_IRQn);
     }
-#ifdef TIM1
-	else if (port == 1)
-	{
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM1);
-	}	  
-#endif 
-    
 #ifdef TIM2
-	else if (port == 2)
-	{
-        LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
-	}
+    else if(tim == TIM2)
+    {
+        __HAL_RCC_TIM2_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+        
+        HAL_NVIC_SetPriority(TIM2_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM12_IRQn);
+    }
 #endif
     
 #ifdef TIM3
-	else if (port == 3)
-	{
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM3);
-	}
+    else if(tim == TIM3)
+    {
+        __HAL_RCC_TIM3_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+                
+        HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM13_IRQn);
+    }
 #endif
     
 #ifdef TIM4
-	else if (port == 4)
-	{
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM4);
-	} 
+    else if(tim == TIM4)
+    {
+        __HAL_RCC_TIM4_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+                
+        HAL_NVIC_SetPriority(TIM4_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM14_IRQn);
+    }
 #endif
     
 #ifdef TIM5
-	else if (port == 5)
-	{
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM5);
-	} 
+    else if(tim == TIM5)
+    {
+        __HAL_RCC_TIM5_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+                
+        HAL_NVIC_SetPriority(TIM5_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM5_IRQn);
+    }
 #endif
     
 #ifdef TIM6
-	else if (port == 6)
-	{
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
-	} 
+    else if(tim == TIM6)
+    {
+        __HAL_RCC_TIM6_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+                
+        HAL_NVIC_SetPriority(TIM6_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM6_IRQn);
+    }
 #endif
     
 #ifdef TIM7
-	else if (port == 7)
-	{
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM7);
-	} 
+    else if(tim == TIM7)
+    {
+        __HAL_RCC_TIM7_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+                
+        HAL_NVIC_SetPriority(TIM7_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM7_IRQn);
+    }
 #endif
     
 #ifdef TIM8
-	else if (port == 8)
-	{
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM8);
-	}
-#endif
-    
-#ifdef TIM9
-	else if (port == 9)
-	{	   
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM9);
-	 }	
-#endif
-    
-#ifdef TIM10
-	else if (port == 10)
-	{	   
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM10);
-	}  
-#endif
-    
-#if TIM11
-	else if (port == 11) 
-	{	  
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM11);
-	}  
-#endif
-
-#ifdef TIM12    
-	else if (port == 12)
-	{	   
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM12);
-	}  
-#endif
-    
-#ifdef TIM13
-	else if (port == 13) 
-	{		
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM13);;
-	}
-#endif
-    
-#ifdef TIM14
-	else if (port == 14) 
-	{		
-		LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM14);
-	}		
-#endif
-    
-#ifdef TIM15
-	else if (port == 15)
-	{
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM15);
-	} 
-#endif
-    
-#ifdef TIM16
-	else if (port == 16)
-	{
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM16);
-	} 
-#endif
-    
-#ifdef TIM17
-	else if(port == 17)
-	{
-        LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM17);
-	}
-#endif
-    
-    else
+    else if(tim == TIM8)
     {
-        //< do nothing
+        __HAL_RCC_TIM8_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+                
+        HAL_NVIC_SetPriority(TIM8_UP_IRQn, 1, 0);
+        HAL_NVIC_EnableIRQ(TIM8_UP_IRQn);
     }
+#endif
+    
+    HAL_TIM_Base_Init(htim);
+
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+    sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+    HAL_TIMEx_MasterConfigSynchronization(htim, &sMasterConfig);
 }
 
-/**
- *******************************************************************************
- * @brief       disable timer
- * @param       [in/out]  port            timer id
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_Close(uint8_t port)
+void Hal_TIM_PWM_Base_Init(TIM_HandleTypeDef *htim, TIM_TypeDef *tim)
 {
-	hal_assert(IS_TIMER_PORT_INVAILD(port));
+    htim->Instance = tim;
+    htim->Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
 
-    if (port == 0)
+    if(tim == TIM1)
     {
-        //< open tick timer clock
+        __HAL_RCC_TIM1_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
     }
-#ifdef TIM1
-	else if (port == 1)
-	{
-        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM1);
-	}	  
-#endif 
-    
 #ifdef TIM2
-	else if (port == 2)
-	{
-        LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM2);
-	}
+    else if(tim == TIM2)
+    {
+        __HAL_RCC_TIM2_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+    }
 #endif
     
 #ifdef TIM3
-	else if (port == 3)
-	{
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM3);
-	}
+    else if(tim == TIM3)
+    {
+        __HAL_RCC_TIM3_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+    }
 #endif
     
 #ifdef TIM4
-	else if (port == 4)
-	{
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM4);
-	} 
+    else if(tim == TIM4)
+    {
+        __HAL_RCC_TIM4_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+    }
 #endif
     
 #ifdef TIM5
-	else if (port == 5)
-	{
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM5);
-	} 
+    else if(tim == TIM5)
+    {
+        __HAL_RCC_TIM5_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+    }
 #endif
     
 #ifdef TIM6
-	else if (port == 6)
-	{
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM6);
-	} 
+    else if(tim == TIM6)
+    {
+        __HAL_RCC_TIM6_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+    }
 #endif
     
 #ifdef TIM7
-	else if (port == 7)
-	{
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM7);
-	} 
+    else if(tim == TIM7)
+    {
+        __HAL_RCC_TIM7_CLK_ENABLE();
+        
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
+    }
 #endif
     
 #ifdef TIM8
-	else if (port == 8)
-	{
-        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM8);
-	}
-#endif
-    
-#ifdef TIM9
-	else if (port == 9)
-	{	   
-        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM9);
-	 }	
-#endif
-    
-#ifdef TIM10
-	else if (port == 10)
-	{	   
-        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM10);
-	}  
-#endif
-    
-#if TIM11
-	else if (port == 11) 
-	{	  
-        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM11);
-	}  
-#endif
-
-#ifdef TIM12    
-	else if (port == 12)
-	{	   
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM12);
-	}  
-#endif
-    
-#ifdef TIM13
-	else if (port == 13) 
-	{		
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM13);;
-	}
-#endif
-    
-#ifdef TIM14
-	else if (port == 14) 
-	{		
-		LL_APB1_GRP1_DisableClock(LL_APB1_GRP1_PERIPH_TIM14);
-	}		
-#endif
-    
-#ifdef TIM15
-	else if (port == 15)
-	{
-        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM15);
-	} 
-#endif
-    
-#ifdef TIM16
-	else if (port == 16)
-	{
-        LL_APB2_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM16);
-	} 
-#endif
-    
-#ifdef TIM17
-	else if(port == 17)
-	{
-        LL_APB1_GRP1_DisableClock(LL_APB2_GRP1_PERIPH_TIM17);
-	}
-#endif
-    
-    else
+    else if(tim == TIM8)
     {
-        //< do nothing
-    }
-}
-
-/**
- *******************************************************************************
- * @brief       init tick time mode
- * @param       [in/out]  *param          set timer param
- * @return      [in/out]  void
- * @note        This function type is static inline
- *******************************************************************************
- */
-__STATIC_INLINE
-void _Tick_Mode_Init(Hal_Device_Timer *param)
-{
-	uint32_t tick = MCU_CLOCK_FREQ/8000;
-
-	//< unit: ms
-	tick = tick * param->Config.Period;
-	
-	SysTick->LOAD = tick - 1;  
-    _CLEAR_REG(SysTick->VAL);                                              
-    NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL); 
-
-	//< enable tick timer isr and set tick timer clock source is core clock
-    SysTick->CTRL  = (uint32_t)((1 << 1) | (1 << 2));
-
-	TimerUpCallback[MCU_TICK_TIMER].TimeOut = param->Callback.TimeOut;
-	TimerUpCallback[MCU_TICK_TIMER].Param    = param->Callback.Param;
-}
-
-/**
- *******************************************************************************
- * @brief       init timer time mode
- * @param       [in/out]  port            timer id
- * @param       [in/out]  *param          set timer param
- * @return      [in/out]  void
- * @note        This function type is static inline
- *******************************************************************************
- */
-__STATIC_INLINE
-void _Timer_Mode_Init(uint8_t port, Hal_Device_Timer *param)
-{
-	LL_TIM_InitTypeDef LL_TIM_InitStructure;
-
-    LL_TIM_InitStructure.Autoreload = param->Config.Period;
-    LL_TIM_InitStructure.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
-    LL_TIM_InitStructure.CounterMode = LL_TIM_COUNTERMODE_UP;
-    LL_TIM_InitStructure.Prescaler = param->Config.Prescaler;
-
-    LL_TIM_DeInit(Timer[port]);
-    LL_TIM_Init(Timer[port], &LL_TIM_InitStructure);
-    LL_TIM_EnableARRPreload(Timer[port]);
-    
-    if(param->Config.IsEnableIsr)
-    {
-        LL_TIM_ClearFlag_UPDATE(Timer[port]);
-        LL_TIM_EnableIT_UPDATE(Timer[port]);
+        __HAL_RCC_TIM8_CLK_ENABLE();
         
-        NVIC_EnableIRQ(TimerIrqn[port]); 
-        NVIC_SetPriority(TimerIrqn[port], param->Config.Priority);  
-
-        TimerUpCallback[port].TimeOut = param->Callback.TimeOut;
-        TimerUpCallback[port].Param    = param->Callback.Param;
+        htim->Init.Prescaler = 72;
+        htim->Init.Period = 999;
     }
+#endif
     
-    LL_TIM_EnableCounter(Timer[port]);
+    HAL_TIM_PWM_Init(htim);
 }
 
-__STATIC_INLINE
-void _PWM_Output_Mode_Init(uint8_t port, Hal_Device_Timer *param)
-{
-    LL_TIM_OC_InitTypeDef LL_TIM_OC_InitStructure;
-    
-    LL_TIM_OC_InitStructure.CompareValue = param->Config.Duty,
-    LL_TIM_OC_InitStructure.OCIdleState = LL_TIM_OCIDLESTATE_HIGH,
-    LL_TIM_OC_InitStructure.OCMode = LL_TIM_OCMODE_PWM1,
-    LL_TIM_OC_InitStructure.OCPolarity = LL_TIM_OCPOLARITY_LOW,
-    LL_TIM_OC_InitStructure.OCState = LL_TIM_OCSTATE_ENABLE,
-        
-    //< init timer pwm output pin
-    Hal_Device_Control(param->Config.Pin, HAL_DEVICE_INIT_CMD);
 
-    if(param->Config.Channel == 1)
+void Hal_TIM_PWM_Output_Port_Init(TIM_HandleTypeDef *htim_pwm, TIM_TypeDef *tim, uint8_t ch)
+{
+    GPIO_InitTypeDef GPIO_InitStruct;
+    
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    
+    if(tim == TIM1)
     {
-        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH1, &LL_TIM_OC_InitStructure);
-        LL_TIM_OC_SetCompareCH1(Timer[port], param->Config.Duty);
+        __HAL_RCC_TIM1_CLK_ENABLE();
+        __HAL_RCC_GPIOE_CLK_ENABLE();
+        /**TIM1 GPIO Configuration    
+        PE9     ------> TIM1_CH1
+        PE11     ------> TIM1_CH2
+        PE13     ------> TIM1_CH3
+        PE14     ------> TIM1_CH4 
+        */
+        if(ch == 0)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_9;
+        }
+        else if(ch == 1)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_11;
+        }
+        else if(ch == 2)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_13;
+        }
+        else if(ch == 3)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_14;
+        }
+        else
+        {
+            //< do nothing!
+        }
+        
+        HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+        
+        __HAL_AFIO_REMAP_TIM1_ENABLE();
     }
-    else if(param->Config.Channel == 2)
+#ifdef TIM2
+    else if(tim == TIM2)
     {
-        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH1N, &LL_TIM_OC_InitStructure);
-        LL_TIM_OC_SetCompareCH2(Timer[port], param->Config.Duty);
+        __HAL_RCC_TIM2_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        
+        /**TIM2 GPIO Configuration    
+        PB10     ------> TIM2_CH3
+        PB11     ------> TIM2_CH4
+        PA15     ------> TIM2_CH1
+        PB3     ------> TIM2_CH2 
+        */
+        if(ch == 0)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_10;
+            HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+        }
+        else if(ch == 1)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_11;
+            HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+        }
+        else if(ch == 2)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_3;
+            HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+        }
+        else if(ch == 3)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_15;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        }
+        else
+        {
+            //< do nothing!
+        }
+
+        __HAL_AFIO_REMAP_TIM2_ENABLE();
     }
-    else if(param->Config.Channel == 3)
+#endif
+    
+#ifdef TIM3
+    else if(tim == TIM3)
     {
-        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH2, &LL_TIM_OC_InitStructure);
-        LL_TIM_OC_SetCompareCH3(Timer[port], param->Config.Duty);
-    }    
-    else if(param->Config.Channel == 4)
-    {
-        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH2N, &LL_TIM_OC_InitStructure);
-        LL_TIM_OC_SetCompareCH4(Timer[port], param->Config.Duty);
+        __HAL_RCC_TIM3_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        /**TIM3 GPIO Configuration    
+        PA6     ------> TIM3_CH1
+        PA7     ------> TIM3_CH2
+        PB0     ------> TIM3_CH3
+        PB1     ------> TIM3_CH4 
+        */
+        if(ch == 0)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_6;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        }
+        else if(ch == 1)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_7;
+            HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        }
+        else if(ch == 2)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_0;
+            HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+        }
+        else if(ch == 3)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_1;
+            HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+        }
+        else
+        {
+            //< do nothing!
+        }
     }
-    else if(param->Config.Channel == 5)
+#endif
+    
+#ifdef TIM4
+    else if(tim == TIM4)
     {
-        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH3, &LL_TIM_OC_InitStructure);
-        LL_TIM_OC_SetCompareCH2(Timer[port], param->Config.Duty);
+        __HAL_RCC_TIM4_CLK_ENABLE();
+        __HAL_RCC_GPIOD_CLK_ENABLE();
+        /**TIM4 GPIO Configuration    
+        PD12     ------> TIM4_CH1
+        PD13     ------> TIM4_CH2
+        PD14     ------> TIM4_CH3
+        PD15     ------> TIM4_CH4 
+        */
+        if(ch == 0)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_12;
+        }
+        else if(ch == 1)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_13;
+        }
+        else if(ch == 2)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_14;
+        }
+        else if(ch == 3)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_15;
+        }
+        else
+        {
+            //< do nothing!
+        }
+        
+        HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+        __HAL_AFIO_REMAP_TIM4_ENABLE();
+        
     }
-    else if(param->Config.Channel == 6)
+#endif
+    
+#ifdef TIM5
+    else if(tim == TIM5)
     {
-        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH3N, &LL_TIM_OC_InitStructure);
-        LL_TIM_OC_SetCompareCH3(Timer[port], param->Config.Duty);
-    }    
-    else if(param->Config.Channel == 7)
+        __HAL_RCC_TIM5_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        /**TIM5 GPIO Configuration    
+        PA0-WKUP     ------> TIM5_CH1
+        PA1     ------> TIM5_CH2
+        PA2     ------> TIM5_CH3
+        PA3     ------> TIM5_CH4 
+        */
+        if(ch == 0)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_0;
+        }
+        else if(ch == 1)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_1;
+        }
+        else if(ch == 2)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_2;
+        }
+        else if(ch == 3)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_3;
+        }
+        else
+        {
+            //< do nothing!
+        }
+        
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        
+    }
+#endif
+    
+#ifdef TIM8
+    else if(tim == TIM8)
     {
-        LL_TIM_OC_Init(Timer[port], LL_TIM_CHANNEL_CH4, &LL_TIM_OC_InitStructure);
-        LL_TIM_OC_SetCompareCH4(Timer[port], param->Config.Duty);
+        __HAL_RCC_TIM8_CLK_ENABLE();
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        /**TIM8 GPIO Configuration    
+        PC6     ------> TIM8_CH1
+        PC7     ------> TIM8_CH2
+        PC8     ------> TIM8_CH3
+        PC9     ------> TIM8_CH4 
+        */
+        if(ch == 0)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_6;
+        }
+        else if(ch == 1)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_7;
+        }
+        else if(ch == 2)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_8;
+        }
+        else if(ch == 3)
+        {
+            GPIO_InitStruct.Pin = GPIO_PIN_9;
+        }
+        else
+        {
+            //< do nothing!
+        }
+        
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    }
+#endif
+}
+
+void HAL_TIM_PWM_Output_Init(TIM_HandleTypeDef *htim_pwm, TIM_TypeDef *tim, uint8_t ch)
+{
+
+    TIM_OC_InitTypeDef sConfigOC;
+    TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig;
+    
+    htim_pwm->Instance = tim;
+    
+    Hal_TIM_PWM_Base_Init(htim_pwm, tim);
+    
+    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+    sConfigOC.Pulse = 0;
+    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+    sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+    sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+    sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+    
+    if(ch == 0)
+    {
+        HAL_TIM_PWM_ConfigChannel(htim_pwm, &sConfigOC, TIM_CHANNEL_1);
+    }
+    else if(ch == 1)
+    {
+        HAL_TIM_PWM_ConfigChannel(htim_pwm, &sConfigOC, TIM_CHANNEL_2);
+    }
+    else if(ch == 2)
+    {
+        HAL_TIM_PWM_ConfigChannel(htim_pwm, &sConfigOC, TIM_CHANNEL_3);
+    }
+    else if(ch == 3)
+    {
+        HAL_TIM_PWM_ConfigChannel(htim_pwm, &sConfigOC, TIM_CHANNEL_4);
     }
     else
     {
         //< do nothing!
+    } 
+
+    sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+    sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+    sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+    sBreakDeadTimeConfig.DeadTime = 0;
+    sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+    sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+    sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+    HAL_TIMEx_ConfigBreakDeadTime(htim_pwm, &sBreakDeadTimeConfig);
+    
+    Hal_TIM_PWM_Output_Port_Init(htim_pwm, tim, ch);
+    
+//    if(ch == 1)
+//    {
+//        HAL_TIM_PWM_Start(htim_pwm, TIM_CHANNEL_1);
+//    }
+//    else if(ch == 2)
+//    {
+//        HAL_TIM_PWM_Start(htim_pwm, TIM_CHANNEL_2);
+//    }
+//    else if(ch == 3)
+//    {
+//        HAL_TIM_PWM_Start(htim_pwm, TIM_CHANNEL_3);
+//    }
+//    else if(ch == 4)
+//    {
+//        HAL_TIM_PWM_Start(htim_pwm, TIM_CHANNEL_4);
+//    }
+//    else
+//    {
+//        //< do nothing!
+//    } 
+}
+
+static void *Map_Timer_Find(char *s)
+{
+
+    if(memcmp(s, "timer1", strlen("timer1")) == 0)
+    {
+        return (void *)&htim1;
+    }
+
+    if(memcmp(s, "timer2", strlen("timer2")) == 0)
+    {
+        return (void *)&htim2;
+    }
+
+    if(memcmp(s, "timer3", strlen("timer3")) == 0)
+    {
+        return (void *)&htim3;
+    }
+
+    if(memcmp(s, "timer4", strlen("timer4")) == 0)
+    {
+        return (void *)&htim4;
+    }
+    
+    if(memcmp(s, "timer5", strlen("timer5")) == 0)
+    {
+        return (void *)&htim1;
+    }
+
+    if(memcmp(s, "timer6", strlen("timer6")) == 0)
+    {
+        return (void *)&htim2;
+    }
+
+    if(memcmp(s, "timer7", strlen("timer7")) == 0)
+    {
+        return (void *)&htim3;
+    }
+
+    if(memcmp(s, "timer8", strlen("timer8")) == 0)
+    {
+        return (void *)&htim4;
+    }
+ 
+    return NULL;
+}
+
+static hal_err_t Map_Timer_Init(void *dev, uint32_t flag)
+{
+    hTimFlag hFlag;
+    hFlag.Flag = flag;
+    
+    if(dev == (void *)&htim1)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim1, TIM1);
+        }
+        else if(hFlag.Mode == 1)
+        {
+            HAL_TIM_PWM_Output_Init(&htim1, TIM1, hFlag.Channel);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    } 
+
+    if(dev == (void *)&htim2)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim2, TIM2);
+        }
+        else if(hFlag.Mode == 1)
+        {
+            HAL_TIM_PWM_Output_Init(&htim2, TIM2, hFlag.Channel);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    }
+
+    if(dev == (void *)&htim3)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim3, TIM3);
+        }
+        else if(hFlag.Mode == 1)
+        {
+            HAL_TIM_PWM_Output_Init(&htim3, TIM3, hFlag.Channel);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    }
+
+    if(dev == (void *)&htim4)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim4, TIM4);
+        }
+        else if(hFlag.Mode == 1)
+        {
+            HAL_TIM_PWM_Output_Init(&htim4, TIM4, hFlag.Channel);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    }
+
+    if(dev == (void *)&htim5)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim5, TIM5);
+        }
+        else if(hFlag.Mode == 1)
+        {
+            HAL_TIM_PWM_Output_Init(&htim5, TIM5, hFlag.Channel);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    }
+
+    if(dev == (void *)&htim6)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim6, TIM6);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    }
+
+    if(dev == (void *)&htim7)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim7, TIM7);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    }
+
+    if(dev == (void *)&htim8)
+    {
+        if(hFlag.Mode == 0)
+        {
+            Hal_TIM_Tick_Init(&htim8, TIM8);
+        }
+        else if(hFlag.Mode == 1)
+        {
+            HAL_TIM_PWM_Output_Init(&htim8, TIM8, hFlag.Channel);
+        }
+        else
+        {
+            //< do nothing!
+        }
+        return HAL_ERR_NONE;
+    }    
+
+    return HAL_ERR_FAIL;
+}
+
+hal_err_t Hal_TIM_Fini(TIM_HandleTypeDef* htim)
+{
+    if(htim->Instance==TIM1)
+    {
+        __HAL_RCC_TIM1_CLK_DISABLE();
+    }
+    else if(htim->Instance==TIM2)
+    {
+        __HAL_RCC_TIM2_CLK_DISABLE();
+    }
+    else if(htim->Instance==TIM3)
+    {
+        __HAL_RCC_TIM3_CLK_DISABLE();
+    }
+    else if(htim->Instance==TIM4)
+    {
+        __HAL_RCC_TIM4_CLK_DISABLE();
+    }
+    else if(htim->Instance==TIM5)
+    {
+        __HAL_RCC_TIM5_CLK_DISABLE();
+    }
+    else if(htim->Instance==TIM6)
+    {
+        __HAL_RCC_TIM6_CLK_DISABLE();
+    }
+    else if(htim->Instance==TIM7)
+    {
+        __HAL_RCC_TIM7_CLK_DISABLE();
+    }
+    else if(htim->Instance==TIM8)
+    {
+        __HAL_RCC_TIM8_CLK_DISABLE();
+    }
+    else
+    {
+        return HAL_ERR_FAIL;
+    }
+    
+    return HAL_ERR_NONE;
+}
+
+static uint16_t Map_Timer_Write(void *dev, uint8_t pos, uint8_t *buf, uint16_t size)
+{
+    TIM_HandleTypeDef *timer = (TIM_HandleTypeDef *)dev;
+    uint16_t param = *((uint16_t *)buf);
+    
+    if(size != 2)
+    {
+        return 0;
+    }
+    
+    switch(pos)
+    {
+        case 0:
+            __HAL_TIM_SET_AUTORELOAD(timer, param);
+            HAL_TIM_Base_Start_IT(timer);
+            break;
+        case 1:
+            __HAL_TIM_SET_COMPARE(timer, timer->Channel, param);
+            HAL_TIM_PWM_Start(timer, timer->Channel);
+            break;
+        default:
+            break;
+    }
+    
+    return size;
+}
+
+static hal_err_t Map_Timer_Control(void *drv, uint8_t cmd, va_list args)
+{
+    return HAL_ERR_NONE;
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    if(htim->Instance==TIM1)
+    {
+        if(!IS_PTR_NULL(TIM1_Tick_Callback.Function))
+        {
+            TIM1_Tick_Callback.TimeOut(TIM1_Tick_Callback.Param);
+        }
+    }
+    else if(htim->Instance==TIM2)
+    {
+        if(!IS_PTR_NULL(TIM2_Tick_Callback.Function))
+        {
+            TIM2_Tick_Callback.TimeOut(TIM2_Tick_Callback.Param);
+        }
+    }
+    else if(htim->Instance==TIM3)
+    {
+        if(!IS_PTR_NULL(TIM3_Tick_Callback.Function))
+        {
+            TIM3_Tick_Callback.TimeOut(TIM3_Tick_Callback.Param);
+        }
+    }
+    else if(htim->Instance==TIM4)
+    {
+        if(!IS_PTR_NULL(TIM4_Tick_Callback.Function))
+        {
+            TIM4_Tick_Callback.TimeOut(TIM4_Tick_Callback.Param);
+        }
+    }
+    else if(htim->Instance==TIM5)
+    {
+        if(!IS_PTR_NULL(TIM5_Tick_Callback.Function))
+        {
+            TIM5_Tick_Callback.TimeOut(TIM5_Tick_Callback.Param);
+        }
+    }
+    else if(htim->Instance==TIM6)
+    {
+        if(!IS_PTR_NULL(TIM6_Tick_Callback.Function))
+        {
+            TIM6_Tick_Callback.TimeOut(TIM6_Tick_Callback.Param);
+        }
+    }
+    else if(htim->Instance==TIM7)
+    {
+        if(!IS_PTR_NULL(TIM7_Tick_Callback.Function))
+        {
+            TIM7_Tick_Callback.TimeOut(TIM7_Tick_Callback.Param);
+        }
+    }
+    else if(htim->Instance==TIM8)
+    {
+        if(!IS_PTR_NULL(TIM8_Tick_Callback.Function))
+        {
+            TIM8_Tick_Callback.TimeOut(TIM8_Tick_Callback.Param);
+        }
     }
 }
-
-/**
- *******************************************************************************
- * @brief       init timer function
- * @param       [in/out]  port            timer id
- * @param       [in/out]  mode            set timer mode
- * @param       [in/out]  *param          set timer param
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_Init(uint8_t port, void *param)
-{
-	hal_assert(IS_TIMER_PORT_INVAILD(port));
-	hal_assert(IS_PTR_NULL(param));
-    
-    Hal_Device_Timer *config = (Hal_Device_Timer *)param;
-	
-    switch(config->Config.Mode)
-	{
-		case MCU_TIMER_TICK_MODE:
-			_Tick_Mode_Init(config);
-			break;
-		case MCU_TIMER_TIME_MODE:
-			_Timer_Mode_Init(port, config);
-			break;
-		case MCU_TIMER_PWM_OUTPUT_MODE:
-            if(config->Config.IsInitTimerBase)
-            {
-                _Timer_Mode_Init(port, config);
-            }
-        
-            _PWM_Output_Mode_Init(port, config);
-			break;
-		case MCU_TIMER_PWM_INTPUT_MODE:
-			break;
-		default:
-            break;
-	}
-}
-
-/**
- *******************************************************************************
- * @brief       timer deinit
- * @param       [in/out]  port            timer id
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_Fini(uint8_t port)
-{
-    hal_assert(IS_TIMER_PORT_INVAILD(port));
-    
-    LL_TIM_DeInit(Timer[port]);
-}
-
-/**
- *******************************************************************************
- * @brief       set timer call back function
- * @param       [in/out]  port            timer id
- * @param       [in/out]  callback        call back function
- * @param       [in/out]  *param          call back function param
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_SetTimeOutCallback(uint8_t port, void (*callback)(void*), void *param)
-{
-    hal_assert(IS_TIMER_PORT_INVAILD(port));
-    
-    TimerUpCallback[port].TimeOut = callback;
-	TimerUpCallback[port].Param    = param;
-}
-
-/**
- *******************************************************************************
- * @brief       start timer function
- * @param       [in/out]  port            timer id
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_Start(uint8_t port)
-{
-	hal_assert(IS_TIMER_PORT_INVAILD(port));
-
-	if(port != 0)
-	{
-		Timer[port]->CR1 |= 0x01;
-	}
-	else
-	{
-		SysTick->CTRL |= 0x01;
-	}
-}
-
-/**
- *******************************************************************************
- * @brief       stop timer function
- * @param       [in/out]  port            timer id
- * @return      [in/out]  void
- * @note        None
- *******************************************************************************
- */
-void Map_Timer_Stop(uint8_t port)
-{
-	hal_assert(IS_TIMER_PORT_INVAILD(port));
-
-	if(port != 0)
-	{
-		Timer[port]->CR1 &= ~0x01;
-	}
-	else
-	{
-		SysTick->CTRL &= ~0x01;
-	}
-}
-
-/**
- *******************************************************************************
- * @brief       tick timer isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-void SysTick_Handler(void)
-{
-	if(!IS_PTR_NULL(TimerUpCallback[0].TimeOut))
-	{
-		TimerUpCallback[0].TimeOut(TimerUpCallback[0].Param);
-	}
-}
-
-/**
- *******************************************************************************
- * @brief       timer1 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM1
-void TIM1_UP_IRQHandler(void)
-{
-	if(!IS_PTR_NULL(TimerUpCallback[1].TimeOut))
-	{
-		TimerUpCallback[1].TimeOut(TimerUpCallback[1].Param);
-	}
-
-	Timer[1]->SR &= ~0x01;
-}
-#endif
-
-/**
- *******************************************************************************
- * @brief       timer2 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM2
-void TIM2_IRQHandler(void)
-{
-	if(Timer[2]->SR & 0x01)
-	{
-		if(!IS_PTR_NULL(TimerUpCallback[2].TimeOut))
-		{
-			TimerUpCallback[2].TimeOut(TimerUpCallback[2].Param);
-		}
-		
-		Timer[2]->SR &= ~0x01;
-	}
-}
-#endif
-
-/**
- *******************************************************************************
- * @brief       timer3 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM3
-void TIM3_IRQHandler(void)
-{
-	if(Timer[3]->SR & 0x01)
-	{
-		if(!IS_PTR_NULL(TimerUpCallback[3].TimeOut))
-		{
-			TimerUpCallback[3].TimeOut(TimerUpCallback[3].Param);
-		}
-		
-		Timer[3]->SR &= ~0x01;
-	}
-}
-#endif
-
-/**
- *******************************************************************************
- * @brief       timer4 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM4
-void TIM4_IRQHandler(void)
-{
-	if(Timer[4]->SR & 0x01)
-	{
-		if(!IS_PTR_NULL(TimerUpCallback[4].TimeOut))
-		{
-			TimerUpCallback[4].TimeOut(TimerUpCallback[4].Param);
-		}
-		
-		Timer[4]->SR &= ~0x01;
-	}
-}
-#endif
-
-/**
- *******************************************************************************
- * @brief       timer5 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM5
-void TIM5_IRQHandler(void)
-{
-	if(Timer[5]->SR & 0x01)
-	{
-		if(!IS_PTR_NULL(TimerUpCallback[5].TimeOut))
-		{
-			TimerUpCallback[5].TimeOut(TimerUpCallback[5].Param);
-		}
-		
-		Timer[5]->SR &= ~0x01;
-	}
-}
-#endif
-
-/**
- *******************************************************************************
- * @brief       timer6 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM6
-void TIM6_IRQHandler(void)
-{
-	if(Timer[6]->SR & 0x01)
-	{
-		if(!IS_PTR_NULL(TimerUpCallback[6].TimeOut))
-		{
-			TimerUpCallback[6].TimeOut(TimerUpCallback[6].Param);
-		}
-		
-		Timer[6]->SR &= ~0x01;
-	}
-}
-#endif
-
-/**
- *******************************************************************************
- * @brief       timer7 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM7
-void TIM7_IRQHandler(void)
-{
-	if(Timer[7]->SR & 0x01)
-	{
-		if(!IS_PTR_NULL(TimerUpCallback[7].TimeOut))
-		{
-			TimerUpCallback[7].TimeOut(TimerUpCallback[7].Param);
-		}
-		
-		Timer[7]->SR &= ~0x01;
-	}
-}
-#endif
-
-/**
- *******************************************************************************
- * @brief       timer8 isr handle
- * @param       [in/out]  void
- * @return      [in/out]  void
- * @note        This function type is interrupt handle
- *******************************************************************************
- */
-#ifdef TIM8
-void TIM8_UP_IRQHandler(void)
-{
-	if(!IS_PTR_NULL(TimerUpCallback[8].TimeOut))
-	{
-		TimerUpCallback[8].TimeOut(TimerUpCallback[8].Param);
-	}
-
-	Timer[8]->SR &= ~0x01;
-}
-#endif
 
 /** @}*/     /** map timer component */
 

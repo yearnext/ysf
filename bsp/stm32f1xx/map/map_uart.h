@@ -51,22 +51,68 @@ extern "C"
     
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
+#ifdef USE_HAL_UART
 /**
  *******************************************************************************
- * @brief      define map uart api
+ * @brief       uart1 config
  *******************************************************************************
- */ 
-extern const struct Map_Uart_Opera map_uart_api;
+ */
+#ifdef USE_HAL_UART1
+#define UART1_BAUD_RATE                                      (115200)
+#define UART1_WORD_LENGTH                                    UART_WORDLENGTH_8B
+#define UART1_STOP_BITS                                      UART_STOPBITS_1
+#define UART1_PARITY                                         UART_PARITY_NONE
+#define UART1_MODE                                           UART_MODE_TX_RX
+#define UART1_HARDWARE_FLOW_CONTROL                          UART_HWCONTROL_NONE
+#endif
 
-/* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
- * @brief      define test api
+ * @brief       uart2 config
  *******************************************************************************
- */ 
-#ifdef USE_HAL_UNIT_TEST
-extern void Hal_Uart_Test(void);
+ */
+#ifdef USE_HAL_UART2
+#define UART2_BAUD_RATE                                      (115200)
+#define UART2_WORD_LENGTH                                    UART_WORDLENGTH_8B
+#define UART2_STOP_BITS                                      UART_STOPBITS_1
+#define UART2_PARITY                                         UART_PARITY_NONE
+#define UART2_MODE                                           UART_MODE_TX_RX
+#define UART2_HARDWARE_FLOW_CONTROL                          UART_HWCONTROL_NONE
+#endif
+
+/**
+ *******************************************************************************
+ * @brief       uart3 config
+ *******************************************************************************
+ */
+#ifdef USE_HAL_UART3  
+#define UART3_BAUD_RATE                                      (115200)
+#define UART3_WORD_LENGTH                                    UART_WORDLENGTH_8B
+#define UART3_STOP_BITS                                      UART_STOPBITS_1
+#define UART3_PARITY                                         UART_PARITY_NONE
+#define UART3_MODE                                           UART_MODE_TX_RX
+#define UART3_HARDWARE_FLOW_CONTROL                          UART_HWCONTROL_NONE
+#endif
+
+/**
+ *******************************************************************************
+ * @brief       uart4 config
+ *******************************************************************************
+ */
+#ifdef USE_HAL_UART4
+#define UART4_BAUD_RATE                                      (115200)
+#define UART4_WORD_LENGTH                                    UART_WORDLENGTH_8B
+#define UART4_STOP_BITS                                      UART_STOPBITS_1
+#define UART4_PARITY                                         UART_PARITY_NONE
+#define UART4_MODE                                           UART_MODE_TX_RX
+#define UART4_HARDWARE_FLOW_CONTROL                          UART_HWCONTROL_NONE
+#endif
+#endif
+
+/* Exported constants --------------------------------------------------------*/
+/* Exported functions --------------------------------------------------------*/
+#ifdef USE_HAL_UART
+extern const struct Hal_Interface Map_Uart_Interface;
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

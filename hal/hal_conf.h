@@ -62,12 +62,10 @@ extern "C"
  */
 #ifdef USE_HAL_DEBUG
     #include "fw_debug.h"
-    #define hal_param_check(expr)                               _FW_ASSERT(expr)
+    #define hal_assert(expr)                                    _FW_ASSERT(expr)
 #else
-    #define hal_param_check(expr)
+    #define hal_assert(expr)
 #endif
-    
-#define hal_assert(expr)                                   hal_param_check(expr)
    
 /**
  *******************************************************************************
@@ -115,7 +113,7 @@ extern "C"
  * @note STM32F107xC STM32F107RB, STM32F107VB, STM32F107RC, STM32F107VC
  *******************************************************************************
  */
-#define STM32F103xB
+#define STM32F103xE
 #define USE_HAL_DRIVER
 //#define USE_FULL_LL_DRIVER
 
@@ -198,6 +196,22 @@ extern "C"
 #define USE_HAL_SPI_COMPONENT
 
 #endif
+
+#define USE_HAL_UART
+#define USE_HAL_UART1
+#define USE_HAL_UART2
+#define USE_HAL_UART3
+#define USE_HAL_UART4
+
+#define USE_HAL_TIMER
+#define USE_HAL_TIMER1
+#define USE_HAL_TIMER2
+#define USE_HAL_TIMER3
+#define USE_HAL_TIMER4
+#define USE_HAL_TIMER5
+#define USE_HAL_TIMER6
+#define USE_HAL_TIMER7
+#define USE_HAL_TIMER8
 
 /**
  *******************************************************************************

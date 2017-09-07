@@ -526,7 +526,7 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>19</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\hal\hal_device.c</PathWithFileName>
@@ -593,8 +593,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\map\map_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>map_gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\map\map_uart.c</PathWithFileName>
+      <FilenameWithoutPath>map_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -605,8 +605,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\map\map_spi.c</PathWithFileName>
-      <FilenameWithoutPath>map_spi.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\map\map_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>map_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -622,18 +622,6 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>26</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\map\map_uart.c</PathWithFileName>
-      <FilenameWithoutPath>map_uart.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
   </Group>
 
   <Group>
@@ -644,7 +632,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>27</FileNumber>
+      <FileNumber>26</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -656,13 +644,25 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
+      <FileNumber>27</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
       <FileNumber>28</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_adc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_adc.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_adc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_adc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -673,8 +673,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_crc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_crc.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_adc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_adc_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -685,8 +685,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dac.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_dac.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_can.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_can.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -697,8 +697,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dma.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_dma.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_cec.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_cec.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -709,8 +709,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_exti.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_exti.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_cortex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_cortex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -721,8 +721,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_fsmc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_fsmc.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_crc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_crc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -733,8 +733,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_dac.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_dac.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -745,8 +745,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_i2c.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_i2c.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_dac_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_dac_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -757,8 +757,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_pwr.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_pwr.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_dma.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -769,8 +769,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rcc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_rcc.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_eth.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_eth.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -781,8 +781,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rtc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_rtc.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_flash.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_flash.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -793,8 +793,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_sdmmc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_sdmmc.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_flash_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_flash_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -805,8 +805,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_spi.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_spi.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -817,8 +817,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_tim.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_tim.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_gpio_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_gpio_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -829,8 +829,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usart.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_usart.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_hcd.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_hcd.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -841,8 +841,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usb.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_usb.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_i2c.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_i2c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -853,8 +853,284 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_utils.c</PathWithFileName>
-      <FilenameWithoutPath>stm32f1xx_ll_utils.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_i2s.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_i2s.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>45</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_irda.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_irda.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>46</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_iwdg.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_iwdg.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>47</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_mmc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_mmc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>48</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_nand.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_nand.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>49</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_nor.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_nor.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>50</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_pccard.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_pccard.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>51</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_pcd.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_pcd.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>52</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_pcd_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_pcd_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>53</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_pwr.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_pwr.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>54</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_rcc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_rcc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>55</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_rcc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_rcc_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>56</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_rtc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_rtc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>57</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_rtc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_rtc_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>58</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_sd.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_sd.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>59</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_smartcard.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_smartcard.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>60</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_spi.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_spi.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>61</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_spi_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_spi_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>62</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_sram.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_sram.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>63</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>1</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_tim.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_tim.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>64</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_tim_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_tim_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>65</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_uart.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_uart.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>66</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_usart.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_usart.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>67</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_wwdg.c</PathWithFileName>
+      <FilenameWithoutPath>stm32f1xx_hal_wwdg.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

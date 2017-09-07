@@ -152,13 +152,10 @@ enum _Hal_GPIO_Mode
  */ 
 typedef struct
 {
-    struct
-    {
-        uint8_t Port;
-        uint8_t Pin;
-        uint8_t Dir;
-        uint8_t Mode;
-    }Config;
+    uint8_t Port;
+    uint8_t Pin;
+    uint8_t Dir;
+    uint8_t Mode;
 }Hal_Device_GPIO;
 
 /**
@@ -168,40 +165,18 @@ typedef struct
  */ 
 struct Map_GPIO_Opera
 {
-    void (*Open)(uint8_t);
-    void (*Close)(uint8_t);
-    
     void (*Init)(uint8_t, uint8_t, uint8_t, uint8_t);
     void (*Fini)(uint8_t, uint8_t);
    
-    hal_err_t (*Write)(uint8_t, uint8_t, uint16_t, uint8_t);
+    hal_err_t (*Write)(uint8_t, uint8_t, uint16_t, uint16_t);
     hal_err_t (*Read)(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
     
     void (*Toggle)(uint8_t, uint8_t);
 };
 
-/* Exported constants --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      define hal gpio interface
- *******************************************************************************
- */ 
-#ifdef USE_HAL_DEVICE_COMPONENT
-extern const struct Hal_Interface Hal_GPIO_Interface;
-#endif
-
 /* Exported functions --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      define hal gpio interface
- *******************************************************************************
- */
-#if USE_GPIO_COMPONENT
-extern hal_err_t Hal_GPIO_Interface_Init(void*);
-extern hal_err_t Hal_GPIO_Interface_Fini(void*);
-extern hal_err_t Hal_GPIO_Interface_Control(void*, uint8_t, va_list);
-#endif
-
+extern void Hal_GPIO_InitComponent(void);
+    
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus
 }

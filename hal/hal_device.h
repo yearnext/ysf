@@ -107,6 +107,11 @@ enum _Hal_Control_Cmd
     HAL_DEVICE_PIN_TOGGLE_CMD,
 };
     
+enum _Hal_Device_Event
+{
+    HAL_DEVICE_TX_COMPLET_EVENT,
+};
+
 /**
  *******************************************************************************
  * @brief       hal device type enum
@@ -167,6 +172,8 @@ typedef enum
     HAL_DEVICE_ERR_CODE_LOCK,
     HAL_DEVICE_ERR_CODE_UNINIT,
     HAL_DEVICE_ERR_CODE_INITED,
+    HAL_DEVICE_ERR_CODE_UNREGISTER,
+    HAL_DEVICE_ERR_CODE_NOT_SUPPORT,
 }Hal_Device_ErrCode;
 
 /**
@@ -176,14 +183,30 @@ typedef enum
  */
 struct Hal_Interface
 {
-    hal_err_t (*Init)(void*);
+    void* (*Open)(char*);
+    
+    hal_err_t (*Init)(void*, uint32_t);
     hal_err_t (*Fini)(void*);
 
-    hal_err_t (*Write)(void*, uint8_t, uint8_t*, uint8_t);
-    hal_err_t (*Read)(void*, uint8_t, uint8_t*, uint8_t);
+    uint16_t (*Write)(void*, uint8_t, uint8_t*, uint16_t);
+    uint16_t (*Read)(void*, uint8_t, uint8_t*, uint16_t);
     
     hal_err_t (*Control)(void*, uint8_t, va_list);
 };
+
+typedef union
+{
+    struct
+    {
+        uint32_t Mode : 2;
+        uint32_t Channel : 2;
+        uint32_t Preiod : 14;
+        uint32_t Cycle : 14;
+    };
+    
+    uint32_t Flag;
+    void *Param;
+}hTimFlag;
 
 /**
  *******************************************************************************
@@ -194,7 +217,8 @@ typedef struct
 {
     void *Device;
     struct Hal_Interface *Interface;
-
+    uint32_t Flag;
+    
     Hal_Device_Lock_State Lock;
     Hal_Device_State      State;
     Hal_Device_ErrCode    ErrCode;
@@ -207,15 +231,21 @@ typedef struct
  * @brief       hal device opera interface
  *******************************************************************************
  */
-extern __INLINE hal_err_t Hal_Device_Register(Hal_Device_t*, void*, struct Hal_Interface*);
-extern __INLINE hal_err_t Hal_Device_Unregister(Hal_Device_t*);
-extern __INLINE hal_err_t Hal_Device_Init(Hal_Device_t*);
+extern hal_err_t Hal_Device_Register(uint8_t, struct Hal_Interface*);
+extern hal_err_t Hal_Device_Unregister(uint8_t);
+
+extern hal_err_t Hal_Device_Open(Hal_Device_t*, uint8_t, char*);
+extern hal_err_t Hal_Device_Froce_Open(Hal_Device_t*, uint8_t, void*);
+
+extern hal_err_t Hal_Device_Init(Hal_Device_t*, uint32_t);
 extern __INLINE hal_err_t Hal_Device_Fini(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Write(Hal_Device_t*, uint8_t, uint8_t*, uint8_t);
 extern __INLINE hal_err_t Hal_Device_Read(Hal_Device_t*, uint8_t, uint8_t*, uint8_t);
 extern __INLINE hal_err_t Hal_Device_Control(Hal_Device_t*, uint8_t, ...);
+
 extern __INLINE hal_err_t Hal_Device_Lock(Hal_Device_t*);
 extern __INLINE hal_err_t Hal_Device_Unlock(Hal_Device_t*);
+
 extern __INLINE uint8_t Hal_Device_GetErrCode(Hal_Device_t*);
 
 /* Add c++ compatibility------------------------------------------------------*/

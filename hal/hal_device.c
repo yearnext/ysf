@@ -38,82 +38,337 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_device.h"
+#include "fw_memory.h"
+#include "fw_linklist.h"
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+struct Hal_Device_Block
+{
+    struct
+    {
+        struct Hal_Device_Block *Last;
+        struct Hal_Device_Block *Next;
+    }LinkList;
+    
+    struct Hal_Interface *Interface;
+    uint8_t Type;
+};
+
+/**
+ *******************************************************************************
+ * @brief      timer control block
+ *******************************************************************************
+ */
+struct
+{
+    struct
+    {
+        struct Hal_Device_Block *Head;
+        struct Hal_Device_Block *Tail;
+    }LinkList;
+
+    uint8_t Num;
+}static DevMgr;
+
+/* Private functions ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief       device block find
+ * @param       [in/out]  type                              device type
+ * @return      [in/out]  struct Hal_Device_Block *         device block address
+ * @note        None
+ *******************************************************************************
+ */
+__STATIC_INLINE
+struct Hal_Device_Block *Hal_Device_Find(uint8_t type)
+{
+    struct Hal_Device_Block *dev = DevMgr.LinkList.Head;
+    
+    //< find device is in list
+    while(1)
+    {
+        if(dev->Type == type)
+        {
+            return dev;
+        }
+        
+        if(dev->LinkList.Next == NULL)
+        {
+            return NULL;
+        }
+        
+        dev = dev->LinkList.Next;
+    }
+}
+
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       device register opera
- * @param       [in/out]  *dev            device type
+ * @param       [in/out]  type            device type
+ * @param       [in/out]  *interface      device interface
  * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
-__INLINE
-hal_err_t Hal_Device_Register(Hal_Device_t *dev, void *device, struct Hal_Interface *interface)
+hal_err_t Hal_Device_Register(uint8_t type, struct Hal_Interface *interface)
 {
-    hal_assert(IS_PTR_NULL(dev));
+    struct Hal_Device_Block *dev = DevMgr.LinkList.Head;
+    struct Hal_Device_Block *newDev;
     
-    dev->Device = device;
-    dev->Interface = interface;
+    //< find device is in list
+    while(1)
+    {
+        if(dev->Type == type)
+        {
+            return HAL_ERR_NONE;
+        }
+        
+        if(dev->LinkList.Next == NULL)
+        {
+            break;
+        }
+        
+        dev = dev->LinkList.Next;
+    }
     
+    //< alloc memory
+    newDev = Fw_Mem_Alloc(sizeof(struct Hal_Device_Block));
+    
+    if(IS_PTR_NULL(newDev))
+    {
+        return HAL_ERR_FAIL;
+    }
+    
+    //< add node to list
+    newDev->Interface = interface;
+    newDev->Type      = type;
+    
+    if (Fw_dLinkList_Push((struct Fw_dLinkList_Block *)&DevMgr.LinkList,
+                          (struct Fw_dLinkList *)&newDev->LinkList)
+        == FW_ERR_NONE)
+    {
+        if(DevMgr.Num < 0xFF)
+        {
+            DevMgr.Num++;
+        }
+    }
+
     return HAL_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       device unregister opera
- * @param       [in/out]  *dev            device type
+ * @param       [in/out]  type            device type
  * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
-__INLINE 
-hal_err_t Hal_Device_Unregister(Hal_Device_t *dev)
+hal_err_t Hal_Device_Unregister(uint8_t type)
 {
-    hal_assert(IS_PTR_NULL(dev));
-
-    dev->Device = NULL;
-    dev->Interface = NULL;
+    struct Hal_Device_Block *dev = DevMgr.LinkList.Head;
     
+    //< find device is in list
+    while(1)
+    {
+        if(dev->Type == type)
+        {
+            break;
+        }
+        
+        if(dev->LinkList.Next == NULL)
+        {
+            return HAL_ERR_FAIL;
+        }
+        
+        dev = dev->LinkList.Next;
+    }
+
+    if (Fw_dLinkList_Remove((struct Fw_dLinkList_Block *)&DevMgr.LinkList,
+                            (struct Fw_dLinkList *)&dev->LinkList)
+        == FW_ERR_NONE)
+    {
+        if(DevMgr.Num > 0)
+        {
+            DevMgr.Num--;
+        }
+    }
+    
+    Fw_Mem_Free(dev);
+
     return HAL_ERR_NONE;
 }
 
 /**
  *******************************************************************************
  * @brief       device open opera
- * @param       [in/out]  *dev            device type
+ * @param       [in/out]  *dev            device block
+ * @param       [in/out]  type            device type
+ * @param       [in/out]  *param          param body
  * @return      [in/out]  HAL_ERR_NONE    result
  * @note        None
  *******************************************************************************
  */
-__INLINE
-hal_err_t Hal_Device_Init(Hal_Device_t *dev)
+hal_err_t Hal_Device_Froce_Open(Hal_Device_t *dev, uint8_t type, void *param)
 {
     hal_assert(IS_PTR_NULL(dev));
     
+    struct Hal_Device_Block *devBlock;
+        
+    //< check device is lock
     if(dev->Lock == HAL_DEVICE_LOCK)
     {
         dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
         return HAL_ERR_FAIL;
     }
     
+    //< check device is init
     if(dev->State == HAL_DEVICE_INIT_STATE)
     {
         dev->ErrCode = HAL_DEVICE_ERR_CODE_INITED;
         return HAL_ERR_FAIL;
     }
     
+    //< get device block
+    Hal_Device_Lock(dev);
+    
+    devBlock = Hal_Device_Find(type);
+
+    if(IS_PTR_NULL(devBlock))
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_UNREGISTER;
+        goto _DEVICE_OPTION_FAIL;
+    }
+    
+    //< open device
+    dev->Interface = devBlock->Interface;
+    dev->Device    = param;
+    
+    Hal_Device_Unlock(dev);
+    
+    return HAL_ERR_NONE;
+    
+_DEVICE_OPTION_FAIL:
+    Hal_Device_Unlock(dev);
+    
+    return HAL_ERR_FAIL;
+}
+
+/**
+ *******************************************************************************
+ * @brief       device open opera
+ * @param       [in/out]  *dev            device block
+ * @param       [in/out]  type            device type
+ * @param       [in/out]  *name           device name
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t Hal_Device_Open(Hal_Device_t *dev, uint8_t type, char *name)
+{
+    hal_assert(IS_PTR_NULL(dev));
+    
+    struct Hal_Device_Block *devBlock;
+        
+    //< check device is lock
+    if(dev->Lock == HAL_DEVICE_LOCK)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
+        return HAL_ERR_FAIL;
+    }
+    
+    //< check device is init
+    if(dev->State == HAL_DEVICE_INIT_STATE)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_INITED;
+        return HAL_ERR_FAIL;
+    }
+    
+    //< get device block
+    Hal_Device_Lock(dev);
+    
+    devBlock = Hal_Device_Find(type);
+
+    if(IS_PTR_NULL(devBlock))
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_UNREGISTER;
+        goto _DEVICE_OPTION_FAIL;
+    }
+    
+    //< open device
+    dev->Interface = devBlock->Interface;
+    
+    if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Open))
+    {
+        dev->Device = dev->Interface->Open(name);
+        
+        if(IS_PTR_NULL(dev->Device))
+        {
+            dev->ErrCode = HAL_DEVICE_ERR_CODE_NOT_SUPPORT;
+            goto _DEVICE_OPTION_FAIL;
+        }
+    }
+    else
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_NOT_SUPPORT;
+        goto _DEVICE_OPTION_FAIL;
+    }
+    
+    Hal_Device_Unlock(dev);
+    
+    return HAL_ERR_NONE;
+    
+_DEVICE_OPTION_FAIL:
+    Hal_Device_Unlock(dev);
+    
+    return HAL_ERR_FAIL;
+}
+
+/**
+ *******************************************************************************
+ * @brief       device open opera
+ * @param       [in/out]  *dev            device type
+ * @param       [in/out]  flag            device config flag
+ * @return      [in/out]  HAL_ERR_NONE    result
+ * @note        None
+ *******************************************************************************
+ */
+hal_err_t Hal_Device_Init(Hal_Device_t *dev, uint32_t flag)
+{
+    hal_assert(IS_PTR_NULL(dev));
+
+    //< check device is lock
+    if(dev->Lock == HAL_DEVICE_LOCK)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_LOCK;
+        return HAL_ERR_FAIL;
+    }
+    
+    //< check device is init
+    if(dev->State == HAL_DEVICE_INIT_STATE)
+    {
+        dev->ErrCode = HAL_DEVICE_ERR_CODE_INITED;
+        return HAL_ERR_FAIL;
+    }
+    
+    Hal_Device_Lock(dev);
+    
+    //< init device
+    dev->Flag = flag;
+    
     if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Init))
     {
-        dev->Interface->Init(dev->Device);
+        dev->Interface->Init(dev->Device, dev->Flag);
         
         dev->State = HAL_DEVICE_INIT_STATE;
     }
+    
+    Hal_Device_Unlock(dev);
     
     return HAL_ERR_NONE;
 }
@@ -130,6 +385,7 @@ __INLINE
 hal_err_t Hal_Device_Fini(Hal_Device_t *dev)
 {
     hal_assert(IS_PTR_NULL(dev));
+    hal_err_t flag;
     
     if(dev->Lock == HAL_DEVICE_LOCK)
     {
@@ -145,7 +401,15 @@ hal_err_t Hal_Device_Fini(Hal_Device_t *dev)
     
     if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Fini))
     {
-        return dev->Interface->Fini(dev->Device);
+        Hal_Device_Lock(dev);
+        
+        flag = dev->Interface->Fini(dev->Device);
+        
+        dev->State = HAL_DEVICE_UNINIT_STATE;
+        
+        Hal_Device_Unlock(dev);
+        
+        return flag;
     }
     
     return HAL_ERR_NONE;
@@ -181,7 +445,11 @@ hal_err_t Hal_Device_Write(Hal_Device_t *dev, uint8_t pos, uint8_t *buf, uint8_t
     
     if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Write))
     {
+        Hal_Device_Lock(dev);
+        
         dev->Interface->Write(dev->Device, pos, buf, size);
+        
+        Hal_Device_Unlock(dev);
     }
     
     return HAL_ERR_NONE;
@@ -217,7 +485,11 @@ hal_err_t Hal_Device_Read(Hal_Device_t *dev, uint8_t pos, uint8_t *buf, uint8_t 
     
     if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Read))
     {
+        Hal_Device_Lock(dev);
+        
         dev->Interface->Read(dev->Device, pos, buf, size);
+        
+        Hal_Device_Unlock(dev);
     }
     
     return HAL_ERR_NONE;
@@ -254,9 +526,13 @@ hal_err_t Hal_Device_Control(Hal_Device_t *dev, uint8_t cmd, ...)
     
     if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Control))
     {
+        Hal_Device_Lock(dev);
+        
         va_start(args, cmd);
         retValue = dev->Interface->Control(dev->Device, cmd, args);
         va_end(args);
+        
+        Hal_Device_Unlock(dev);
         
         return retValue;
     }
