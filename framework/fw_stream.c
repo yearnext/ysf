@@ -71,7 +71,7 @@ __INLINE void Fw_Stream_Init(struct Fw_Stream *stream)
     //< init hardware
     if(!IS_PTR_NULL(stream->Device))
     {
-        Hal_Device_Init(stream->Device);
+        Hal_Device_Init(stream->Device, 0);
     }
 }
 

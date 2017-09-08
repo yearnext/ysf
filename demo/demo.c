@@ -26,26 +26,13 @@
 #include "map_uart.h"
 
 /* Private define ------------------------------------------------------------*/
+#define LED_PORT MCU_PORT_D
+#define LED_PIN  MCU_PIN_13
+#define LED_MODE GPIO_DIR_OUTPUT
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief       device port define
- *******************************************************************************
- */  
-static Hal_Device_GPIO LedPort = 
-{
-    .Config.Port = MCU_PORT_D,
-    .Config.Pin  = MCU_PIN_13,
-    .Config.Dir  = GPIO_DIR_HS_OUTPUT,
-    .Config.Mode = GPIO_PUSH_PULL_MODE,
-};
- 
-static Hal_Device_t Led = 
-{
-    .Device = (void *)&LedPort,
-    .Interface = (struct Hal_Interface *)&Hal_GPIO_Interface,
-};
+static Hal_Device_t Led;
 
 /**
  *******************************************************************************
@@ -69,7 +56,8 @@ void Led_Task_Handle(uint32_t event, void *param);
 
 void App_Led_Init(void)
 {
-    Hal_Device_Init(&Led);
+    Hal_Device_Open(&Led, HAL_DEVICE_GPIO, "led");
+    Hal_Device_Init(&Led, LED_PORT | LED_PIN | LED_MODE);
     
     Fw_Task_Init(&LedTask, "Led Task", 1, (void *)Led_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
     

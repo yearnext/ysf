@@ -204,14 +204,7 @@ extern "C"
 #define USE_HAL_UART4
 
 #define USE_HAL_TIMER
-#define USE_HAL_TIMER1
-#define USE_HAL_TIMER2
-#define USE_HAL_TIMER3
-#define USE_HAL_TIMER4
-#define USE_HAL_TIMER5
-#define USE_HAL_TIMER6
-#define USE_HAL_TIMER7
-#define USE_HAL_TIMER8
+#define USE_HAL_TIMER0
 
 /**
  *******************************************************************************

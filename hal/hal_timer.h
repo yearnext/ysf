@@ -73,114 +73,14 @@ extern "C"
 #endif
 
 /* Exported types ------------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      define mcu timer id
- *******************************************************************************
- */ 
-enum _Hal_Timer_Port
-{
-    MCU_TICK_TIMER = 0,
-    MCU_TIMER_1,
-    MCU_TIMER_2,
-    MCU_TIMER_3,
-    MCU_TIMER_4,
-    MCU_TIMER_5,
-    MCU_TIMER_6,
-    MCU_TIMER_7,
-    MCU_TIMER_8,
-    MCU_TIMER_9,
-    MCU_TIMER_10,
-    MCU_TIMER_11,
-    MCU_TIMER_12,
-    MCU_TIMER_13,
-    MCU_TIMER_14,
-    MCU_TIMER_15,
-    MCU_TIMER_16,
-    MCU_TIMER_17,
-};
-
-/**
- *******************************************************************************
- * @brief      define timer mode
- *******************************************************************************
- */ 
-enum _Hal_Timer_Mode
-{
-	MCU_TIMER_TICK_MODE,
-	MCU_TIMER_TIME_MODE,
-	MCU_TIMER_PWM_OUTPUT_MODE,
-	MCU_TIMER_PWM_INTPUT_MODE,
-};
-
-/**
- *******************************************************************************
- * @brief      define map deivce timer structure
- *******************************************************************************
- */ 
-typedef struct
-{
-    struct
-    {
-        uint8_t Port;
-        uint8_t Group;
-        uint8_t Channel;
-        uint8_t Priority;
-        uint8_t Mode;
-        
-        uint8_t IsEnableIsr;
-        uint8_t IsInitTimerBase;
-        
-        uint16_t Period;
-        uint16_t Prescaler;
-        uint16_t Duty;
-        
-        Hal_Device_t *Pin;
-    }Config;
-    
-    Hal_Callback_t Callback;
-}Hal_Device_Timer;
-
-/**
- *******************************************************************************
- * @brief      define mcu application pack timer opera interface
- *******************************************************************************
- */ 
-struct Map_Timer_Opera
-{
-    void (*Open)(uint8_t);
-    void (*Close)(uint8_t);
-    
-    void (*Init)(uint8_t, void*);
-    void (*Fini)(uint8_t);
-    
-    void (*SetTimeOutCallback)(uint8_t, void (*)(void*), void*);
-    
-    void (*Start)(uint8_t);
-    void (*Stop)(uint8_t);
-};
-
 /* Exported constants --------------------------------------------------------*/
-/**
- *******************************************************************************
- * @brief      define common uart option interface
- *******************************************************************************
- */ 
-#ifdef USE_HAL_DEVICE_COMPONENT
-extern const struct Hal_Interface Hal_Timer_Interface;
-#endif
-
 /* Exported functions --------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief      define hal timer interface
  *******************************************************************************
  */
-#if USE_TIMER_COMPONENT
-extern hal_err_t Hal_Timer_Interface_Init(void*);
-extern hal_err_t Hal_Timer_Interface_Fini(void*);
-extern hal_err_t Hal_Timer_Interface_Control(void*, uint8_t, va_list);
-#endif
+extern void Hal_Timer_InitComponent(void);
 
 /* Add c++ compatibility------------------------------------------------------*/
 #ifdef __cplusplus

@@ -165,10 +165,10 @@ typedef struct
  */ 
 struct Map_GPIO_Opera
 {
-    void (*Init)(uint8_t, uint8_t, uint8_t, uint8_t);
+    void (*Init)(uint8_t, uint8_t, uint8_t);
     void (*Fini)(uint8_t, uint8_t);
    
-    hal_err_t (*Write)(uint8_t, uint8_t, uint16_t, uint16_t);
+    hal_err_t (*Write)(uint8_t, uint8_t, uint16_t, uint8_t);
     hal_err_t (*Read)(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
     
     void (*Toggle)(uint8_t, uint8_t);

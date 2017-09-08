@@ -46,7 +46,7 @@
  * @brief      define map api
  *******************************************************************************
  */ 
-void Map_GPIO_Init(uint8_t, uint8_t, uint8_t, uint8_t);
+void Map_GPIO_Init(uint8_t, uint8_t, uint8_t);
 void Map_GPIO_Fini(uint8_t, uint8_t);
 hal_err_t Map_GPIO_Write(uint8_t, uint8_t, uint16_t, uint8_t);
 hal_err_t Map_GPIO_Read(uint8_t, uint8_t, uint8_t, uint16_t*, uint8_t);
@@ -228,63 +228,21 @@ void _config(uint8_t port, uint8_t pin, uint8_t mode)
  * @note        None
  *******************************************************************************
  */
-void Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t dir, uint8_t mode)
+void Map_GPIO_Init(uint8_t port, uint8_t pin, uint8_t dir)
 {
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
 
-	uint8_t setMode = 0x00;
+	uint8_t setMode;
     
     //< set gpio dir param
-    if(dir == GPIO_DIR_LS_OUTPUT)
+    if(dir == GPIO_DIR_OUTPUT)
     {
         setMode = 0x01;
     }
-    else if(dir == GPIO_DIR_MS_OUTPUT)
-    {
-        setMode = 0x02;
-    }
-    else if(dir == GPIO_DIR_HS_OUTPUT)
-    {
-        setMode = 0x03;
-    }
     else
     {
-        //<  do nothing!
-    }
-    
-    //< set gpio mode
-    if(mode == GPIO_ANALOG_MODE)
-    {
-        setMode |= 0x00;
-    }
-    else if(mode == GPIO_FLOAT_MODE)
-    {
-        setMode |= 0x04;
-    }
-    else if(mode == GPIO_PULL_UP_DOWN_MODE)
-    {
-        setMode |= 0x08;
-    }
-    else if(mode == GPIO_PUSH_PULL_MODE)
-    {
-        setMode |= 0x00;
-    }
-    else if(mode == GPIO_OPEN_DRAIN_MODE)
-    {
-        setMode |= 0x04;
-    }
-    else if(mode == GPIO_AF_PUSH_PULL_MODE)
-    {
-        setMode |= 0x08;
-    }
-    else if(mode == GPIO_AF_OPEN_DRAIN_MODE)
-    {
-        setMode |= 0x0C;
-    }
-    else
-    {
-        //< do nothing!
+        setMode = 0x08;
     }
     
     //< init port

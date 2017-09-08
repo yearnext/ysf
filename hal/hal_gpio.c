@@ -47,15 +47,16 @@
  *******************************************************************************
  */ 
 #ifdef USE_HAL_DEVICE_COMPONENT
-hal_err_t Hal_GPIO_Init(void*, uint32_t);
-hal_err_t Hal_GPIO_Fini(void*);
-uint16_t Hal_GPIO_Write(void *dev, uint8_t, uint8_t*, uint16_t);
-uint16_t Hal_GPIO_Read(void *dev, uint8_t, uint8_t*, uint16_t);
-hal_err_t Hal_GPIO_Control(void*, uint8_t, va_list);
+static void *Hal_GPIO_Find(char *name);
+static hal_err_t Hal_GPIO_Init(void*, uint32_t);
+static hal_err_t Hal_GPIO_Fini(void*);
+static uint16_t Hal_GPIO_Write(void *dev, uint8_t, uint8_t*, uint16_t);
+static uint16_t Hal_GPIO_Read(void *dev, uint8_t, uint8_t*, uint16_t);
+static hal_err_t Hal_GPIO_Control(void*, uint8_t, va_list);
 
 const struct Hal_Interface Hal_GPIO_Interface = 
 {
-    .Open = NULL,
+    .Open = Hal_GPIO_Find,
     
     .Init = Hal_GPIO_Init,
     .Fini = Hal_GPIO_Fini,
@@ -81,15 +82,21 @@ static const struct Map_GPIO_Opera *map_api = (struct Map_GPIO_Opera *)&map_gpio
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 #if USE_GPIO_COMPONENT
+static void *Hal_GPIO_Find(char *name)
+{
+    return NULL;
+}
+
 static hal_err_t Hal_GPIO_Init(void *dev, uint32_t flag)
 {
     hal_assert(IS_PTR_NULL(dev));
     
-    Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)dev;
+    hPortFlag portFlag;
+    portFlag.Flag = flag;
     
     if(!IS_PTR_NULL(map_api->Init))
     {
-        map_api->Init(gpio->Port, gpio->Pin, gpio->Dir, gpio->Mode);
+        map_api->Init(portFlag.Port, portFlag.Pin, portFlag.Dir);
     }
     else
     {

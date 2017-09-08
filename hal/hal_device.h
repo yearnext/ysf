@@ -78,6 +78,7 @@ enum _Hal_Control_Cmd
     
     HAL_DEVICE_SET_TX_CALLBACK_CMD,
     HAL_DEVICE_SET_RX_CALLBACK_CMD,
+    HAL_DEVICE_SET_CALLBACK_CMD,
         
     //< hal device gpio cmd
     HAL_GPIO_SET_BIT_CMD,
@@ -208,6 +209,20 @@ typedef union
     void *Param;
 }hTimFlag;
 
+typedef union
+{
+    struct
+    {
+        uint32_t Port : 4;
+        uint32_t Pin : 4;
+        uint32_t Dir : 1;
+        uint32_t : 23;
+    };
+    
+    uint32_t Flag;
+    void *Param;
+}hPortFlag;
+
 /**
  *******************************************************************************
  * @brief       hal device type structure
@@ -231,6 +246,8 @@ typedef struct
  * @brief       hal device opera interface
  *******************************************************************************
  */
+extern void Hal_Device_InitComponent(void);
+
 extern hal_err_t Hal_Device_Register(uint8_t, struct Hal_Interface*);
 extern hal_err_t Hal_Device_Unregister(uint8_t);
 

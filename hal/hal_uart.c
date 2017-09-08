@@ -47,13 +47,12 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
+#ifdef USE_HAL_UART
 void Hal_Uart_InitComponent(void)
 {
-#ifdef USE_HAL_UART
-    Hal_Device_Register(HAL_DEVICE_UART, (struct Hal_Interface *)&Map_Uart_Interface);
-#endif
+    Map_Uart_InitComponent();
 }
-    
+#endif
 
 /** @}*/     /** hal uart component */
 

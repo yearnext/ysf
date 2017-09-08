@@ -112,7 +112,7 @@ extern "C"
 /* Exported constants --------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 #ifdef USE_HAL_UART
-extern const struct Hal_Interface Map_Uart_Interface;
+extern void Map_Uart_InitComponent(void);
 #endif
 
 /* Add c++ compatibility------------------------------------------------------*/

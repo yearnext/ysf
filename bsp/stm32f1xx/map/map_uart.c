@@ -115,7 +115,7 @@ const struct Hal_Interface Map_Uart_Interface =
 
 /* Private define ------------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
 /**
  *******************************************************************************
  * @brief       device option api
@@ -677,6 +677,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     return;
 }
 #endif
+
+/* Exported functions --------------------------------------------------------*/
+void Map_Uart_InitComponent(void)
+{
+    Hal_Device_Register(HAL_DEVICE_UART, (struct Hal_Interface *)&Map_Uart_Interface);
+}
 
 /** @}*/     /** map uart component */
 

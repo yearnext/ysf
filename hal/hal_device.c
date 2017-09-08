@@ -41,6 +41,10 @@
 #include "fw_memory.h"
 #include "fw_linklist.h"
 
+#include "hal_gpio.h"
+#include "hal_timer.h"
+#include "hal_uart.h"
+
 /* Exported constants --------------------------------------------------------*/
 /* Exported variables --------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -306,12 +310,6 @@ hal_err_t Hal_Device_Open(Hal_Device_t *dev, uint8_t type, char *name)
     if(!IS_PTR_NULL(dev->Interface) && !IS_PTR_NULL(dev->Interface->Open))
     {
         dev->Device = dev->Interface->Open(name);
-        
-        if(IS_PTR_NULL(dev->Device))
-        {
-            dev->ErrCode = HAL_DEVICE_ERR_CODE_NOT_SUPPORT;
-            goto _DEVICE_OPTION_FAIL;
-        }
     }
     else
     {
@@ -594,6 +592,13 @@ uint8_t Hal_Device_GetErrCode(Hal_Device_t *dev)
     dev->ErrCode = HAL_DEVICE_ERR_CODE_NONE;
     
     return errCode;
+}
+
+void Hal_Device_InitComponent(void)
+{
+    Hal_GPIO_InitComponent();
+    Hal_Uart_InitComponent();
+    Hal_Timer_InitComponent();
 }
 
 /** @}*/     /** hal device component */
