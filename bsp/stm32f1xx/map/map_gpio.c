@@ -264,7 +264,7 @@ void Map_GPIO_Fini(uint8_t port, uint8_t pin)
     hal_assert(IS_PORT_NUM_INVAILD(port));
     hal_assert(IS_PIN_NUM_INVAILD(pin));
     
-    _config(port, pin, GPIO_INIT_MODE);
+    _config(port, pin, 0x00);
 }
 
 /**

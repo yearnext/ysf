@@ -22,16 +22,24 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "fw_core.h"
-#include "hal_core.h"
-#include "map_uart.h"
 
 /* Private define ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define led port and mode
+ *******************************************************************************
+ */  
 #define LED_PORT MCU_PORT_D
 #define LED_PIN  MCU_PIN_13
-#define LED_MODE GPIO_DIR_OUTPUT
+#define LED_DIR  GPIO_DIR_OUTPUT
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define led device
+ *******************************************************************************
+ */  
 static Hal_Device_t Led;
 
 /**
@@ -56,8 +64,13 @@ void Led_Task_Handle(uint32_t event, void *param);
 
 void App_Led_Init(void)
 {
+    hPortFlag portConfig;
+    portConfig.Port = LED_PORT;
+    portConfig.Pin  = LED_PIN;
+    portConfig.Dir  = LED_DIR;
+        
     Hal_Device_Open(&Led, HAL_DEVICE_GPIO, "led");
-    Hal_Device_Init(&Led, LED_PORT | LED_PIN | LED_MODE);
+    Hal_Device_Init(&Led, portConfig.Flag);
     
     Fw_Task_Init(&LedTask, "Led Task", 1, (void *)Led_Task_Handle, FW_MESSAGE_HANDLE_TYPE_TASK);
     
@@ -86,16 +99,22 @@ void Led_Task_Handle(uint32_t event, void *param)
     }
 }
 
-void App_Put_Callback(void *param)
-{
-    log("Hello World!\r\n");
-}
-
+/**
+ *******************************************************************************
+ * @brief       led1 blink function
+ *******************************************************************************
+ */
+void App_Put_Callback(void *param);
 void App_Put_Init(void)
 {
     Fw_Timer_Init(&PutTimer, "Put User Message Timer");
     Fw_Timer_SetCallback(&PutTimer, App_Put_Callback, NULL);
     Fw_Timer_Start(&PutTimer, 1000, -1);
+}
+
+void App_Put_Callback(void *param)
+{
+    log("Hello World!\r\n");
 }
 
 /**

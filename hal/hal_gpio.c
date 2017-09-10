@@ -110,11 +110,12 @@ static hal_err_t Hal_GPIO_Fini(void *dev)
 {
     hal_assert(IS_PTR_NULL(dev));
     
-    Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)dev;
+    hPortFlag portFlag;
+    portFlag.Flag = ((Hal_Device_t *)dev)->Flag;
 
     if(!IS_PTR_NULL(map_api->Fini))
     {
-        map_api->Fini(gpio->Port, gpio->Pin);
+        map_api->Fini(portFlag.Port, portFlag.Pin);
     }
     else
     {
@@ -130,11 +131,12 @@ static uint16_t Hal_GPIO_Write(void *dev, uint8_t pos, uint8_t *buf, uint16_t si
     hal_assert(IS_PTR_NULL(buf));
     hal_assert(IS_PARAM_ZERO(size));
     
-    Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)dev;
+    hPortFlag portFlag;
+    portFlag.Flag = ((Hal_Device_t *)dev)->Flag;
     
     if(!IS_PTR_NULL(map_api->Write))
     {
-        map_api->Write(gpio->Port, gpio->Pin, (uint16_t)*buf, size);
+        map_api->Write(portFlag.Port, portFlag.Pin, (uint16_t)*buf, size);
     }
     else
     {
@@ -150,11 +152,12 @@ static uint16_t Hal_GPIO_Read(void *dev, uint8_t pos, uint8_t *buf, uint16_t siz
     hal_assert(IS_PTR_NULL(buf));
     hal_assert(IS_PARAM_ZERO(size));
     
-    Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)dev;
+    hPortFlag portFlag;
+    portFlag.Flag = ((Hal_Device_t *)dev)->Flag;
     
     if(!IS_PTR_NULL(map_api->Read))
     {
-        map_api->Read(gpio->Port, gpio->Pin, pos, (uint16_t *)buf, size);
+        map_api->Read(portFlag.Port, portFlag.Pin, pos, (uint16_t *)buf, size);
     }
     else
     {
@@ -200,7 +203,8 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
 {
     hal_assert(IS_PTR_NULL(dev));
     
-    Hal_Device_GPIO *gpio = (Hal_Device_GPIO *)dev;
+    hPortFlag portFlag;
+    portFlag.Flag = ((Hal_Device_t *)dev)->Flag;
     
     switch(cmd)
     {
@@ -208,7 +212,7 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Write))
             {
-                map_api->Write(gpio->Port, gpio->Pin, 1, 1);
+                map_api->Write(portFlag.Port, portFlag.Pin, 1, 1);
             }
             else
             {
@@ -220,7 +224,7 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Write))
             {
-                map_api->Write(gpio->Port, gpio->Pin, 0, 1);
+                map_api->Write(portFlag.Port, portFlag.Pin, 0, 1);
             }
             else
             {
@@ -234,7 +238,7 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
             {
                 uint16_t value = (uint16_t)va_arg(args, int);
                 uint16_t num = (uint16_t)va_arg(args, int);
-                map_api->Write(gpio->Port, gpio->Pin, value, num);
+                map_api->Write(portFlag.Port, portFlag.Pin, value, num);
             }
             else
             {
@@ -249,7 +253,7 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
                 uint8_t dir = *va_arg(args, uint8_t *);
                 uint16_t *value = va_arg(args, uint16_t *);
                 uint16_t num = *va_arg(args, uint16_t *);
-                map_api->Read(gpio->Port, gpio->Pin, dir, value, 1);
+                map_api->Read(portFlag.Port, portFlag.Pin, dir, value, 1);
             }
             else
             {
@@ -262,7 +266,7 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
             if(!IS_PTR_NULL(map_api->Read))
             {
                 uint16_t *status = va_arg(args, uint16_t *);
-                map_api->Read(gpio->Port, gpio->Pin, GPIO_DIR_INTPUT, status, 1); 
+                map_api->Read(portFlag.Port, portFlag.Pin, GPIO_DIR_INTPUT, status, 1); 
             }
             else
             {
@@ -275,7 +279,7 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
             if(!IS_PTR_NULL(map_api->Read))
             {
                 uint16_t *status = va_arg(args, uint16_t *);
-                map_api->Read(gpio->Port, gpio->Pin, GPIO_DIR_INTPUT, status, 1); 
+                map_api->Read(portFlag.Port, portFlag.Pin, GPIO_DIR_INTPUT, status, 1); 
             }
             else
             {
@@ -287,7 +291,7 @@ static hal_err_t Hal_GPIO_Control(void *dev, uint8_t cmd, va_list args)
         {
             if(!IS_PTR_NULL(map_api->Toggle))
             {
-                map_api->Toggle(gpio->Port, gpio->Pin); 
+                map_api->Toggle(portFlag.Port, portFlag.Pin); 
             }
             else
             {

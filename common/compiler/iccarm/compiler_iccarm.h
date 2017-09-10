@@ -62,17 +62,6 @@ extern "C"
 #define __FUNCNAME__            __func__
 #endif
 
-///**
-// *******************************************************************************
-// * @brief      DEFINE MCU HEAP ADDRESS
-// *******************************************************************************
-// */
-////#pragma section="HEAP"
-////
-////#define MCU_HEAP_HEAD_ADDR    (__segment_end("HEAP"))
-////#define MCU_HEAP_TAIL_ADDR    (MCU_SRAM_END_ADDR)
-////#define MCU_HEAP_SIZE         (MCU_HEAP_TAIL_ADDR - (uint32_t)MCU_HEAP_HEAD_ADDR) 
-
 /**
  *******************************************************************************
  * @brief      define compiler pragma cmd
@@ -184,6 +173,15 @@ extern "C"
 #ifndef __ATOM_ACTIVE_END
 #define __ATOM_ACTIVE_END()     __EXIT_CRITICAL()
 #endif
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU HEAP ADDRESS
+ *******************************************************************************
+ */
+#pragma section="HEAP"
+
+#define __HEAP_HEAD_ADDR                                 (__segment_end("HEAP"))
 
 /**
  *******************************************************************************

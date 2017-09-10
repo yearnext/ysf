@@ -2379,6 +2379,15 @@
             </file>
         </group>
         <group>
+            <name>pipeline</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_pipe.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\framework\fw_pipe.h</name>
+            </file>
+        </group>
+        <group>
             <name>protothread</name>
             <file>
                 <name>$PROJ_DIR$\..\..\framework\fw_pt.c</name>
@@ -2398,15 +2407,6 @@
         </group>
         <group>
             <name>stream</name>
-            <group>
-                <name>fifostream</name>
-                <file>
-                    <name>$PROJ_DIR$\..\..\framework\fw_fifostream.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\framework\fw_fifostream.h</name>
-                </file>
-            </group>
             <file>
                 <name>$PROJ_DIR$\..\..\framework\fw_stream.c</name>
             </file>
@@ -2475,15 +2475,6 @@
             </file>
         </group>
         <group>
-            <name>spi</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\hal\hal_spi.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\hal\hal_spi.h</name>
-            </file>
-        </group>
-        <group>
             <name>timer</name>
             <file>
                 <name>$PROJ_DIR$\..\..\hal\hal_timer.c</name>
@@ -2516,15 +2507,6 @@
                 </file>
             </group>
             <group>
-                <name>spi</name>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_spi.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_spi.h</name>
-                </file>
-            </group>
-            <group>
                 <name>timer</name>
                 <file>
                     <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\map\map_timer.c</name>
@@ -2548,124 +2530,40 @@
             <group>
                 <name>lib</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\stm32f1xx.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_adc.c</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_cortex.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_adc.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_dma.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_bus.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_gpio.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_cortex.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_gpio_ex.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_crc.c</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_rcc.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_crc.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_rcc_ex.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dac.c</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_spi.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dac.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_tim.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dma.c</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_tim_ex.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_dma.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_uart.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_exti.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_exti.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_fsmc.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_fsmc.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_gpio.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_gpio.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_i2c.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_i2c.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_iwdg.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_pwr.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_pwr.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rcc.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rcc.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rtc.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_rtc.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_sdmmc.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_sdmmc.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_spi.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_spi.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_system.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_tim.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_tim.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usart.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usart.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usb.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_usb.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_utils.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_utils.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\ll_lib\stm32f1xx_ll_wwdg.h</name>
+                    <name>$PROJ_DIR$\..\..\bsp\stm32f1xx\msp\hal_lib\stm32f1xx_hal_usart.c</name>
                 </file>
             </group>
             <group>

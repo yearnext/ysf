@@ -52,6 +52,11 @@ extern "C"
 /* Exported macro ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
+/**
+ *******************************************************************************
+ * @brief      define hal control cmd
+ *******************************************************************************
+ */  
 enum _Hal_Control_Cmd
 {
     //< hal device common cmd
@@ -108,6 +113,101 @@ enum _Hal_Control_Cmd
     HAL_DEVICE_PIN_TOGGLE_CMD,
 };
     
+/**
+ *******************************************************************************
+ * @brief      define gpio port
+ *******************************************************************************
+ */  
+enum _Hal_GPIO_Port
+{
+	MCU_PORT_A = 0,
+	MCU_PORT_B,
+	MCU_PORT_C,
+	MCU_PORT_D,
+	MCU_PORT_E,
+	MCU_PORT_F,
+	MCU_PORT_G,
+};
+
+/**
+ *******************************************************************************
+ * @brief      define gpio pin
+ *******************************************************************************
+ */
+enum _Hal_GPIO_Pin
+{
+	MCU_PIN_0 = 0,
+	MCU_PIN_1,
+	MCU_PIN_2,
+	MCU_PIN_3,
+	MCU_PIN_4,
+	MCU_PIN_5,
+	MCU_PIN_6,
+	MCU_PIN_7,
+	MCU_PIN_8,
+	MCU_PIN_9,
+	MCU_PIN_10,
+	MCU_PIN_11,
+	MCU_PIN_12,
+	MCU_PIN_13,
+	MCU_PIN_14,
+	MCU_PIN_15,
+};
+
+/**
+ *******************************************************************************
+ * @brief      define gpio dir
+ *******************************************************************************
+ */ 
+enum _Hal_GPIO_Dir
+{
+    GPIO_DIR_INTPUT = 0,
+    GPIO_DIR_OUTPUT,
+};
+
+/**
+ *******************************************************************************
+ * @brief       hal device opera interface structure
+ *******************************************************************************
+ */
+typedef union
+{
+    struct
+    {
+        uint32_t Port : 4;
+        uint32_t Pin : 4;
+        uint32_t Dir : 1;
+        uint32_t : 23;
+    };
+    
+    uint32_t Flag;
+    void *Param;
+}hPortFlag;
+
+/**
+ *******************************************************************************
+ * @brief       hal device opera interface structure
+ *******************************************************************************
+ */
+typedef union
+{
+    struct
+    {
+        uint32_t Mode : 2;
+        uint32_t Channel : 2;
+        uint32_t Preiod : 14;
+        uint32_t Cycle : 14;
+    };
+    
+    uint32_t Flag;
+    void *Param;
+}hTimFlag;
+
+/**
+ *******************************************************************************
+ * @brief      define device trigger events
+ *******************************************************************************
+ */ 
 enum _Hal_Device_Event
 {
     HAL_DEVICE_TX_COMPLET_EVENT,
@@ -194,34 +294,6 @@ struct Hal_Interface
     
     hal_err_t (*Control)(void*, uint8_t, va_list);
 };
-
-typedef union
-{
-    struct
-    {
-        uint32_t Mode : 2;
-        uint32_t Channel : 2;
-        uint32_t Preiod : 14;
-        uint32_t Cycle : 14;
-    };
-    
-    uint32_t Flag;
-    void *Param;
-}hTimFlag;
-
-typedef union
-{
-    struct
-    {
-        uint32_t Port : 4;
-        uint32_t Pin : 4;
-        uint32_t Dir : 1;
-        uint32_t : 23;
-    };
-    
-    uint32_t Flag;
-    void *Param;
-}hPortFlag;
 
 /**
  *******************************************************************************

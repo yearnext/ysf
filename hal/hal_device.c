@@ -313,8 +313,7 @@ hal_err_t Hal_Device_Open(Hal_Device_t *dev, uint8_t type, char *name)
     }
     else
     {
-        dev->ErrCode = HAL_DEVICE_ERR_CODE_NOT_SUPPORT;
-        goto _DEVICE_OPTION_FAIL;
+        dev->Device = (void *)dev;
     }
     
     Hal_Device_Unlock(dev);
