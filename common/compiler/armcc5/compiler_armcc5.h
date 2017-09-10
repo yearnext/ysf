@@ -63,17 +63,6 @@ extern "C"
 
 /**
  *******************************************************************************
- * @brief      DEFINE MCU HEAP ADDRESS
- *******************************************************************************
- */
-extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
-
-#define __HEAP_HEAD_ADDR             ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
-
-#define USE_COMPILER_HEAP_ADDR                                               (1)
-
-/**
- *******************************************************************************
  * @brief      disable compiler warning about anonymous structs 
  *******************************************************************************
  */
@@ -248,6 +237,28 @@ extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
     #define COMPILER_USE_LITTLE_ENDIAN
 //    #warning The byte order of the compiler uses little endian mode!
 #endif
+
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU HEAP ADDRESS
+ *******************************************************************************
+ */
+extern unsigned int Image$$RW_IRAM1$$ZI$$Limit;
+
+#define __HEAP_HEAD_ADDR             ((unsigned int)&Image$$RW_IRAM1$$ZI$$Limit)
+
+#define USE_COMPILER_HEAP_ADDR                                               (1)
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE FRAMEOWRK MAIN FUNCTION
+ *******************************************************************************
+ */
+extern int $Super$$main(void);
+
+#define Fw_Main_Init __iar_data_init3
+#define Fw_Main $Sub$$main
 
 /* Exported types ------------------------------------------------------------*/
 /**

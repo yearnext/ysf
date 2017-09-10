@@ -176,15 +176,6 @@ extern "C"
 
 /**
  *******************************************************************************
- * @brief      DEFINE MCU HEAP ADDRESS
- *******************************************************************************
- */
-#pragma section="HEAP"
-
-#define __HEAP_HEAD_ADDR                                 (__segment_end("HEAP"))
-
-/**
- *******************************************************************************
  * @brief      size the end mode detection
  *******************************************************************************
  */
@@ -195,6 +186,26 @@ extern "C"
     #define COMPILER_USE_LITTLE_ENDIAN
 //    #warning The byte order of the compiler uses little endian mode!
 #endif
+    
+/**
+ *******************************************************************************
+ * @brief      DEFINE MCU HEAP ADDRESS
+ *******************************************************************************
+ */
+#pragma section="HEAP"
+
+#define __HEAP_HEAD_ADDR                                 (__segment_end("HEAP"))
+
+/**
+ *******************************************************************************
+ * @brief      DEFINE FRAMEOWRK MAIN FUNCTION
+ *******************************************************************************
+ */
+extern int main(void);
+extern void __iar_data_init3(void);
+
+#define Fw_Main_Init __iar_data_init3
+#define Fw_Main __low_level_init
 
 /* Exported types ------------------------------------------------------------*/
 /**
